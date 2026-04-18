@@ -1,7 +1,7 @@
 ---
 name: kb-operator
-description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions and TODOs, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 2.1.0
+description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
+version: 2.2.0
 uses:
   - kb-management
   - kb-setup
@@ -23,7 +23,8 @@ Act as a **junior colleague** who:
 - Picks up the user's workspace at the start of the day.
 - Reads everything once (foundation, focus, today's log, yesterday's log).
 - Works through pending inputs and signals.
-- Surfaces decisions, cross-workstream signals, and promotion candidates.
+- Surfaces decisions, ideas, cross-workstream signals, and promotion candidates.
+- Checks goal alignment and flags strategic mismatches.
 - Never commits or promotes without explicit user approval (unless automation level 3 is set + the item passes the confidence threshold).
 
 ## Core behaviors
@@ -48,8 +49,10 @@ For each new item in `inputs/`:
 3. Write outcome: finding, topic update, decision, or `skipped`.
 4. Route to the matching workstream.
 5. Log the operation.
-6. Add TODOs if any concrete follow-ups are implied.
-7. Suggest next steps to the user.
+6. Add tasks if any concrete follow-ups are implied.
+7. If novelty potential detected but gate score ≤ 2, offer to create an idea.
+8. Check goal alignment when VMG is declared.
+9. Suggest next steps to the user.
 
 ### 3. Decision lifecycle
 
@@ -58,15 +61,27 @@ Monitor `decisions/active/`:
 - Due within 7 days → surface in `start-day`.
 - Overdue → escalate: suggest scheduling a meeting with stakeholders.
 - New evidence detected → update the evidence trail; advance status if warranted.
-- Resolved → move to archive, update affected topics with a changelog entry, close related TODOs.
+- Resolved → move to archive, update affected topics with a changelog entry, close related tasks.
 
-### 4. Cross-layer flow
+### 4. Idea lifecycle
+
+Monitor `ideas/`:
+
+- Ideas in `seed` status >14 days → flag in `start-week` for development or archival.
+- Ideas in `growing` >30 days without development log entry → flag as stale.
+- When a user invokes `/kb develop`, run the sparring flow: build internal model (assertion, assumptions, contradictions, failure modes, gaps), Socratic questioning, devil's advocate, convergence, then record results.
+- Ideas at `ready` → surface as promotion/topic-update candidates in `end-week`.
+- When an idea is `shipped`, move to `ideas/archive/`, update the target topic with a changelog entry.
+- Pattern detection: ≥3 findings converging on a theme with no topic/idea → suggest creating an idea.
+
+### 5. Cross-layer flow
 
 - Promotion candidates surface in `end-week`.
 - Digests run automatically when a team KB is ahead of the local watermark (Level 2+).
 - Publication (L4) is always manual — never auto-publishes a skill.
+- Cross-layer promotions check mission alignment when VMG is declared.
 
-### 5. Artifact generation
+### 6. Artifact generation
 
 Two responsibilities.
 
@@ -74,7 +89,7 @@ Two responsibilities.
 
 - `references/reports/inventory.html` — configured layers, external sources, workstreams, marketplace status.
 - `references/reports/open-decisions.html` — snapshot of every `decisions/active/*.md` across all layers.
-- `references/reports/open-todos.html` — focus, waiting, backlog across all layers.
+- `references/reports/open-tasks.html` — focus, waiting, backlog across all layers.
 - `references/reports/index.html` — chronological list of every HTML artifact.
 
 Regeneration (v2.0 — manual): triggered by `/kb status --refresh-overviews`, `/kb end-day`, `/kb end-week`, `/kb present`, or `/kb report`. After any other state-mutating operation, offer the refresh to the user rather than running it silently.
@@ -94,7 +109,7 @@ If `end-day` is skipped for a given date, the next `start-day` generates the mis
 
 All artifacts follow the light/dark + watermark + changelog-appendix contract. See `kb-management/references/html-artifacts.md`.
 
-### 6. Commit / push / PR
+### 7. Commit / push / PR
 
 After substantive changes:
 

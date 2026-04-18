@@ -1,6 +1,6 @@
 # The Critical Evaluation Gate
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.2 | **Last updated:** 2026-04-18
 
 The single mechanism that keeps every KB from rotting. Applied at **every stage** — capture, digest, promote, process, publish — the gate is the KB's immune system.
 
@@ -11,16 +11,24 @@ Before persisting anything, the agent asks:
 1. **Does this strengthen a position?** — Does it change or reinforce a topic file?
 2. **Does this inform a decision?** — Does it provide evidence for an open or emerging decision?
 3. **Would you reference this again?** — Is it durable signal, or a passing observation?
-4. **Is this actionable?** — Does it lead to a concrete next step (TODO, meeting, promotion)?
+4. **Is this actionable?** — Does it lead to a concrete next step (task, meeting, promotion)?
 5. **Does this already exist?** — Is the insight already captured in a topic or recent finding?
+
+### Strategic alignment check (VMG)
+
+When vision/mission/goals are declared in `.kb-config.yaml`, the gate adds a sixth dimension:
+
+6. **Does this align with declared goals?** — Material aligned with an active goal gets +1 to the gate score. Material contradicting a goal is captured as a finding + flagged for decision review.
+
+See [12-vision-mission-goals.md](12-vision-mission-goals.md) for the full VMG model.
 
 ## Scoring
 
 | Matches | Outcome |
 |---------|---------|
 | 0 of 5 | Discard. Log as `skipped` in today's log with the reason. |
-| 1–2 of 5 | Finding only. Snapshot to `findings/`, no topic update. |
-| 3+ of 5 | Finding + topic update + possibly a new decision. |
+| 1–2 of 5 | Finding only. Snapshot to `findings/`, no topic update. If novelty potential detected, offer to create an idea. |
+| 3+ of 5 | Finding + topic update + possibly a new decision or idea. |
 
 The gate is **not a blocker**. The agent can persist with a lower confidence note if the user insists — but it always tells the user *why* it thinks something is or isn't worth keeping.
 
@@ -58,4 +66,5 @@ See the `log/` format in [../spec/logging.md](../spec/logging.md).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-18 | v0.2 — Added VMG strategic alignment check, idea creation path at 1–2/5 with novelty, renamed TODO→task | Spec review |
 | 2026-04-18 | Initial version | Extracted from source spec §3e |

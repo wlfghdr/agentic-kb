@@ -35,12 +35,12 @@ The block is enforced by the `publish` flow itself, then re-checked in the marke
 
 The agent should **decline** to capture content that triggers any of these patterns and inform the user why.
 
-## TODO Items Are Sensitive Too
+## Task Items Are Sensitive Too
 
-Personal `todo/focus.md` items often include unreleased plans, stakeholder concerns, or in-progress negotiations. The agent MUST NOT:
+Personal `tasks/focus.md` items often include unreleased plans, stakeholder concerns, or in-progress negotiations. The agent MUST NOT:
 
-- Include full todo content in published artifacts without explicit user confirmation.
-- Promote `todo/` files themselves (they stay per-layer).
+- Include full task content in published artifacts without explicit user confirmation.
+- Promote `tasks/` files themselves (they stay per-layer).
 
 ## Audit Trail
 

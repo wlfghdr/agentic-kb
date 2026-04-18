@@ -17,18 +17,24 @@ Most knowledge bases accumulate. `agentic-kb` curates. Every piece of material p
    Relevance is assessed against declared themes and open decisions. "Interesting" is not enough. The bar is: *would you reference this again?*
 
 3. **Decisions as first-class objects.**
-   Strategic, tactical, and technical decisions are tracked explicitly — not buried in prose. Open decisions drive TODOs. Decided items ground future processing. Each decision lives in its own file.
+   Strategic, tactical, and technical decisions are tracked explicitly — not buried in prose. Open decisions drive tasks. Decided items ground future processing. Each decision lives in its own file.
 
-4. **Stakeholders inform action.**
-   Knowing who cares about what enables the agent to suggest meetings, messages, and reviews. Not a CRM — just enough to connect decisions to people. Outside the personal KB, TODOs carry RACIs.
+4. **Ideas as incubation objects.**
+   Observations with novelty value that aren't yet ready to shape a topic become ideas — tracked with their own lifecycle (`seed → growing → ready → shipped`), developed via sparring, and promoted when mature. See [11-ideas.md](11-ideas.md).
 
-5. **Always offer next steps.**
+5. **Vision, mission, and goals steer the system.**
+   Each layer can declare a vision, mission, and goals. These are active filters — the evaluation gate checks strategic alignment, tasks are prioritized by goal relevance, and cross-layer promotions are grounded in mission fit. See [12-vision-mission-goals.md](12-vision-mission-goals.md).
+
+6. **Stakeholders inform action.**
+   Knowing who cares about what enables the agent to suggest meetings, messages, and reviews. Not a CRM — just enough to connect decisions to people. Outside the personal KB, tasks carry RACIs.
+
+7. **Always offer next steps.**
    After every operation, the agent suggests concrete follow-up actions. Never leave the user staring at output without a path forward.
 
-6. **Multiple workstreams.**
+8. **Multiple workstreams.**
    A personal KB can track multiple parallel workstreams. The agent auto-routes content to the right workstream and reveals cross-workstream connections, synergies, and dependencies.
 
-7. **Presentation-ready.**
+9. **Presentation-ready.**
    When work needs to be communicated, the agent generates versioned HTML artifacts (presentations, reports, pitches) with light/dark themes and subtle version watermarks. See [HTML artifacts spec](../spec/html-artifacts.md).
 
 ## Mental Model — One Picture
@@ -64,7 +70,7 @@ Most knowledge bases accumulate. `agentic-kb` curates. Every piece of material p
 |------------|----------------|
 | Route captures to the right workstream and layer | Decide what's strategically important |
 | Apply the critical evaluation gate | Silently discard material — always logs why |
-| Maintain topic files, findings, decisions, todos | Auto-commit to team or org without confirmation |
+| Maintain topic files, findings, decisions, ideas, tasks | Auto-commit to team or org without confirmation |
 | Generate digests, summaries, presentations | Send messages to stakeholders on the user's behalf |
 | Suggest next steps | Execute risky next steps without approval |
 
@@ -78,6 +84,9 @@ Throughout this spec, examples use the framing of an *observability platform R&D
 
 - [02-architecture.md](02-architecture.md) — the five layers in detail
 - [03-memory-model.md](03-memory-model.md) — findings vs topics vs foundation
+- [05-tasks.md](05-tasks.md) — lean task tracking (focus / backlog / archive)
+- [11-ideas.md](11-ideas.md) — idea incubation and development
+- [12-vision-mission-goals.md](12-vision-mission-goals.md) — strategic steering across layers
 - [08-evaluation-gate.md](08-evaluation-gate.md) — the five-question filter
 - [../spec/commands.md](../spec/commands.md) — the full `/kb` surface
 

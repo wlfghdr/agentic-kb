@@ -28,7 +28,7 @@ One to three sentences.
 
 - Updates topic: `../topics/deployment-strategy.md`
 - Advances decision: D-2026-04-18
-- Adds TODO: "Integrate pattern into core-topics"
+- Adds task: "Integrate pattern into core-topics"
 
 ## Stakeholders
 
@@ -122,7 +122,7 @@ Path: `workstreams/<name>.md`
 
 ## Focus / Backlog
 
-Path: `todo/focus.md`, `todo/backlog.md`
+Path: `tasks/focus.md`, `tasks/backlog.md`
 
 ```markdown
 # Focus
@@ -136,7 +136,7 @@ Path: `todo/focus.md`, `todo/backlog.md`
 - [ ] @person: what they owe you
 ```
 
-Team/org variant uses the RACI prefix — see [../concept/05-todos.md](../concept/05-todos.md).
+Team/org variant uses the RACI prefix — see [../concept/05-tasks.md](../concept/05-tasks.md).
 
 ## Log
 

@@ -11,10 +11,10 @@ Two families of artifacts:
 |------|-----------------|-----------------|
 | `references/reports/inventory.html` | `.kb-config.yaml` + `references/foundation/sources.md` + git status per layer | every mutation |
 | `references/reports/open-decisions.html` | `decisions/active/*.md` across all layers | every mutation |
-| `references/reports/open-todos.html` | `todo/focus.md` + `todo/backlog.md` across all layers | every mutation |
+| `references/reports/open-tasks.html` | `tasks/focus.md` + `tasks/backlog.md` across all layers | every mutation |
 | `references/reports/index.html` | chronological list of everything under `references/reports/` | every artifact create/update |
 
-**Regenerate after**: `capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `todo-add`, `todo-done`, `update-topic`, `audit`, and every ritual.
+**Regenerate after**: `capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, and every ritual.
 
 **Rules**:
 

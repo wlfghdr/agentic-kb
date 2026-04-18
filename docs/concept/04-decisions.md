@@ -107,7 +107,7 @@ One-file-per-decision keeps history clean, makes the RACI machine-readable, and 
 
 ## See Also
 
-- [05-todos.md](05-todos.md) — open decisions generate TODOs for evidence-gathering and stakeholder follow-up.
+- [05-tasks.md](05-tasks.md) — open decisions generate tasks for evidence-gathering and stakeholder follow-up.
 - [07-stakeholders.md](07-stakeholders.md) — how the people map drives RACI suggestions.
 - [09-flows.md](09-flows.md) — how decisions propagate from `active/` → topic updates → archive.
 

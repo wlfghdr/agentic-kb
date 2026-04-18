@@ -97,18 +97,18 @@ On abort: print the missing tool, the OS-specific install command, and exit. Do 
 - Marketplace: clone or register.
 
 ### Step 3 — Scaffold personal KB
-Directories: `inputs/`, `inputs/digested/`, `references/{topics,findings,foundation,reports,legacy}/`, `decisions/{active,archive}/`, `todo/{,archive}/`, `log/`, `workstreams/`.
+Directories: `inputs/`, `inputs/digested/`, `references/{topics,findings,foundation,reports,legacy}/`, `ideas/`, `ideas/archive/`, `decisions/{active,archive}/`, `tasks/{,archive}/`, `log/`, `workstreams/`.
 
 Files (from `templates/`):
 - `AGENTS.md`, `README.md`, `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml`.
 - Initial `workstreams/<name>.md` per declared workstream.
 - `references/foundation/{me,context,stakeholders,sources,naming}.md`.
 - Initial `references/topics/<slug>.md` per declared theme (with empty changelog).
-- `todo/focus.md`, `todo/backlog.md`.
+- `tasks/focus.md`, `tasks/backlog.md`.
 
 ### Step 4 — Scaffold team KB (if creating new)
 - Contributor directory (`<your-name>/inputs/`, `<your-name>/outputs/{topics,findings}/`).
-- `decisions/{active,archive}/`, `todo/{focus,backlog}.md`, `log/`, `AGENTS.md`, `README.md`.
+- `decisions/{active,archive}/`, `tasks/{focus,backlog}.md`, `log/`, `AGENTS.md`, `README.md`.
 
 ### Step 5 — Workspace-level configuration
 

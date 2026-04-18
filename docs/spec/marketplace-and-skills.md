@@ -61,7 +61,7 @@ my-marketplace/
 name: kb-management                # required, kebab-case, matches directory
 description: >                     # required, ≤1024 chars; used by model auto-invocation
   Lean, layered knowledge management driven by `/kb`. Captures inputs,
-  applies a five-question evaluation gate, tracks decisions, manages TODOs,
+  applies a five-question evaluation gate, tracks decisions, manages tasks,
   and generates versioned HTML artifacts. Install to get the `/kb` command.
 version: 0.1.0                     # optional; surfaced in marketplace listings
 triggers:                          # optional; used as auto-invocation hints
@@ -96,7 +96,7 @@ Keep the `SKILL.md` body under ~5,000 tokens.
 ```markdown
 ---
 name: kb-operator
-description: Autonomous knowledge-operations persona. Runs rituals, processes inputs, maintains decisions and TODOs, generates HTML artifacts.
+description: Autonomous knowledge-operations persona. Runs rituals, processes inputs, maintains decisions and tasks, generates HTML artifacts.
 uses:
   - kb-management
   - kb-setup

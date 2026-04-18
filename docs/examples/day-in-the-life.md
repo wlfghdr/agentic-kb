@@ -16,7 +16,7 @@ Alex: /kb start-day
 Agent:
 Good morning. Here's your briefing:
 
-📋 Focus (from todo/focus.md):
+📋 Focus (from tasks/focus.md):
   1. Finalize deployment-strategy position paper → promote to team
   2. Schedule architecture review with @alice
   3. Review platform backlog for sprint alignment

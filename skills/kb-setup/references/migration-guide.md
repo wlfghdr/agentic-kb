@@ -7,7 +7,7 @@ For users who already have a knowledge base in another layout.
 `/kb setup` detects migration candidates:
 
 - Existing git repo in the declared personal KB path.
-- Presence of `topics/`, `findings/`, `decisions/`, `todo/`, or similar subdirs.
+- Presence of `topics/`, `findings/`, `decisions/`, `tasks/`, or similar subdirs.
 - No `.kb-config.yaml` at the root.
 
 ## Plan
@@ -15,7 +15,7 @@ For users who already have a knowledge base in another layout.
 Produce a **diff** before applying:
 
 - Directories to create (missing required paths).
-- Files to rename (e.g., `todo.md` → split into `todo/focus.md` + `todo/backlog.md`).
+- Files to rename (e.g., `todo.md` → split into `tasks/focus.md` + `tasks/backlog.md`).
 - Files to restructure (e.g., single `decisions/open.md` → individual `decisions/active/D-*.md` files).
 - Files to move to `references/legacy/` (material that doesn't fit).
 
@@ -35,9 +35,9 @@ Only after user confirmation:
 ```
 Before: todo.md (mixed open + done)
 After:
-  todo/focus.md
-  todo/backlog.md
-  todo/archive/YYYY-MM.md   (done items grouped by completion month)
+  tasks/focus.md
+  tasks/backlog.md
+  tasks/archive/YYYY-MM.md   (done items grouped by completion month)
 ```
 
 ### Single `decisions.md` / `decisions/open.md` → individual files

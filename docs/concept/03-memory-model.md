@@ -1,14 +1,15 @@
 # Memory Model — Findings, Topics, Foundation
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.2 | **Last updated:** 2026-04-18
 
-Every personal and team KB has three kinds of memory, each with a distinct purpose and context-cost profile. Understanding which is which is the single most important thing about navigating the KB.
+Every personal and team KB has four kinds of memory, each with a distinct purpose and context-cost profile. Understanding which is which is the single most important thing about navigating the KB.
 
-## Three Memory Types
+## Four Memory Types
 
 | Type | Purpose | Lifecycle | Context cost |
-|------|---------|-----------|--------------|
+|------|---------|-----------|----------|
 | **Historical** (`references/findings/`) | "What did I learn and when?" Evidence trail. | Created once, **never edited** | LOW — only recent ones loaded |
+| **Incubation** (`ideas/`) | "What's worth developing?" Novelty with potential. | Lifecycle: `seed → growing → ready → shipped` | LOW — only active ones loaded |
 | **Topic** (`references/topics/`) | "What is my current position on X?" | **Updated in place**, carries inline changelog | MEDIUM — loaded when relevant |
 | **Foundation** (`references/foundation/`) | Identity: who you are, what you care about | Rarely changes, carries inline changelog | LOW — loaded always |
 
@@ -32,12 +33,24 @@ findings/
 
 Two special kinds of finding are generated automatically by the rituals:
 
-- **Daily summary** — created by `/kb end-day` as `references/findings/YYYY-MM-DD-daily-summary.md`. Captures the day's activity: findings, decisions, TODOs, promotions, skipped items, per-workstream progress.
+- **Daily summary** — created by `/kb end-day` as `references/findings/YYYY-MM-DD-daily-summary.md`. Captures the day's activity: findings, decisions, ideas, tasks, promotions, skipped items, per-workstream progress.
 - **Weekly summary** — created by `/kb end-week` (Friday 15:00 default) as `references/findings/YYYY-MM-DD-weekly-summary.md`. Aggregates the week's dailies + promotion and presentation candidates + staleness flags.
 
 Both have a rendered HTML companion in `references/reports/` (see [../spec/html-artifacts.md](../spec/html-artifacts.md)). The markdown file is the source; the HTML is a presentation layer.
 
 Because they follow the `YYYY-MM-DD-slug.md` finding format, they participate in all normal finding behavior — immutable, referenced by topics, surfaced by digests.
+
+## Incubation Memory — `ideas/`
+
+Ideas bridge findings and topics. A finding with novelty value — something that doesn't yet shape a position but opens a new direction — becomes an idea.
+
+- **Format**: `I-YYYY-MM-DD-slug.md`.
+- **Lifecycle**: `seed → growing → ready → shipped | archived`.
+- **Key rule**: ideas are developed via sparring (`/kb develop`), not just stored. The agent plays devil's advocate, surfaces assumptions, and tracks the reasoning chain.
+- **When created**: from capture (novelty detected), from audit (pattern convergence), or explicitly via `/kb idea [text]`.
+- **When shipped**: absorbed into a topic update, a decision, or a promotion. The idea file moves to `ideas/archive/`.
+
+Full spec: [11-ideas.md](11-ideas.md).
 
 ## Topic Memory — `references/topics/`
 
@@ -117,13 +130,13 @@ Git history shows *that* a file changed, but not *why* or *what triggered it*. T
 | What it loads | When | Size |
 |---|---|---|
 | `foundation/me.md` + `context.md` | Always | ~200 lines |
-| `todo/focus.md` | Always | ~10 lines |
+| `tasks/focus.md` | Always | ~10 lines |
 | `decisions/active/*.md` (titles only) | On start-day | ~10 lines |
 | Relevant `topics/*.md` | When processing related input | 1–2 files |
 | Recent `findings/` | When digesting or auditing | Last 5–10 |
 | `workstreams/<relevant>.md` | When routing workstream content | 1 file |
-| `todo/backlog.md` | On explicit todo review | ~30 lines |
-| `todo/archive/*` | Never (unless searching history) | 0 lines |
+| `tasks/backlog.md` | On explicit task review | ~30 lines |
+| `tasks/archive/*` | Never (unless searching history) | 0 lines |
 | `inputs/digested/*` | Never (unless re-processing) | 0 lines |
 | Full decision file | When processing related input | 1 file |
 | `decisions/archive/` | Only when referencing past decisions | 0 lines |

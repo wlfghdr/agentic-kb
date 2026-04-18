@@ -22,11 +22,14 @@ Explicit subcommands are provided for disambiguation but are never required for 
 /kb sync team              → cross-reference all team contributors
 /kb diff team              → show what's new from other team contributors
 
-/kb todo                   → show focus items
-/kb todo done [item]       → complete an item
+/kb task                   → show focus items (aliases: todo, tasks)
+/kb task done [item]       → complete an item
+
+/kb idea [text]            → create a new idea (seed)
+/kb develop [idea]         → sparring session on an idea
 
 /kb decide [description]   → create a new decision
-/kb decide resolve [D-id]  → resolve a decision (archive + update topics + close TODOs)
+/kb decide resolve [D-id]  → resolve a decision (archive + update topics + close tasks)
 
 /kb start-day              → morning briefing
 /kb end-day                → evening wrap
@@ -34,7 +37,7 @@ Explicit subcommands are provided for disambiguation but are never required for 
 /kb end-week               → weekly summary (Friday 15:00)
 
 /kb audit                  → check for contradictions, gaps, staleness
-/kb status                 → pending inputs, recent activity, todo counts, workstream summary
+/kb status                 → pending inputs, recent activity, task counts, workstream summary
 
 /kb present [topic/file]   → generate HTML presentation
 /kb report [topic/file]    → generate HTML report (personal, team, or org-unit scope)
@@ -57,25 +60,27 @@ Explicit subcommands are provided for disambiguation but are never required for 
 
 ## `/kb start-day` — Morning Briefing
 
-1. Read `todo/focus.md`.
+1. Read `tasks/focus.md`.
 2. Scan `decisions/active/` — any due soon or blocked?
+3. Scan `ideas/` — any stale seeds or growing ideas needing attention?
 3. Read today's and yesterday's `log/`.
 4. `git diff` in personal KB since last activity.
 5. `git diff` in team KB(s) since last digest.
 6. Scan `inputs/` — anything unprocessed? (add to `backlog.md` if so).
-7. Check workstreams for cross-workstream connections.
+7. Check goal status — any at risk or recently achieved?
+8. Check workstreams for cross-workstream connections.
 8. **Output**: briefing grouped by workstream.
 9. **Suggest next steps**.
 
 ## `/kb end-day` — Evening Wrap
 
 1. Review uncommitted changes; summarize the day.
-2. Move completed focus items → `todo/archive/YYYY-MM.md`.
+2. Move completed focus items → `tasks/archive/YYYY-MM.md`.
 3. Update decisions if any state changed.
 4. Pull next items from `backlog.md` → `focus.md` (if space).
 5. Append to today's `log/`.
 6. **Generate the daily summary**: `references/findings/YYYY-MM-DD-daily-summary.md` + rendered `references/reports/daily-YYYY-MM-DD.html`. See [html-artifacts.md](html-artifacts.md).
-7. **Regenerate live overviews**: `inventory.html`, `open-decisions.html`, `open-todos.html`, `index.html`.
+7. **Regenerate live overviews**: `inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`.
 8. Offer to stage, commit, push (and open a PR if branch protection requires).
 9. **Suggest next steps** (promotion candidates, overdue decisions).
 
@@ -86,7 +91,7 @@ If `end-day` is skipped for a given date, the next `start-day` generates the mis
 1. Full team KB digest.
 2. Review all workstream files for movement.
 3. Audit `decisions/active/` — overdue? new evidence?
-4. Audit `todo/backlog.md` for stale items (>14 days untouched).
+4. Audit `tasks/backlog.md` for stale items (>14 days untouched).
 5. Check marketplace for new skills matching themes.
 6. **Output**: weekly briefing grouped by workstream.
 7. **Suggest next steps**.
@@ -94,11 +99,11 @@ If `end-day` is skipped for a given date, the next `start-day` generates the mis
 ## `/kb end-week` — Friday 15:00
 
 1. Generate the weekly summary finding → `references/findings/YYYY-MM-DD-weekly-summary.md` + rendered `references/reports/weekly-YYYY-WW.html`.
-2. Full TODO cleanup (archive done, prune stale backlog).
+2. Full task cleanup (archive done, prune stale backlog).
 3. Identify candidates for promotion (L1 → L2 or → L4).
 4. Identify presentation-worthy items for the upcoming week.
 5. Per-workstream progress summary.
-6. **Regenerate live overviews**: `inventory.html`, `open-decisions.html`, `open-todos.html`, `index.html`.
+6. **Regenerate live overviews**: `inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`.
 7. Offer to commit + push.
 8. **Output**: week-in-review + promotion candidates + presentation suggestions.
 
@@ -133,11 +138,11 @@ After any substantive edit to a KB, the agent offers to commit and push. Rules:
 
 ## Live Overview Regeneration — Every Mutation
 
-After **any** state-mutating command (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `todo-add`, `todo-done`, `update-topic`, `audit`, any ritual), the agent regenerates the four live overview HTML files:
+After **any** state-mutating command (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, any ritual), the agent regenerates the four live overview HTML files:
 
 - `references/reports/inventory.html`
 - `references/reports/open-decisions.html`
-- `references/reports/open-todos.html`
+- `references/reports/open-tasks.html`
 - `references/reports/index.html`
 
 Rules:

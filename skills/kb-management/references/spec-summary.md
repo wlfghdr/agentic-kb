@@ -30,7 +30,7 @@ my-kb/
 ├── decisions/
 │   ├── active/              D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── todo/
+├── tasks/
 │   ├── focus.md             max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
@@ -43,7 +43,7 @@ my-kb/
 ```
 team-kb/
 ├── decisions/{active,archive}/    RACIs required
-├── todo/{focus,backlog}.md        RACIs required
+├── tasks/{focus,backlog}.md        RACIs required
 ├── log/
 ├── <contributor>/
 │   ├── inputs/digested/YYYY-MM/
@@ -117,6 +117,6 @@ github-pages:
 HH:MM:SSZ | <op> | <scope> | <target> | <details>
 ```
 
-Ops: `capture`, `digest`, `publish`, `promote`, `update-topic`, `todo-add`, `todo-done`, `decide`, `decide-resolve`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-*`, `automation-failure`, `correction`.
+Ops: `capture`, `digest`, `publish`, `promote`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-*`, `automation-failure`, `correction`.
 
 Scopes: `personal`, `team-kb`, `team-kb/<contrib>`, `org-unit`, `marketplace`, `personal→team`, `team→personal`, `personal→marketplace`, `workspace`.

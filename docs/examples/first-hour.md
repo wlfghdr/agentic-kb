@@ -113,12 +113,12 @@ Expected behavior:
 
 1. Summarize today's uncommitted diff.
 2. Generate `references/findings/2026-04-18-daily-summary.md` + `references/reports/daily-2026-04-18.html`.
-3. Move completed focus items to `todo/archive/2026-04.md`.
+3. Move completed focus items to `tasks/archive/2026-04.md`.
 4. Offer `git commit` (+ push/PR if a remote is configured).
 
 The HTML report uses `skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
 
-Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-todos.html`, `index.html`) are refreshed as part of `end-day`. Between rituals, run `/kb status --refresh-overviews` if you want them up to date. Automatic refresh after every mutation ships in v2.1.
+Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) are refreshed as part of `end-day`. Between rituals, run `/kb status --refresh-overviews` if you want them up to date. Automatic refresh after every mutation ships in v2.1.
 
 ## What to do when this walkthrough breaks
 

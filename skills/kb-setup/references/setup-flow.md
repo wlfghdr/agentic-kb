@@ -35,8 +35,8 @@ references/reports/
 references/legacy/
 decisions/active/
 decisions/archive/
-todo/
-todo/archive/
+tasks/
+tasks/archive/
 log/
 workstreams/
 ```
@@ -53,8 +53,8 @@ Instantiate these files from `templates/`:
 - `references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
 - `references/foundation/sources.md` ← `foundation-sources.md`
 - `references/foundation/naming.md` ← `foundation-naming.md`
-- `todo/focus.md` ← `focus.md`
-- `todo/backlog.md` ← `backlog.md`
+- `tasks/focus.md` ← `focus.md`
+- `tasks/backlog.md` ← `backlog.md`
 - Per workstream: `workstreams/<name>.md` ← `workstream.md`
 - Per theme: `references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
 
@@ -63,7 +63,7 @@ Instantiate these files from `templates/`:
 ```
 decisions/active/
 decisions/archive/
-todo/archive/
+tasks/archive/
 log/
 <contributor>/inputs/digested/
 <contributor>/outputs/topics/
@@ -72,21 +72,21 @@ log/
 
 - `AGENTS.md` ← `team-kb-AGENTS.md`
 - `README.md` ← `team-kb-README.md`
-- `todo/focus.md`, `todo/backlog.md`
+- `tasks/focus.md`, `tasks/backlog.md`
 
 ## Scaffold — org-unit KB
 
 ```
 decisions/active/
 decisions/archive/
-todo/archive/
+tasks/archive/
 workstreams/
 log/
 ```
 
 - `AGENTS.md` ← `org-kb-AGENTS.md`
 - `README.md` ← `org-kb-README.md`
-- `todo/focus.md`, `todo/backlog.md`
+- `tasks/focus.md`, `tasks/backlog.md`
 
 ## Scaffold — workspace root
 

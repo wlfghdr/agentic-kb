@@ -330,8 +330,8 @@
         <p>
           <strong>Scoring:</strong>
           0/5 → discard (logged with reason).
-          1–2/5 → finding only.
-          3+/5 → finding + topic update + possibly a new decision.
+          1–2/5 → finding only (offer idea creation if novelty detected).
+          3+/5 → finding + topic update + possibly a new decision or idea.
         </p>
         <p class="muted">
           The gate is never silent. Every accept and every reject is logged
@@ -342,7 +342,7 @@
     </section>
 
     <section aria-label="Memory model">
-      <h2>Three kinds of memory</h2>
+      <h2>Four kinds of memory</h2>
       <p>
         Each kind has a distinct purpose and context cost. Splitting them by
         access pattern is what keeps the agent fast.
@@ -380,6 +380,15 @@
         <path d="M 260 110 Q 300 110 335 110" class="svg-accent-stroke" stroke-width="1.5" fill="none" marker-end="url(#arrowR2)"/>
         <text x="298" y="100" class="svg-muted" text-anchor="middle">cite</text>
 
+        <!-- ideas (incubation) -->
+        <g transform="translate(182, 0)">
+          <rect x="335" y="50" width="230" height="120" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="450" y="80" class="svg-label" text-anchor="middle" font-weight="600">ideas/</text>
+          <text x="450" y="103" class="svg-muted" text-anchor="middle">incubation memory</text>
+          <text x="450" y="122" class="svg-muted" text-anchor="middle">I-YYYY-MM-DD-slug.md</text>
+          <text x="450" y="148" class="svg-muted" text-anchor="middle" font-style="italic">seed → growing → ready → shipped</text>
+        </g>
+
         <text x="450" y="205" class="svg-muted" text-anchor="middle" font-style="italic">
           Inline changelog on every topic + foundation update — the reasoning chain is traceable without git log.
         </text>
@@ -401,8 +410,10 @@
 /kb review                 → process pending items in inputs/
 /kb promote [file]         → push to team KB
 /kb digest team            → pull team changes into personal findings
+/kb idea [text]            → create an idea (seed)
+/kb develop [idea]         → sparring session on an idea
 /kb decide [description]   → open a new decision
-/kb todo done [item]       → complete a task
+/kb task done [item]       → complete a task
 /kb start-day              → morning briefing
 /kb end-week               → Friday 15:00 weekly summary
 /kb present [topic]        → versioned HTML presentation (light + dark)
@@ -415,7 +426,7 @@
         Strategic and tactical choices live in their own files with explicit
         lifecycle, stakeholders, and evidence trails — not buried in prose.
         When a decision resolves, the agent archives it, updates affected
-        topics with a changelog entry, and closes related TODOs.
+        topics with a changelog entry, and closes related tasks.
       </p>
       <div class="pill-row">
         <span class="pill"><strong>gathering-evidence</strong></span>
@@ -428,6 +439,33 @@
         <span class="pill">→</span>
         <span class="pill">archive</span>
       </div>
+
+      <h2>Ideas as incubation objects</h2>
+      <p>
+        Observations with novelty value that aren't ready to shape a topic
+        become <strong>ideas</strong> — tracked with their own lifecycle,
+        developed via sparring (<code>/kb develop</code>), and promoted when
+        mature. The agent plays devil's advocate, surfaces assumptions, and
+        tracks the reasoning chain.
+      </p>
+      <div class="pill-row">
+        <span class="pill"><strong>seed</strong></span>
+        <span class="pill">→</span>
+        <span class="pill"><strong>growing</strong></span>
+        <span class="pill">→</span>
+        <span class="pill"><strong>ready</strong></span>
+        <span class="pill">→</span>
+        <span class="pill">shipped | archived</span>
+      </div>
+
+      <h2>Vision, mission &amp; goals</h2>
+      <p>
+        Each layer can declare a <strong>vision</strong> (north star),
+        <strong>mission</strong> (what we do), and <strong>goals</strong>
+        (measurable targets). These actively steer the system — the
+        evaluation gate checks strategic alignment, tasks are prioritized by
+        goal relevance, and cross-layer promotions are grounded in mission fit.
+      </p>
 
       <h2>Presentation-ready output</h2>
       <p>

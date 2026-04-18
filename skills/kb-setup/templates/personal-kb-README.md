@@ -15,7 +15,7 @@
 ├── decisions/
 │   ├── active/          open decisions (one file each)
 │   └── archive/         resolved or superseded
-├── todo/
+├── tasks/
 │   ├── focus.md         max 3 items — what you're doing NOW
 │   ├── backlog.md       queued up
 │   └── archive/         monthly done archives

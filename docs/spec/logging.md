@@ -37,7 +37,7 @@ All timestamps are UTC.
 | # | Field | Description |
 |---|-------|-------------|
 | 1 | Time | `HH:MM:SSZ` (date is in the filename) |
-| 2 | Operation | `capture`, `digest`, `publish`, `promote`, `update-topic`, `todo-add`, `todo-done`, `decide`, `decide-resolve`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-start-day`, `ritual-end-day`, `ritual-start-week`, `ritual-end-week`, `automation-failure` |
+| 2 | Operation | `capture`, `digest`, `publish`, `promote`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `idea-create`, `idea-develop`, `idea-ship`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-start-day`, `ritual-end-day`, `ritual-start-week`, `ritual-end-week`, `automation-failure` |
 | 3 | Scope | `personal`, `team-kb`, `org-unit`, `marketplace`, `personal→team`, `team→personal`, `personal→marketplace`, `team-kb/<contributor>`, `workspace` |
 | 4 | Target | File path or short description |
 | 5 | Details | Free-form context, including gate rationale for `skipped` operations |
@@ -49,7 +49,7 @@ All timestamps are UTC.
 | `/kb status` | Reads current day's log for recent activity. |
 | `/kb start-day` | Compares log timestamps with git log to find unprocessed changes. |
 | `/kb digest team` | Uses log + git diff to determine what's new since last processing. |
-| `/kb todo` auto-feed | New items are logged as `todo-add`. |
+| `/kb task` auto-feed | New items are logged as `task-add`. |
 | `/kb audit` | Searches log for patterns (failed gates, skipped items, stale topics). |
 
 ## Append-Only

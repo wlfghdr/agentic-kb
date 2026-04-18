@@ -11,10 +11,11 @@ Content flows across five layers. Only L1 is required; all higher layers are opt
 │             │   │ (multiple)  │   │              │   │               │   │             │
 │ inputs/     │   │ <you>/inputs│   │ <team>/inputs│   │ skills/<name> │   │ OKRs, MCG   │
 │ references/ │   │ <you>/outputs│  │ <team>/outputs│  │ agents/<name> │   │ strategy    │
-│ decisions/  │   │ decisions/  │   │ decisions/   │   │ plugins/<name>│   │ directives  │
-│ todo/       │   │ todo/       │   │ workstreams/ │   │               │   │             │
-│ log/        │   │ log/        │   │ todo/        │   │               │   │             │
-│ workstreams/│   │             │   │ log/         │   │               │   │             │
+│ ideas/      │   │ decisions/  │   │ decisions/   │   │ plugins/<name>│   │ directives  │
+│ decisions/  │   │ tasks/      │   │ workstreams/ │   │               │   │             │
+│ tasks/      │   │ log/        │   │ tasks/       │   │               │   │             │
+│ log/        │   │             │   │ log/         │   │               │   │             │
+│ workstreams/│   │             │   │              │   │               │   │             │
 └─────────────┘   └─────────────┘   └──────────────┘   └──────────────┘   └─────────────┘
 
  Contributor unit:   —           person              team              —                —
@@ -23,11 +24,12 @@ Content flows across five layers. Only L1 is required; all higher layers are opt
 
 ## L1 — Personal KB (required, one per person)
 
-- **What**: your private evidence base — raw captures, distilled findings, curated positions, task tracking, decisions.
+- **What**: your private evidence base — raw captures, distilled findings, curated positions, ideas in development, task tracking, decisions.
 - **Repo**: individual Git repo.
 - **Audience**: you + your AI agents.
 - **Lifecycle**: Capture → Digest → Formalize → Promote (up) or Archive.
 - **Supports multiple parallel workstreams** — the agent auto-routes and cross-links.
+- **Declares vision, mission, and goals** — these steer the evaluation gate and task prioritization (see [12-vision-mission-goals.md](12-vision-mission-goals.md)).
 
 ## L2 — Team KB (optional, multiple allowed)
 
@@ -35,7 +37,7 @@ Content flows across five layers. Only L1 is required; all higher layers are opt
 - **Repo**: shared Git repo with contributor-isolated directories.
 - **Audience**: a small team (2–15 people).
 - **Lifecycle**: Receive promotions → Review → Cross-reference → Output → Digest back (down).
-- **Decisions and TODOs** live here with RACIs (see [04-decisions.md](04-decisions.md)).
+- **Decisions, tasks, and ideas** live here with RACIs (see [04-decisions.md](04-decisions.md)).
 
 ## L3 — Org-Unit KB (optional — capability, solution, or department level)
 
@@ -45,7 +47,7 @@ Content flows across five layers. Only L1 is required; all higher layers are opt
 - **Contributor unit**: teams (not individuals). Each team has its own `<team>/inputs/` and `<team>/outputs/` directory.
 - **Lifecycle**: Receive promotions from team KBs → Cross-team analysis (synergies, conflicts, gaps) → Org-level decisions with cross-team RACIs → Roadmap alignment.
 - **Cross-analysis**: the agent synthesizes across team directories — surfacing synergies, contradictions, and gaps, just like L2 does across people.
-- **Decisions and TODOs** live here with cross-team RACIs.
+- **Decisions, tasks, and ideas** live here with cross-team RACIs.
 
 ## L4 — Skills Marketplace (optional)
 
@@ -135,4 +137,5 @@ Full flow details: [09-flows.md](09-flows.md).
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | L3: added team-isolated directories (mirroring L2 person-directories). L5: clarified as reference-only, no bottom-up input. ASCII diagram updated with contributor-unit / cross-analysis rows. | Spec review |
+| 2026-04-18 | Added ideas/ to L1 layout, renamed todo→tasks across layers, added VMG reference to L1, added ideas+tasks to L2/L3 | Spec review — Ideas + VMG + tasks rename |
 | 2026-04-18 | Initial version | Extracted from source spec §1 |

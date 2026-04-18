@@ -27,6 +27,26 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - `docs/concept/02-architecture.md` — L3 now has team-isolated directories (mirroring L2's person-directories). L5 clarified as reference-only (no bottom-up input). Added contributor-unit / cross-analysis summary to the ASCII diagram.
 - `docs/spec/workspace-layout.md` — L3 directory layout updated with per-team `inputs/` + `outputs/` structure. Required-files table updated.
 
+### Added
+
+- `docs/concept/11-ideas.md` — Ideas as first-class incubation objects with lifecycle (`seed → growing → ready → shipped | archived`), `/kb develop` sparring flow, pattern detection (3+ signal convergence), annotations, freshness tracking.
+- `docs/concept/12-vision-mission-goals.md` — VMG strategic steering model across all layers. Vision (years), Mission (quarters), Goals (weeks–quarters). Evaluation gate enhancement, task prioritization, cross-layer coherence checks, ritual integration.
+- `/kb idea [text]`, `/kb develop [idea]` commands.
+- `ideas/` directory in workspace layout (L1, L2, L3).
+- `idea.md` template added to kb-management skill.
+- `idea-create`, `idea-develop`, `idea-ship` log operations.
+- Idea lifecycle management in kb-operator agent (Section 4).
+- VMG-aligned evaluation gate scoring, goal status in rituals.
+
+### Changed (continued)
+
+- **Renamed `todo/` → `tasks/`** across entire spec. "todo" remains a recognized command synonym. Affects: `05-tasks.md` (renamed from `05-todos.md`), workspace-layout, commands, rituals, logging, glossary, skills, agent.
+- `open-todos.html` → `open-tasks.html` in all artifact references.
+- Evaluation gate (08) now offers idea creation at 1–2/5 when novelty detected, and checks VMG strategic alignment.
+- Memory model (03) expanded from three to four types (added Incubation).
+- Overview (01) renumbered principles 1–9, added Ideas (#4) and VMG (#5).
+- Skills bumped to v2.2.0, agent bumped to v2.2.0.
+
 ---
 
 ## [2.1.0] — 2026-04-18

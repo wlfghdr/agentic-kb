@@ -9,7 +9,7 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 ├── decisions/
 │   ├── active/               open decisions with RACIs
 │   └── archive/
-├── todo/
+├── tasks/
 │   ├── focus.md              team focus (with RACIs)
 │   └── backlog.md
 ├── log/                      team processing log
@@ -28,6 +28,6 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 3. Cross-reference other contributors via `/kb sync team`.
 4. Promote mature topics / findings up to org-unit via `/kb promote org`.
 
-## Decisions & TODOs
+## Decisions & Tasks
 
-Every team decision and TODO carries a RACI (Responsible, Accountable, Consulted, Informed).
+Every team decision and task carries a RACI (Responsible, Accountable, Consulted, Informed).

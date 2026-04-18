@@ -16,6 +16,7 @@ Content moves between layers via a small set of named flows. Every flow passes t
 | **Digest org** | L3 → L1 | `/kb digest org` | Position-changing signal |
 | **Install** | L4 → harness | `/kb install [skill]` | Marketplace-approved |
 | **Propagate** | L5 → L1 | `/kb [capture]` | Relevance to themes |
+| **Develop** | within layer | `/kb develop [idea]` | Sparring: assumptions, contradictions, gaps |
 
 ## Personal → Team (promote)
 

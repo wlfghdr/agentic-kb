@@ -22,7 +22,7 @@ This document tracks the known open items, deferred decisions, and future improv
 
 ### Auto-regeneration of always-current overviews
 
-- [ ] After every state-mutating `/kb` operation, regenerate `inventory.html`, `open-decisions.html`, `open-todos.html`, and `index.html` automatically (today: manual via `/kb status --refresh-overviews` or ritual commands).
+- [ ] After every state-mutating `/kb` operation, regenerate `inventory.html`, `open-decisions.html`, `open-tasks.html`, and `index.html` automatically (today: manual via `/kb status --refresh-overviews` or ritual commands).
 - [ ] Automation-level behavior: Level 1 asks before regenerating; Level 2 bundles with the commit; Level 3 runs silently in the autonomous loop.
 - [ ] Deterministic rendering contract so CI can diff against a fixture.
 
@@ -32,11 +32,11 @@ Blocks the full promise of `docs/spec/html-artifacts.md` §Family 1. Until this 
 
 ### Issue-tracker backbone for tasks and decisions
 
-Today, TODOs and decisions live as files. A future option is to back them with an issue-tracking system — GitHub Issues + Projects being the most common choice.
+Today, tasks and decisions live as files. A future option is to back them with an issue-tracking system — GitHub Issues + Projects being the most common choice.
 
 Goals:
 
-- `todo/focus.md` and `todo/backlog.md` become views on top of issues with a specific label set.
+- `tasks/focus.md` and `tasks/backlog.md` become views on top of issues with a specific label set.
 - `decisions/active/*.md` back onto issues with a `decision` label and the decision state as a project field.
 - RACI is preserved via issue assignees and `@` mentions in comments.
 - Cross-layer references: team KB issues cross-link to personal KB issues via `parent:` syntax.

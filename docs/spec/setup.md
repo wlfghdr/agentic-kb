@@ -91,7 +91,7 @@ Step 3 — Scaffold personal KB
 Step 4 — Scaffold team KB (if creating new)
   - Contributor directory structure
   - decisions/active/, decisions/archive/
-  - todo/ with focus.md, backlog.md
+  - tasks/ with focus.md, backlog.md
   - AGENTS.md, README.md, log/
 
 Step 5 — Scaffold workspace-level config

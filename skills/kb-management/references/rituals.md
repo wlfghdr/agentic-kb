@@ -10,7 +10,7 @@
 
 ## `/kb start-day`
 
-1. Read `todo/focus.md`.
+1. Read `tasks/focus.md`.
 2. Scan `decisions/active/` — any due soon or blocked?
 3. Read today's and yesterday's `log/`.
 4. `git diff` in personal KB since last activity.
@@ -23,7 +23,7 @@
 ## `/kb end-day`
 
 1. Review uncommitted changes; summarize the day.
-2. Move completed focus items → `todo/archive/YYYY-MM.md`.
+2. Move completed focus items → `tasks/archive/YYYY-MM.md`.
 3. Update decisions if any state changed.
 4. Pull next items from `backlog.md` → `focus.md` (if space).
 5. Append to today's `log/`.
@@ -35,7 +35,7 @@
 1. Full team KB digest.
 2. Review all workstream files for movement.
 3. Audit `decisions/active/` — overdue? new evidence?
-4. Audit `todo/backlog.md` for stale items (>14 days untouched).
+4. Audit `tasks/backlog.md` for stale items (>14 days untouched).
 5. Check marketplace for new skills matching themes.
 6. **Output**: weekly briefing grouped by workstream.
 7. **Suggest**.

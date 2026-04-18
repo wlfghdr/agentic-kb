@@ -7,7 +7,7 @@ A personal KB can track multiple parallel **workstreams**. Each workstream has i
 Workstreams serve two purposes:
 
 1. **Routing** — the agent auto-routes captured inputs to the right workstream based on theme keywords.
-2. **Visibility** — the briefing groups signals, TODOs, and decisions by workstream, so a user with three parallel tracks can see each one cleanly.
+2. **Visibility** — the briefing groups signals, tasks, and decisions by workstream, so a user with three parallel tracks can see each one cleanly.
 
 ## File Layout
 

@@ -126,7 +126,7 @@ A feature missing in one harness should not block the core KB flow.
 | Marketplace auto-update | Periodic `scripts/install --force` via a scheduled job |
 | Native slash commands | Direct prompts still work; users type the full phrase |
 
-The core flows — capture, review, promote, digest, decide, todo, rituals — work identically on all three harnesses.
+The core flows — capture, review, promote, digest, decide, task, rituals — work identically on all three harnesses.
 
 ## Related
 

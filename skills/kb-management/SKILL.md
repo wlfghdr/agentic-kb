@@ -1,7 +1,7 @@
 ---
 name: kb-management
-description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions as first-class objects, manages TODOs, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 2.1.0
+description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
+version: 2.2.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -16,7 +16,11 @@ triggers:
   - "start week"
   - "end week"
   - "todo"
+  - "task"
   - "decide"
+  - "idea"
+  - "develop"
+  - "goal"
   - "knowledge management"
   - "present"
   - "report"
@@ -31,14 +35,14 @@ license: Apache-2.0
 
 This skill implements the `agentic-kb` specification. It operates on the user's workspace — a directory containing one required **personal KB** and any number of optional **team**, **org-unit**, **marketplace**, and **company** layers. See `references/spec-summary.md` for the condensed architecture.
 
-> **v2.0 scope note.** HTML overviews (`inventory.html`, `open-decisions.html`, `open-todos.html`, `index.html`) are regenerated **on explicit invocation** — `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`, or `/kb status --refresh-overviews`. Automatic regeneration after every state-mutating operation is planned for v2.1 (see `docs/roadmap.md`). Until then, after a mutating operation the skill **offers** the refresh but does not run it silently.
+> **v2.0 scope note.** HTML overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) are regenerated **on explicit invocation** — `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`, or `/kb status --refresh-overviews`. Automatic regeneration after every state-mutating operation is planned for v2.1 (see `docs/roadmap.md`). Until then, after a mutating operation the skill **offers** the refresh but does not run it silently.
 
 ## When to invoke
 
 Invoke this skill whenever the user:
 
-- Types `/kb` followed by text, a URL, a file path, or a subcommand (`review`, `promote`, `publish`, `digest team`, `todo`, `decide`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`).
-- Describes work that implies capture (*"I just read this paper…"*), decision (*"we need to decide…"*), or promotion (*"this should go to the team"*) — offer to run the corresponding `/kb` action first.
+- Types `/kb` followed by text, a URL, a file path, or a subcommand (`review`, `promote`, `publish`, `digest team`, `task`, `todo`, `idea`, `develop`, `decide`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`).
+- Describes work that implies capture (*"I just read this paper…"*), decision (*"we need to decide…"*), idea development (*"I've been thinking about…"*), or promotion (*"this should go to the team"*) — offer to run the corresponding `/kb` action first.
 
 ## The single command model
 
@@ -62,7 +66,9 @@ Full command reference: `references/command-reference.md`.
    3. Would the user reference this again?
    4. Is this actionable?
    5. Does this already exist?
-   Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only. Score 3+ → finding + topic update + possibly new decision.
+   Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only (offer idea creation if novelty detected). Score 3+ → finding + topic update + possibly new decision or idea.
+
+1b. **Check strategic alignment** when VMG is declared. Material aligned with active goals gets +1. Material contradicting a goal is captured + flagged for decision review.
 
 2. **Always suggest next steps.** Every operation output ends with 1–3 concrete follow-ups (promote, notify, update topic, generate presentation).
 
@@ -92,10 +98,13 @@ my-kb/
 │   ├── foundation/          # me, context, stakeholders, sources, naming
 │   ├── legacy/              # archived topics after audit
 │   └── reports/             # generated HTML artifacts
+├── ideas/
+│   ├── I-YYYY-MM-DD-slug.md # active ideas (seed/growing/ready)
+│   └── archive/             # shipped + archived
 ├── decisions/
 │   ├── active/              # D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── todo/
+├── tasks/
 │   ├── focus.md             # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
@@ -109,7 +118,7 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 
 | Flow | Command | What it does |
 |------|---------|--------------|
-| Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream |
+| Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream; offer idea if novelty detected |
 | Review | `/kb review` | Process all pending items in `inputs/` |
 | Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `inputs/`) with safety pre-check |
 | Promote org | `/kb promote org [file]` | L2 → L3 |
@@ -118,14 +127,16 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Digest org | `/kb digest org` | L3 → L1 equivalent |
 | Sync team | `/kb sync team` | Cross-reference contributor topics; flag conflicts |
 | Diff team | `/kb diff team` | Show new items per contributor |
-| Todo | `/kb todo` / `/kb todo done [item]` | Manage focus/backlog |
+| Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog (aliases: todo, tasks) |
+| Idea | `/kb idea [text]` | Create a new idea (seed status) |
+| Develop | `/kb develop [idea]` | Sparring: assumptions, contradictions, gaps, convergence |
 | Decide | `/kb decide [desc]` / `/kb decide resolve [D-id]` | Open/resolve a decision; update affected topics |
 | Start-day / End-day / Start-week / End-week | rituals | See `references/rituals.md` |
 | Present | `/kb present [topic/file]` | HTML presentation — see `references/html-artifacts.md` |
 | Report | `/kb report [scope]` | HTML report (personal / team / org) |
 | Browse / Install | `/kb browse` / `/kb install [skill]` | Marketplace queries |
 | Audit | `/kb audit` | Contradictions, gaps, staleness |
-| Status | `/kb status` | Pending inputs, recent activity, todo counts |
+| Status | `/kb status` | Pending inputs, recent activity, task counts, goal status |
 
 ## Output contract
 
@@ -150,7 +161,7 @@ Keep output terse. The user reads it in a terminal/editor pane, not a full docum
 
 The templates this skill instantiates live in `templates/`:
 
-- `finding.md`, `topic.md`, `decision.md`, `workstream.md`
+- `finding.md`, `topic.md`, `decision.md`, `idea.md`, `workstream.md`
 - `focus.md`, `backlog.md`
 - `index.html` — KB root landing page linking to dashboards, reports, topics, findings
 - `artifact-base.html`

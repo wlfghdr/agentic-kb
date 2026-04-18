@@ -19,7 +19,7 @@ The system supports three levels of automation. Users pick a level during onboar
 - Git hooks (or the harness's background task runner) trigger processing on events — commit, push, fetch.
 - Scheduled agent runs for:
   - Daily team KB check (new contributions → auto-digest)
-  - Weekly TODO staleness check
+  - Weekly task staleness check
 - Human approves promotions and publishes.
 
 **Who this fits**: experienced users who trust the evaluation gate but want to keep cross-layer promotions under human control.
@@ -30,7 +30,7 @@ The system supports three levels of automation. Users pick a level during onboar
   1. Pull all repos.
   2. Detect changes (git diff).
   3. Process new inputs with the review gate.
-  4. Update TODOs.
+  4. Update tasks.
   5. Promote if confidence exceeds threshold.
   6. Commit + push.
   7. Notify the user of actions taken (log, notification, or periodic summary).
@@ -46,7 +46,7 @@ level: 2                            # 1=manual, 2=semi-auto, 3=full-auto
 schedules:
   start-day: daily 08:00
   team-digest: daily 08:00
-  todo-review: daily 08:30
+  task-review: daily 08:30
   end-week: friday 15:00
 
 auto-promote:

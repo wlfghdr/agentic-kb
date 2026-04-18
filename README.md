@@ -44,7 +44,10 @@ There is exactly one user-facing command: **`/kb`**. The agent infers the layer 
 /kb review                 → process inputs/
 /kb promote [file]         → push to team KB
 /kb digest team            → pull team changes
+/kb idea [text]            → create an idea (seed)
+/kb develop [idea]         → sparring session on an idea
 /kb decide [description]   → open a decision
+/kb task                   → show focus items
 /kb start-day              → morning briefing
 /kb end-week               → Friday 15:00 summary
 /kb present [topic]        → versioned HTML presentation (light + dark)
@@ -56,8 +59,8 @@ There is exactly one user-facing command: **`/kb`**. The agent infers the layer 
 | Matches | Outcome |
 |--------:|---------|
 | 0/5 | Discard, logged with reason |
-| 1–2/5 | Finding only (dated snapshot) |
-| 3+/5 | Finding + topic update + possibly a new decision |
+| 1–2/5 | Finding only (offer idea creation if novelty detected) |
+| 3+/5 | Finding + topic update + possibly a new decision or idea |
 
 Never silent. Every accept and reject carries a rationale.
 

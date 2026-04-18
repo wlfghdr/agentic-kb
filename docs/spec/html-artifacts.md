@@ -21,7 +21,7 @@ These artifacts are snapshots of the current KB state. They overwrite in place, 
 |------|-----------------|-----------------|
 | `references/reports/inventory.html` | `.kb-config.yaml` + `references/foundation/sources.md` + git status per configured layer | Every processing operation |
 | `references/reports/open-decisions.html` | `decisions/active/*.md` across all configured layers | Every `decide`, `decide-resolve`, digest, or capture that advances a decision |
-| `references/reports/open-todos.html` | `todo/focus.md` + `todo/backlog.md` across all configured layers | Every `todo-add`, `todo-done`, capture that adds TODOs, or ritual |
+| `references/reports/open-tasks.html` | `tasks/focus.md` + `tasks/backlog.md` across all configured layers | Every `task-add`, `task-done`, capture that adds tasks, or ritual |
 | `references/reports/index.html` | Chronological list of all artifacts in `references/reports/` | Every artifact create/update |
 
 ### `inventory.html` — what's in your KB ecosystem
@@ -49,11 +49,11 @@ One row per file in `decisions/active/` across all layers. Columns:
 
 Sorted by due date ascending; overdue at top.
 
-### `open-todos.html` — what to work on
+### `open-tasks.html` — what to work on
 
 Three clear sections:
 
-1. **Focus** — the (max 3) items from `todo/focus.md` across all layers.
+1. **Focus** — the (max 3) items from `tasks/focus.md` across all layers.
 2. **Waiting** — external blockers, grouped by the stakeholder who owes something.
 3. **Backlog** — grouped by workstream, then by staleness (newest first).
 
@@ -63,7 +63,7 @@ Recent completions (last 7 days) are shown in a collapsed "Recently done" accord
 
 Chronological list of every `.html` file under `references/reports/`. Regenerated on every artifact create/update. Split into two sections:
 
-- **Current overviews** (inventory, open-decisions, open-todos — the live set).
+- **Current overviews** (inventory, open-decisions, open-tasks — the live set).
 - **Historical artifacts** (daily, weekly, presentations, reports, pitches — newest first).
 
 Each entry carries title, version or timestamp, generation date, one-line summary, and a direct link.
@@ -108,10 +108,10 @@ The markdown source lives in `references/findings/` — it is a finding, and par
 
 Content sections (both in the markdown and in the rendered HTML):
 
-1. **At a glance** — counts: findings captured, decisions opened/advanced/resolved, TODOs added/completed, items skipped by the gate.
+1. **At a glance** — counts: findings captured, decisions opened/advanced/resolved, tasks added/completed, items skipped by the gate.
 2. **By workstream** — per-workstream activity, cross-workstream connections flagged.
 3. **Decisions** — anything opened, advanced, or resolved today. Link to each decision file.
-4. **TODOs** — completed today + new items.
+4. **Tasks** — completed today + new items.
 5. **Promotions / digests** — what flowed up or down.
 6. **Skipped (with rationale)** — gate rejections, one-line reason each.
 7. **Stakeholder mentions** — who was referenced and why.
@@ -168,7 +168,7 @@ Semantic HTML, WCAG AA contrast, keyboard navigation, screen-reader-friendly lab
 | Pitch | `/kb present --pitch [topic]` | Opinionated narrative with a decision ask | Leadership buy-in, resource request |
 | Daily summary | automatic on `end-day` | Log + git diff for the day | Keeps the week navigable |
 | Weekly summary | automatic on `end-week` (Fri 15:00) | Aggregation of dailies + trend analysis | Week-in-review, promotion planning |
-| Overview (inventory / decisions / todos / index) | automatic after every mutation | Current state of configured layers | Dashboard — always reflects now |
+| Overview (inventory / decisions / tasks / index) | automatic after every mutation | Current state of configured layers | Dashboard — always reflects now |
 
 ## Mandatory Behaviors
 
@@ -328,7 +328,7 @@ The agent watches for opportunities to suggest artifact generation:
 
 | Trigger | Suggestion |
 |---------|-----------|
-| A TODO contains "present", "pitch", "demo", "share", "meeting prep" | *"Want me to generate a presentation draft for this?"* |
+| A task contains "present", "pitch", "demo", "share", "meeting prep" | *"Want me to generate a presentation draft for this?"* |
 | A decision has been resolved and affects stakeholders | *"Generate a one-pager for @stakeholder about the outcome?"* |
 | End of week | *"Want me to generate the weekly report?"* |
 | A topic has accumulated ≥5 new findings since last artifact | *"The <topic> topic has moved — regenerate its artifact?"* |
@@ -347,5 +347,5 @@ The reference implementation ships a **plain** built-in template so the feature 
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | v0.3 — clarified that automatic regeneration of always-current overviews ships in v2.1; v2.0 reference implementation regenerates on explicit invocation (`/kb present`, `/kb report`, rituals, or `/kb status --refresh-overviews`) | Adopter feasibility review |
-| 2026-04-18 | v0.2 — split into always-current overviews vs historical artifacts; added inventory.html, open-decisions.html, open-todos.html, index.html as live overviews; added daily + weekly summaries as historical findings with rendered HTML | New |
+| 2026-04-18 | v0.2 — split into always-current overviews vs historical artifacts; added inventory.html, open-decisions.html, open-tasks.html, index.html as live overviews; added daily + weekly summaries as historical findings with rendered HTML | New |
 | 2026-04-18 | v0.1 — initial version | Spec bootstrapping |

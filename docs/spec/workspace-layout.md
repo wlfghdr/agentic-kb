@@ -71,11 +71,15 @@ my-kb/
 │   ├── legacy/                     # archived topics (after audit)
 │   └── reports/                    # optional: generated HTML artifacts
 │
+├── ideas/
+│   ├── I-2026-04-18-slug.md           # active ideas
+│   └── archive/                      # shipped + archived ideas
+│
 ├── decisions/
 │   ├── active/                     # D-YYYY-MM-DD-slug.md
 │   └── archive/                    # resolved + superseded
 │
-├── todo/
+├── tasks/
 │   ├── focus.md                    # max 3 items — always in context
 │   ├── backlog.md
 │   └── archive/
@@ -104,7 +108,7 @@ What happens next (see [../concept/09-flows.md](../concept/09-flows.md) for the 
 3. High-signal material → distilled into `references/findings/` or integrated into `references/topics/`.
 4. If the input implies a decision point → creates a file in `decisions/active/`.
 5. The original input → moved to `inputs/digested/YYYY-MM/`.
-6. TODOs extracted → added to `todo/backlog.md`.
+6. Tasks extracted → added to `tasks/backlog.md`.
 7. Agent routes to the correct workstream.
 8. Agent suggests next steps.
 
@@ -117,7 +121,7 @@ team-kb/
 ├── decisions/
 │   ├── active/                     # team decisions with RACIs
 │   └── archive/
-├── todo/
+├── tasks/
 │   ├── focus.md                    # team focus with RACIs
 │   └── backlog.md
 ├── log/
@@ -142,7 +146,7 @@ org-unit-kb/
 ├── decisions/
 │   ├── active/
 │   └── archive/
-├── todo/
+├── tasks/
 │   ├── focus.md
 │   └── backlog.md
 ├── workstreams/                    # org-level workstream coordination
@@ -167,9 +171,9 @@ See [`marketplace-and-skills.md`](marketplace-and-skills.md) for the required pa
 
 | Layer | Required files |
 |-------|---------------|
-| L1 Personal | `AGENTS.md`, `README.md`, `.kb-config.yaml`, `inputs/`, `references/{topics,findings,foundation}/`, `decisions/active/`, `todo/focus.md`, `log/` |
-| L2 Team | `AGENTS.md`, `README.md`, `decisions/active/`, `todo/focus.md`, `log/`, per-contributor `inputs/outputs/` |
-| L3 Org-Unit | `AGENTS.md`, `README.md`, `decisions/active/`, `todo/focus.md`, `workstreams/`, `log/`, per-team `inputs/outputs/` |
+| L1 Personal | `AGENTS.md`, `README.md`, `.kb-config.yaml`, `inputs/`, `references/{topics,findings,foundation}/`, `ideas/`, `decisions/active/`, `tasks/focus.md`, `log/` |
+| L2 Team | `AGENTS.md`, `README.md`, `decisions/active/`, `tasks/focus.md`, `log/`, per-contributor `inputs/outputs/` |
+| L3 Org-Unit | `AGENTS.md`, `README.md`, `decisions/active/`, `tasks/focus.md`, `workstreams/`, `log/`, per-team `inputs/outputs/` |
 | Workspace root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md`, `.github/instructions/kb.instructions.md` |
 
 `/kb setup` (see [setup.md](setup.md)) verifies these post-scaffold.

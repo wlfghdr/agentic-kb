@@ -24,7 +24,7 @@ Every ritual MUST:
 3. **Respect the evaluation gate** — rituals don't bypass the gate. They just amortize the work.
 4. **End with suggested next steps** — no ritual leaves the user with no path forward.
 5. **Log the ritual invocation** — one log line per ritual with a summary.
-6. **Regenerate live overviews** — `inventory.html`, `open-decisions.html`, `open-todos.html`, `index.html` are rebuilt at ritual end so the user's dashboard reflects the new state.
+6. **Regenerate live overviews** — `inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html` are rebuilt at ritual end so the user's dashboard reflects the new state.
 
 ## Scheduling
 
@@ -55,10 +55,10 @@ If the user is not available at 15:00, the ritual queues its output as an `input
 Rituals are composed from primitives:
 
 ```
-start-day  = status + read-log + review-inputs + decisions-status + workstream-signals + briefing
+start-day  = status + read-log + review-inputs + ideas-status + decisions-status + goal-status + workstream-signals + briefing
 end-day    = uncommitted-summary + archive-done + pull-next + log-append + offer-commit + suggestions
-start-week = digest-team + workstream-review + audit-decisions + audit-backlog + marketplace-check + briefing
-end-week   = weekly-summary + todo-cleanup + promotion-candidates + presentation-candidates + offer-commit
+start-week = digest-team + workstream-review + audit-decisions + audit-ideas + audit-backlog + marketplace-check + briefing
+end-week   = weekly-summary + task-cleanup + promotion-candidates + presentation-candidates + offer-commit
 ```
 
 Primitives are internal — they are not separate user-visible commands. This keeps the surface small.
