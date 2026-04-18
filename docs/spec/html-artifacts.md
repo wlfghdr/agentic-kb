@@ -1,19 +1,21 @@
 # HTML Artifacts — Overviews, Reports, Presentations
 
-> **Version:** 0.2 | **Last updated:** 2026-04-18
+> **Version:** 0.3 | **Last updated:** 2026-04-18
 
 HTML artifacts fall into two families:
 
-1. **Always-current overviews** — regenerated after every KB processing. Overwritten, not versioned. They are dashboards for the current state of the KB.
+1. **Always-current overviews** — snapshots of the current KB state. Overwritten, not versioned. Dashboards for "what does this KB look like right now".
 2. **Historical artifacts** — dated, immutable, versioned. Presentations, reports, pitches, daily summaries, weekly summaries.
 
 Both families share the same visual contract (self-contained, light + dark, watermark, CI-validated). They differ only in lifecycle: overviews overwrite themselves; historical artifacts never do.
+
+> **v2.0 scope — manual regeneration.** The v2.0 reference implementation regenerates artifacts **on explicit `/kb present` / `/kb report` invocation** and on the two ritual commands (`/kb end-day`, `/kb end-week`). Automatic regeneration after every state-mutating `/kb` operation is specified below but ships as part of **v2.1** (see [roadmap.md](../roadmap.md) §Near-Term). Until v2.1, the "refresh trigger" column below is a target contract — not a guarantee. Users who want fresh dashboards between rituals run `/kb status --refresh-overviews` (or accept the suggested refresh that the skill offers after each mutation, when automation level ≥ 2).
 
 The **default template is not part of this spec** — the reference implementation ships a plain accessible base; organizations contribute branded templates to their marketplace. This doc specifies the behavior, not the visual style.
 
 ## Family 1 — Always-current Overviews
 
-These artifacts are regenerated automatically after any state-mutating `/kb` operation. They overwrite in place, always reflect the latest state, and carry a **timestamp watermark** rather than a version number (the "version" is implicitly *latest*).
+These artifacts are snapshots of the current KB state. They overwrite in place, carry a **timestamp watermark** rather than a version number (the "version" is implicitly *latest*), and — **from v2.1 onward** — are regenerated automatically after any state-mutating `/kb` operation. In v2.0, regeneration is triggered by `/kb status --refresh-overviews`, the two ritual commands, or `/kb present` / `/kb report`.
 
 | File | Source of truth | Refresh trigger |
 |------|-----------------|-----------------|
@@ -344,5 +346,6 @@ The reference implementation ships a **plain** built-in template so the feature 
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-18 | v0.3 — clarified that automatic regeneration of always-current overviews ships in v2.1; v2.0 reference implementation regenerates on explicit invocation (`/kb present`, `/kb report`, rituals, or `/kb status --refresh-overviews`) | Adopter feasibility review |
 | 2026-04-18 | v0.2 — split into always-current overviews vs historical artifacts; added inventory.html, open-decisions.html, open-todos.html, index.html as live overviews; added daily + weekly summaries as historical findings with rendered HTML | New |
 | 2026-04-18 | v0.1 — initial version | Spec bootstrapping |

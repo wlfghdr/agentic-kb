@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions as first-class objects, manages TODOs, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 2.0.0
+version: 2.1.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -30,6 +30,8 @@ license: Apache-2.0
 # Skill: KB Management
 
 This skill implements the `agentic-kb` specification. It operates on the user's workspace — a directory containing one required **personal KB** and any number of optional **team**, **org-unit**, **marketplace**, and **company** layers. See `references/spec-summary.md` for the condensed architecture.
+
+> **v2.0 scope note.** HTML overviews (`inventory.html`, `open-decisions.html`, `open-todos.html`, `index.html`) are regenerated **on explicit invocation** — `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`, or `/kb status --refresh-overviews`. Automatic regeneration after every state-mutating operation is planned for v2.1 (see `docs/roadmap.md`). Until then, after a mutating operation the skill **offers** the refresh but does not run it silently.
 
 ## When to invoke
 

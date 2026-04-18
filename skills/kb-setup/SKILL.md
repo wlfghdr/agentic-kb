@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures IDE harnesses (VS Code Copilot, Claude Code, OpenCode), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 2.0.0
+version: 2.1.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -21,6 +21,19 @@ license: Apache-2.0
 # Skill: KB Setup
 
 This skill is the single entry point for bootstrapping an `agentic-kb` workspace. It runs once per user; subsequent invocations are **idempotent** (add missing pieces, never overwrite).
+
+## Scope boundary — install vs. init
+
+This skill **initializes the user's KB workspace**. It does **not** distribute itself.
+
+Two concerns, two tools:
+
+| Concern | Who handles it | When |
+|---------|---------------|------|
+| Get `kb-management` + `kb-setup` + `kb-operator` into the harness (`.claude/`, `.opencode/`, `.github/`, or user-global equivalents) | Harness marketplace (`/plugin install kb@agentic-kb`) **or** `scripts/install.py` from a cloned marketplace repo | Before this skill runs — otherwise `/kb setup` wouldn't be callable |
+| Scaffold the user's KB repos (`.kb-config.yaml`, foundation files, workstreams, topics, todos, log) | **This skill** | When the user types `/kb setup` |
+
+Concrete consequence: by the time this skill runs, the skills are already present. Step 5/6 below do not re-install them — they only create the user's workspace-level configuration files (`.github/prompts/kb.prompt.md`, `AGENTS.md`, `.kb-config.yaml`, etc.) and invoke `scripts/install` **only** when the user picks an additional harness that isn't yet present.
 
 ## When to invoke
 
@@ -59,9 +72,23 @@ Ask each block in order. Stop and wait after each block for the user's answer be
 
 ## What setup does (after confirmation)
 
-### Step 1 — Prerequisites
-- Check `git`, `gh` (or equivalent), IDE CLIs are installed. Guide install if missing.
-- SSH key check (offer `ssh-keygen` walkthrough if missing).
+### Step 1 — Prerequisites (MUST abort on missing required tools)
+
+Required (setup cannot proceed without these):
+
+| Tool | Check | Abort message if missing |
+|------|-------|--------------------------|
+| `git` | `git --version` exits 0 | macOS: `xcode-select --install` · Debian/Ubuntu: `sudo apt install git` · Fedora: `sudo dnf install git` · Windows: [git-scm.com/download/win](https://git-scm.com/download/win) |
+| Harness CLI (at least one: `claude`, `code`, or `opencode`) | binary on PATH | Install the harness first; the skill can't install itself into an absent harness |
+
+Recommended (warn, do not abort):
+
+| Tool | Why | Install hint if missing |
+|------|-----|------------------------|
+| `gh` | GitHub-native PR/issue flows in `/kb promote`, `/kb publish` | [cli.github.com](https://cli.github.com/) |
+| SSH key for the user's git host | Push without password prompts | Offer an `ssh-keygen -t ed25519 -C <email>` walkthrough |
+
+On abort: print the missing tool, the OS-specific install command, and exit. Do **not** proceed partially and leave the workspace half-scaffolded.
 
 ### Step 2 — Create / clone repos
 - Personal KB: `mkdir`, `git init`, remote setup.
@@ -84,16 +111,27 @@ Files (from `templates/`):
 - `decisions/{active,archive}/`, `todo/{focus,backlog}.md`, `log/`, `AGENTS.md`, `README.md`.
 
 ### Step 5 — Workspace-level configuration
-- `.github/prompts/kb.prompt.md` (the slash-command entry).
-- `.github/instructions/kb.instructions.md` (routing rules).
+
+Workspace-level *KB configuration* (distinct from harness-level *skill installation*):
+
 - `AGENTS.md` at workspace root with a repo index.
 - `CLAUDE.md` → symlink to `AGENTS.md`.
-- `.claude/` and `.opencode/` if those harnesses were selected.
+- `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml` at workspace root (not the KB root — these are workspace-scoped indexes of all configured layers).
 
-### Step 6 — Configure IDE targets
-- **VS Code**: update `settings.json` with the marketplace entry.
-- **Claude Code**: preferred — inside Claude Code run `/plugin marketplace add <repo-url>` then `/plugin install kb@agentic-kb`. For dev installs: `<marketplace>/scripts/install --target claude`.
-- **OpenCode**: no official marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global`. OpenCode also reads `.claude/skills/` so a Claude Code install in the same workspace is picked up.
+Optional workspace-level harness hooks (only written if the harness was **not** already configured by marketplace install or `scripts/install`):
+
+- VS Code selected → write `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md` from `templates/` **only if missing**.
+- Claude Code / OpenCode selected → nothing to write at workspace level; plugin/install handles `.claude/` and `.opencode/`.
+
+### Step 6 — Configure additional IDE targets
+
+For any harness the user selected that is **not yet installed**, run the installer and record the outcome:
+
+- **Claude Code**: recommend `/plugin marketplace add <repo-url>` + `/plugin install kb@agentic-kb` from inside Claude Code (preferred — handles updates). Fall back to `<marketplace>/scripts/install --target claude` for dev installs.
+- **VS Code**: point the user at `chat.plugins.marketplaces` in `settings.json` for one-click install, or run `<marketplace>/scripts/install --target vscode` for direct workspace copy.
+- **OpenCode**: no marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global`. OpenCode also reads `.claude/skills/`, so a Claude Code install in the same workspace is picked up automatically.
+
+Never re-install into a harness that already has the skills — that causes symlink/file conflicts with `link_or_copy` falling back to "skip (exists)".
 
 ### Step 7 — Configure integrations
 - For each opted-in integration: validate access; skip with a warning if unreachable.
@@ -140,4 +178,42 @@ Running `/kb setup` a second time:
 
 ## Templates
 
-All templates are in `templates/`. The skill instantiates them with values from the interactive interview. Template keys are `{{double-brace}}` placeholders.
+All templates are in `templates/`. The skill instantiates them with values from the interactive interview. Template keys are `{{DOUBLE_BRACE}}` placeholders.
+
+### Placeholder → interview-answer mapping (MUST be substituted)
+
+Every placeholder below has exactly one source — always from the interview answers collected in the 12 question blocks. If a source is missing, **ask the user again** before writing; never leave a literal `{{…}}` in an output file.
+
+| Placeholder | Source (question block) |
+|-------------|------------------------|
+| `{{USER_NAME}}` | Q1 (your name) |
+| `{{ROLE}}` | Q2 (role sentence) |
+| `{{THEMES}}` | Q2 (theme keywords, rendered as a bullet list) |
+| `{{KB_NAME}}` | Q4 (personal KB name; defaults to `<user-name>-kb` if the user accepts the default) |
+| `{{KB_DESCRIPTION}}` | Q2 (one-sentence role statement) |
+| `{{WORKSTREAMS}}` | Q8 (rendered as a bullet list: `- <name>: <themes>`) |
+| `{{WORKSTREAM_N_NAME}}`, `{{WORKSTREAM_N_THEMES}}` | Q8 (per declared workstream) |
+| `{{TEAM_NAME}}` | Q5 (per declared team, if any) |
+| `{{ORG_UNIT_NAME}}` | Q6 (if an org-unit KB was onboarded) |
+| `{{REPO_INDEX}}` | Computed — one bullet per configured KB layer with its path + role |
+| `{{KEYWORD_LOOKUP}}` | Computed — `docs/glossary.md` summary injected verbatim |
+| `{{RECENT_REPORTS}}` | Empty `<ul></ul>` on first run (will be filled by `/kb present` / `/kb report`) |
+| `{{DATE}}` | Today's ISO-8601 date (`YYYY-MM-DD`) |
+| `{{VERSION}}` | `1.0` on first scaffold; later artifacts bump their own version |
+
+### Post-write check (MUST run before Step 8)
+
+After all files are written and before the initial commit, scan the scaffolded workspace for any remaining `{{` sequence. If any match is found:
+
+1. Stop — do not commit.
+2. List the (file, line, placeholder) triples to the user.
+3. Ask for the missing values.
+4. Re-render, then re-scan.
+
+Concrete grep the skill must run (or equivalent):
+
+```
+grep -rn '{{[A-Z_0-9]*}}' <workspace-root> || true
+```
+
+A zero-hit run is the gate for Step 8.

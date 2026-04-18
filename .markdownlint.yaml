@@ -23,3 +23,9 @@ MD036: false
 # Allow long tables
 MD007:
   indent: 2
+
+# Table pipe alignment/spacing — pure cosmetics; not worth enforcing
+MD060: false
+
+# Fenced code blocks without language — tree listings and generic snippets are fine
+MD040: false
