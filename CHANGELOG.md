@@ -19,6 +19,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Changed
+
+- `README.md` — replaced `<org>` placeholders with actual repo URL (`wlfghdr/agentic-kb`). Restructured install section as "Getting started": marketplace-first flow (connect → `/kb setup`), cross-harness install script as optional secondary path.
+- `README.md` — rewrote problem section as direct questions ("Does this sound familiar?"), renamed "The solution" → "How it works".
+- `index.html` — intro now leads with the same user-facing questions; problem section renamed to "Why existing approaches fail".
+- `docs/concept/02-architecture.md` — L3 now has team-isolated directories (mirroring L2's person-directories). L5 clarified as reference-only (no bottom-up input). Added contributor-unit / cross-analysis summary to the ASCII diagram.
+- `docs/spec/workspace-layout.md` — L3 directory layout updated with per-team `inputs/` + `outputs/` structure. Required-files table updated.
+
 ---
 
 ## [2.1.0] — 2026-04-18

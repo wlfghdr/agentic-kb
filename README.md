@@ -6,22 +6,22 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Spec version](https://img.shields.io/badge/spec-v2.0.0-green.svg)](CHANGELOG.md)
 
-**One-page visual overview** → [`index.html`](index.html) (open in a browser — light + dark themes, self-contained).
+**One-page visual overview** → [`index.html`](index.html)
 
 ---
 
-## The problem
+## Does this sound familiar?
 
-Most knowledge bases rot. They start as wikis, turn into graveyards, and never help again:
+- *"How do I actually work AI-natively — with agents, not just chat?"*
+- *"How does my team share knowledge so agents can use it — not just humans?"*
+- *"Where do decisions, positions, and context go so they survive across sessions, tools, and people?"*
+- *"Is there something I can just install and start using — one command, not a month-long rollout?"*
 
-- **Decay** — pages drift out of sync with reality; nobody trusts them; nobody maintains them.
-- **Context loss** — decisions are buried in chat threads, meeting notes, inbox replies.
-- **Manual curation fatigue** — triaging, tagging, cross-linking, archiving is a full-time job nobody has.
-- **Cross-layer opacity** — personal notes, team workspaces, org strategy, company OKRs each live in silos.
+If yes: that's what `agentic-kb` solves. One command — `/kb` — and the agent handles capture, evaluation, cross-referencing, and promotion across layers. You think, the agent does the bookkeeping.
 
-## The solution
+## How it works
 
-`agentic-kb` inverts the problem. Every piece of material passes a **five-question evaluation gate** before it persists. Agents do the bookkeeping; humans do the thinking.
+`agentic-kb` gives you a layered knowledge system that agents maintain. Every piece of material passes a **five-question evaluation gate** before it persists. You capture — the agent triages, files, cross-links, and keeps everything current.
 
 ### Five layers, one command
 
@@ -61,42 +61,53 @@ There is exactly one user-facing command: **`/kb`**. The agent infers the layer 
 
 Never silent. Every accept and reject carries a rationale.
 
-## Install
+## Getting started
+
+Connect this repo as a marketplace in your IDE, then run `/kb setup` — that's it.
 
 ### Claude Code
 
-Inside Claude Code:
-
 ```
-/plugin marketplace add https://github.com/<org>/agentic-kb
+/plugin marketplace add https://github.com/wlfghdr/agentic-kb
 /plugin install kb@agentic-kb
+/kb setup
 ```
 
 ### VS Code Copilot Chat
 
-In `settings.json`:
+Add to `settings.json`:
 
 ```json
 {
   "chat.plugins.marketplaces": [
-    "<org>/agentic-kb"
+    "wlfghdr/agentic-kb"
   ]
 }
 ```
 
-Then install from the Extensions view — it reads the top-level [`plugin.json`](plugin.json).
+Install from the Extensions view (reads [`plugin.json`](plugin.json)), then run `/kb setup` in Copilot Chat.
 
 ### OpenCode
 
-No official plugin marketplace yet. Clone and install:
+No official plugin marketplace yet. Clone and install manually:
 
 ```bash
-git clone https://github.com/<org>/agentic-kb
+git clone https://github.com/wlfghdr/agentic-kb
 cd agentic-kb
 scripts/install --target opencode --global
 ```
 
-OpenCode natively reads `.claude/skills/` — a Claude Code install in the same workspace is picked up automatically.
+OpenCode natively reads `.claude/skills/` — a Claude Code install in the same workspace is picked up automatically. Then run `/kb setup`.
+
+### Cross-harness install (optional)
+
+If you already have the skills in one harness and want to add them to another, the install script can do that. `/kb setup` will offer this during onboarding — no need to run it manually.
+
+```bash
+scripts/install --target vscode --global     # add to VS Code
+scripts/install --target opencode --global   # add to OpenCode
+scripts/install --target all --global        # all harnesses
+```
 
 ## Repo layout
 

@@ -5,17 +5,20 @@
 Content flows across five layers. Only L1 is required; all higher layers are optional and declared in a single configuration file in the personal KB.
 
 ```
-┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌──────────────┐   ┌─────────────┐
-│  L1 Personal│──►│   L2 Team   │──►│ L3 Org-Unit │──►│ L4 Marketplace│◄──│ L5 Company  │
-│  (required) │   │ (optional)  │   │ (optional)  │   │   (optional)  │   │ (top-down)  │
-│             │   │ (multiple)  │   │             │   │               │   │             │
-│ inputs/     │   │ <you>/inputs│   │ workstreams │   │ skills/<name> │   │ OKRs, MCG   │
-│ references/ │   │ <you>/outputs│  │ decisions/  │   │ agents/<name> │   │ strategy    │
-│ decisions/  │   │ decisions/  │   │ todo/       │   │ plugins/<name>│   │ directives  │
-│ todo/       │   │ todo/       │   │             │   │               │   │             │
-│ log/        │   │ log/        │   │             │   │               │   │             │
-│ workstreams/│   │             │   │             │   │               │   │             │
-└─────────────┘   └─────────────┘   └─────────────┘   └──────────────┘   └─────────────┘
+┌─────────────┐   ┌─────────────┐   ┌──────────────┐   ┌──────────────┐   ┌─────────────┐
+│  L1 Personal│──►│   L2 Team   │──►│ L3 Org-Unit  │──►│ L4 Marketplace│◄──│ L5 Company  │
+│  (required) │   │ (optional)  │   │  (optional)  │   │   (optional)  │   │ (top-down)  │
+│             │   │ (multiple)  │   │              │   │               │   │             │
+│ inputs/     │   │ <you>/inputs│   │ <team>/inputs│   │ skills/<name> │   │ OKRs, MCG   │
+│ references/ │   │ <you>/outputs│  │ <team>/outputs│  │ agents/<name> │   │ strategy    │
+│ decisions/  │   │ decisions/  │   │ decisions/   │   │ plugins/<name>│   │ directives  │
+│ todo/       │   │ todo/       │   │ workstreams/ │   │               │   │             │
+│ log/        │   │ log/        │   │ todo/        │   │               │   │             │
+│ workstreams/│   │             │   │ log/         │   │               │   │             │
+└─────────────┘   └─────────────┘   └──────────────┘   └──────────────┘   └─────────────┘
+
+ Contributor unit:   —           person              team              —                —
+ Cross-analysis:     workstreams across people       across teams      —                —
 ```
 
 ## L1 — Personal KB (required, one per person)
@@ -37,9 +40,11 @@ Content flows across five layers. Only L1 is required; all higher layers are opt
 ## L3 — Org-Unit KB (optional — capability, solution, or department level)
 
 - **What**: cross-team coordination — shared workstreams, org-level decisions, strategic alignment.
-- **Repo**: shared Git repo or directory structure owned by the org unit.
+- **Repo**: shared Git repo with team-isolated directories (same pattern as L2, one level up).
 - **Audience**: multiple teams within a capability area, solution area, or department.
-- **Lifecycle**: Aggregation from team KBs → Org-level decisions with RACIs → Roadmap alignment → Strategy propagation.
+- **Contributor unit**: teams (not individuals). Each team has its own `<team>/inputs/` and `<team>/outputs/` directory.
+- **Lifecycle**: Receive promotions from team KBs → Cross-team analysis (synergies, conflicts, gaps) → Org-level decisions with cross-team RACIs → Roadmap alignment.
+- **Cross-analysis**: the agent synthesizes across team directories — surfacing synergies, contradictions, and gaps, just like L2 does across people.
 - **Decisions and TODOs** live here with cross-team RACIs.
 
 ## L4 — Skills Marketplace (optional)
@@ -50,13 +55,14 @@ Content flows across five layers. Only L1 is required; all higher layers are opt
 - **Lifecycle**: Mature patterns from L1/L2/L3 → Skill/agent packaging → PR → Review → Published in the marketplace.
 - **Only tools available via the marketplace** should be used in published skills. No hidden external dependencies.
 
-## L5 — Company-wide (optional, top-down consumption)
+## L5 — Company-wide (optional, top-down only)
 
 - **What**: strategy decks, directives, OKRs, company-wide announcements.
 - **Repo**: no single repo — consumed from various company sources.
 - **Audience**: everyone (top-down).
 - **Lifecycle**: Company publishes → Agent pulls relevant signals → Integrates into personal/team/org context.
-- **Propagation, not promotion** — you consume L5, you don't push to it.
+- **No bottom-up input** — L5 accepts no promotions. Lower layers **reference** L5 material (strategy, MCG, OKRs) when making decisions or shaping positions, but they don't write to it.
+- **How to use it**: the agent includes relevant L5 references as context when evaluating captures, drafting decisions, or promoting across layers. L5 grounds the "why" — it doesn't receive the "what".
 
 ## External Resources — First-Class Links
 
@@ -128,4 +134,5 @@ Full flow details: [09-flows.md](09-flows.md).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-18 | L3: added team-isolated directories (mirroring L2 person-directories). L5: clarified as reference-only, no bottom-up input. ASCII diagram updated with contributor-unit / cross-analysis rows. | Spec review |
 | 2026-04-18 | Initial version | Extracted from source spec §1 |

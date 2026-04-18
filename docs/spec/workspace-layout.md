@@ -146,10 +146,18 @@ org-unit-kb/
 │   ├── focus.md
 │   └── backlog.md
 ├── workstreams/                    # org-level workstream coordination
-└── log/
+├── log/
+├── team-alpha/                     # one directory per team
+│   ├── inputs/
+│   │   └── digested/
+│   │       └── 2026-04/
+│   └── outputs/
+│       ├── topics/                 # team’s living positions at org level
+│       └── findings/               # team’s dated snapshots
+└── team-beta/ ...
 ```
 
-Org-unit KBs don't have contributor directories — they aggregate from team KBs via promote flows.
+Team directories mirror the contributor structure of L2 — same pattern, one level up. Each team has isolated `inputs/` and `outputs/`. The agent cross-analyzes across team directories to surface synergies, contradictions, and gaps.
 
 ## Marketplace (L4)
 
@@ -161,7 +169,7 @@ See [`marketplace-and-skills.md`](marketplace-and-skills.md) for the required pa
 |-------|---------------|
 | L1 Personal | `AGENTS.md`, `README.md`, `.kb-config.yaml`, `inputs/`, `references/{topics,findings,foundation}/`, `decisions/active/`, `todo/focus.md`, `log/` |
 | L2 Team | `AGENTS.md`, `README.md`, `decisions/active/`, `todo/focus.md`, `log/`, per-contributor `inputs/outputs/` |
-| L3 Org-Unit | `AGENTS.md`, `README.md`, `decisions/active/`, `todo/focus.md`, `workstreams/`, `log/` |
+| L3 Org-Unit | `AGENTS.md`, `README.md`, `decisions/active/`, `todo/focus.md`, `workstreams/`, `log/`, per-team `inputs/outputs/` |
 | Workspace root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md`, `.github/instructions/kb.instructions.md` |
 
 `/kb setup` (see [setup.md](setup.md)) verifies these post-scaffold.
@@ -183,4 +191,5 @@ The onboarding skill creates every file listed above from templates. See [setup.
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | Initial version | Extracted from source spec §3 |
+| 2026-04-18 | L3: added per-team directory layout with `inputs/` + `outputs/`. Updated required-files table. | Spec review |
 | 2026-04-18 | Escaped literal `\|` in the harness-directories table rows so markdownlint MD056 passes (no semantic change) | CI fix |
