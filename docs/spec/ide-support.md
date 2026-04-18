@@ -1,6 +1,6 @@
 # Harness Support Matrix
 
-> **Version:** 0.2 | **Last updated:** 2026-04-18
+> **Version:** 0.3 | **Last updated:** 2026-04-18
 
 Three harnesses are targeted by the reference implementation. Each has different conventions; the marketplace ships one source tree that feeds all three.
 
@@ -13,7 +13,8 @@ Three harnesses are targeted by the reference implementation. Each has different
 | Slash commands | ✅ `.github/prompts/<name>.prompt.md` | ✅ `commands/<name>.md` in plugins, or auto from skill name | ✅ `.opencode/commands/<name>.md` |
 | MCP tools | ✅ | ✅ | ✅ |
 | Plugin install from GitHub URL | ✅ via `chat.plugins.marketplaces` + Extensions view | ✅ `/plugin marketplace add <url>` then `/plugin install <name>@<mp>` | ❌ no official path; manual clone + `scripts/install` |
-| Background automation | Limited | ✅ task runner | ✅ daemon mode |
+| Background automation (ad-hoc) | ⚠ limited (editor foreground only) | ✅ task runner | ✅ daemon mode |
+| **`kb-operator` Level-3 autonomous loop** | ❌ not supported — needs OS-level cron + CLI invocation | ✅ native (task runner triggers agent on a schedule) | ✅ native (daemon mode) |
 | File-system access for KB ops | ✅ | ✅ | ✅ |
 
 ## VS Code Copilot Chat
@@ -138,5 +139,6 @@ The core flows — capture, review, promote, digest, decide, todo, rituals — w
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-18 | v0.3 — added explicit `kb-operator` Level-3 loop row to the capability matrix (VS Code doesn't support it natively) | Adopter feasibility review |
 | 2026-04-18 | v0.2 — rewrote for Claude Code plugin marketplaces, VS Code Agent Skills/Plugins, OpenCode `.opencode/` layout; dropped `.opencode-plugin/` reference; corrected slash-command mechanism per harness | Harness docs |
 | 2026-04-18 | v0.1 — initial | Spec bootstrapping |
