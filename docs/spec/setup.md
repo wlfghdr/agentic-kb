@@ -95,7 +95,7 @@ Step 4 — Scaffold team KB (if creating new)
   - AGENTS.md, README.md, log/
 
 Step 5 — Scaffold workspace-level config
-  - AGENTS.md at workspace root with repo index
+  - AGENTS.md at workspace root with repo index + short-alias table + keyword lookup
   - CLAUDE.md symlink → AGENTS.md
   - .kb-config.yaml, .kb-automation.yaml, .kb-artifacts.yaml at workspace root
   - If VS Code selected and .github/prompts/kb.prompt.md is missing:

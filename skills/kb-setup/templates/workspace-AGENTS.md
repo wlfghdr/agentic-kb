@@ -8,6 +8,12 @@ This file is the **master index** for the workspace. Read it first, then jump to
 
 {{REPO_INDEX}}
 
+## Short aliases
+
+Use these abbreviations anywhere — the agent resolves them to the full repo path.
+
+{{ALIAS_INDEX}}
+
 ## Rules
 
 - Each repo has its own `AGENTS.md`. Read it before working in that repo.

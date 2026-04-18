@@ -107,6 +107,30 @@ And (if selected):
 - `.github/prompts/kb.prompt.md` ← `kb.prompt.md`
 - `.github/instructions/kb.instructions.md` ← `kb.instructions.md`
 
+### Repo index and short aliases
+
+The generated `AGENTS.md` includes:
+
+1. **Repo index table** — every repo in the workspace with its path, instruction file, and one-line description.
+2. **Short alias table** — auto-generated abbreviations for fast navigation:
+
+```markdown
+| Alias | Repo | Path |
+|-------|------|------|
+| `bb` | bluebox | bluebox/ |
+| `psb` | product-strategy-brainstorming | product-strategy-brainstorming/ |
+| `akb` | agentic-kb | agentic-kb/ |
+| `whkb` | wh-kb | wh-kb/ |
+```
+
+Alias generation rules:
+- Use initials of hyphenated segments (e.g., `product-strategy-brainstorming` → `psb`).
+- Single-word repos get first 2–3 letters (e.g., `bluebox` → `bb`).
+- On collision, append a digit or use a longer prefix.
+- The user can override aliases in `.kb-config.yaml` under `workspace.aliases`.
+
+3. **Keyword lookup** — concept → file map, also resolving aliases.
+
 ## IDE configuration
 
 Per selected IDE:
