@@ -1,6 +1,6 @@
 # Roadmap & Open Questions
 
-> **Version:** 2.0 | **Last updated:** 2026-04-18
+> **Version:** 2.1 | **Last updated:** 2026-04-18
 
 This document tracks the known open items, deferred decisions, and future improvements for the `agentic-kb` spec. It is intentionally **living** — contributors add items, the maintainers resolve them or mark them deferred.
 
@@ -19,6 +19,14 @@ This document tracks the known open items, deferred decisions, and future improv
 - [ ] Built-in HTML artifact template with light/dark + toggle + watermark + changelog appendix.
 - [ ] Validation of HTML artifacts in CI (`scripts/check_html_artifacts.py` — placeholder provided).
 - [ ] A minimal example marketplace repo consumers can clone and extend.
+
+### Auto-regeneration of always-current overviews
+
+- [ ] After every state-mutating `/kb` operation, regenerate `inventory.html`, `open-decisions.html`, `open-todos.html`, and `index.html` automatically (today: manual via `/kb status --refresh-overviews` or ritual commands).
+- [ ] Automation-level behavior: Level 1 asks before regenerating; Level 2 bundles with the commit; Level 3 runs silently in the autonomous loop.
+- [ ] Deterministic rendering contract so CI can diff against a fixture.
+
+Blocks the full promise of `docs/spec/html-artifacts.md` §Family 1. Until this ships, the "refresh trigger" column there is aspirational.
 
 ## Medium-Term (v3)
 
@@ -110,3 +118,4 @@ The following are **not** intended to be part of this spec:
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | Initial version; tracks near/medium/long-term items including issue-tracker backbone deferred future | New |
+| 2026-04-18 | v2.1 — added "Auto-regeneration of always-current overviews" to near-term items after the adopter feasibility review flagged it as a spec-ahead-of-implementation gap | Adopter feasibility review |

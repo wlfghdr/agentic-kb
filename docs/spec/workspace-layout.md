@@ -40,8 +40,8 @@ The workspace root `AGENTS.md` is the **master index**. It lists every repo with
 | `.github/prompts/` | VS Code Copilot prompt files (slash commands) |
 | `.github/instructions/` | VS Code Copilot scoped instructions |
 | `.github/agents/` | VS Code Copilot custom agent personas (`*.agent.md`) |
-| `.claude/skills|agents|commands/` | Claude Code artifacts |
-| `.opencode/skills|agents|commands/` | OpenCode artifacts |
+| `.claude/skills\|agents\|commands/` | Claude Code artifacts |
+| `.opencode/skills\|agents\|commands/` | OpenCode artifacts |
 
 The `/kb setup` skill creates all three by default. Users can delete any they don't use.
 
@@ -183,3 +183,4 @@ The onboarding skill creates every file listed above from templates. See [setup.
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | Initial version | Extracted from source spec §3 |
+| 2026-04-18 | Escaped literal `\|` in the harness-directories table rows so markdownlint MD056 passes (no semantic change) | CI fix |

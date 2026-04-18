@@ -1,8 +1,19 @@
 # Setup — The Onboarding Flow
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.2 | **Last updated:** 2026-04-18
 
 `/kb setup` is the interactive wizard that bootstraps a complete workspace. It runs once. It is the only user-facing command that creates directories and repos from scratch.
+
+## Scope — install vs. init
+
+Two stages, two tools. `/kb setup` is the **second** stage.
+
+| Stage | What happens | Who does it |
+|-------|-------------|------------|
+| **1. Install** (once per harness) | Load `kb-management` + `kb-setup` + `kb-operator` into `.claude/`, `.opencode/`, `.github/`, or the user-global equivalent | Harness marketplace (`/plugin install kb@agentic-kb`) — or `scripts/install.py` from a cloned marketplace repo for dev installs |
+| **2. Init** (once per workspace) | Scaffold the user's actual KB repos and workspace-level config | `/kb setup` — this wizard |
+
+Because the skill is already installed by the time the wizard runs, Step 5/6 below write **workspace-level KB config only**. They do not re-run the installer — they only invoke `scripts/install` for additional harnesses the user selected that aren't already present.
 
 ## What It Asks
 
@@ -84,16 +95,18 @@ Step 4 — Scaffold team KB (if creating new)
   - AGENTS.md, README.md, log/
 
 Step 5 — Scaffold workspace-level config
-  - .github/prompts/kb.prompt.md
-  - .github/instructions/kb.instructions.md
   - AGENTS.md at workspace root with repo index
   - CLAUDE.md symlink → AGENTS.md
-  - .claude/, .opencode/, and .github/skills|agents|prompts|instructions/ populated via scripts/install for the selected harness(es)
+  - .kb-config.yaml, .kb-automation.yaml, .kb-artifacts.yaml at workspace root
+  - If VS Code selected and .github/prompts/kb.prompt.md is missing:
+    - .github/prompts/kb.prompt.md and .github/instructions/kb.instructions.md
+  - Claude Code / OpenCode selected: nothing to write here — install (Stage 1) owns those paths.
 
-Step 6 — Configure IDE targets
-  - VS Code: update settings.json, register marketplace
-  - Claude Code: add marketplace + install kb plugin (preferred) or run scripts/install --target claude
-  - OpenCode: run scripts/install --target opencode (workspace) or --global; .claude/skills/ is also read natively
+Step 6 — Configure additional IDE targets (only those not yet installed)
+  - VS Code: register repo in settings.json chat.plugins.marketplaces OR run scripts/install --target vscode.
+  - Claude Code: recommend /plugin marketplace add <url> + /plugin install kb@agentic-kb inside Claude Code; fall back to scripts/install --target claude for dev installs.
+  - OpenCode: scripts/install --target opencode (workspace) or --global; .claude/skills/ is also read natively.
+  - Skip any harness already present — link_or_copy would report "skip (exists)".
 
 Step 7 — Configure integrations
   - For each integration the user opted in to: validate access; fall back to skip if unavailable.
@@ -143,3 +156,4 @@ If the user has an existing knowledge base in another layout, `/kb setup` offers
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | Initial version | Extracted from source spec §10, plus onboarding questions for HTML styling |
+| 2026-04-18 | v0.2 — added explicit install-vs-init scope section; rewrote Step 5/6 to stop re-doing the installer's job and only touch workspace-level config; harmonized with `skills/kb-setup/SKILL.md` | Adopter feasibility review |
