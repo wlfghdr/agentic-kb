@@ -46,15 +46,15 @@ Agents and contributors must not leave work stranded locally. Every completed un
 
 When in doubt, add a section rather than rewrite one. The changelog makes intent traceable. Deletions require a justification in the PR description.
 
-### 9. Honor the layered doc structure
+### 9. Honor the doc structure
 
-- `docs/concept/` — the "why" and "what". Stable, conceptual.
-- `docs/spec/` — the "how". Precise, implementation-ready.
+- `docs/REFERENCE.md` — architecture, layout, formats, and contracts. The implementation-critical reference.
 - `docs/examples/` — illustrative walkthroughs. Not normative.
 - `docs/roadmap.md` — open items, explicitly unresolved.
 - `docs/glossary.md` — authoritative terms.
+- `skills/*/SKILL.md` + `agents/*.md` — the behavioral spec. These ARE the spec.
 
-Don't move content across these boundaries without a clear reason.
+The skills and agent files are the source of truth for behavior. `REFERENCE.md` is the source of truth for structure and formats.
 
 ### 10. One canonical term per concept
 
@@ -66,7 +66,7 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 
 1. Read this file.
 2. Read [README.md](README.md).
-3. Identify which docs your change touches (`docs/concept/`, `docs/spec/`, or both).
+3. Identify which docs your change touches (`docs/REFERENCE.md`, skills, or agent).
 4. Draft the change.
 5. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
 6. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).

@@ -26,7 +26,7 @@ This document tracks the known open items, deferred decisions, and future improv
 - [ ] Automation-level behavior: Level 1 asks before regenerating; Level 2 bundles with the commit; Level 3 runs silently in the autonomous loop.
 - [ ] Deterministic rendering contract so CI can diff against a fixture.
 
-Blocks the full promise of `docs/spec/html-artifacts.md` §Family 1. Until this ships, the "refresh trigger" column there is aspirational.
+Blocks the full promise of `docs/REFERENCE.md` §6 HTML Artifacts (Family 1 overviews). Until this ships, the "refresh trigger" column there is aspirational.
 
 ## Medium-Term (v3)
 

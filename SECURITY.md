@@ -5,8 +5,8 @@
 `agentic-kb` is a **specification** repository. It contains documentation, configuration, and CI glue — no runtime code that processes untrusted input. Security concerns therefore fall into three narrow buckets:
 
 1. **Dependency security** — the CI uses GitHub Actions and a few Python scripts. Dependabot monitors this (see `.github/dependabot.yml`).
-2. **Content safety** — the spec explicitly discourages putting secrets, PII, or untrusted URLs into knowledge bases built against it (see [`docs/spec/security-privacy.md`](docs/spec/security-privacy.md)). If you spot an example that violates this, file an issue.
-3. **Supply chain for reference skills** — the skills shipped by implementations built against this spec are expected to follow safe-skill rules (see [`docs/spec/marketplace-and-skills.md`](docs/spec/marketplace-and-skills.md), §Safety).
+2. **Content safety** — the spec explicitly discourages putting secrets, PII, or untrusted URLs into knowledge bases built against it (see [`docs/REFERENCE.md`](docs/REFERENCE.md) §7 Security & Privacy). If you spot an example that violates this, file an issue.
+3. **Supply chain for reference skills** — the skills shipped by implementations built against this spec are expected to follow safe-skill rules (see [`docs/REFERENCE.md`](docs/REFERENCE.md) §9 Marketplace).
 
 ## Reporting a Vulnerability
 

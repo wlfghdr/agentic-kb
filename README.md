@@ -146,10 +146,9 @@ agentic-kb/
 ## Where to start
 
 1. [`index.html`](index.html) — open in a browser for a 2-minute visual overview.
-2. [`docs/concept/01-overview.md`](docs/concept/01-overview.md) — principles + mental model.
-3. [`docs/concept/02-architecture.md`](docs/concept/02-architecture.md) — the five layers.
-4. [`docs/spec/commands.md`](docs/spec/commands.md) — the full `/kb` surface.
-5. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
+2. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
+3. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
+4. [`skills/kb-management/SKILL.md`](skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 

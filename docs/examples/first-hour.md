@@ -132,10 +132,9 @@ Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.htm
 
 ## Related
 
-- [setup.md](../spec/setup.md) — full spec of the onboarding flow.
-- [commands.md](../spec/commands.md) — all `/kb` subcommands with semantics.
+- [REFERENCE.md](../REFERENCE.md) — architecture, layout, formats, and contracts.
 - [day-in-the-life.md](day-in-the-life.md) — a fuller day after this first hour.
-- [ide-support.md](../spec/ide-support.md) — per-harness capability matrix.
+- [kb-setup SKILL.md](../../skills/kb-setup/SKILL.md) — full onboarding flow spec.
 
 ---
 

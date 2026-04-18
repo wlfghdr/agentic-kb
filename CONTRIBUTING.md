@@ -12,7 +12,7 @@ Read:
 
 1. [README.md](README.md) — the one-page orientation.
 2. [AGENTS.md](AGENTS.md) — rules for both humans and AI agents working in this repo.
-3. [docs/concept/01-overview.md](docs/concept/01-overview.md) — mental model.
+3. [docs/REFERENCE.md](docs/REFERENCE.md) — architecture, layout, formats.
 4. [docs/roadmap.md](docs/roadmap.md) — what's open, what's intentionally deferred.
 
 ## Rules for Changes
@@ -37,7 +37,7 @@ Read:
 
 For anything that touches the command surface, the workspace layout, or the file formats, open a discussion first. These are the parts that implementations depend on — breaking them is a MAJOR bump.
 
-For the reference implementation (skills + agent), most work will happen in a companion marketplace repo. See [`docs/spec/marketplace-and-skills.md`](docs/spec/marketplace-and-skills.md) — PRs to the companion repo need to reference the spec version they target.
+For the reference implementation (skills + agent), most work will happen in a companion marketplace repo. See [`docs/REFERENCE.md`](docs/REFERENCE.md) §9 Marketplace — PRs to the companion repo need to reference the spec version they target.
 
 ## Running Checks Locally
 

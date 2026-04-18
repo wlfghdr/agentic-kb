@@ -6,7 +6,7 @@ The spec repo itself does NOT ship presentations or reports (the template lives
 elsewhere). This check is therefore a placeholder that:
 
   - Scans for .html files under `examples/html/` (opt-in location for example artifacts).
-  - If any are found, verifies the minimum contract from docs/spec/html-artifacts.md:
+  - If any are found, verifies the minimum contract from docs/REFERENCE.md §6:
       * self-contained (no external <script src=...> or <link rel=stylesheet href=...> pointing
         outside the file — allowed: data: URIs, inline)
       * both light and dark theme present (strings 'theme="light"' / 'theme="dark"' or CSS classes)

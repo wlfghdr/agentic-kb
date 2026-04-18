@@ -13,14 +13,20 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 | **MINOR** | New sections, new spec rules, new commands — non-breaking additions |
 | **MAJOR** | Breaking changes to the directory layout, command surface, or file formats that invalidate existing implementations |
 
-**Document-level versioning**: each spec document (`docs/spec/*.md`, `docs/concept/*.md`) carries its own `Version` field in its frontmatter or first heading, plus a `## Changelog` section at the bottom. The root-level `VERSION` file and this `CHANGELOG.md` track the aggregate framework version.
+**Versioning**: the root-level `VERSION` file and this `CHANGELOG.md` track the aggregate framework version. The behavioral spec lives in `skills/*/SKILL.md` and `agents/*.md`; the structural reference is `docs/REFERENCE.md`.
 
 ---
 
 ## [Unreleased]
 
+### Removed
+
+- **`docs/concept/` (12 files) and `docs/spec/` (11 files)** — consolidated into a single `docs/REFERENCE.md`. The behavioral spec is the skill/agent files themselves; the reference doc retains only implementation-critical structure (architecture, layout, formats, HTML contract, security, marketplace).
+
 ### Changed
 
+- `docs/REFERENCE.md` — new single-file reference replacing 23 concept/spec docs.
+- All cross-references (`README.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`, `agents/kb-operator.md`, `docs/roadmap.md`, `scripts/check_html_artifacts.py`, `skills/kb-management/references/spec-summary.md`) updated to point to `docs/REFERENCE.md`.
 - `README.md` — replaced `<org>` placeholders with actual repo URL (`wlfghdr/agentic-kb`). Restructured install section as "Getting started": marketplace-first flow (connect → `/kb setup`), cross-harness install script as optional secondary path.
 - `README.md` — rewrote problem section as direct questions ("Does this sound familiar?"), renamed "The solution" → "How it works".
 - `index.html` — intro now leads with the same user-facing questions; problem section renamed to "Why existing approaches fail".

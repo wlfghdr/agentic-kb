@@ -56,7 +56,7 @@ Same as team minus per-contributor dirs. Adds `workstreams/`.
 
 ## Marketplace layout
 
-See `agentic-kb` spec `docs/spec/marketplace-and-skills.md`.
+See `agentic-kb` spec `docs/REFERENCE.md` §9 Marketplace.
 
 ## Config file keys
 

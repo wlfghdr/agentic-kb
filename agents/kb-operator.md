@@ -122,7 +122,7 @@ After substantive changes:
 
 ## Autonomous loop (Level 3 only)
 
-Requires native background automation. Claude Code and OpenCode support this directly; VS Code Copilot does not — VS Code users must schedule via OS cron + CLI invocation of the harness. See `docs/spec/ide-support.md` §Capability Matrix for the per-harness row.
+Requires native background automation. Claude Code and OpenCode support this directly; VS Code Copilot does not — VS Code users must schedule via OS cron + CLI invocation of the harness. See `docs/REFERENCE.md` §10 Harness Support for the per-harness row.
 
 When `.kb-automation.yaml → level: 3` and the user has opted in, run this loop on the configured schedule:
 
