@@ -1,0 +1,28 @@
+# HTML artifact styling — used by /kb present and /kb report.
+
+styling:
+  source: builtin                       # builtin | website | template
+  reference-url: ""                     # if source=website
+  reference-file: ""                    # if source=template
+  themes: [light, dark]
+  default-theme: auto                   # auto | light | dark
+
+watermark:
+  enabled: true
+  position: intro-slide                 # intro-slide | every-slide
+  format: "v{version} · {date}"
+  style: subtle                         # subtle | normal
+
+appendix:
+  changelog: true
+  sources: true
+  hidden-by-default: false
+
+output:
+  directory: references/reports
+  filename-template: "{slug}-v{version}.html"
+
+github-pages:
+  enabled: false
+  branch: gh-pages
+  index-file: index.html

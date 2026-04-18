@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Install agentic-kb skills + agent into the selected harness.
+#
+# Usage:
+#   scripts/install [--target claude|opencode|vscode|all] [--global] [--force] [skill...]
+#
+# Default: --target all, installs all declared skills + agents.
+#
+# On POSIX, installs are symlinks so the marketplace can update in place.
+# On Windows, installs are copies (see scripts/install.py).
+
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec python3 "$HERE/install.py" "$@"

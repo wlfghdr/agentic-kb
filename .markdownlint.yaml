@@ -1,0 +1,25 @@
+default: true
+
+# Line length — disabled, we allow long prose lines in spec docs
+MD013: false
+
+# Allow inline HTML (for the HTML-artifacts doc + occasional emphasis)
+MD033: false
+
+# Allow bare URLs (they're converted to links by most renderers)
+MD034: false
+
+# Allow duplicate headings across different sections (e.g. each doc has its own "Changelog")
+MD024:
+  allow_different_nesting: true
+  siblings_only: true
+
+# First line doesn't have to be a top-level heading (some files start with a quote block)
+MD041: false
+
+# Emphasis as heading — we use "> **Version:** …" blockquotes deliberately
+MD036: false
+
+# Allow long tables
+MD007:
+  indent: 2

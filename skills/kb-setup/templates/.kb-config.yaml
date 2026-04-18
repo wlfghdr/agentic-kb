@@ -1,0 +1,28 @@
+# Layer configuration for the personal KB.
+# See https://github.com/wlfghdr/agentic-kb/blob/main/docs/concept/02-architecture.md
+
+layers:
+  personal:
+    path: .
+    workstreams:
+      - name: {{WORKSTREAM_1_NAME}}
+        themes: {{WORKSTREAM_1_THEMES}}
+      # add more workstreams as needed
+
+  teams:
+    # - name: team-x
+    #   path: ../team-x-kb
+    #   contributor-dir: {{USER_NAME}}
+
+  org-unit:
+    # name: my-org-unit
+    # path: ../my-org-unit-kb
+
+  marketplace:
+    enabled: false
+    # repo: <org>/<marketplace-repo>
+    # path: ../marketplace
+
+  company:
+    enabled: false
+    sources: []

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}}</title>
+  <meta name="generator" content="agentic-kb" />
+  <meta name="version" content="{{VERSION}}" />
+  <meta name="date" content="{{DATE}}" />
+  <style>
+    :root {
+      --fg: #1a1a1a;
+      --bg: #ffffff;
+      --muted: #666;
+      --accent: #0366d6;
+      --border: #e0e0e0;
+    }
+    [data-theme="dark"] {
+      --fg: #e6e6e6;
+      --bg: #121212;
+      --muted: #9a9a9a;
+      --accent: #6ea8fe;
+      --border: #2a2a2a;
+    }
+    @media (prefers-color-scheme: dark) {
+      [data-theme="auto"] {
+        --fg: #e6e6e6;
+        --bg: #121212;
+        --muted: #9a9a9a;
+        --accent: #6ea8fe;
+        --border: #2a2a2a;
+      }
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.55;
+    }
+    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem; }
+    section {
+      min-height: 60vh;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    section:last-of-type { border-bottom: none; }
+    h1, h2, h3, h4 { color: var(--fg); margin-top: 0; }
+    h1 { font-size: 2.25rem; }
+    h2 { font-size: 1.6rem; }
+    a { color: var(--accent); }
+    .watermark {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      margin-top: 0.5rem;
+    }
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg);
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    .appendix {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .appendix table { border-collapse: collapse; width: 100%; }
+    .appendix th, .appendix td {
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.6rem;
+      text-align: left;
+    }
+    .changelog-hidden .appendix { display: none; }
+    img { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <button
+    class="theme-toggle"
+    type="button"
+    aria-label="Toggle light and dark theme"
+    onclick="(function(){var h=document.documentElement,t=h.getAttribute('data-theme');h.setAttribute('data-theme',t==='dark'?'light':(t==='light'?'auto':'dark'));})()">
+    Theme
+  </button>
+  <main>
+    <section aria-label="Intro">
+      <h1>{{TITLE}}</h1>
+      <p>{{ABSTRACT}}</p>
+      <p class="watermark">{{WATERMARK}}</p>
+    </section>
+
+    {{BODY_SECTIONS}}
+
+    <section class="appendix" aria-label="Appendix">
+      <h2>Changelog</h2>
+      {{CHANGELOG_TABLE}}
+      <h2>Sources</h2>
+      {{SOURCES_LIST}}
+    </section>
+  </main>
+</body>
+</html>

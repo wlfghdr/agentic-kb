@@ -1,0 +1,87 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-lint:
+    name: markdown-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run markdownlint-cli2
+        run: npx --yes markdownlint-cli2 "docs/**/*.md" "*.md"
+
+  dead-links:
+    name: dead-links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config .lychee.toml --no-progress --verbose .
+          fail: true
+
+  consistency:
+    name: consistency-and-versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Consistency + version + vendor-neutrality checks
+        run: python3 scripts/check_consistency.py
+
+  plugin-structure:
+    name: plugin-structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Validate skill + agent + plugin structure
+        run: python3 scripts/check_plugin_structure.py
+
+  plugin-generator-drift:
+    name: plugin-generator-drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regenerate plugins and check for drift
+        run: |
+          python3 scripts/generate_plugins.py
+          if ! git diff --quiet -- plugins/; then
+            echo "::error::plugins/ is out of sync with sources. Run scripts/generate_plugins.py and commit."
+            git --no-pager diff -- plugins/ | head -100
+            exit 1
+          fi
+
+  html-artifacts:
+    name: html-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate any checked-in HTML artifacts
+        run: python3 scripts/check_html_artifacts.py

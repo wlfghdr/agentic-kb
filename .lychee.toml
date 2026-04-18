@@ -1,0 +1,49 @@
+# lychee configuration — dead-link check
+# Docs: https://lychee.cli.rs/usage/config/
+
+# Accept these status codes as success
+accept = ["200", "206", "429"]
+
+# Timeout per request (seconds)
+timeout = 20
+
+# Retry wait (seconds)
+retry_wait_time = 2
+
+# Maximum concurrent requests
+max_concurrency = 16
+
+# Cache results between runs
+cache = true
+max_cache_age = "1d"
+
+# Follow these protocols
+scheme = ["https", "http"]
+
+# Ignore (regex) — things that legitimately can't be reached or are placeholders
+exclude = [
+  # Example / placeholder hosts used throughout the spec
+  "^https?://example\\.org",
+  "^https?://example\\.com",
+  # Plain anchors on spec pages
+  "^#",
+  # Mailto / telephone
+  "^mailto:",
+  "^tel:",
+  # GitHub URLs for placeholder org/repo names used in examples
+  "github\\.com/<",
+  "github\\.com/\\$",
+  # Documentation URLs that sometimes rate-limit heavily
+  "^https?://agentic-kb\\.dev",
+]
+
+# Skip files
+exclude_path = [
+  "node_modules",
+  ".git",
+  "dist",
+  "build",
+]
+
+# Don't check fragments against local files (we have a separate consistency check)
+include_fragments = false

@@ -1,0 +1,53 @@
+name: Feature request
+description: Propose an addition or change to the spec or the reference implementation.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing something! Please describe the problem before jumping to a solution.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: One paragraph. Focus on the gap you're experiencing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What would you like added, removed, or changed? Reference existing sections if relevant.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Concept doc
+        - Spec doc
+        - Reference skill
+        - Reference agent
+        - CI / tooling
+        - Example
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: bump
+    attributes:
+      label: Expected version bump (best guess)
+      options:
+        - PATCH
+        - MINOR
+        - MAJOR
+        - Not sure
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you consider? Why isn't one of them better?

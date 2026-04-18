@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-marketplace.json",
+  "name": "agentic-kb",
+  "description": "AI-native, layered knowledge operations — reference skills + agent for the agentic-kb specification. Install the `kb` plugin to get the full `/kb` command surface.",
+  "owner": {
+    "name": "agentic-kb contributors",
+    "url": "https://github.com/wlfghdr/agentic-kb"
+  },
+  "metadata": {
+    "version": "2.0.0",
+    "homepage": "https://github.com/wlfghdr/agentic-kb",
+    "license": "Apache-2.0"
+  },
+  "plugins": [
+    {
+      "name": "kb",
+      "source": "./plugins/kb",
+      "description": "Knowledge-ops plugin: kb-management + kb-setup skills and the kb-operator agent.",
+      "version": "2.0.0",
+      "category": "productivity",
+      "keywords": ["knowledge-management", "kb", "agents", "notes", "decisions"]
+    }
+  ]
+}

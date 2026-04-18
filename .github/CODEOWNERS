@@ -1,0 +1,25 @@
+# CODEOWNERS
+#
+# Every PR is automatically reviewed by the owners listed here.
+# Lines below are order-sensitive: later matches win.
+
+# Default — everything
+*                          @maintainers
+
+# Spec — both concept and normative spec docs
+/docs/                     @spec-editors @maintainers
+
+# Reference implementation
+/skills/                   @skill-authors @maintainers
+/agents/                   @skill-authors @maintainers
+/plugins/                  @maintainers
+/scripts/                  @maintainers
+
+# CI / release plumbing
+/.github/                  @maintainers
+/.lychee.toml              @maintainers
+/.markdownlint.yaml        @maintainers
+
+# Changelog / version — any change requires maintainer review
+/CHANGELOG.md              @maintainers
+/VERSION                   @maintainers

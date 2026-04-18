@@ -1,0 +1,24 @@
+# Automation configuration for the personal KB.
+# Levels: 1 (manual), 2 (semi-auto), 3 (full-auto).
+
+level: 1
+
+schedules:
+  start-day: "daily 08:00"
+  end-day: "daily 18:00"
+  start-week: "monday 08:00"
+  end-week: "friday 15:00"
+
+auto-promote:
+  enabled: false
+  confidence-threshold: 0.9
+  require-evidence: true
+  exclude-topics: []
+
+commit-push:
+  auto-commit: false
+  auto-push: false
+  respect-branch-protection: true
+
+notifications:
+  channel: terminal

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / Discussion
+    url: https://github.com/wlfghdr/agentic-kb/discussions
+    about: Open a discussion instead of an issue for questions, design exploration, or use cases.
