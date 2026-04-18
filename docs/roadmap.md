@@ -24,4 +24,3 @@ What's next, what's deferred, what's out of scope.
 - A UI (terminal- and editor-first)
 - A proprietary file format (Markdown, YAML, generated HTML only)
 - Billing, licensing, telemetry (open source)
-| 2026-04-18 | v2.1 — added "Auto-regeneration of always-current overviews" to near-term items after the adopter feasibility review flagged it as a spec-ahead-of-implementation gap | Adopter feasibility review |

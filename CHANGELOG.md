@@ -19,6 +19,12 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+*(nothing yet)*
+
+---
+
+## [2.2.0] — 2026-04-19
+
 ### Removed
 
 - **`docs/concept/` (12 files) and `docs/spec/` (11 files)** — consolidated into a single `docs/REFERENCE.md`. The behavioral spec is the skill/agent files themselves; the reference doc retains only implementation-critical structure (architecture, layout, formats, HTML contract, security, marketplace).
@@ -56,6 +62,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - Memory model (03) expanded from three to four types (added Incubation).
 - Overview (01) renumbered principles 1–9, added Ideas (#4) and VMG (#5).
 - Skills bumped to v2.2.0, agent bumped to v2.2.0.
+
+### Version bumps
+
+- Root `VERSION`: 2.1.0 → 2.2.0.
+- `plugin.json`: 2.0.0 → 2.2.0.
+- `skills/kb-setup/SKILL.md`: 2.1.0 → 2.2.0.
+- `skills/kb-management/SKILL.md`: 2.2.0 (already bumped).
+- `agents/kb-operator.md`: 2.2.0 (already bumped).
 
 ---
 
