@@ -3,586 +3,218 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentic-kb — layered AI-native knowledge operations</title>
-  <meta name="generator" content="agentic-kb" />
-  <meta name="version" content="2.0.0" />
-  <meta name="date" content="2026-04-18" />
+  <title>agentic-kb — AI-native knowledge operations</title>
   <style>
     :root, [data-theme="light"] {
-      --fg: #1a1a1a;
-      --fg-muted: #555;
-      --fg-dim: #888;
-      --bg: #ffffff;
-      --bg-soft: #f6f8fa;
-      --border: #e1e4e8;
-      --border-strong: #cbd1d8;
-      --accent: #0550ae;
-      --accent-bg: #ddf4ff;
-      --good: #1a7f37;
-      --warn: #9a6700;
-      --bad: #cf222e;
-      --code: #f6f8fa;
-      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --fg: #111; --fg2: #444; --fg3: #777;
+      --bg: #fff; --bg2: #f7f8fa; --border: #e2e5e9;
+      --accent: #2563eb; --accent-soft: #eff6ff;
+      --good: #16a34a; --good-soft: #f0fdf4;
+      --shadow: 0 1px 3px rgba(0,0,0,.05);
     }
     [data-theme="dark"] {
-      --fg: #e6e6e6;
-      --fg-muted: #a0a7ae;
-      --fg-dim: #6a7078;
-      --bg: #0d1117;
-      --bg-soft: #161b22;
-      --border: #30363d;
-      --border-strong: #484f58;
-      --accent: #79b8ff;
-      --accent-bg: #0c2b52;
-      --good: #3fb950;
-      --warn: #d29922;
-      --bad: #f85149;
-      --code: #161b22;
-      --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+      --fg: #eee; --fg2: #aaa; --fg3: #666;
+      --bg: #0c0f14; --bg2: #161b22; --border: #2d333b;
+      --accent: #79b8ff; --accent-soft: #0d2240;
+      --good: #3fb950; --good-soft: #0d2818;
+      --shadow: 0 1px 3px rgba(0,0,0,.3);
     }
     @media (prefers-color-scheme: dark) {
       [data-theme="auto"] {
-        --fg: #e6e6e6;
-        --fg-muted: #a0a7ae;
-        --fg-dim: #6a7078;
-        --bg: #0d1117;
-        --bg-soft: #161b22;
-        --border: #30363d;
-        --border-strong: #484f58;
-        --accent: #79b8ff;
-        --accent-bg: #0c2b52;
-        --good: #3fb950;
-        --warn: #d29922;
-        --bad: #f85149;
-        --code: #161b22;
-        --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+        --fg: #eee; --fg2: #aaa; --fg3: #666;
+        --bg: #0c0f14; --bg2: #161b22; --border: #2d333b;
+        --accent: #79b8ff; --accent-soft: #0d2240;
+        --good: #3fb950; --good-soft: #0d2818;
+        --shadow: 0 1px 3px rgba(0,0,0,.3);
       }
     }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0; padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: var(--bg); color: var(--fg);
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-    }
-    main { max-width: 980px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-    section { padding: 2.5rem 0; border-bottom: 1px solid var(--border); }
-    section:last-of-type { border-bottom: none; }
-    h1, h2, h3 { color: var(--fg); margin-top: 0; line-height: 1.25; }
-    h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; }
-    h2 { font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; font-weight: 600; }
-    h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; font-weight: 600; color: var(--fg-muted); }
-    p { margin: 0.75rem 0; }
-    a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
-    a:hover { border-bottom-color: var(--accent); }
-    code {
-      background: var(--code); padding: 0.1em 0.35em; border-radius: 3px;
-      font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 0.88em;
-    }
-    pre {
-      background: var(--code); padding: 0.9rem 1rem; border-radius: 6px;
-      overflow-x: auto; font-size: 0.85rem; border: 1px solid var(--border);
-    }
-    pre code { background: none; padding: 0; font-size: inherit; }
-    ul, ol { padding-left: 1.5rem; }
-    li { margin: 0.3rem 0; }
-    table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
-    th, td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
-    th { font-weight: 600; color: var(--fg-muted); }
-    .watermark {
-      font-size: 0.78rem; color: var(--fg-dim); letter-spacing: 0.06em;
-      margin-top: 0.75rem; font-variant: all-small-caps;
-    }
-    .theme-toggle {
-      position: fixed; top: 1rem; right: 1rem;
-      padding: 0.4rem 0.75rem; border: 1px solid var(--border-strong);
-      background: var(--bg-soft); color: var(--fg); cursor: pointer;
-      border-radius: 6px; font-size: 0.8rem; font-family: inherit;
-      box-shadow: var(--shadow);
-    }
-    .theme-toggle:hover { border-color: var(--accent); }
-    .tag {
-      display: inline-block; padding: 0.15rem 0.5rem; font-size: 0.72rem;
-      border-radius: 3px; background: var(--accent-bg); color: var(--accent);
-      font-weight: 600; letter-spacing: 0.02em; margin-right: 0.4rem;
-      vertical-align: 2px;
-    }
-    .lead { font-size: 1.15rem; color: var(--fg-muted); margin: 1rem 0 1.5rem; }
-    .grid-2 {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
-      margin: 1.25rem 0;
-    }
-    @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
-    .card {
-      border: 1px solid var(--border); border-radius: 8px;
-      padding: 1rem 1.1rem; background: var(--bg-soft); box-shadow: var(--shadow);
-    }
-    .card h3 { margin-top: 0; color: var(--fg); font-size: 1rem; }
-    .card p { margin: 0.3rem 0; font-size: 0.93rem; color: var(--fg-muted); }
-    .callout {
-      border-left: 3px solid var(--accent); background: var(--accent-bg);
-      padding: 0.75rem 1rem; border-radius: 0 6px 6px 0; margin: 1.25rem 0;
-    }
-    .callout p:first-child { margin-top: 0; }
-    .callout p:last-child { margin-bottom: 0; }
-    .appendix {
-      margin-top: 4rem; padding-top: 2rem; border-top: 2px solid var(--border-strong);
-      color: var(--fg-muted); font-size: 0.9rem;
-    }
-    .appendix table th, .appendix table td {
-      border: 1px solid var(--border); padding: 0.4rem 0.6rem;
-    }
-    svg { max-width: 100%; height: auto; display: block; margin: 1rem auto; }
-    .svg-label { fill: var(--fg); font-size: 13px; font-family: inherit; }
-    .svg-muted { fill: var(--fg-muted); font-size: 11px; font-family: inherit; }
-    .svg-fill-bg { fill: var(--bg-soft); }
-    .svg-stroke { stroke: var(--border-strong); fill: none; }
-    .svg-accent-stroke { stroke: var(--accent); fill: none; }
-    .svg-accent-fill { fill: var(--accent); }
-    .svg-good { stroke: var(--good); fill: none; }
-    .pill-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.5rem 0 1rem; }
-    .pill {
-      padding: 0.25rem 0.7rem; font-size: 0.8rem; border-radius: 999px;
-      background: var(--bg-soft); border: 1px solid var(--border);
-      color: var(--fg-muted);
-    }
-    .pill strong { color: var(--fg); }
-    .kbd {
-      display: inline-block; padding: 0.15rem 0.45rem; font-size: 0.82rem;
-      border: 1px solid var(--border-strong); border-bottom-width: 2px;
-      border-radius: 4px; background: var(--bg-soft); color: var(--fg);
-      font-family: "SF Mono", Menlo, Consolas, monospace;
-    }
-    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-    .muted { color: var(--fg-muted); }
-    .hidden { display: none; }
+    * { box-sizing: border-box; margin: 0; }
+    body { font: 1rem/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; }
+    main { max-width: 860px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+    section { margin-bottom: 5rem; }
+    h1 { font-size: 3rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
+    p { margin: .75rem 0; color: var(--fg2); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: "SF Mono", Menlo, monospace; font-size: .88em; background: var(--bg2); padding: .1em .35em; border-radius: 3px; }
+    pre { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; overflow-x: auto; font-size: .85rem; margin: 1.5rem 0; }
+    pre code { background: none; padding: 0; }
+    .hero { text-align: center; margin-bottom: 5rem; padding-top: 2rem; }
+    .hero h1 { margin-bottom: 1.5rem; }
+    .hero .tagline { font-size: 1.25rem; color: var(--fg2); max-width: 600px; margin: 0 auto 2.5rem; }
+    .questions { list-style: none; padding: 0; max-width: 540px; margin: 0 auto 2.5rem; text-align: left; }
+    .questions li { font-size: 1.1rem; padding: .6rem 0; border-bottom: 1px solid var(--border); color: var(--fg); font-style: italic; }
+    .questions li:last-child { border-bottom: none; }
+    .cta { display: inline-block; padding: .7rem 1.5rem; background: var(--accent); color: #fff; border-radius: 6px; font-weight: 600; font-size: .95rem; transition: opacity .15s; }
+    .cta:hover { opacity: .85; text-decoration: none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin: 1.5rem 0; }
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+    .card h3 { font-size: .95rem; font-weight: 700; margin-bottom: .4rem; color: var(--fg); }
+    .card p { font-size: .88rem; margin: 0; color: var(--fg2); }
+    .flow { display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap; margin: 2rem 0; }
+    .flow-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: .75rem 1.25rem; text-align: center; min-width: 100px; }
+    .flow-box strong { display: block; font-size: .85rem; }
+    .flow-box span { font-size: .72rem; color: var(--fg3); }
+    .flow-arrow { color: var(--accent); font-size: 1.2rem; font-weight: 700; }
+    .flow-arrow-back { color: var(--good); font-size: 1rem; }
+    .gate { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+    .gate ol { padding-left: 1.25rem; margin: .75rem 0 0; }
+    .gate li { margin: .3rem 0; font-size: .92rem; color: var(--fg); }
+    .score { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+    .score span { font-size: .82rem; padding: .3rem .75rem; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); }
+    .cmd-list { columns: 2; column-gap: 2rem; margin: 1rem 0; }
+    .cmd-list p { margin: .25rem 0; font-size: .88rem; }
+    @media (max-width: 600px) { .cmd-list { columns: 1; } h1 { font-size: 2.2rem; } }
+    .install-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .install-grid .card pre { margin: .5rem 0 0; font-size: .8rem; }
+    .footer { text-align: center; color: var(--fg3); font-size: .8rem; padding-top: 3rem; border-top: 1px solid var(--border); }
+    .theme-btn { position: fixed; top: 1rem; right: 1rem; background: var(--bg2); border: 1px solid var(--border); color: var(--fg2); padding: .35rem .7rem; border-radius: 6px; font-size: .75rem; cursor: pointer; }
   </style>
 </head>
 <body>
-  <button
-    class="theme-toggle"
-    type="button"
-    aria-label="Toggle light and dark theme"
-    onclick="(function(){var h=document.documentElement,t=h.getAttribute('data-theme'),next=t==='dark'?'light':(t==='light'?'auto':'dark');h.setAttribute('data-theme',next);this.textContent='Theme: '+next;}).call(this)">
-    Theme
-  </button>
-  <main>
 
-    <section aria-label="Intro">
-      <span class="tag">SPEC</span><span class="tag">OSS</span>
-      <h1>agentic-kb</h1>
-      <p class="lead">
-        AI-native, layered knowledge operations — install, run <code>/kb setup</code>, start working.
-      </p>
-      <p>
-        <em>"How do I actually work AI-natively — with agents, not just chat?"</em><br/>
-        <em>"How does my team share knowledge so agents can use it?"</em><br/>
-        <em>"Is there something I can just install and go?"</em>
-      </p>
-      <p>
-        If that sounds familiar: <strong>agentic-kb</strong> gives you a layered knowledge
-        system that agents maintain. One command — <code>/kb</code> — handles capture,
-        evaluation, cross-referencing, and promotion. You think, the agent does the bookkeeping.
-      </p>
-      <p class="watermark">v2.0 · 2026-04-18</p>
-    </section>
+<button class="theme-btn" onclick="const h=document.documentElement,m={auto:'light',light:'dark',dark:'auto'};h.dataset.theme=m[h.dataset.theme]||'auto';this.textContent=h.dataset.theme">auto</button>
 
-    <section aria-label="Problem">
-      <h2>Why existing approaches fail</h2>
-      <div class="grid-2">
-        <div class="card">
-          <h3>Knowledge decay</h3>
-          <p>
-            Wikis accumulate. Pages drift out of sync with reality. Nobody
-            trusts them. Nobody maintains them. Eventually, nobody reads them.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Context loss</h3>
-          <p>
-            Decisions are buried in Slack threads, meeting notes, inbox
-            replies. Who decided what, when, and why becomes unknowable.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Manual curation fatigue</h3>
-          <p>
-            Someone has to triage, tag, cross-link, archive. Doing it well is
-            a full-time job nobody has time for.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Silos everywhere</h3>
-          <p>
-            Personal notes, team workspaces, org strategy, company OKRs —
-            each in its own tool. Nothing flows up or down coherently,
-            and agents can't reach any of it.
-          </p>
-        </div>
-      </div>
-    </section>
+<main>
 
-    <section aria-label="Solution">
-      <h2>The solution — five layers, one command</h2>
-      <p>
-        Content is organized into five layers. Only the personal layer is
-        required. Higher layers are optional and declared in the user's
-        config. One command — <span class="kbd">/kb</span> — routes everything.
-      </p>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>agentic-kb</h1>
+    <p class="tagline">AI-native knowledge operations. Install, run <code>/kb setup</code>, start working.</p>
+    <ul class="questions">
+      <li>"How do I actually work AI-natively — with agents, not just chat?"</li>
+      <li>"How does my team share knowledge so agents can use it?"</li>
+      <li>"Where do decisions go so they survive across sessions and people?"</li>
+      <li>"Is there something I can just install and go?"</li>
+    </ul>
+    <a class="cta" href="#install">Get started</a>
+  </section>
 
-      <svg viewBox="0 0 900 360" aria-label="Five-layer architecture diagram" role="img">
-        <!-- five boxes -->
-        <g>
-          <rect x="20"  y="120" width="150" height="100" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <rect x="200" y="120" width="150" height="100" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <rect x="380" y="120" width="150" height="100" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <rect x="560" y="120" width="150" height="100" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <rect x="740" y="120" width="150" height="100" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-        </g>
+  <!-- LAYERS -->
+  <section>
+    <h2>Five layers, one command</h2>
+    <p>Only the personal layer is required. Higher layers are opt-in. Content flows up via <strong>promote</strong>, down via <strong>digest</strong>. Every boundary passes a five-question evaluation gate.</p>
+    <div class="flow">
+      <div class="flow-box"><strong>L1 Personal</strong><span>required</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box"><strong>L2 Team</strong><span>optional</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box"><strong>L3 Org-Unit</strong><span>optional</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box"><strong>L4 Marketplace</strong><span>skills + agents</span></div>
+      <span class="flow-arrow-back">← L5 Company (top-down)</span>
+    </div>
+    <p style="text-align:center;font-size:.85rem;color:var(--fg3)">promote →&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← digest</p>
+  </section>
 
-        <!-- layer titles -->
-        <g>
-          <text x="95"  y="148" class="svg-label" text-anchor="middle" font-weight="600">L1</text>
-          <text x="95"  y="172" class="svg-label" text-anchor="middle">Personal</text>
-          <text x="95"  y="192" class="svg-muted" text-anchor="middle">required</text>
-
-          <text x="275" y="148" class="svg-label" text-anchor="middle" font-weight="600">L2</text>
-          <text x="275" y="172" class="svg-label" text-anchor="middle">Team</text>
-          <text x="275" y="192" class="svg-muted" text-anchor="middle">optional</text>
-
-          <text x="455" y="148" class="svg-label" text-anchor="middle" font-weight="600">L3</text>
-          <text x="455" y="172" class="svg-label" text-anchor="middle">Org-Unit</text>
-          <text x="455" y="192" class="svg-muted" text-anchor="middle">optional</text>
-
-          <text x="635" y="148" class="svg-label" text-anchor="middle" font-weight="600">L4</text>
-          <text x="635" y="172" class="svg-label" text-anchor="middle">Marketplace</text>
-          <text x="635" y="192" class="svg-muted" text-anchor="middle">skills + agents</text>
-
-          <text x="815" y="148" class="svg-label" text-anchor="middle" font-weight="600">L5</text>
-          <text x="815" y="172" class="svg-label" text-anchor="middle">Company</text>
-          <text x="815" y="192" class="svg-muted" text-anchor="middle">top-down only</text>
-        </g>
-
-        <!-- arrows up -->
-        <g stroke-width="1.5">
-          <line x1="170" y1="155" x2="200" y2="155" class="svg-accent-stroke" marker-end="url(#arrowR)"/>
-          <line x1="350" y1="155" x2="380" y2="155" class="svg-accent-stroke" marker-end="url(#arrowR)"/>
-          <line x1="530" y1="155" x2="560" y2="155" class="svg-accent-stroke" marker-end="url(#arrowR)"/>
-          <line x1="710" y1="155" x2="740" y2="155" class="svg-accent-stroke" marker-end="url(#arrowR)"/>
-        </g>
-        <!-- arrows down -->
-        <g stroke-width="1.5">
-          <line x1="200" y1="185" x2="170" y2="185" class="svg-good" marker-end="url(#arrowL)"/>
-          <line x1="380" y1="185" x2="350" y2="185" class="svg-good" marker-end="url(#arrowL)"/>
-          <line x1="560" y1="185" x2="530" y2="185" class="svg-good" marker-end="url(#arrowL)"/>
-          <line x1="740" y1="185" x2="710" y2="185" class="svg-good" marker-end="url(#arrowL)"/>
-        </g>
-
-        <text x="185" y="145" class="svg-muted" text-anchor="middle">promote</text>
-        <text x="185" y="210" class="svg-muted" text-anchor="middle">digest</text>
-
-        <!-- flow legend -->
-        <text x="450" y="40" class="svg-label" text-anchor="middle" font-weight="600">Content flows up and down</text>
-        <text x="450" y="62" class="svg-muted" text-anchor="middle">Every boundary passes through the five-question evaluation gate.</text>
-
-        <!-- input inbox illustration -->
-        <g transform="translate(20, 260)">
-          <rect width="150" height="70" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <text x="75" y="28" class="svg-label" text-anchor="middle" font-weight="600">inputs/</text>
-          <text x="75" y="48" class="svg-muted" text-anchor="middle">the inbox — drop</text>
-          <text x="75" y="62" class="svg-muted" text-anchor="middle">anything here</text>
-        </g>
-        <line x1="95" y1="260" x2="95" y2="220" class="svg-accent-stroke" stroke-width="1.5" marker-end="url(#arrowU)"/>
-
-        <!-- arrow defs -->
-        <defs>
-          <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5"
-                  markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" class="svg-accent-fill"/>
-          </marker>
-          <marker id="arrowL" viewBox="0 0 10 10" refX="1" refY="5"
-                  markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 10 0 L 0 5 L 10 10 z" fill="#1a7f37"/>
-          </marker>
-          <marker id="arrowU" viewBox="0 0 10 10" refX="5" refY="1"
-                  markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 10 L 5 0 L 10 10 z" class="svg-accent-fill"/>
-          </marker>
-        </defs>
-      </svg>
-    </section>
-
-    <section aria-label="The gate">
-      <h2>The evaluation gate — five questions</h2>
-      <p>
-        Applied at every persistence boundary: capture, digest, promote,
-        publish. This is the system's immune system.
-      </p>
+  <!-- GATE -->
+  <section>
+    <h2>The evaluation gate</h2>
+    <p>Applied at every persistence boundary. This is the system's immune system — nothing persists without earning its place.</p>
+    <div class="gate">
       <ol>
-        <li><strong>Does this strengthen a position?</strong> &nbsp;(will a topic file change?)</li>
-        <li><strong>Does this inform a decision?</strong> &nbsp;(does it provide evidence for an open decision?)</li>
-        <li><strong>Would you reference this again?</strong> &nbsp;(durable signal vs. passing observation?)</li>
-        <li><strong>Is this actionable?</strong> &nbsp;(does it imply a concrete next step?)</li>
-        <li><strong>Does this already exist?</strong> &nbsp;(avoid duplicates)</li>
+        <li>Does this <strong>strengthen a position</strong>?</li>
+        <li>Does this <strong>inform a decision</strong>?</li>
+        <li>Would you <strong>reference this again</strong>?</li>
+        <li>Is this <strong>actionable</strong>?</li>
+        <li>Does this <strong>already exist</strong>?</li>
       </ol>
-      <div class="callout">
-        <p>
-          <strong>Scoring:</strong>
-          0/5 → discard (logged with reason).
-          1–2/5 → finding only (offer idea creation if novelty detected).
-          3+/5 → finding + topic update + possibly a new decision or idea.
-        </p>
-        <p class="muted">
-          The gate is never silent. Every accept and every reject is logged
-          with the rationale. If the user insists, the agent will persist
-          with a low-confidence flag — but it always explains why.
-        </p>
+      <div class="score">
+        <span>0/5 → discard</span>
+        <span>1–2/5 → finding only</span>
+        <span>3+/5 → finding + topic + decision</span>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section aria-label="Memory model">
-      <h2>Four kinds of memory</h2>
-      <p>
-        Each kind has a distinct purpose and context cost. Splitting them by
-        access pattern is what keeps the agent fast.
-      </p>
+  <!-- MEMORY -->
+  <section>
+    <h2>Four kinds of memory</h2>
+    <div class="grid">
+      <div class="card"><h3>findings/</h3><p>Dated, immutable snapshots. The evidence base.</p></div>
+      <div class="card"><h3>topics/</h3><p>Living positions. Updated in place with changelog.</p></div>
+      <div class="card"><h3>ideas/</h3><p>Incubation objects. Seed → growing → ready → shipped.</p></div>
+      <div class="card"><h3>foundation/</h3><p>Identity: who you are, your context, sources, stakeholders.</p></div>
+    </div>
+  </section>
 
-      <svg viewBox="0 0 900 220" aria-label="Memory model diagram" role="img">
-        <!-- findings stack -->
-        <g>
-          <rect x="30"  y="50" width="230" height="120" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="145" y="80" class="svg-label" text-anchor="middle" font-weight="600">findings/</text>
-          <text x="145" y="103" class="svg-muted" text-anchor="middle">historical memory</text>
-          <text x="145" y="122" class="svg-muted" text-anchor="middle">YYYY-MM-DD-slug.md</text>
-          <text x="145" y="148" class="svg-muted" text-anchor="middle" font-style="italic">immutable, dated</text>
-        </g>
+  <!-- COMMAND -->
+  <section>
+    <h2>One command: <code>/kb</code></h2>
+    <p>The agent infers the layer and action from context. No subcommand memorization needed.</p>
+    <div class="cmd-list">
+      <p><code>/kb [text]</code> — capture + evaluate</p>
+      <p><code>/kb review</code> — process inbox</p>
+      <p><code>/kb promote</code> — push to team</p>
+      <p><code>/kb digest team</code> — pull team changes</p>
+      <p><code>/kb idea [text]</code> — create idea</p>
+      <p><code>/kb develop [idea]</code> — sparring session</p>
+      <p><code>/kb decide [desc]</code> — open decision</p>
+      <p><code>/kb start-day</code> — morning briefing</p>
+      <p><code>/kb end-week</code> — weekly summary</p>
+      <p><code>/kb present [topic]</code> — HTML slides</p>
+      <p><code>/kb setup</code> — onboarding wizard</p>
+    </div>
+  </section>
 
-        <!-- topics -->
-        <g>
-          <rect x="335" y="50" width="230" height="120" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="450" y="80" class="svg-label" text-anchor="middle" font-weight="600">topics/</text>
-          <text x="450" y="103" class="svg-muted" text-anchor="middle">living memory</text>
-          <text x="450" y="122" class="svg-muted" text-anchor="middle">&lt;slug&gt;.md</text>
-          <text x="450" y="148" class="svg-muted" text-anchor="middle" font-style="italic">updated in place + changelog</text>
-        </g>
-
-        <!-- foundation -->
-        <g>
-          <rect x="640" y="50" width="230" height="120" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="755" y="80" class="svg-label" text-anchor="middle" font-weight="600">foundation/</text>
-          <text x="755" y="103" class="svg-muted" text-anchor="middle">identity memory</text>
-          <text x="755" y="122" class="svg-muted" text-anchor="middle">me, context, sources, …</text>
-          <text x="755" y="148" class="svg-muted" text-anchor="middle" font-style="italic">rarely changes, always in context</text>
-        </g>
-
-        <!-- arrows -->
-        <path d="M 260 110 Q 300 110 335 110" class="svg-accent-stroke" stroke-width="1.5" fill="none" marker-end="url(#arrowR2)"/>
-        <text x="298" y="100" class="svg-muted" text-anchor="middle">cite</text>
-
-        <!-- ideas (incubation) -->
-        <g transform="translate(182, 0)">
-          <rect x="335" y="50" width="230" height="120" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <text x="450" y="80" class="svg-label" text-anchor="middle" font-weight="600">ideas/</text>
-          <text x="450" y="103" class="svg-muted" text-anchor="middle">incubation memory</text>
-          <text x="450" y="122" class="svg-muted" text-anchor="middle">I-YYYY-MM-DD-slug.md</text>
-          <text x="450" y="148" class="svg-muted" text-anchor="middle" font-style="italic">seed → growing → ready → shipped</text>
-        </g>
-
-        <text x="450" y="205" class="svg-muted" text-anchor="middle" font-style="italic">
-          Inline changelog on every topic + foundation update — the reasoning chain is traceable without git log.
-        </text>
-
-        <defs>
-          <marker id="arrowR2" viewBox="0 0 10 10" refX="9" refY="5"
-                  markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" class="svg-accent-fill"/>
-          </marker>
-        </defs>
-      </svg>
-    </section>
-
-    <section aria-label="Command">
-      <h2>One command</h2>
-      <p>There is exactly one user-facing command: <span class="kbd">/kb</span>. The agent infers the layer and action from context.</p>
-      <pre><code>/kb                        → status (if bare) or auto-detect
-/kb [text/URL/path]        → capture + evaluate
-/kb review                 → process pending items in inputs/
-/kb promote [file]         → push to team KB
-/kb digest team            → pull team changes into personal findings
-/kb idea [text]            → create an idea (seed)
-/kb develop [idea]         → sparring session on an idea
-/kb decide [description]   → open a new decision
-/kb task done [item]       → complete a task
-/kb start-day              → morning briefing
-/kb end-week               → Friday 15:00 weekly summary
-/kb present [topic]        → versioned HTML presentation (light + dark)
-/kb setup                  → run the interactive onboarding wizard</code></pre>
-    </section>
-
-    <section aria-label="Decisions and artifacts">
-      <h2>Decisions as first-class objects</h2>
-      <p>
-        Strategic and tactical choices live in their own files with explicit
-        lifecycle, stakeholders, and evidence trails — not buried in prose.
-        When a decision resolves, the agent archives it, updates affected
-        topics with a changelog entry, and closes related tasks.
-      </p>
-      <div class="pill-row">
-        <span class="pill"><strong>gathering-evidence</strong></span>
-        <span class="pill">→</span>
-        <span class="pill"><strong>under-discussion</strong></span>
-        <span class="pill">→</span>
-        <span class="pill"><strong>proposed</strong></span>
-        <span class="pill">→</span>
-        <span class="pill"><strong>decided</strong></span>
-        <span class="pill">→</span>
-        <span class="pill">archive</span>
+  <!-- DECISIONS + IDEAS -->
+  <section>
+    <h2>Decisions &amp; ideas as first-class objects</h2>
+    <div class="grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="card">
+        <h3>Decisions</h3>
+        <p>Tracked with evidence trails, stakeholders, RACI, and due dates. Not buried in prose.</p>
+        <p style="font-size:.8rem;color:var(--fg3);margin-top:.5rem">gathering-evidence → under-discussion → proposed → decided → archive</p>
       </div>
-
-      <h2>Ideas as incubation objects</h2>
-      <p>
-        Observations with novelty value that aren't ready to shape a topic
-        become <strong>ideas</strong> — tracked with their own lifecycle,
-        developed via sparring (<code>/kb develop</code>), and promoted when
-        mature. The agent plays devil's advocate, surfaces assumptions, and
-        tracks the reasoning chain.
-      </p>
-      <div class="pill-row">
-        <span class="pill"><strong>seed</strong></span>
-        <span class="pill">→</span>
-        <span class="pill"><strong>growing</strong></span>
-        <span class="pill">→</span>
-        <span class="pill"><strong>ready</strong></span>
-        <span class="pill">→</span>
-        <span class="pill">shipped | archived</span>
+      <div class="card">
+        <h3>Ideas</h3>
+        <p>Observations with novelty value get incubated. The agent plays devil's advocate via <code>/kb develop</code>.</p>
+        <p style="font-size:.8rem;color:var(--fg3);margin-top:.5rem">seed → growing → ready → shipped | archived</p>
       </div>
+    </div>
+  </section>
 
-      <h2>Vision, mission &amp; goals</h2>
-      <p>
-        Each layer can declare a <strong>vision</strong> (north star),
-        <strong>mission</strong> (what we do), and <strong>goals</strong>
-        (measurable targets). These actively steer the system — the
-        evaluation gate checks strategic alignment, tasks are prioritized by
-        goal relevance, and cross-layer promotions are grounded in mission fit.
-      </p>
+  <!-- MULTI-HARNESS -->
+  <section>
+    <h2>Cross-agent portable</h2>
+    <p>One source of skills and agents feeds three harnesses. Write once, use everywhere.</p>
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="card" style="text-align:center"><h3>Claude Code</h3><p>.claude/skills/</p></div>
+      <div class="card" style="text-align:center"><h3>VS Code Copilot</h3><p>.github/skills/</p></div>
+      <div class="card" style="text-align:center"><h3>OpenCode</h3><p>.opencode/skills/</p></div>
+    </div>
+  </section>
 
-      <h2>Presentation-ready output</h2>
-      <p>
-        <span class="kbd">/kb present [topic]</span> generates a self-contained
-        HTML artifact with both light and dark themes, an in-page toggle, a
-        subtle <code>v{version} · {date}</code> watermark on the intro slide,
-        and a changelog appendix. This very page is an example.
-      </p>
-    </section>
+  <!-- INSTALL -->
+  <section id="install">
+    <h2>Get started</h2>
+    <div class="install-grid">
+      <div class="card">
+        <h3>Claude Code</h3>
+        <pre><code>/install-marketplace https://github.com/wlfghdr/agentic-kb
+/kb setup</code></pre>
+      </div>
+      <div class="card">
+        <h3>VS Code</h3>
+        <pre><code>// settings.json → chat.plugins.marketplaces
+["wlfghdr/agentic-kb"]
+// then: /kb setup</code></pre>
+      </div>
+      <div class="card">
+        <h3>OpenCode</h3>
+        <pre><code>scripts/install --target opencode --global
+# then: /kb setup</code></pre>
+      </div>
+    </div>
+    <p style="margin-top:1.5rem">That's it. <code>/kb setup</code> walks you through everything — name, role, workstreams, branding, integrations.</p>
+  </section>
 
-    <section aria-label="Multi-harness">
-      <h2>One source, three harnesses</h2>
-      <p>
-        Skills and agents are <strong>cross-agent portable</strong>. One set
-        of sources feeds VS Code Copilot Chat, Claude Code, and OpenCode via
-        a generated per-harness manifest.
-      </p>
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Apache-2.0 · <a href="README.md">README</a> · <a href="docs/REFERENCE.md">Reference</a> · <a href="CONTRIBUTING.md">Contributing</a> · <a href="https://github.com/wlfghdr/agentic-kb">GitHub</a></p>
+  </div>
 
-      <svg viewBox="0 0 900 250" aria-label="Multi-harness distribution" role="img">
-        <!-- central source -->
-        <g>
-          <rect x="350" y="100" width="200" height="60" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="450" y="126" class="svg-label" text-anchor="middle" font-weight="600">skills/ + agents/</text>
-          <text x="450" y="144" class="svg-muted" text-anchor="middle">single source of truth</text>
-        </g>
-
-        <!-- three harnesses -->
-        <g>
-          <rect x="40" y="40" width="200" height="60" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="140" y="66" class="svg-label" text-anchor="middle" font-weight="600">Claude Code</text>
-          <text x="140" y="84" class="svg-muted" text-anchor="middle">.claude-plugin/marketplace.json</text>
-
-          <rect x="660" y="40" width="200" height="60" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="760" y="66" class="svg-label" text-anchor="middle" font-weight="600">VS Code Copilot</text>
-          <text x="760" y="84" class="svg-muted" text-anchor="middle">plugin.json + .github/skills/</text>
-
-          <rect x="350" y="200" width="200" height="60" rx="8" class="svg-fill-bg svg-stroke" stroke-width="1.5"/>
-          <text x="450" y="226" class="svg-label" text-anchor="middle" font-weight="600">OpenCode</text>
-          <text x="450" y="244" class="svg-muted" text-anchor="middle">.opencode/{skills,agents,commands}/</text>
-        </g>
-
-        <!-- lines from source to targets -->
-        <line x1="350" y1="120" x2="240" y2="80" class="svg-accent-stroke" stroke-width="1.5"/>
-        <line x1="550" y1="120" x2="660" y2="80" class="svg-accent-stroke" stroke-width="1.5"/>
-        <line x1="450" y1="160" x2="450" y2="200" class="svg-accent-stroke" stroke-width="1.5"/>
-
-        <text x="300" y="185" class="svg-muted" font-style="italic">Installer: symlinks on POSIX · copies on Windows</text>
-      </svg>
-    </section>
-
-    <section aria-label="Install">
-      <h2>Install</h2>
-      <h3>Claude Code</h3>
-      <pre><code>/plugin marketplace add https://github.com/&lt;org&gt;/agentic-kb
-/plugin install kb@agentic-kb</code></pre>
-
-      <h3>VS Code Copilot Chat</h3>
-      <pre><code>// settings.json
-{
-  "chat.plugins.marketplaces": [
-    "&lt;org&gt;/agentic-kb"
-  ]
-}</code></pre>
-
-      <h3>OpenCode</h3>
-      <pre><code>git clone https://github.com/&lt;org&gt;/agentic-kb
-cd agentic-kb
-scripts/install --target opencode --global</code></pre>
-    </section>
-
-    <section aria-label="Principles">
-      <h2>Seven core principles</h2>
-      <ol>
-        <li><strong>Lean by default</strong> — every piece of content must earn its place.</li>
-        <li><strong>Signal over noise</strong> — relevance is measured against themes, not "interesting".</li>
-        <li><strong>Decisions as first-class objects</strong> — tracked explicitly, not buried in prose.</li>
-        <li><strong>Stakeholders inform action</strong> — the agent suggests who to involve.</li>
-        <li><strong>Always offer next steps</strong> — never leave the user staring at output.</li>
-        <li><strong>Multiple workstreams</strong> — one personal KB can track parallel tracks.</li>
-        <li><strong>Presentation-ready</strong> — any topic can become a versioned HTML artifact.</li>
-      </ol>
-    </section>
-
-    <section aria-label="Next">
-      <h2>Next</h2>
-      <p>
-        Read the spec → <a href="docs/concept/01-overview.md">docs/concept/01-overview.md</a>.
-        Browse commands → <a href="docs/spec/commands.md">docs/spec/commands.md</a>.
-        Try the example → <a href="docs/examples/day-in-the-life.md">day-in-the-life.md</a>.
-      </p>
-      <p>Issues and PRs welcome. See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
-    </section>
-
-    <section class="appendix" aria-label="Appendix">
-      <h2>Changelog</h2>
-      <table>
-        <thead>
-          <tr><th>Version</th><th>Date</th><th>What changed</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>2.0</td><td>2026-04-18</td><td>Moved to repo root as index.html for GitHub Pages. Version bump for public release.</td></tr>
-          <tr><td>1.0</td><td>2026-04-18</td><td>Initial overview page — intro, problem, solution, memory model, /kb command, multi-harness, install.</td></tr>
-        </tbody>
-      </table>
-
-      <h2>Sources</h2>
-      <ul>
-        <li><a href="README.md">README.md</a> — top-level orientation</li>
-        <li><a href="docs/concept/01-overview.md">docs/concept/01-overview.md</a> — principles</li>
-        <li><a href="docs/concept/02-architecture.md">docs/concept/02-architecture.md</a> — five layers</li>
-        <li><a href="docs/concept/08-evaluation-gate.md">docs/concept/08-evaluation-gate.md</a> — the gate</li>
-        <li><a href="docs/spec/marketplace-and-skills.md">docs/spec/marketplace-and-skills.md</a> — multi-harness distribution</li>
-      </ul>
-
-      <p class="watermark" style="margin-top:2rem;">agentic-kb · v2.0 · 2026-04-18 · Apache-2.0</p>
-    </section>
-
-  </main>
+</main>
 </body>
 </html>

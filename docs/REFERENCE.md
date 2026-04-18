@@ -1,6 +1,8 @@
 # Reference
 
-> Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For behavioral specs, read the skill and agent files directly: [`skills/kb-management/SKILL.md`](../skills/kb-management/SKILL.md), [`skills/kb-setup/SKILL.md`](../skills/kb-setup/SKILL.md), [`agents/kb-operator.md`](../agents/kb-operator.md).
+> **Version:** 1.0
+
+Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For behavioral specs, read the skill and agent files directly: [`skills/kb-management/SKILL.md`](../skills/kb-management/SKILL.md), [`skills/kb-setup/SKILL.md`](../skills/kb-setup/SKILL.md), [`agents/kb-operator.md`](../agents/kb-operator.md).
 
 ---
 
@@ -433,3 +435,11 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 | OpenCode | `.opencode/skills/<name>/SKILL.md` | `.opencode/agents/<name>.md` | `.opencode/config.yaml` |
 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree.
+
+---
+
+## Changelog
+
+| Date | What changed |
+|------|-------------|
+| 2026-04-19 | Initial — consolidated from 23 concept/spec docs |

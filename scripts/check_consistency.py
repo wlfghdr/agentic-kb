@@ -18,13 +18,14 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
-LONG_LIVED_DIRS = [REPO / "docs" / "concept", REPO / "docs" / "spec"]
-OPTIONAL_LONG_LIVED = [REPO / "docs" / "roadmap.md", REPO / "docs" / "glossary.md"]
+LONG_LIVED_DIRS: list[Path] = []
+OPTIONAL_LONG_LIVED = [REPO / "docs" / "REFERENCE.md", REPO / "docs" / "glossary.md"]
 
 # Files that are allowed to not have a version header — narrative walkthroughs,
 # examples, and standalone index files.
 EXEMPT_FROM_VERSION = {
     REPO / "docs" / "examples" / "day-in-the-life.md",
+    REPO / "docs" / "roadmap.md",
 }
 
 # Terms we forbid in the public spec.
