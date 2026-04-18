@@ -10,7 +10,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Capture** | The flow that turns raw input into a finding (or skipped material). Command: `/kb [text/URL/path]`. |
 | **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and team output topics. |
 | **Decision** | A first-class artifact representing an open or resolved choice. One file per decision. Lifecycle: `gathering-evidence → under-discussion → proposed → decided`, optionally `revisiting`. |
-| **Digest** | The flow that pulls changes from a higher layer (team/org) down into the personal KB as a finding. Command: `/kb digest team|org`. |
+| **Digest** | The flow that pulls changes from a higher layer (team/org) down into the personal KB as a finding. Command: `/kb digest team\|org`. |
 | **Evaluation gate** | The five-question relevance filter applied at every persistence boundary. |
 | **External anchor** | A link from the KB to an authoritative external source (dashboard, runbook, CMDB). Registered in `sources.md` via an alias. |
 | **Finding** | A dated, immutable snapshot capturing what was learned on a specific date. Path: `references/findings/YYYY-MM-DD-slug.md`. |
@@ -48,3 +48,4 @@ The following terms are **not** used in this spec; use the term on the right ins
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-18 | Initial version | New |
+| 2026-04-18 | Escaped literal `\|` inside the Digest row so markdownlint MD056 passes (no semantic change) | CI fix |

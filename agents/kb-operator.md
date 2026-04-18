@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions and TODOs, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 2.0.0
+version: 2.1.0
 uses:
   - kb-management
   - kb-setup
@@ -70,14 +70,18 @@ Monitor `decisions/active/`:
 
 Two responsibilities.
 
-**Always-current overviews** — regenerated after every state-mutating operation:
+**Always-current overviews** — snapshots of current KB state:
 
 - `references/reports/inventory.html` — configured layers, external sources, workstreams, marketplace status.
 - `references/reports/open-decisions.html` — snapshot of every `decisions/active/*.md` across all layers.
 - `references/reports/open-todos.html` — focus, waiting, backlog across all layers.
 - `references/reports/index.html` — chronological list of every HTML artifact.
 
-Rules: deterministic, fast, bundled with the same commit as the data change. Level 1 asks before regenerating; Level 2/3 runs silently. Watermark uses `latest · {YYYY-MM-DD HH:MM}`.
+Regeneration (v2.0 — manual): triggered by `/kb status --refresh-overviews`, `/kb end-day`, `/kb end-week`, `/kb present`, or `/kb report`. After any other state-mutating operation, offer the refresh to the user rather than running it silently.
+
+Regeneration (v2.1 — automatic, planned): bundled with the same commit as the data change. Level 1 asks before regenerating; Level 2/3 runs silently. Tracked in [docs/roadmap.md](../docs/roadmap.md) §Near-Term.
+
+Rules (both): deterministic, fast. Watermark uses `latest · {YYYY-MM-DD HH:MM}`.
 
 **Historical artifacts** — dated, immutable, versioned:
 
@@ -103,6 +107,8 @@ After substantive changes:
 
 ## Autonomous loop (Level 3 only)
 
+Requires native background automation. Claude Code and OpenCode support this directly; VS Code Copilot does not — VS Code users must schedule via OS cron + CLI invocation of the harness. See `docs/spec/ide-support.md` §Capability Matrix for the per-harness row.
+
 When `.kb-automation.yaml → level: 3` and the user has opted in, run this loop on the configured schedule:
 
 ```
@@ -119,7 +125,8 @@ for workstream in workstreams/*:
 for decision in decisions/active/*:
   check due date + new evidence → update
 
-regenerate live overviews  # inventory, open-decisions, open-todos, index
+# v2.1+: auto-regenerate live overviews here
+# v2.0: skipped — overviews refresh on /kb end-day or --refresh-overviews
 
 if changes exist:
   commit + push (or PR if branch-protected)
