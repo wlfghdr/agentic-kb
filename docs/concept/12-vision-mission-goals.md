@@ -6,11 +6,11 @@ Every KB layer can declare a **vision**, **mission**, and **goals**. These are n
 
 ## The Three Levels
 
-| Level | What it answers | Cadence |
-|-------|----------------|---------|
-| **Vision** | Where are we heading? (north star) | Rarely changes — years |
-| **Mission** | What do we do to get there? | Changes with strategy shifts — quarters |
-| **Goals** | What are the measurable targets? | Changes with planning cycles — weeks to quarters |
+| Level | What it answers | Cadence | Synonyms |
+|-------|----------------|---------|----------|
+| **Vision** | Where are we heading? (north star) | Rarely changes — years | — |
+| **Mission** | What do we do to get there? | Changes with strategy shifts — quarters | — |
+| **Goals** | What are the measurable targets? | Changes with planning cycles — weeks to quarters | MCGs (Mission-Critical Goals), OKRs |
 
 ## How VMG Differs per Layer
 
