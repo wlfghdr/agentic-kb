@@ -37,6 +37,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - `idea-create`, `idea-develop`, `idea-ship` log operations.
 - Idea lifecycle management in kb-operator agent (Section 4).
 - VMG-aligned evaluation gate scoring, goal status in rituals.
+- `skills/kb-management/templates/report.html` — comprehensive slide-deck template with 12 slide types (Cover, Metrics, Progress, Decisions, Blocked, Ideas, Kanban, Daily Digest, Stakeholder Map, Pitch, Comparison, Closing), dark/light theme, slide engine with keyboard navigation, and sample data.
+- Slide composition spec in `html-artifacts.md` — defines per-report-type slide recipes (Weekly Status, Daily Digest, Pitch, Roadmap Status, Topic Presentation) and ritual triggers for report generation.
+- Stakeholder auto-update rule in `07-stakeholders.md` — agent detects relevance changes during processing and suggests updates to `stakeholders.md`.
+- `stakeholder-update` log operation added to `logging.md`.
 
 ### Changed (continued)
 

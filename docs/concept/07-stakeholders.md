@@ -32,13 +32,32 @@ A lightweight people map in `references/foundation/stakeholders.md`. **Not a CRM
 | `/kb start-day` detects `Waiting` items | Shows who to follow up with and how |
 | `/kb digest team` finds a new contributor | Offers to add them to `stakeholders.md` |
 
+## Auto-Update Rule
+
+The stakeholder map is a **living document**. The agent updates it whenever processing reveals evidence of relevance changes:
+
+| Signal detected during processing | Agent action |
+|------------------------------------|-------------|
+| New person mentioned 3+ times in findings (within 14 days) | Suggest adding to `stakeholders.md` with inferred role |
+| Existing stakeholder mentioned in a new team/org-unit context | Suggest updating their "Cares about" column |
+| Stakeholder not mentioned for 60+ days | Flag as potentially stale in `end-week` |
+| Team restructure signal (new org unit, team rename, role change) | Suggest updating role + org affiliation |
+| New blocker or decision involving an unknown person | Suggest adding immediately with "Reach via" TBD |
+| Digest from L2/L3 reveals new RACI assignments on the user | Suggest adding the accountable person |
+
+Rules:
+- **Never silently update** — always show the proposed change and ask for confirmation.
+- Updates are logged as `stakeholder-update` operations in the daily log.
+- The stakeholder map is included in the weekly report's Stakeholder Map slide if any changes occurred that week.
+- At team/org-unit level, stakeholder changes propagate as suggestions to personal KBs (not forced).
+
 ## Context Cost
 
-~30 lines. Loaded only when decisions or TODOs reference people. Never a bottleneck.
+~30 lines. Loaded only when decisions or tasks reference people. Never a bottleneck.
 
 ## In Team and Org-Unit KBs
 
-Team and org-unit KBs do **not** maintain a central stakeholders file — RACIs on decisions and TODOs already capture who's involved for each piece of work. The personal KB's `stakeholders.md` is the canonical place for the user's own mental model of their network.
+Team and org-unit KBs do **not** maintain a central stakeholders file — RACIs on decisions and tasks already capture who's involved for each piece of work. The personal KB's `stakeholders.md` is the canonical place for the user's own mental model of their network.
 
 ---
 

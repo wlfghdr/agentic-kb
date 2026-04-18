@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="agentic-kb">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   AGENTIC-KB REPORT TEMPLATE — v1.0
+   Contains sample slides for every report type.
+   Agents: pick the slides matching the purpose, fill content.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ─────────────────────────────────────── */
+:root {
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --slide-w: 100vw;
+  --slide-h: 100vh;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 8px rgba(0,0,0,.12);
+  --transition: .2s ease;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1117;
+  --bg-soft: #1a1d27;
+  --bg-card: #1e2130;
+  --fg: #e8eaf0;
+  --fg-muted: #9ca3b4;
+  --fg-dim: #6b7280;
+  --border: #2d3348;
+  --border-strong: #3d4560;
+  --accent: #6ea8fe;
+  --accent-bg: rgba(110,168,254,.1);
+  --success: #86efac;
+  --success-bg: rgba(134,239,172,.1);
+  --warning: #fcd34d;
+  --warning-bg: rgba(252,211,77,.1);
+  --danger: #fca5a5;
+  --danger-bg: rgba(252,165,165,.1);
+  --purple: #c4b5fd;
+  --purple-bg: rgba(196,181,253,.1);
+  --gradient-cover: linear-gradient(135deg, #1a1d27 0%, #2d1b69 50%, #1a1d27 100%);
+  --gradient-accent: linear-gradient(90deg, var(--accent), var(--purple));
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-soft: #f8f9fb;
+  --bg-card: #ffffff;
+  --fg: #1f2937;
+  --fg-muted: #6b7280;
+  --fg-dim: #9ca3af;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --accent: #2563eb;
+  --accent-bg: rgba(37,99,235,.06);
+  --success: #16a34a;
+  --success-bg: rgba(22,163,74,.06);
+  --warning: #d97706;
+  --warning-bg: rgba(217,119,6,.06);
+  --danger: #dc2626;
+  --danger-bg: rgba(220,38,38,.06);
+  --purple: #7c3aed;
+  --purple-bg: rgba(124,58,237,.06);
+  --gradient-cover: linear-gradient(135deg, #f0f4ff 0%, #e8e0ff 50%, #f0f4ff 100%);
+  --gradient-accent: linear-gradient(90deg, var(--accent), var(--purple));
+}
+
+/* ── Reset & Base ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: var(--font); background: var(--bg); color: var(--fg); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Slide Engine ──────────────────────────────────────── */
+.deck { position: relative; width: var(--slide-w); height: var(--slide-h); }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 4rem 6rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease;
+}
+.slide.active { opacity: 1; pointer-events: auto; }
+
+/* ── Header ────────────────────────────────────────────── */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .5rem 1.5rem; background: var(--bg-soft); border-bottom: 1px solid var(--border);
+}
+.header-title { font-size: .75rem; font-weight: 500; color: var(--fg-muted); letter-spacing: .02em; }
+.theme-toggle {
+  background: none; border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--fg-muted); cursor: pointer; padding: .25rem .5rem; font-size: .75rem;
+  transition: var(--transition);
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Footer / Progress ─────────────────────────────────── */
+.footer {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .4rem 1.5rem; background: var(--bg-soft); border-top: 1px solid var(--border);
+}
+.progress { flex: 1; height: 3px; background: var(--border); border-radius: 2px; margin: 0 1rem; }
+.progress-bar { height: 100%; background: var(--gradient-accent); border-radius: 2px; transition: width .3s; }
+.slide-counter { font-size: .7rem; color: var(--fg-dim); min-width: 3rem; text-align: right; }
+.nav-btn {
+  background: none; border: none; color: var(--fg-dim); cursor: pointer;
+  font-size: .9rem; padding: .2rem .4rem; border-radius: 4px;
+  transition: var(--transition);
+}
+.nav-btn:hover { color: var(--accent); background: var(--accent-bg); }
+
+/* ── Slide Types ───────────────────────────────────────── */
+
+/* Cover */
+.slide.cover {
+  background: var(--gradient-cover);
+  text-align: center; gap: 1.5rem;
+}
+.slide.cover h1 { font-size: 2.8rem; font-weight: 700; line-height: 1.15; }
+.slide.cover .subtitle { font-size: 1.2rem; color: var(--fg-muted); }
+.slide.cover .watermark { font-size: .75rem; color: var(--fg-dim); margin-top: 2rem; }
+
+/* Section Title */
+.slide.section-title { gap: 1rem; }
+.slide.section-title::before {
+  content: ''; position: absolute; left: 4rem; top: 30%; bottom: 30%;
+  width: 4px; background: var(--gradient-accent); border-radius: 2px;
+}
+.slide.section-title h2 { font-size: 2.2rem; font-weight: 700; padding-left: 1.5rem; }
+.slide.section-title .section-desc { font-size: 1.1rem; color: var(--fg-muted); padding-left: 1.5rem; }
+
+/* Content (default) */
+.slide.content { gap: 1.5rem; }
+.slide.content h2 { font-size: 1.6rem; font-weight: 600; }
+.slide.content h3 { font-size: 1.2rem; font-weight: 600; color: var(--fg-muted); margin-top: .5rem; }
+.slide.content p { line-height: 1.6; color: var(--fg-muted); }
+.slide.content ul, .slide.content ol { padding-left: 1.5rem; line-height: 1.8; }
+.slide.content li { margin-bottom: .3rem; }
+.slide.content li::marker { color: var(--accent); }
+
+/* Dashboard (scrollable single-slide) */
+.slide.dashboard { overflow-y: auto; padding: 3rem 4rem; gap: 2rem; justify-content: flex-start; }
+
+/* ── Layout Helpers ────────────────────────────────────── */
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.columns.wide-left { grid-template-columns: 2fr 1fr; }
+.columns.wide-right { grid-template-columns: 1fr 2fr; }
+.thirds { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+
+/* ── Cards ─────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.5rem; transition: var(--transition);
+}
+.card:hover { border-color: var(--border-strong); box-shadow: var(--shadow); }
+.card.accent { border-left: 3px solid var(--accent); }
+.card.success { border-left: 3px solid var(--success); }
+.card.warning { border-left: 3px solid var(--warning); }
+.card.danger { border-left: 3px solid var(--danger); }
+.card.purple { border-left: 3px solid var(--purple); }
+.card h4 { font-size: .9rem; font-weight: 600; margin-bottom: .5rem; }
+.card p { font-size: .85rem; color: var(--fg-muted); line-height: 1.5; }
+
+/* ── Metrics ───────────────────────────────────────────── */
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+.metric { text-align: center; padding: 1rem; background: var(--bg-soft); border-radius: var(--radius); border: 1px solid var(--border); }
+.metric-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+.metric-label { font-size: .75rem; color: var(--fg-muted); margin-top: .25rem; }
+
+/* ── Badges / Pills ────────────────────────────────────── */
+.badge {
+  display: inline-block; padding: .15rem .5rem; border-radius: 99px;
+  font-size: .7rem; font-weight: 500; text-transform: uppercase; letter-spacing: .03em;
+}
+.badge.done { background: var(--success-bg); color: var(--success); }
+.badge.progress { background: var(--accent-bg); color: var(--accent); }
+.badge.blocked { background: var(--danger-bg); color: var(--danger); }
+.badge.idea { background: var(--purple-bg); color: var(--purple); }
+.badge.waiting { background: var(--warning-bg); color: var(--warning); }
+
+/* ── Tables ────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+th { text-align: left; font-weight: 600; padding: .6rem .8rem; border-bottom: 2px solid var(--border-strong); color: var(--fg-muted); }
+td { padding: .6rem .8rem; border-bottom: 1px solid var(--border); }
+tr:hover td { background: var(--bg-soft); }
+
+/* ── Kanban ────────────────────────────────────────────── */
+.kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.kanban-col { background: var(--bg-soft); border-radius: var(--radius); padding: .75rem; min-height: 200px; }
+.kanban-col h5 { font-size: .75rem; font-weight: 600; color: var(--fg-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+.kanban-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: .6rem; margin-bottom: .5rem; font-size: .8rem; }
+.kanban-item .item-tag { font-size: .65rem; color: var(--fg-dim); }
+
+/* ── Callouts ──────────────────────────────────────────── */
+.callout { padding: 1rem 1.25rem; border-radius: var(--radius); border-left: 3px solid var(--accent); background: var(--accent-bg); font-size: .9rem; }
+.callout.success { border-color: var(--success); background: var(--success-bg); }
+.callout.warning { border-color: var(--warning); background: var(--warning-bg); }
+.callout.danger { border-color: var(--danger); background: var(--danger-bg); }
+.callout.purple { border-color: var(--purple); background: var(--purple-bg); }
+
+/* ── Stakeholder Map ───────────────────────────────────── */
+.stakeholder-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+.stakeholder { padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); }
+.stakeholder .name { font-weight: 600; font-size: .9rem; }
+.stakeholder .role { font-size: .75rem; color: var(--fg-muted); }
+.stakeholder .relevance { font-size: .75rem; color: var(--accent); margin-top: .25rem; }
+
+/* ── Timeline / Decision Log ───────────────────────────── */
+.timeline { position: relative; padding-left: 1.5rem; }
+.timeline::before { content: ''; position: absolute; left: .4rem; top: 0; bottom: 0; width: 2px; background: var(--border); }
+.timeline-item { position: relative; margin-bottom: 1.5rem; }
+.timeline-item::before { content: ''; position: absolute; left: -1.25rem; top: .5rem; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.timeline-item.blocked::before { background: var(--danger); }
+.timeline-item.decided::before { background: var(--success); }
+.timeline-item .tl-date { font-size: .7rem; color: var(--fg-dim); }
+.timeline-item .tl-title { font-weight: 500; font-size: .9rem; }
+.timeline-item .tl-desc { font-size: .8rem; color: var(--fg-muted); }
+
+/* ── Print ─────────────────────────────────────────────── */
+@media print {
+  .header, .footer { display: none; }
+  .deck { overflow: visible; }
+  .slide { position: relative; opacity: 1; pointer-events: auto; page-break-after: always; min-height: 100vh; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-title">{{HEADER_TITLE}}</span>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☾</button>
+</div>
+
+<div class="deck">
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: COVER
+       Use: First slide of every report/presentation.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide cover active">
+    <h1>Weekly Status Report</h1>
+    <p class="subtitle">Week 16 · 14–18 April 2026</p>
+    <p class="watermark">v1.0 · 2026-04-18</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: METRICS OVERVIEW
+       Use: Quick KPIs at a glance. Good opening after cover.
+       Suits: weekly status, daily digest, roadmap status.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>At a Glance</h2>
+    <div class="metrics">
+      <div class="metric"><div class="metric-value">7</div><div class="metric-label">Topics Progressed</div></div>
+      <div class="metric"><div class="metric-value">3</div><div class="metric-label">Decisions Needed</div></div>
+      <div class="metric"><div class="metric-value">2</div><div class="metric-label">Blocked Items</div></div>
+      <div class="metric"><div class="metric-value">4</div><div class="metric-label">Ideas in Incubation</div></div>
+      <div class="metric"><div class="metric-value">12</div><div class="metric-label">Tasks Completed</div></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: PROGRESS / WHAT HAPPENED
+       Use: Weekly or daily — things that moved forward.
+       Suits: weekly status (boss meeting), daily digest.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Progress This Week</h2>
+    <div class="columns">
+      <div>
+        <div class="card success">
+          <h4>agentic-kb v2.2 shipped</h4>
+          <p>Ideas lifecycle, VMG strategic steering, todo→tasks rename. 41 files, all CI green.</p>
+        </div>
+        <div class="card success" style="margin-top:1rem">
+          <h4>Bluebox session protocol finalized</h4>
+          <p>Contract v2 reviewed and merged. Harness integration tested.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card success">
+          <h4>Product strategy digest published</h4>
+          <p>Christoph's L2 framing integrated. Cross-reference summary in wh-kb.</p>
+        </div>
+        <div class="card accent">
+          <h4>Jira workstream sync automated</h4>
+          <p>Direct-API backend stable. 8 workstreams digested into wh-kb.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: DECISIONS NEEDED
+       Use: Items requiring boss/team input or escalation.
+       Suits: weekly status (boss meeting).
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Decisions Needed</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-date">Due: 2026-04-22</div>
+        <div class="tl-title">Bluebox naming — do we go public with codename?</div>
+        <div class="tl-desc">Stakeholders: Marketing, PM Lead. Evidence gathered, proposal ready.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">Due: 2026-04-25</div>
+        <div class="tl-title">L3 org-unit KB ownership</div>
+        <div class="tl-desc">Who maintains the cross-team KB? Options: rotate quarterly vs. dedicated owner.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-date">Overdue: 2026-04-14</div>
+        <div class="tl-title">ACC trust-surface scope for MVP</div>
+        <div class="tl-desc">Blocked on architecture review. Need alignment with Platform team.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: BLOCKED / RISKS
+       Use: Items that cannot progress without external action.
+       Suits: weekly status (boss meeting), escalation.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Blocked &amp; At Risk</h2>
+    <div class="columns">
+      <div>
+        <div class="card danger">
+          <h4><span class="badge blocked">blocked</span> Trust-surface API review</h4>
+          <p>Waiting on Platform team since Apr 10. Impact: ACC MVP timeline at risk.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card warning">
+          <h4><span class="badge waiting">at risk</span> Skill marketplace launch</h4>
+          <p>Depends on CI pipeline stabilization. ETA slipped from Apr 20 → May 5.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout danger" style="margin-top:1.5rem">
+      <strong>Escalation ask:</strong> Need 30 min with Platform lead to unblock trust-surface review.
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: IDEAS IN INCUBATION
+       Use: What's being explored / developed but not committed.
+       Suits: weekly status, innovation review, pitch prep.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Ideas in Incubation</h2>
+    <div class="thirds">
+      <div class="card purple">
+        <h4><span class="badge idea">seed</span> Cross-agent knowledge sync</h4>
+        <p>What if agents across different harnesses shared a reconciliation protocol?</p>
+      </div>
+      <div class="card purple">
+        <h4><span class="badge idea">growing</span> Outcome-linked roadmaps</h4>
+        <p>Kanban views auto-generated from Jira + KB goals. 2 sparring sessions done.</p>
+      </div>
+      <div class="card purple">
+        <h4><span class="badge idea">ready</span> Stakeholder auto-detection</h4>
+        <p>Pattern: 3+ mentions in findings → suggest adding to stakeholder map. Ready to ship.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: ROADMAP / KANBAN
+       Use: Visual timeline of what's coming.
+       Suits: weekly status, quarterly review, product planning.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide dashboard">
+    <h2>Roadmap — Next 4 Weeks</h2>
+    <div class="kanban">
+      <div class="kanban-col">
+        <h5>Done</h5>
+        <div class="kanban-item"><span class="badge done">done</span><br>agentic-kb v2.2<div class="item-tag">spec</div></div>
+        <div class="kanban-item"><span class="badge done">done</span><br>Session protocol v2<div class="item-tag">bluebox</div></div>
+      </div>
+      <div class="kanban-col">
+        <h5>This Week</h5>
+        <div class="kanban-item"><span class="badge progress">in progress</span><br>Report template system<div class="item-tag">agentic-kb</div></div>
+        <div class="kanban-item"><span class="badge progress">in progress</span><br>Tool proxy hardening<div class="item-tag">bluebox</div></div>
+      </div>
+      <div class="kanban-col">
+        <h5>Next Week</h5>
+        <div class="kanban-item">Marketplace CI pipeline<div class="item-tag">agentic-kb</div></div>
+        <div class="kanban-item">ACC event schema v2<div class="item-tag">acc</div></div>
+      </div>
+      <div class="kanban-col">
+        <h5>Later</h5>
+        <div class="kanban-item">L3 pilot with Observability team<div class="item-tag">org</div></div>
+        <div class="kanban-item">Skill marketplace beta<div class="item-tag">marketplace</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: DAILY DIGEST
+       Use: Quick status for daily standup / team sync.
+       Focus: what I did, what's relevant for teammates,
+       what I need to discuss.
+       Suits: daily meetings.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Daily Digest — Fri 18 Apr</h2>
+    <div class="columns wide-left">
+      <div>
+        <h3>What progressed</h3>
+        <ul>
+          <li>agentic-kb v2.2: Ideas + VMG + tasks rename — shipped &amp; pushed</li>
+          <li>Report template designed — ready for review</li>
+          <li>Stakeholder auto-update rule added to spec</li>
+        </ul>
+        <h3 style="margin-top:1.5rem">Relevant for team</h3>
+        <ul>
+          <li><strong>@stefan</strong> — incident-investigator can now consume agentic-kb skills</li>
+          <li><strong>@christoph</strong> — strategy brainstorming output format aligned with new report template</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Discuss / Need Input</h3>
+        <div class="card warning" style="margin-bottom:.75rem">
+          <h4>Trust-surface scope for MVP</h4>
+          <p>Need alignment on which trust assertions ACC validates.</p>
+        </div>
+        <div class="card accent">
+          <h4>Team KB pilot timing</h4>
+          <p>When should we start the L2 pilot? Post-MVP or in parallel?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: STAKEHOLDER MAP
+       Use: Who's involved, their roles, what changed.
+       Suits: weekly status appendix, onboarding, context.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Stakeholder Map</h2>
+    <p style="color:var(--fg-muted);margin-bottom:1rem">Auto-updated when processing reveals new relevance signals.</p>
+    <div class="stakeholder-grid">
+      <div class="stakeholder">
+        <div class="name">Christoph</div>
+        <div class="role">Product Strategy · Bluebox</div>
+        <div class="relevance">Active: strategy brainstorming, product definition</div>
+      </div>
+      <div class="stakeholder">
+        <div class="name">Stefan W.</div>
+        <div class="role">Labs · Incident Investigator</div>
+        <div class="relevance">Active: graptor integration, skill consumption</div>
+      </div>
+      <div class="stakeholder">
+        <div class="name">Platform Lead</div>
+        <div class="role">Platform Team</div>
+        <div class="relevance">Blocker: trust-surface API review pending</div>
+      </div>
+      <div class="stakeholder">
+        <div class="name">Boss</div>
+        <div class="role">Director · AI-first Org</div>
+        <div class="relevance">Primary audience: weekly status, escalations, decisions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: PITCH / PROPOSAL
+       Use: Single-topic persuasion slide.
+       Suits: pitch deck, decision proposal, budget ask.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Proposal: Start L2 Team KB Pilot</h2>
+    <div class="columns">
+      <div>
+        <h3>Why now</h3>
+        <ul>
+          <li>agentic-kb v2.2 has all L2 primitives (contributor dirs, RACIs, digests)</li>
+          <li>product-strategy-brainstorming already operates as a proto-L2</li>
+          <li>3 team members actively producing findings — promotion is manual today</li>
+        </ul>
+        <h3 style="margin-top:1.5rem">Ask</h3>
+        <div class="callout">
+          Approve 2-week pilot with the Bluebox strategy team. Success criteria: automated digest flow + 1 cross-referenced decision.
+        </div>
+      </div>
+      <div>
+        <h3>Risks &amp; Mitigations</h3>
+        <div class="card warning">
+          <h4>Adoption friction</h4>
+          <p>Mitigation: `/kb setup` handles scaffolding. Team only needs to push to their dirs.</p>
+        </div>
+        <div class="card accent" style="margin-top:.75rem">
+          <h4>Overhead concern</h4>
+          <p>Mitigation: all rituals are agent-initiated, not manual. Zero ceremony for contributors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: COMPARISON TABLE
+       Use: Tool/option comparison, feature matrix.
+       Suits: topic-based reports, landscape analysis.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide content">
+    <h2>Report Types — When to Use What</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Trigger</th><th>Audience</th><th>Key Slides</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge progress">weekly</span> Weekly Status</td><td><code>/kb end-week</code></td><td>Boss / skip-level</td><td>Cover + Metrics + Progress + Decisions + Blocked + Roadmap</td></tr>
+          <tr><td><span class="badge done">daily</span> Daily Digest</td><td><code>/kb end-day</code></td><td>Team standup</td><td>Cover + Daily Digest</td></tr>
+          <tr><td><span class="badge idea">pitch</span> Pitch / Proposal</td><td><code>/kb present --pitch</code></td><td>Decision-makers</td><td>Cover + Proposal + Comparison</td></tr>
+          <tr><td><span class="badge waiting">roadmap</span> Roadmap Status</td><td><code>/kb report roadmap</code></td><td>Stakeholders</td><td>Cover + Metrics + Kanban + Stakeholder Map</td></tr>
+          <tr><td><span class="badge blocked">topic</span> Topic Deep-Dive</td><td><code>/kb present [topic]</code></td><td>Specialists</td><td>Cover + Section Title + Content + Table + Closing</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLIDE TYPE: CLOSING
+       Use: Last slide. Summary or call-to-action.
+       ═══════════════════════════════════════════════════════ -->
+  <section class="slide cover">
+    <h1>Summary &amp; Next Steps</h1>
+    <p class="subtitle">3 decisions pending · 2 blockers to escalate · 4 ideas maturing</p>
+    <p class="watermark">Generated by agentic-kb · /kb end-week</p>
+  </section>
+
+</div>
+
+<div class="footer">
+  <button class="nav-btn" onclick="prev()" aria-label="Previous">◂</button>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <span class="slide-counter" id="counter"></span>
+  <button class="nav-btn" onclick="next()" aria-label="Next">▸</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+function show(n) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(n, slides.length - 1));
+  slides[current].classList.add('active');
+  document.getElementById('progressBar').style.width = ((current + 1) / slides.length * 100) + '%';
+  document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+}
+
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); show(0); }
+  if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+});
+
+document.querySelector('.deck').addEventListener('click', e => {
+  if (e.target.closest('a, button, .card, .kanban-item')) return;
+  e.clientX > window.innerWidth / 2 ? next() : prev();
+});
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.querySelector('.theme-toggle').textContent = next === 'dark' ? '☾' : '☀';
+  localStorage.setItem('akb-theme', next);
+}
+
+// Restore theme
+const saved = localStorage.getItem('akb-theme');
+if (saved) { document.documentElement.setAttribute('data-theme', saved); document.querySelector('.theme-toggle').textContent = saved === 'dark' ? '☾' : '☀'; }
+
+show(0);
+</script>
+</body>
+</html>

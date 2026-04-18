@@ -170,6 +170,57 @@ Semantic HTML, WCAG AA contrast, keyboard navigation, screen-reader-friendly lab
 | Weekly summary | automatic on `end-week` (Fri 15:00) | Aggregation of dailies + trend analysis | Week-in-review, promotion planning |
 | Overview (inventory / decisions / tasks / index) | automatic after every mutation | Current state of configured layers | Dashboard — always reflects now |
 
+## Slide Composition per Report Type
+
+The template `report.html` contains sample slides for every category. The agent **picks the slide types** matching the report purpose and fills content from KB state. It does not include all slide types in every report.
+
+### Slide types available
+
+| Slide type | CSS class | Content |
+|-----------|-----------|---------|
+| Cover | `.cover` | Title, subtitle (date range or topic), watermark |
+| Metrics | `.content` + `.metrics` | KPI grid — counts of progress, decisions, blockers, ideas |
+| Progress | `.content` + cards | What moved forward — success cards per item |
+| Decisions Needed | `.content` + `.timeline` | Open decisions requiring input, sorted by due date |
+| Blocked / Risks | `.content` + danger/warning cards | Items that cannot progress without external action |
+| Ideas in Incubation | `.content` + `.thirds` + purple cards | Seed / growing / ready ideas |
+| Roadmap / Kanban | `.dashboard` + `.kanban` | Timeline columns: Done, This Week, Next Week, Later |
+| Daily Digest | `.content` + `.columns.wide-left` | Left: progressed + relevant-for-team. Right: discuss/need-input |
+| Stakeholder Map | `.content` + `.stakeholder-grid` | People, roles, relevance, recent changes |
+| Pitch / Proposal | `.content` + `.columns` | Why now + ask (left), risks + mitigations (right) |
+| Comparison Table | `.content` + `.table-wrap` | Feature matrix, option comparison |
+| Closing | `.cover` | Summary + next-steps one-liner |
+
+### Report composition recipes
+
+| Report | Suggested slides (in order) |
+|--------|----------------------------|
+| **Weekly Status** (boss meeting) | Cover → Metrics → Progress → Decisions Needed → Blocked → Ideas → Roadmap → Stakeholder Map (if changed) → Closing |
+| **Daily Digest** (team standup) | Cover → Daily Digest |
+| **Pitch / Proposal** | Cover → Pitch → Comparison Table (optional) → Closing |
+| **Roadmap Status** | Cover → Metrics → Kanban → Stakeholder Map → Closing |
+| **Topic Presentation** | Cover → Section Title → Content slides → Comparison Table → Closing |
+
+### Ritual triggers for report generation
+
+| Ritual | Report generated | Suggestion behavior |
+|--------|-----------------|---------------------|
+| `/kb end-day` | Daily Digest HTML + finding | Always generated (can be skipped with `--no-report`) |
+| `/kb end-week` | Weekly Status HTML + finding | Always suggested; if the user has a recurring boss meeting, auto-include all relevant slides |
+| `/kb start-week` | — | Surfaces "Generate roadmap status?" if goals have moved |
+| capture / review | — | If a new blocker or decision is detected: "Update weekly draft?" |
+
+The weekly status report is the **primary artifact for boss meetings**. It focuses on:
+1. What happened/progressed (evidence of delivery)
+2. What needs decisions or is blocked (escalation surface)
+3. What's in ideation (innovation signal)
+4. Roadmap delta (what moved, what slipped)
+
+The daily digest is the **primary artifact for team standups**. It focuses on:
+1. What I progressed (my topics)
+2. What's relevant for teammates (cross-references, dependencies)
+3. What I need to discuss (input needed, alignment questions)
+
 ## Mandatory Behaviors
 
 ### 1. Subtle Version Watermark on the Intro Slide

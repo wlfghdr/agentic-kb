@@ -37,7 +37,7 @@ All timestamps are UTC.
 | # | Field | Description |
 |---|-------|-------------|
 | 1 | Time | `HH:MM:SSZ` (date is in the filename) |
-| 2 | Operation | `capture`, `digest`, `publish`, `promote`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `idea-create`, `idea-develop`, `idea-ship`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-start-day`, `ritual-end-day`, `ritual-start-week`, `ritual-end-week`, `automation-failure` |
+| 2 | Operation | `capture`, `digest`, `publish`, `promote`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `idea-create`, `idea-develop`, `idea-ship`, `stakeholder-update`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-start-day`, `ritual-end-day`, `ritual-start-week`, `ritual-end-week`, `automation-failure` |
 | 3 | Scope | `personal`, `team-kb`, `org-unit`, `marketplace`, `personal→team`, `team→personal`, `personal→marketplace`, `team-kb/<contributor>`, `workspace` |
 | 4 | Target | File path or short description |
 | 5 | Details | Free-form context, including gate rationale for `skipped` operations |
