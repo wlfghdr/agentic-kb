@@ -17,6 +17,15 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- CI: `markdown-lint` now passes on `main`. Disabled cosmetic `MD060`/`MD040`; added blank lines around headings and lists in `AGENTS.md`; escaped `|` inside table cells in `docs/glossary.md` and `docs/spec/workspace-layout.md`; removed the duplicate empty `[0.1.0]` heading in this file.
+- CI: `consistency-and-versions` now passes on `main`. Added this `[Unreleased]` section as required by `scripts/check_consistency.py`.
+
+---
+
 ## [2.0.0] — 2026-04-18
 
 ### Changed
@@ -57,10 +66,6 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 - Removed the one remaining internal-vocabulary reference ("Lane 2") from `docs/concept/06-workstreams.md`.
 - `scripts/check_html_artifacts.py` theme-marker regex loosened to accept `[data-theme="light"]` / `[data-theme="dark"]` CSS selectors (the common idiomatic form).
-
----
-
-## [0.1.0] — 2026-04-18
 
 ---
 
