@@ -16,44 +16,45 @@ Condensed reference for the skill's runtime. For the full spec, see the `agentic
 
 ```
 my-kb/
-├── .kb-config.yaml
-├── .kb-automation.yaml
-├── .kb-artifacts.yaml
-├── __inputs/
+├── .kb-config/
+│   ├── layers.yaml
+│   ├── automation.yaml
+│   └── artifacts.yaml
+├── __kb-inputs/
 │   └── digested/YYYY-MM/
-├── _references/
+├── _kb-references/
 │   ├── topics/              living, inline changelog
 │   ├── findings/            YYYY-MM-DD-slug.md, immutable
 │   ├── foundation/          me, context, sources, stakeholders, naming
 │   ├── legacy/
 │   └── reports/             generated HTML
-├── _decisions/
+├── _kb-decisions/
 │   ├── active/              D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── _tasks/
+├── _kb-tasks/
 │   ├── focus.md             max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                 optional utility scripts
-└── _workstreams/<name>.md
+└── _kb-workstreams/<name>.md
 ```
 
 ## Team KB layout
 
 ```
 team-kb/
-├── _decisions/{active,archive}/    RACIs required
-├── _tasks/{focus,backlog}.md        RACIs required
+├── _kb-decisions/{active,archive}/    RACIs required
+├── _kb-tasks/{focus,backlog}.md        RACIs required
 ├── .kb-log/
 ├── <contributor>/
-│   ├── _inputs/digested/YYYY-MM/
-│   └── outputs/{topics,findings}/
+│   ├── _kb-inputs/digested/YYYY-MM/
+│   └── _kb-references/{topics,findings}/
 ```
 
 ## Org-Unit KB layout
 
-Same as team minus per-contributor dirs. Adds `_workstreams/`.
+Same as team minus per-contributor dirs. Adds `_kb-workstreams/`.
 
 ## Marketplace layout
 
@@ -61,9 +62,14 @@ See `agentic-kb` spec `docs/REFERENCE.md` §9 Marketplace.
 
 ## Config file keys
 
-### `.kb-config.yaml`
+### `.kb-config/layers.yaml`
 
 ```yaml
+workspace:
+  root: /path/to/workspace
+  user: alice
+  aliases: { kb: my-kb, tk: team-kb }
+
 layers:
   personal:
     path: .
@@ -75,7 +81,7 @@ layers:
   company: { enabled, sources: [] }
 ```
 
-### `.kb-automation.yaml`
+### `.kb-config/automation.yaml`
 
 ```yaml
 level: 1 | 2 | 3
@@ -85,7 +91,7 @@ commit-push: { auto-commit, auto-push, respect-branch-protection }
 notifications: { channel: terminal|slack|email|none }
 ```
 
-### `.kb-artifacts.yaml`
+### `.kb-config/artifacts.yaml`
 
 ```yaml
 styling:
@@ -104,7 +110,7 @@ appendix:
   sources: true
   hidden-by-default: false
 output:
-  directory: _references/reports
+  directory: _kb-references/reports
   filename-template: "{slug}-v{version}.html"
 github-pages:
   enabled: false

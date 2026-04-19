@@ -9,10 +9,10 @@ Two families of artifacts:
 
 | File | Source of truth | Refresh trigger |
 |------|-----------------|-----------------|
-| `_references/reports/inventory.html` | `.kb-config.yaml` + `_references/foundation/sources.md` + git status per layer | every mutation |
-| `_references/reports/open-decisions.html` | `_decisions/active/*.md` across all layers | every mutation |
-| `_references/reports/open-tasks.html` | `_tasks/focus.md` + `_tasks/backlog.md` across all layers | every mutation |
-| `_references/reports/index.html` | chronological list of everything under `_references/reports/` | every artifact create/update |
+| `_kb-references/reports/inventory.html` | `.kb-config/layers.yaml` + `_kb-references/foundation/sources.md` + git status per layer | every mutation |
+| `_kb-references/reports/open-decisions.html` | `_kb-decisions/active/*.md` across all layers | every mutation |
+| `_kb-references/reports/open-tasks.html` | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` across all layers | every mutation |
+| `_kb-references/reports/index.html` | chronological list of everything under `_kb-references/reports/` | every artifact create/update |
 
 **Regenerate after**: `capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, and every ritual.
 
@@ -85,7 +85,7 @@ The skill offers HTML artifact generation when:
 Every generated artifact:
 
 1. **Self-contained** — no external runtime fetches (all CSS/JS inline or embedded).
-2. **Light + dark theme** embedded, with an in-page toggle. Default theme per `.kb-artifacts.yaml`.
+2. **Light + dark theme** embedded, with an in-page toggle. Default theme per `.kb-config/artifacts.yaml`.
 3. **Version watermark** on the intro slide / top of report — subtle, format: `v{version} · {date}`.
 4. **Changelog appendix** — the final slide (presentation) or section (report) lists versions.
 5. **Accessible** — semantic HTML, WCAG AA contrast, keyboard nav, alt text on images.
@@ -93,7 +93,7 @@ Every generated artifact:
 
 ## Styling sources
 
-Per `.kb-artifacts.yaml`:
+Per `.kb-config/artifacts.yaml`:
 
 - `source: builtin` — plain accessible template ships with the skill (`templates/artifact-base.html`).
 - `source: website` — read the page at `reference-url`, derive colors/typography/spacing.
@@ -105,11 +105,11 @@ In all cases, build **both light and dark themes** into the output file with a t
 
 | Layer | Directory |
 |-------|-----------|
-| Personal KB | `_references/reports/` |
-| Team KB | `<contributor>/outputs/reports/` |
+| Personal KB | `_kb-references/reports/` |
+| Team KB | `<contributor>/_kb-references/reports/` |
 | Org-Unit KB | `reports/` |
 
-Filename: `<slug>-v<version>.html` (per `.kb-artifacts.yaml → output.filename-template`).
+Filename: `<slug>-v<version>.html` (per `.kb-config/artifacts.yaml → output.filename-template`).
 
 ## Versioning rules
 
@@ -151,4 +151,4 @@ The base template (in `templates/artifact-base.html`) includes:
 - Watermark placeholder `{{WATERMARK}}`.
 - Changelog appendix placeholder `{{CHANGELOG}}`.
 
-The generator fills placeholders from `.kb-artifacts.yaml` + topic content.
+The generator fills placeholders from `.kb-config/artifacts.yaml` + topic content.

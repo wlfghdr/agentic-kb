@@ -8,16 +8,16 @@ For users who already have a knowledge base in another layout.
 
 - Existing git repo in the declared personal KB path.
 - Presence of `topics/`, `findings/`, `decisions/`, `tasks/`, or similar subdirs.
-- No `.kb-config.yaml` at the root.
+- No `.kb-config/layers.yaml` at the root.
 
 ## Plan
 
 Produce a **diff** before applying:
 
 - Directories to create (missing required paths).
-- Files to rename (e.g., `todo.md` → split into `_tasks/focus.md` + `_tasks/backlog.md`).
-- Files to restructure (e.g., single `decisions/open.md` → individual `_decisions/active/D-*.md` files).
-- Files to move to `_references/legacy/` (material that doesn't fit).
+- Files to rename (e.g., `todo.md` → split into `_kb-tasks/focus.md` + `_kb-tasks/backlog.md`).
+- Files to restructure (e.g., single `decisions/open.md` → individual `_kb-decisions/active/D-*.md` files).
+- Files to move to `_kb-references/legacy/` (material that doesn't fit).
 
 ## Apply
 
@@ -35,26 +35,26 @@ Only after user confirmation:
 ```
 Before: todo.md (mixed open + done)
 After:
-  tasks/focus.md
-  tasks/backlog.md
-  tasks/archive/YYYY-MM.md   (done items grouped by completion month)
+  _kb-tasks/focus.md
+  _kb-tasks/backlog.md
+  _kb-tasks/archive/YYYY-MM.md   (done items grouped by completion month)
 ```
 
 ### Single `decisions.md` / `decisions/open.md` → individual files
 
 ```
 Before: decisions/open.md (multiple decisions in one file)
-After: decisions/active/D-YYYY-MM-DD-<slug>.md  (one per decision)
+After: _kb-decisions/active/D-YYYY-MM-DD-<slug>.md  (one per decision)
 ```
 
-### Flat `inputs/digested/` → dated
+### Flat `_kb-inputs/digested/` → dated
 
 ```
-Before: inputs/digested/*.md
-After: inputs/digested/YYYY-MM/*.md (grouped by processed month)
+Before: _kb-inputs/digested/*.md
+After: _kb-inputs/digested/YYYY-MM/*.md (grouped by processed month)
 ```
 
-### Missing `_workstreams/`
+### Missing `_kb-workstreams/`
 
 Prompt the user for 1–5 parallel tracks. Create files.
 

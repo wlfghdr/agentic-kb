@@ -1,5 +1,5 @@
 ---
-applyTo: "**/.kb-config.yaml,**/_inputs/**,**/_references/**,**/_decisions/**,**/_tasks/**,**/_workstreams/**,**/.kb-log/**"
+applyTo: "**/.kb-config/**,**/_kb-inputs/**,**/_kb-references/**,**/_kb-decisions/**,**/_kb-tasks/**,**/_kb-workstreams/**,**/.kb-log/**"
 description: Routing rules for all KB operations
 ---
 
@@ -9,7 +9,7 @@ Use these rules when any `/kb` command is invoked.
 
 ## Layer detection
 
-Read `.kb-config.yaml` in the personal KB root. It declares:
+Read `.kb-config/layers.yaml` in the personal KB root. It declares:
 
 - `layers.personal.path` — always `.`
 - `layers.teams[]` — zero or more team KBs
@@ -31,7 +31,7 @@ Given a file path, determine the layer by matching the path against the declared
 
 ## Workstream routing
 
-Read `.kb-config.yaml → layers.personal.workstreams`. Each entry has `name` and `themes` (keyword list). Match captured content against themes to pick the workstream. If multiple match, flag cross-workstream connection.
+Read `.kb-config/layers.yaml → layers.personal.workstreams`. Each entry has `name` and `themes` (keyword list). Match captured content against themes to pick the workstream. If multiple match, flag cross-workstream connection.
 
 ## Output contract
 

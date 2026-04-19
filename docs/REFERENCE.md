@@ -13,17 +13,17 @@ Implementation-critical details for building agentic-kb compatible tools. For th
 │  L1 Personal │──►│   L2 Team    │──►│  L3 Org-Unit  │──►│L4 Marketplace│◄──│ L5 Company  │
 │  (required)  │   │  (optional)  │   │   (optional)  │   │  (optional)  │   │ (top-down)  │
 │              │   │  (multiple)  │   │               │   │              │   │             │
-│ _inputs/     │   │ <you>/_inputs│   │ <team>/_inputs│   │ skills/<name>│   │ OKRs, MCG   │
-│ _references/ │   │ <you>/output │   │ <team>/output │   │ agents/<name>│   │ strategy    │
-│ _ideas/      │   │ _decisions/  │   │ _decisions/   │   │ plugins/<nm> │   │ directives  │
-│ _decisions/  │   │ _tasks/      │   │ _workstreams/ │   │              │   │             │
-│ _tasks/      │   │ .kb-log/     │   │ _tasks/       │   │              │   │             │
-│ _workstreams/│   │              │   │ .kb-log/      │   │              │   │             │
+│ _kb-inputs/  │   │<you>/_kb-inp │   │<team>/_kb-inp │   │ skills/<name>│   │ OKRs, MCG   │
+│ _kb-referenc/│   │<you>/_kb-ref │   │<team>/_kb-ref │   │ agents/<name>│   │ strategy    │
+│ _kb-ideas/   │   │ _kb-decision/│   │ _kb-decision/ │   │ plugins/<nm> │   │ directives  │
+│ _kb-decision/│   │ _kb-tasks/   │   │ _kb-workstrm/ │   │              │   │             │
+│ _kb-tasks/   │   │ .kb-log/     │   │ _kb-tasks/    │   │              │   │             │
+│ _kb-workstrm/│   │              │   │ .kb-log/      │   │              │   │             │
 │ .kb-log/     │   │              │   │               │   │              │   │             │
 └──────────────┘   └──────────────┘   └───────────────┘   └──────────────┘   └─────────────┘
 ```
 
-- Only **L1** is required. Higher layers are optional, declared in `.kb-config.yaml`.
+- Only **L1** is required. Higher layers are optional, declared in `.kb-config/layers.yaml`.
 - Content flows **up** via `promote` / `publish`; **down** via `digest`.
 - L5 is top-down only — no promotions accepted.
 - Every upward flow passes the evaluation gate.
@@ -58,9 +58,6 @@ Before persisting anything, the agent scores against five questions:
 my-workspace/
 ├── AGENTS.md                       # master index (all repos, keyword lookup)
 ├── CLAUDE.md → AGENTS.md           # symlink
-├── .kb-config.yaml                 # layer config
-├── .kb-automation.yaml             # automation level + schedules
-├── .kb-artifacts.yaml              # HTML styling config
 ├── .github/prompts/kb.prompt.md
 ├── .github/instructions/kb.instructions.md
 ├── .claude/                        # Claude Code harness
@@ -71,17 +68,21 @@ my-workspace/
 └── marketplace/                    # L4 Marketplace (optional)
 ```
 
+Note: all configuration YAMLs live inside the personal KB under `.kb-config/` — not at workspace root.
+
 ### Personal KB (L1)
 
 ```
 my-kb/
 ├── AGENTS.md
 ├── README.md
-├── .kb-config.yaml
-├── .kb-automation.yaml
-├── _inputs/                        # THE INBOX — drop anything here
+├── .kb-config/
+│   ├── layers.yaml                 # layer index, workspace aliases, VMG
+│   ├── automation.yaml             # automation level + schedules
+│   └── artifacts.yaml              # HTML artifact styling
+├── _kb-inputs/                        # THE INBOX — drop anything here
 │   └── digested/YYYY-MM/
-├── _references/
+├── _kb-references/
 │   ├── topics/                     # living positions (updated in place)
 │   ├── findings/                   # dated snapshots (immutable)
 │   ├── foundation/
@@ -92,19 +93,19 @@ my-kb/
 │   │   └── naming.md
 │   ├── legacy/                     # archived material
 │   └── reports/                    # generated HTML artifacts
-├── _ideas/
+├── _kb-ideas/
 │   ├── I-YYYY-MM-DD-slug.md
 │   └── archive/
-├── _decisions/
+├── _kb-decisions/
 │   ├── active/D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── _tasks/
+├── _kb-tasks/
 │   ├── focus.md                    # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                    # optional utility scripts
-└── _workstreams/<name>.md
+└── _kb-workstreams/<name>.md
 ```
 
 ### Team KB (L2)
@@ -112,12 +113,12 @@ my-kb/
 ```
 team-kb/
 ├── AGENTS.md, README.md
-├── _decisions/{active,archive}/
-├── _tasks/{focus.md,backlog.md}
+├── _kb-decisions/{active,archive}/
+├── _kb-tasks/{focus.md,backlog.md}
 ├── .kb-log/
 ├── alice/
-│   ├── _inputs/ (+ digested/)
-│   └── outputs/{topics/,findings/}
+│   ├── _kb-inputs/ (+ digested/)
+│   └── _kb-references/{topics/,findings/}
 └── bob/ ...
 ```
 
@@ -127,25 +128,27 @@ Same as L2 but contributor units are teams, not people:
 
 ```
 org-unit-kb/
-├── _decisions/, _tasks/, _workstreams/, .kb-log/
-├── team-alpha/{_inputs/,outputs/}
-└── team-beta/{_inputs/,outputs/}
+├── _kb-decisions/, _kb-tasks/, _kb-workstreams/, .kb-log/
+├── team-alpha/{_kb-inputs/,_kb-references/}
+└── team-beta/{_kb-inputs/,_kb-references/}
 ```
 
 ### Required files per layer
 
 | Layer | Must exist |
 |-------|-----------|
-| L1 | `AGENTS.md`, `.kb-config.yaml`, `_inputs/`, `_references/{topics,findings,foundation}/`, `_ideas/`, `_decisions/active/`, `_tasks/focus.md`, `.kb-log/` |
-| L2 | `AGENTS.md`, `_decisions/active/`, `_tasks/focus.md`, `.kb-log/`, per-contributor dirs |
-| L3 | `AGENTS.md`, `_decisions/active/`, `_tasks/focus.md`, `_workstreams/`, `.kb-log/`, per-team dirs |
+| L1 | `AGENTS.md`, `.kb-config/layers.yaml`, `_kb-inputs/`, `_kb-references/{topics,findings,foundation}/`, `_kb-ideas/`, `_kb-decisions/active/`, `_kb-tasks/focus.md`, `.kb-log/` |
+| L2 | `AGENTS.md`, `_kb-decisions/active/`, `_kb-tasks/focus.md`, `.kb-log/`, per-contributor dirs |
+| L3 | `AGENTS.md`, `_kb-decisions/active/`, `_kb-tasks/focus.md`, `_kb-workstreams/`, `.kb-log/`, per-team dirs |
 | Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md` |
+
+Note: `.kb-config/automation.yaml` and `.kb-config/artifacts.yaml` are optional — defaults apply when absent.
 
 ---
 
 ## 4. File Formats
 
-### Finding (`_references/findings/YYYY-MM-DD-slug.md`)
+### Finding (`_kb-references/findings/YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Finding: <title>
@@ -163,7 +166,7 @@ org-unit-kb/
 
 Immutable after creation. Corrections create a new finding.
 
-### Topic (`_references/topics/<slug>.md`)
+### Topic (`_kb-references/topics/<slug>.md`)
 
 ```markdown
 # Topic: <name>
@@ -179,7 +182,7 @@ Immutable after creation. Corrections create a new finding.
 
 One file per topic. Inline changelog required.
 
-### Decision (`_decisions/active/D-YYYY-MM-DD-slug.md`)
+### Decision (`_kb-decisions/active/D-YYYY-MM-DD-slug.md`)
 
 ```markdown
 # D-YYYY-MM-DD: <title>
@@ -201,7 +204,7 @@ One file per topic. Inline changelog required.
 - **Date**: resolved date
 ```
 
-### Idea (`_ideas/I-YYYY-MM-DD-slug.md`)
+### Idea (`_kb-ideas/I-YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Idea: <title>
@@ -221,7 +224,7 @@ One file per topic. Inline changelog required.
 - Relates to: topics, decisions, findings
 ```
 
-### Workstream (`_workstreams/<name>.md`)
+### Workstream (`_kb-workstreams/<name>.md`)
 
 ```markdown
 # Workstream: <name>
@@ -235,7 +238,7 @@ One file per topic. Inline changelog required.
 ## Cross-Workstream Dependencies
 ```
 
-### Focus / Backlog (`_tasks/focus.md`, `_tasks/backlog.md`)
+### Focus / Backlog (`_kb-tasks/focus.md`, `_kb-tasks/backlog.md`)
 
 ```markdown
 # Focus
@@ -261,9 +264,25 @@ Scopes: `personal`, `team-kb`, `org-unit`, `marketplace`, `personal→team`, `te
 
 ## 5. Configuration Files
 
-### `.kb-config.yaml`
+All configuration lives in a `.kb-config/` directory inside the personal KB (L1). Other KB layers (L2/L3) may have their own `.kb-config/layers.yaml` for layer declaration.
+
+```
+.kb-config/
+├── layers.yaml        # layer index, workspace aliases, VMG  (required)
+├── automation.yaml    # automation level + schedules          (optional)
+└── artifacts.yaml     # HTML artifact styling                 (optional)
+```
+
+### `.kb-config/layers.yaml`
 
 ```yaml
+workspace:
+  root: /path/to/workspace
+  user: alice
+  aliases:
+    kb: my-kb
+    tk: team-kb
+
 layers:
   personal:
     path: .
@@ -282,11 +301,6 @@ layers:
     source: https://github.com/org/marketplace
     install-mode: marketplace   # marketplace | clone
 
-workspace:
-  aliases:
-    kb: my-kb
-    tk: team-kb
-
 vmg:
   vision: "..."
   mission: "..."
@@ -297,7 +311,7 @@ vmg:
       status: active
 ```
 
-### `.kb-automation.yaml`
+### `.kb-config/automation.yaml`
 
 ```yaml
 level: 2                            # 1=manual, 2=semi-auto, 3=full-auto
@@ -314,7 +328,7 @@ auto-promote:
   excluded-workstreams: []
 ```
 
-### `.kb-artifacts.yaml`
+### `.kb-config/artifacts.yaml`
 
 ```yaml
 styling:
@@ -413,7 +427,7 @@ marketplace-repo/
 ├── skills/<name>/
 │   ├── SKILL.md              # frontmatter + instructions
 │   ├── templates/            # optional
-│   └── _references/           # optional
+│   └── _kb-references/           # optional
 ├── agents/<name>.md
 ├── plugins/<harness>/        # generated per-harness mirrors
 ├── scripts/

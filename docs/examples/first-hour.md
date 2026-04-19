@@ -84,7 +84,7 @@ Expected output shape:
 
 ```
 **What I did**: briefed you.
-**Where it went**: read focus.md (0 items), _decisions/active/ (0 items), .kb-log/2026-04-18.log (new), _workstreams/<name>.md.
+**Where it went**: read focus.md (0 items), _kb-decisions/active/ (0 items), .kb-log/2026-04-18.log (new), _kb-workstreams/<name>.md.
 **Gate notes**: n/a — briefing, not capture.
 **Suggested next steps**:
   - Capture something: /kb <URL-or-paste>
@@ -99,7 +99,7 @@ On a clean workspace with no inputs, the briefing is a one-liner "no pending wor
 /kb https://example.com/article-about-caches
 ```
 
-Expected behavior: the skill fetches the URL (or asks for consent first), applies the five-question evaluation gate, writes `_references/findings/2026-04-18-<slug>.md`, possibly updates a workstream's topic file, logs the operation, and ends with 1–3 next steps.
+Expected behavior: the skill fetches the URL (or asks for consent first), applies the five-question evaluation gate, writes `_kb-references/findings/2026-04-18-<slug>.md`, possibly updates a workstream's topic file, logs the operation, and ends with 1–3 next steps.
 
 If the URL needs auth or is a PDF, the skill should surface the blocker — not fail silently. If it fails silently, file an issue.
 
@@ -112,8 +112,8 @@ If the URL needs auth or is a PDF, the skill should surface the blocker — not 
 Expected behavior:
 
 1. Summarize today's uncommitted diff.
-2. Generate `_references/findings/2026-04-18-daily-summary.md` + `_references/reports/daily-2026-04-18.html`.
-3. Move completed focus items to `_tasks/archive/2026-04.md`.
+2. Generate `_kb-references/findings/2026-04-18-daily-summary.md` + `_kb-references/reports/daily-2026-04-18.html`.
+3. Move completed focus items to `_kb-tasks/archive/2026-04.md`.
 4. Offer `git commit` (+ push/PR if a remote is configured).
 
 The HTML report uses `skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
@@ -126,7 +126,7 @@ Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.htm
 |---------|-------------|-----|
 | `/kb setup` is not offered as a command | Stage 1 didn't complete — skill isn't loaded | Re-run marketplace install or `scripts/install`, restart the harness |
 | Scaffolded files contain literal `{{USER_NAME}}` etc. | Post-write check skipped or an interview answer was empty | Re-run `/kb setup` — it's idempotent, it will re-render |
-| `/kb start-day` returns nothing / crashes | `.kb-config.yaml` invalid or KB directory structure missing | Run `/kb status` — it should report which files are missing |
+| `/kb start-day` returns nothing / crashes | `.kb-config/layers.yaml` invalid or KB directory structure missing | Run `/kb status` — it should report which files are missing |
 | URL capture prints nothing | The skill couldn't fetch the URL (auth, PDF, CORS-only content) | Paste the text directly: `/kb <paste the article text>` |
 | Claude Code Level-3 automation doesn't trigger | VS Code-only limitation applies? Check `ide-support.md` capability matrix | Schedule via OS cron + CLI invocation instead |
 

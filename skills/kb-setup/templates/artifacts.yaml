@@ -19,7 +19,7 @@ appendix:
   hidden-by-default: false
 
 output:
-  directory: _references/reports
+  directory: _kb-references/reports
   filename-template: "{slug}-v{version}.html"
 
 github-pages:

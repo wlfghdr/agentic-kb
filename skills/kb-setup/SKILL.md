@@ -44,15 +44,15 @@ Two concerns, two tools:
 | Concern | Who handles it | When |
 |---------|---------------|------|
 | Get `kb-management` + `kb-setup` + `kb-operator` into the harness (`.claude/`, `.opencode/`, `.github/`, or user-global equivalents) | Harness marketplace (`/plugin install kb@agentic-kb`) **or** `scripts/install.py` from a cloned marketplace repo | Before this skill runs — otherwise `/kb setup` wouldn't be callable |
-| Scaffold the user's KB repos (`.kb-config.yaml`, foundation files, workstreams, topics, todos, log) | **This skill** | When the user types `/kb setup` |
+| Scaffold the user's KB repos (`.kb-config/`, foundation files, workstreams, topics, todos, log) | **This skill** | When the user types `/kb setup` |
 
-Concrete consequence: by the time this skill runs, the skills are already present. Step 5/6 below do not re-install them — they only create the user's workspace-level configuration files (`.github/prompts/kb.prompt.md`, `AGENTS.md`, `.kb-config.yaml`, etc.) and invoke `scripts/install` **only** when the user picks an additional harness that isn't yet present.
+Concrete consequence: by the time this skill runs, the skills are already present. Step 5/6 below do not re-install them — they only create the user's workspace-level configuration files (`.github/prompts/kb.prompt.md`, `AGENTS.md`, etc.) and invoke `scripts/install` **only** when the user picks an additional harness that isn't yet present.
 
 ## When to invoke
 
 - The user types `/kb setup`.
 - The user says *"set me up with a KB"*, *"onboard me"*, *"bootstrap my workspace"*, or equivalent.
-- `kb-management` detects no `.kb-config.yaml` in the current directory and the user tries to run any `/kb` command — offer to run setup first.
+- `kb-management` detects no `.kb-config/layers.yaml` in the current directory and the user tries to run any `/kb` command — offer to run setup first.
 
 ## Interactive question flow
 
@@ -61,16 +61,16 @@ Ask each block in order. Stop and wait after each block for the user's answer be
 1. **Your name** (used for contributor directories): `your-name`.
    *→ Sets your contributor directory name in team/org KBs, and the default KB repo name (`<name>-kb`).*
 2. **Your role and themes**: one sentence + 3–5 theme keywords (these become initial workstreams).
-   *→ Seeds your `me.md` foundation file, creates initial topic stubs under `_references/topics/`, and pre-populates workstream files.*
+   *→ Seeds your `me.md` foundation file, creates initial topic stubs under `_kb-references/topics/`, and pre-populates workstream files.*
 3. **Workspace root**: absolute path. Default: current directory.
-   *→ All repos, config files (`AGENTS.md`, `.kb-config.yaml`), and harness hooks are created relative to this path.*
+   *→ All repos, config files (`AGENTS.md`, `.kb-config/`), and harness hooks are created relative to this path.*
 4. **Personal KB (L1)** — required:
    - Create new? → ask for name, initialize git, choose remote.
    - Onboard existing? → ask for path.
    *→ Your single source of truth. All `/kb` commands operate on this repo. "Onboard existing" runs migration analysis instead of scaffolding from scratch.*
 5. **Team KBs (L2)** — optional, multiple:
    - Create new / onboard existing / skip.
-   *→ Shared decision logs and cross-contributor outputs. Creates your contributor directory (`<name>/inputs/`, `<name>/outputs/`) and team-level `_decisions/`, `_tasks/`.*
+   *→ Shared decision logs and cross-contributor references. Creates your contributor directory (`<name>/_kb-inputs/`, `<name>/_kb-references/`) and team-level `_kb-decisions/`, `_kb-tasks/`.*
 6. **Org-Unit KB (L3)** — optional:
    - Onboard existing / skip.
    *→ Links your workspace to the org-wide aggregation layer. Enables `/kb promote` to push mature content upstream.*
@@ -80,20 +80,20 @@ Ask each block in order. Stop and wait after each block for the user's answer be
    - Skip.
    *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
 8. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
-   *→ Creates `_workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
+   *→ Creates `_kb-workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
 9. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`.
    *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`). Multiple selections create cross-harness compatibility.*
 10. **Integrations**: marketplace-available MCP servers / APIs to wire up.
-    *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config.yaml`. Each integration is validated for connectivity before persisting.*
+    *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
 11. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
-    *→ Controls `.kb-automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
+    *→ Controls `.kb-config/automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
 12. **HTML artifact styling**:
     - *"For generated presentations and reports, what styling should the agent use?"*
     - (a) Default built-in template.
     - (b) Point to a website — agent derives a matching theme from the page.
     - (c) Point to a template file.
     - Always generate both light and dark themes with an in-page toggle.
-    *→ Writes `.kb-artifacts.yaml` with the chosen template path or derived color tokens. All `/kb present` and `/kb report` commands use this styling.*
+    *→ Writes `.kb-config/artifacts.yaml` with the chosen template path or derived color tokens. All `/kb present` and `/kb report` commands use this styling.*
 
 ## What setup does (after confirmation)
 
@@ -122,18 +122,18 @@ On abort: print the missing tool, the OS-specific install command, and exit. Do 
 - Marketplace: clone or register.
 
 ### Step 3 — Scaffold personal KB
-Directories: `_inputs/`, `_inputs/digested/`, `_references/{topics,findings,foundation,reports,legacy}/`, `_ideas/`, `_ideas/archive/`, `_decisions/{active,archive}/`, `_tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_workstreams/`.
+Directories: `_kb-inputs/`, `_kb-inputs/digested/`, `_kb-references/{topics,findings,foundation,reports,legacy}/`, `_kb-ideas/`, `_kb-ideas/archive/`, `_kb-decisions/{active,archive}/`, `_kb-tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_kb-workstreams/`.
 
 Files (from `templates/`):
-- `AGENTS.md`, `README.md`, `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml`.
-- Initial `_workstreams/<name>.md` per declared workstream.
-- `_references/foundation/{me,context,stakeholders,sources,naming}.md`.
-- Initial `_references/topics/<slug>.md` per declared theme (with empty changelog).
-- `_tasks/focus.md`, `_tasks/backlog.md`.
+- `AGENTS.md`, `README.md`, `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`.
+- Initial `_kb-workstreams/<name>.md` per declared workstream.
+- `_kb-references/foundation/{me,context,stakeholders,sources,naming}.md`.
+- Initial `_kb-references/topics/<slug>.md` per declared theme (with empty changelog).
+- `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`.
 
 ### Step 4 — Scaffold team KB (if creating new)
-- Contributor directory (`<your-name>/_inputs/`, `<your-name>/outputs/{topics,findings}/`).
-- `_decisions/{active,archive}/`, `_tasks/{focus,backlog}.md`, `.kb-log/`, `AGENTS.md`, `README.md`.
+- Contributor directory (`<your-name>/_kb-inputs/`, `<your-name>/_kb-references/{topics,findings}/`).
+- `_kb-decisions/{active,archive}/`, `_kb-tasks/{focus,backlog}.md`, `.kb-log/`, `AGENTS.md`, `README.md`.
 
 ### Step 5 — Workspace-level configuration
 
@@ -141,9 +141,10 @@ Workspace-level *KB configuration* (distinct from harness-level *skill installat
 
 - `AGENTS.md` at workspace root with a repo index + short-alias table + keyword lookup.
 - `CLAUDE.md` → symlink to `AGENTS.md`.
-- `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml` at workspace root (not the KB root — these are workspace-scoped indexes of all configured layers).
 
-The repo index and alias table are generated by scanning the workspace for git repos with an `AGENTS.md`, `CLAUDE.md`, or `README.md`. Short aliases are derived automatically (initials of hyphenated segments, or first 2–3 chars for single-word repos). Collisions are resolved by appending digits. Users can override aliases in `.kb-config.yaml` under `workspace.aliases`.
+Note: all configuration YAMLs live inside the personal KB under `.kb-config/` — not at workspace root. The workspace root only holds `AGENTS.md`, `CLAUDE.md`, and `.github/` harness hooks.
+
+The repo index and alias table are generated by scanning the workspace for git repos with an `AGENTS.md`, `CLAUDE.md`, or `README.md`. Short aliases are derived automatically (initials of hyphenated segments, or first 2–3 chars for single-word repos). Collisions are resolved by appending digits. Users can override aliases in `.kb-config/layers.yaml` under `workspace.aliases`.
 
 Optional workspace-level harness hooks (only written if the harness was **not** already configured by marketplace install or `scripts/install`):
 
@@ -181,7 +182,7 @@ If the user points at an existing knowledge base in another layout:
 2. Propose a diff (files to create, rename, restructure).
 3. Apply **only after explicit confirmation**.
 4. Use `git mv` to preserve history.
-5. Move material that doesn't fit into `_references/legacy/` with a note — **never delete**.
+5. Move material that doesn't fit into `_kb-references/legacy/` with a note — **never delete**.
 
 ## Idempotency
 

@@ -1,5 +1,11 @@
 # Layer configuration for the personal KB.
-# See https://github.com/wlfghdr/agentic-kb/blob/main/docs/concept/02-architecture.md
+# All config lives in .kb-config/ — this file is .kb-config/layers.yaml.
+# See https://github.com/wlfghdr/agentic-kb/blob/main/docs/REFERENCE.md §5
+
+workspace:
+  root: {{WORKSPACE_ROOT}}
+  user: {{USER_NAME}}
+  aliases: {}
 
 layers:
   personal:

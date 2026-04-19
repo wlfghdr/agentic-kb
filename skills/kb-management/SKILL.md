@@ -67,7 +67,7 @@ There is **one** user-facing command: `/kb`. Infer layer and action from context
 | Path inside `my-kb/` | L1 operation |
 | Path inside a team repo | Team operation |
 | Explicit keyword (`team`, `org`, `publish`) | Disambiguates |
-| `.kb-config.yaml` | Declares which dirs are which layer |
+| `.kb-config/layers.yaml` | Declares which dirs are which layer |
 
 Full command reference: `references/command-reference.md`.
 
@@ -85,7 +85,7 @@ Full command reference: `references/command-reference.md`.
 
 2. **Always suggest next steps.** Every operation output ends with 1–3 concrete follow-ups (promote, notify, update topic, generate presentation).
 
-3. **Route to workstreams.** Analyze content against the workstream themes in `.kb-config.yaml`. If cross-workstream, flag the connection.
+3. **Route to workstreams.** Analyze content against the workstream themes in `.kb-config/layers.yaml`. If cross-workstream, flag the connection.
 
 4. **Log every operation** to `.kb-log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
 
@@ -101,29 +101,30 @@ Full command reference: `references/command-reference.md`.
 
 ```
 my-kb/
-├── .kb-config.yaml          # layer declaration
-├── .kb-automation.yaml      # automation level + schedules
-├── .kb-artifacts.yaml       # HTML artifact styling
-├── _inputs/                  # the inbox; digested/YYYY-MM/ archive
-├── _references/
+├── .kb-config/               # all KB config lives here
+│   ├── layers.yaml           # layer declaration, workspace aliases, VMG
+│   ├── automation.yaml       # automation level + schedules
+│   └── artifacts.yaml        # HTML artifact styling
+├── _kb-inputs/                  # the inbox; digested/YYYY-MM/ archive
+├── _kb-references/
 │   ├── topics/              # living; inline changelog required
 │   ├── findings/            # YYYY-MM-DD-slug.md; immutable
 │   ├── foundation/          # me, context, stakeholders, sources, naming
 │   ├── legacy/              # archived topics after audit
 │   └── reports/             # generated HTML artifacts
-├── _ideas/
+├── _kb-ideas/
 │   ├── I-YYYY-MM-DD-slug.md # active ideas (seed/growing/ready)
 │   └── archive/             # shipped + archived
-├── _decisions/
+├── _kb-decisions/
 │   ├── active/              # D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── _tasks/
+├── _kb-tasks/
 │   ├── focus.md             # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                    # optional utility scripts
-└── _workstreams/<name>.md
+└── _kb-workstreams/<name>.md
 ```
 
 See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
@@ -133,8 +134,8 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Flow | Command | What it does |
 |------|---------|--------------|
 | Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream; offer idea if novelty detected |
-| Review | `/kb review` | Process all pending items in `_inputs/` |
-| Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `_inputs/`) with safety pre-check |
+| Review | `/kb review` | Process all pending items in `_kb-inputs/` |
+| Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `_kb-inputs/`) with safety pre-check |
 | Promote org | `/kb promote org [file]` | L2 → L3 |
 | Publish | `/kb publish [file]` | L1/L2/L3 → L4 marketplace; packages as SKILL.md; opens PR |
 | Digest team | `/kb digest team` | Pull team changes since watermark; distill new findings |
@@ -182,7 +183,7 @@ The templates this skill instantiates live in `templates/`:
 - `personal-kb-AGENTS.md`, `personal-kb-README.md`
 - `team-kb-AGENTS.md`, `team-kb-README.md`, `org-kb-AGENTS.md`, `org-kb-README.md`
 - `workspace-AGENTS.md`, `kb.prompt.md`, `kb.instructions.md`
-- `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml`
+- `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`
 
 ## References (load on demand)
 

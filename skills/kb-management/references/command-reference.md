@@ -5,7 +5,7 @@
 | Subcommand | Action |
 |-----------|--------|
 | `/kb [text/URL/path]` | Capture: assess + persist via the gate; route to workstream |
-| `/kb review` | Process all pending items in `_inputs/` |
+| `/kb review` | Process all pending items in `_kb-inputs/` |
 | `/kb promote [file]` | L1 → team KB's contributor `inputs/` (ask which team if multiple) |
 | `/kb promote org [file]` | L2 → org-unit KB |
 | `/kb publish [file]` | L1/L2/L3 → marketplace skill (PR) |
@@ -16,7 +16,7 @@
 |-----------|--------|
 | `/kb todo` | Show `focus.md` |
 | `/kb todo done [item]` | Complete item → archive, pull next from backlog |
-| `/kb decide [description]` | Create new `_decisions/active/D-YYYY-MM-DD-slug.md` |
+| `/kb decide [description]` | Create new `_kb-decisions/active/D-YYYY-MM-DD-slug.md` |
 | `/kb decide resolve [D-id]` | Archive decision + update topics + close related TODOs |
 
 ## Rituals

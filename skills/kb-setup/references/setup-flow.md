@@ -26,67 +26,67 @@ For each repo (personal / team / org-unit / marketplace), offer:
 Create these directories (idempotent):
 
 ```
-__inputs/
-__inputs/digested/
-_references/topics/
-_references/findings/
-_references/foundation/
-_references/reports/
-_references/legacy/
-_decisions/active/
-_decisions/archive/
-_tasks/
-_tasks/archive/
+__kb-inputs/
+__kb-inputs/digested/
+_kb-references/topics/
+_kb-references/findings/
+_kb-references/foundation/
+_kb-references/reports/
+_kb-references/legacy/
+_kb-decisions/active/
+_kb-decisions/archive/
+_kb-tasks/
+_kb-tasks/archive/
 .kb-log/
-_workstreams/
+_kb-workstreams/
 ```
 
 Instantiate these files from `templates/`:
 
 - `AGENTS.md` ← `personal-kb-AGENTS.md`
 - `README.md` ← `personal-kb-README.md`
-- `.kb-config.yaml` ← `.kb-config.yaml`
-- `.kb-automation.yaml` ← `.kb-automation.yaml`
-- `.kb-artifacts.yaml` ← `.kb-artifacts.yaml`
-- `_references/foundation/me.md` ← `foundation-me.md`
-- `_references/foundation/context.md` ← `foundation-context.md`
-- `_references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
-- `_references/foundation/sources.md` ← `foundation-sources.md`
-- `_references/foundation/naming.md` ← `foundation-naming.md`
-- `_tasks/focus.md` ← `focus.md`
-- `_tasks/backlog.md` ← `backlog.md`
-- Per workstream: `_workstreams/<name>.md` ← `workstream.md`
-- Per theme: `_references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
+- `.kb-config/layers.yaml` ← `layers.yaml`
+- `.kb-config/automation.yaml` ← `automation.yaml`
+- `.kb-config/artifacts.yaml` ← `artifacts.yaml`
+- `_kb-references/foundation/me.md` ← `foundation-me.md`
+- `_kb-references/foundation/context.md` ← `foundation-context.md`
+- `_kb-references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
+- `_kb-references/foundation/sources.md` ← `foundation-sources.md`
+- `_kb-references/foundation/naming.md` ← `foundation-naming.md`
+- `_kb-tasks/focus.md` ← `focus.md`
+- `_kb-tasks/backlog.md` ← `backlog.md`
+- Per workstream: `_kb-workstreams/<name>.md` ← `workstream.md`
+- Per theme: `_kb-references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
 
 ## Scaffold — team KB (if creating new)
 
 ```
-_decisions/active/
-_decisions/archive/
-_tasks/archive/
+_kb-decisions/active/
+_kb-decisions/archive/
+_kb-tasks/archive/
 .kb-log/
-<contributor>/_inputs/digested/
-<contributor>/outputs/topics/
-<contributor>/outputs/findings/
+<contributor>/_kb-inputs/digested/
+<contributor>/_kb-references/topics/
+<contributor>/_kb-references/findings/
 ```
 
 - `AGENTS.md` ← `team-kb-AGENTS.md`
 - `README.md` ← `team-kb-README.md`
-- `_tasks/focus.md`, `_tasks/backlog.md`
+- `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`
 
 ## Scaffold — org-unit KB
 
 ```
-_decisions/active/
-_decisions/archive/
-_tasks/archive/
-_workstreams/
+_kb-decisions/active/
+_kb-decisions/archive/
+_kb-tasks/archive/
+_kb-workstreams/
 .kb-log/
 ```
 
 - `AGENTS.md` ← `org-kb-AGENTS.md`
 - `README.md` ← `org-kb-README.md`
-- `_tasks/focus.md`, `_tasks/backlog.md`
+- `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`
 
 ## Scaffold — workspace root
 
@@ -127,7 +127,7 @@ Alias generation rules:
 - Use initials of hyphenated segments (e.g., `product-strategy-brainstorming` → `psb`).
 - Single-word repos get first 2–3 letters (e.g., `bluebox` → `bb`).
 - On collision, append a digit or use a longer prefix.
-- The user can override aliases in `.kb-config.yaml` under `workspace.aliases`.
+- The user can override aliases in `.kb-config/layers.yaml` under `workspace.aliases`.
 
 3. **Keyword lookup** — concept → file map, also resolving aliases.
 

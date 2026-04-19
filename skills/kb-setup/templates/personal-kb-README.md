@@ -6,22 +6,22 @@
 
 ```
 .
-├── _inputs/             THE INBOX — drop anything here
-├── _references/
+├── _kb-inputs/             THE INBOX — drop anything here
+├── _kb-references/
 │   ├── topics/          living positions (updated in place)
 │   ├── findings/        dated snapshots (immutable)
 │   ├── foundation/      identity: me, context, stakeholders, sources
 │   └── reports/         generated HTML artifacts
-├── _decisions/
+├── _kb-decisions/
 │   ├── active/          open decisions (one file each)
 │   └── archive/         resolved or superseded
-├── _tasks/
+├── _kb-tasks/
 │   ├── focus.md         max 3 items — what you're doing NOW
 │   ├── backlog.md       queued up
 │   └── archive/         monthly done archives
 ├── .kb-log/             dated processing log
 ├── .kb-scripts/         optional utility scripts
-└── _workstreams/         parallel tracks
+└── _kb-workstreams/         parallel tracks
 ```
 
 ## Commands
@@ -30,9 +30,9 @@ Everything runs through `/kb`. See `AGENTS.md` for rules; see the spec at <https
 
 ## Configuration
 
-- `.kb-config.yaml` — layer declaration
-- `.kb-automation.yaml` — automation level + schedules
-- `.kb-artifacts.yaml` — HTML artifact styling
+- `.kb-config/layers.yaml` — layer declaration, workspace aliases, VMG
+- `.kb-config/automation.yaml` — automation level + schedules
+- `.kb-config/artifacts.yaml` — HTML artifact styling
 
 ## Quickstart
 

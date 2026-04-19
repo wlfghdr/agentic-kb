@@ -21,7 +21,7 @@ Symptom: `/kb setup` reports that a selected IDE is not installed.
 
 Fix: install the IDE's CLI tool or deselect that harness and re-run.
 
-## `.kb-config.yaml` already exists
+## `.kb-config/` already exists
 
 `/kb setup` never overwrites it. Options:
 
@@ -31,7 +31,7 @@ Fix: install the IDE's CLI tool or deselect that harness and re-run.
 
 ## "No pending work" on first `/kb start-day`
 
-Expected on a brand-new KB. Capture your first input with `/kb [text/URL/path]` or drop a file into `inputs/`.
+Expected on a brand-new KB. Capture your first input with `/kb [text/URL/path]` or drop a file into `_kb-inputs/`.
 
 ## CI complaining about missing changelog
 

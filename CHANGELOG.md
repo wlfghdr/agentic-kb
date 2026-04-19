@@ -26,6 +26,11 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - **`generate_plugins.py`**: generates flat `plugins/<name>/plugin.json` with `x-skills`/`x-agents` instead of nested `.claude-plugin/plugin.json`.
 - **`check_plugin_structure.py`**: validates `plugins` entries and per-plugin manifests in addition to direct `skills`/`agents`/`prompts`/`instructions` paths.
 - **`.claude-plugin/marketplace.json`**: version bumped 2.0.0 → 3.0.0.
+- **Remaining bare KB paths**: `rituals.md`, `spec-summary.md`, `migration-guide.md`, `troubleshooting.md` updated to use `_kb-` prefix convention consistently (`_kb-tasks/`, `_kb-decisions/`, `_kb-inputs/`, `_kb-references/`, `.kb-log/`).
+
+### Changed
+
+- **Configuration consolidated into `.kb-config/` directory**: flat `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml` replaced by `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`. All config lives inside the personal KB — workspace root no longer hosts config YAMLs. Updated: REFERENCE.md, both SKILL.md files, all templates, spec-summary, html-artifacts, glossary, first-hour, setup-flow, migration-guide, troubleshooting, kb-operator agent.
 
 ### Added
 
@@ -38,22 +43,24 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Breaking — Directory renames
 
-All KB folders use a prefix convention to separate them from user files (AGENTS.md, README.md):
+All KB-managed folders use a `_kb-` prefix to clearly separate them from user files and non-KB directories:
 
 | Old | New | Reason |
 |-----|-----|--------|
-| `inputs/` | `_inputs/` | Underscore prefix — visible, sorted to top |
-| `ideas/` | `_ideas/` | Same |
-| `decisions/` | `_decisions/` | Same |
-| `tasks/` | `_tasks/` | Same |
-| `references/` | `_references/` | Same |
-| `workstreams/` | `_workstreams/` | Same |
+| `inputs/` | `_kb-inputs/` | `_kb-` prefix — visible, sorted to top, unambiguously KB-managed |
+| `ideas/` | `_kb-ideas/` | Same |
+| `decisions/` | `_kb-decisions/` | Same |
+| `tasks/` | `_kb-tasks/` | Same |
+| `references/` | `_kb-references/` | Same |
+| `workstreams/` | `_kb-workstreams/` | Same |
 | `log/` | `.kb-log/` | Dot prefix — truly hidden infra you never browse |
 | *(new)* | `.kb-scripts/` | Same — hidden infra |
 
-Convention: `_` = visible KB structure (you browse these), `.kb-*` = hidden infrastructure.
+Convention: `_kb-*` = visible KB structure (you browse these, KB agents manage them), `.kb-*` = hidden infrastructure.
 
-**Migration**: `git mv inputs _inputs && git mv ideas _ideas && git mv decisions _decisions && git mv tasks _tasks && git mv references _references && git mv workstreams _workstreams && git mv log .kb-log`.
+Team KB contributor folders now **mirror personal KB structure** — `_kb-inputs/` + `_kb-references/` instead of the old `inputs/` + `outputs/` pattern.
+
+**Migration**: `git mv inputs _kb-inputs && git mv ideas _kb-ideas && git mv decisions _kb-decisions && git mv tasks _kb-tasks && git mv references _kb-references && git mv workstreams _kb-workstreams && git mv log .kb-log`.
 
 ### Changed
 
@@ -62,11 +69,11 @@ Convention: `_` = visible KB structure (you browse these), `.kb-*` = hidden infr
 - `docs/examples/day-in-the-life.md` — all path references updated.
 - `docs/examples/first-hour.md` — all path references updated.
 - `skills/kb-management/SKILL.md` — directory contract, log rule, flow primitives updated.
-- `skills/kb-management/_references/` — command-reference, evaluation-gate, html-artifacts, rituals, spec-summary updated.
+- `skills/kb-management/references/` — command-reference, evaluation-gate, html-artifacts, rituals, spec-summary updated.
 - `skills/kb-setup/SKILL.md` — Step 3 (personal KB scaffold) and Step 4 (team KB scaffold) directory lists updated.
-- `skills/kb-setup/_references/` — setup-flow, migration-guide updated.
+- `skills/kb-setup/references/` — setup-flow, migration-guide updated.
 - `skills/kb-setup/templates/` — personal-kb-README, personal-kb-AGENTS, team-kb-README, team-kb-AGENTS, org-kb-README, kb.prompt, kb.instructions updated.
-- `agents/kb-operator.md` — `_inputs/` in capture loop.
+- `agents/kb-operator.md` — `_kb-inputs/` in capture loop.
 
 ### Version bumps
 
@@ -88,12 +95,12 @@ Convention: `_` = visible KB structure (you browse these), `.kb-*` = hidden infr
 ### Changed
 
 - `docs/REFERENCE.md` — new single-file reference replacing 23 concept/spec docs.
-- All cross-references (`README.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`, `agents/kb-operator.md`, `docs/roadmap.md`, `scripts/check_html_artifacts.py`, `skills/kb-management/_references/spec-summary.md`) updated to point to `docs/REFERENCE.md`.
+- All cross-references (`README.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`, `agents/kb-operator.md`, `docs/roadmap.md`, `scripts/check_html_artifacts.py`, `skills/kb-management/references/spec-summary.md`) updated to point to `docs/REFERENCE.md`.
 - `README.md` — replaced `<org>` placeholders with actual repo URL (`wlfghdr/agentic-kb`). Restructured install section as "Getting started": marketplace-first flow (connect → `/kb setup`), cross-harness install script as optional secondary path.
 - `README.md` — rewrote problem section as direct questions ("Does this sound familiar?"), renamed "The solution" → "How it works".
 - `index.html` — intro now leads with the same user-facing questions; problem section renamed to "Why existing approaches fail".
 - `docs/concept/02-architecture.md` — L3 now has team-isolated directories (mirroring L2's person-directories). L5 clarified as reference-only (no bottom-up input). Added contributor-unit / cross-analysis summary to the ASCII diagram.
-- `docs/spec/workspace-layout.md` — L3 directory layout updated with per-team `inputs/` + `outputs/` structure. Required-files table updated.
+- `docs/spec/workspace-layout.md` — L3 directory layout updated with per-team `_kb-inputs/ + _kb-references/ structure. Required-files table updated.
 
 ### Added
 
@@ -181,8 +188,8 @@ Convention: `_` = visible KB structure (you browse these), `.kb-*` = hidden infr
 ### Added
 
 - **Always-current HTML overviews** regenerated after every state-mutating `/kb` operation: `inventory.html` (configured layers + external sources + workstreams + marketplace), `open-decisions.html`, `open-todos.html`, `index.html`. Watermark: `latest · YYYY-MM-DD HH:MM`. Spec: `docs/spec/html-artifacts.md` §"Family 1".
-- **Daily summary** as a historical finding — generated by `/kb end-day`: `_references/findings/YYYY-MM-DD-daily-summary.md` + rendered `_references/reports/daily-YYYY-MM-DD.html`. Back-filled from the log if end-day was skipped.
-- **Weekly summary** rendered artifact — paired with the existing weekly-summary finding: `_references/reports/weekly-YYYY-WW.html`.
+- **Daily summary** as a historical finding — generated by `/kb end-day`: `_kb-references/findings/YYYY-MM-DD-daily-summary.md` + rendered `_kb-references/reports/daily-YYYY-MM-DD.html`. Back-filled from the log if end-day was skipped.
+- **Weekly summary** rendered artifact — paired with the existing weekly-summary finding: `_kb-references/reports/weekly-YYYY-WW.html`.
 - `docs/overview.html` moved to `index.html` at repo root — self-contained one-page visual overview with SVG diagrams (five-layer architecture, memory model, multi-harness distribution), light + dark themes, watermark, changelog appendix.
 
 ### Changed

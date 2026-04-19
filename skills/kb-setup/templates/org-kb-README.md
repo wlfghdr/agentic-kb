@@ -6,13 +6,13 @@ Org-unit knowledge base for {{ORG_UNIT_NAME}}, built on the `agentic-kb` specifi
 
 ```
 .
-├── _decisions/
+├── _kb-decisions/
 │   ├── active/          org-level decisions with cross-team RACIs
 │   └── archive/
-├── _tasks/
+├── _kb-tasks/
 │   ├── focus.md         org focus (with RACIs)
 │   └── backlog.md
-├── _workstreams/         org-level workstream coordination
+├── _kb-workstreams/         org-level workstream coordination
 └── .kb-log/
 ```
 

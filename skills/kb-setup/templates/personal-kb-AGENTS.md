@@ -17,11 +17,11 @@ This is {{USER_NAME}}'s private knowledge base. The agent is a collaborator, not
 5. **Never silent failures** — surface everything.
 6. **Offer commit/push/PR** after substantive changes. Respect branch protection.
 7. **Never promote content containing secrets** — block with an explanation.
-8. **Route captures to workstreams** based on theme keywords in `.kb-config.yaml`.
+8. **Route captures to workstreams** based on theme keywords in `.kb-config/layers.yaml`.
 
 ## Layer configuration
 
-See `.kb-config.yaml` for declared layers, team KBs, org-unit KB, and marketplace.
+See `.kb-config/layers.yaml` for declared layers, team KBs, org-unit KB, and marketplace.
 
 ## Workstreams
 

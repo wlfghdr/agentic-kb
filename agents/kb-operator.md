@@ -42,7 +42,7 @@ Rituals are idempotent within a day/week.
 
 ### 2. Capture loop
 
-For each new item in `_inputs/`:
+For each new item in `_kb-inputs/`:
 
 1. Read the content.
 2. Apply the five-question evaluation gate (`kb-management/references/evaluation-gate.md`).
@@ -56,7 +56,7 @@ For each new item in `_inputs/`:
 
 ### 3. Decision lifecycle
 
-Monitor `_decisions/active/`:
+Monitor `_kb-decisions/active/`:
 
 - Due within 7 days → surface in `start-day`.
 - Overdue → escalate: suggest scheduling a meeting with stakeholders.
@@ -65,13 +65,13 @@ Monitor `_decisions/active/`:
 
 ### 4. Idea lifecycle
 
-Monitor `_ideas/`:
+Monitor `_kb-ideas/`:
 
 - Ideas in `seed` status >14 days → flag in `start-week` for development or archival.
 - Ideas in `growing` >30 days without development log entry → flag as stale.
 - When a user invokes `/kb develop`, run the sparring flow: build internal model (assertion, assumptions, contradictions, failure modes, gaps), Socratic questioning, devil's advocate, convergence, then record results.
 - Ideas at `ready` → surface as promotion/topic-update candidates in `end-week`.
-- When an idea is `shipped`, move to `_ideas/archive/`, update the target topic with a changelog entry.
+- When an idea is `shipped`, move to `_kb-ideas/archive/`, update the target topic with a changelog entry.
 - Pattern detection: ≥3 findings converging on a theme with no topic/idea → suggest creating an idea.
 
 ### 5. Cross-layer flow
@@ -87,10 +87,10 @@ Two responsibilities.
 
 **Always-current overviews** — snapshots of current KB state:
 
-- `_references/reports/inventory.html` — configured layers, external sources, workstreams, marketplace status.
-- `_references/reports/open-decisions.html` — snapshot of every `_decisions/active/*.md` across all layers.
-- `_references/reports/open-tasks.html` — focus, waiting, backlog across all layers.
-- `_references/reports/index.html` — chronological list of every HTML artifact.
+- `_kb-references/reports/inventory.html` — configured layers, external sources, workstreams, marketplace status.
+- `_kb-references/reports/open-decisions.html` — snapshot of every `_kb-decisions/active/*.md` across all layers.
+- `_kb-references/reports/open-tasks.html` — focus, waiting, backlog across all layers.
+- `_kb-references/reports/index.html` — chronological list of every HTML artifact.
 
 Regeneration (v2.0 — manual): triggered by `/kb status --refresh-overviews`, `/kb end-day`, `/kb end-week`, `/kb present`, or `/kb report`. After any other state-mutating operation, offer the refresh to the user rather than running it silently.
 
@@ -124,20 +124,20 @@ After substantive changes:
 
 Requires native background automation. Claude Code and OpenCode support this directly; VS Code Copilot does not — VS Code users must schedule via OS cron + CLI invocation of the harness. See `docs/REFERENCE.md` §10 Harness Support for the per-harness row.
 
-When `.kb-automation.yaml → level: 3` and the user has opted in, run this loop on the configured schedule:
+When `.kb-config/automation.yaml → level: 3` and the user has opted in, run this loop on the configured schedule:
 
 ```
 for repo in [personal, *teams, org-unit]:
   pull
 
-for input in personal/_inputs/*:
+for input in personal/_kb-inputs/*:
   if not already digested:
     gate → act → log
 
-for workstream in _workstreams/*:
+for workstream in _kb-workstreams/*:
   re-check cross-workstream signals → surface in next start-day
 
-for decision in _decisions/active/*:
+for decision in _kb-decisions/active/*:
   check due date + new evidence → update
 
 # v2.1+: auto-regenerate live overviews here
