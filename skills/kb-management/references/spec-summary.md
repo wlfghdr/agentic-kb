@@ -19,22 +19,23 @@ my-kb/
 ├── .kb-config.yaml
 ├── .kb-automation.yaml
 ├── .kb-artifacts.yaml
-├── inputs/
+├── .inputs/
 │   └── digested/YYYY-MM/
-├── references/
+├── .references/
 │   ├── topics/              living, inline changelog
 │   ├── findings/            YYYY-MM-DD-slug.md, immutable
 │   ├── foundation/          me, context, sources, stakeholders, naming
 │   ├── legacy/
 │   └── reports/             generated HTML
-├── decisions/
+├── .decisions/
 │   ├── active/              D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── tasks/
+├── .tasks/
 │   ├── focus.md             max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── log/YYYY-MM-DD.log
+├── .kb-log/YYYY-MM-DD.log
+├── .kb-scripts/                 optional utility scripts
 └── workstreams/<name>.md
 ```
 
@@ -42,9 +43,9 @@ my-kb/
 
 ```
 team-kb/
-├── decisions/{active,archive}/    RACIs required
-├── tasks/{focus,backlog}.md        RACIs required
-├── log/
+├── .decisions/{active,archive}/    RACIs required
+├── .tasks/{focus,backlog}.md        RACIs required
+├── .kb-log/
 ├── <contributor>/
 │   ├── inputs/digested/YYYY-MM/
 │   └── outputs/{topics,findings}/
@@ -103,7 +104,7 @@ appendix:
   sources: true
   hidden-by-default: false
 output:
-  directory: references/reports
+  directory: .references/reports
   filename-template: "{slug}-v{version}.html"
 github-pages:
   enabled: false

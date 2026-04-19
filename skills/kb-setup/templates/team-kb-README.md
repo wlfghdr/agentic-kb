@@ -6,13 +6,13 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 
 ```
 .
-├── decisions/
+├── .decisions/
 │   ├── active/               open decisions with RACIs
 │   └── archive/
-├── tasks/
+├── .tasks/
 │   ├── focus.md              team focus (with RACIs)
 │   └── backlog.md
-├── log/                      team processing log
+├── .kb-log/                  team processing log
 └── <contributor>/
     ├── inputs/
     │   └── digested/YYYY-MM/

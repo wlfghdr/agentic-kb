@@ -6,7 +6,7 @@ Every AI agent operating on this team KB follows these rules.
 
 ## Identity
 
-This is a **shared team knowledge base**. Multiple contributors write here. Each has their own directory (`<contributor>/inputs/`, `<contributor>/outputs/`). Shared decisions and TODOs live at the team root.
+This is a **shared team knowledge base**. Multiple contributors write here. Each has their own directory (`<contributor>/inputs/`, `<contributor>/outputs/`). Shared decisions and TODOs live at the team root (`.decisions/`, `.tasks/`).
 
 ## Rules
 

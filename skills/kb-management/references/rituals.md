@@ -34,15 +34,15 @@
 
 1. Full team KB digest.
 2. Review all workstream files for movement.
-3. Audit `decisions/active/` — overdue? new evidence?
-4. Audit `tasks/backlog.md` for stale items (>14 days untouched).
+3. Audit `.decisions/active/` — overdue? new evidence?
+4. Audit `.tasks/backlog.md` for stale items (>14 days untouched).
 5. Check marketplace for new skills matching themes.
 6. **Output**: weekly briefing grouped by workstream.
 7. **Suggest**.
 
 ## `/kb end-week` — Friday 15:00
 
-1. Generate `references/findings/YYYY-MM-DD-weekly-summary.md`.
+1. Generate `.references/findings/YYYY-MM-DD-weekly-summary.md`.
 2. Full TODO cleanup (archive done, prune stale backlog).
 3. Identify promotion candidates (L1 → L2 / L4).
 4. Identify presentation-worthy items for next week.

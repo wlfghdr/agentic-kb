@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 2.2.0
+version: 3.0.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -74,7 +74,7 @@ Full command reference: `references/command-reference.md`.
 
 3. **Route to workstreams.** Analyze content against the workstream themes in `.kb-config.yaml`. If cross-workstream, flag the connection.
 
-4. **Log every operation** to `log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
+4. **Log every operation** to `.kb-log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
 
 5. **Append inline changelog** entries on topic and foundation file updates (newest first, under a `---` separator).
 
@@ -91,24 +91,25 @@ my-kb/
 ├── .kb-config.yaml          # layer declaration
 ├── .kb-automation.yaml      # automation level + schedules
 ├── .kb-artifacts.yaml       # HTML artifact styling
-├── inputs/                  # the inbox; digested/YYYY-MM/ archive
-├── references/
+├── .inputs/                  # the inbox; digested/YYYY-MM/ archive
+├── .references/
 │   ├── topics/              # living; inline changelog required
 │   ├── findings/            # YYYY-MM-DD-slug.md; immutable
 │   ├── foundation/          # me, context, stakeholders, sources, naming
 │   ├── legacy/              # archived topics after audit
 │   └── reports/             # generated HTML artifacts
-├── ideas/
+├── .ideas/
 │   ├── I-YYYY-MM-DD-slug.md # active ideas (seed/growing/ready)
 │   └── archive/             # shipped + archived
-├── decisions/
+├── .decisions/
 │   ├── active/              # D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── tasks/
+├── .tasks/
 │   ├── focus.md             # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── log/YYYY-MM-DD.log
+├── .kb-log/YYYY-MM-DD.log
+├── .kb-scripts/                    # optional utility scripts
 └── workstreams/<name>.md
 ```
 
@@ -119,7 +120,7 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Flow | Command | What it does |
 |------|---------|--------------|
 | Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream; offer idea if novelty detected |
-| Review | `/kb review` | Process all pending items in `inputs/` |
+| Review | `/kb review` | Process all pending items in `.inputs/` |
 | Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `inputs/`) with safety pre-check |
 | Promote org | `/kb promote org [file]` | L2 → L3 |
 | Publish | `/kb publish [file]` | L1/L2/L3 → L4 marketplace; packages as SKILL.md; opens PR |

@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 2.2.0
+version: 3.0.0
 uses:
   - kb-management
   - kb-setup
@@ -42,7 +42,7 @@ Rituals are idempotent within a day/week.
 
 ### 2. Capture loop
 
-For each new item in `inputs/`:
+For each new item in `.inputs/`:
 
 1. Read the content.
 2. Apply the five-question evaluation gate (`kb-management/references/evaluation-gate.md`).

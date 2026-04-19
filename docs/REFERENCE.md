@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 1.0
+> **Version:** 3.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For behavioral specs, read the skill and agent files directly: [`skills/kb-management/SKILL.md`](../skills/kb-management/SKILL.md), [`skills/kb-setup/SKILL.md`](../skills/kb-setup/SKILL.md), [`agents/kb-operator.md`](../agents/kb-operator.md).
 
@@ -13,12 +13,13 @@ Implementation-critical details for building agentic-kb compatible tools. For th
 │  L1 Personal│──►│   L2 Team   │──►│ L3 Org-Unit  │──►│ L4 Marketplace│◄──│ L5 Company  │
 │  (required) │   │ (optional)  │   │  (optional)  │   │   (optional)  │   │ (top-down)  │
 │             │   │ (multiple)  │   │              │   │               │   │             │
-│ inputs/     │   │ <you>/inputs│   │ <team>/inputs│   │ skills/<name> │   │ OKRs, MCG   │
-│ references/ │   │ <you>/outputs│  │ <team>/outputs│  │ agents/<name> │   │ strategy    │
-│ ideas/      │   │ decisions/  │   │ decisions/   │   │ plugins/<name>│   │ directives  │
-│ decisions/  │   │ tasks/      │   │ workstreams/ │   │               │   │             │
-│ tasks/      │   │ log/        │   │ tasks/       │   │               │   │             │
-│ log/        │   │             │   │ log/         │   │               │   │             │
+│ .inputs/    │   │ <you>/inputs│   │ <team>/inputs│   │ skills/<name> │   │ OKRs, MCG   │
+│ .references/│   │ <you>/outputs│  │ <team>/outputs│  │ agents/<name> │   │ strategy    │
+│ .ideas/     │   │ .decisions/ │   │ .decisions/  │   │ plugins/<name>│   │ directives  │
+│ .decisions/ │   │ .tasks/     │   │ workstreams/ │   │               │   │             │
+│ .tasks/     │   │ .kb-log/    │   │ .tasks/      │   │               │   │             │
+│ .kb-log/    │   │             │   │ .kb-log/     │   │               │   │             │
+│ .kb-scripts/│   │             │   │              │   │               │   │             │
 │ workstreams/│   │             │   │              │   │               │   │             │
 └─────────────┘   └─────────────┘   └──────────────┘   └──────────────┘   └─────────────┘
 ```
@@ -79,9 +80,9 @@ my-kb/
 ├── README.md
 ├── .kb-config.yaml
 ├── .kb-automation.yaml
-├── inputs/                         # THE INBOX — drop anything here
+├── .inputs/                        # THE INBOX — drop anything here
 │   └── digested/YYYY-MM/
-├── references/
+├── .references/
 │   ├── topics/                     # living positions (updated in place)
 │   ├── findings/                   # dated snapshots (immutable)
 │   ├── foundation/
@@ -92,17 +93,18 @@ my-kb/
 │   │   └── naming.md
 │   ├── legacy/                     # archived material
 │   └── reports/                    # generated HTML artifacts
-├── ideas/
+├── .ideas/
 │   ├── I-YYYY-MM-DD-slug.md
 │   └── archive/
-├── decisions/
+├── .decisions/
 │   ├── active/D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── tasks/
+├── .tasks/
 │   ├── focus.md                    # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── log/YYYY-MM-DD.log
+├── .kb-log/YYYY-MM-DD.log
+├── .kb-scripts/                    # optional utility scripts
 └── workstreams/<name>.md
 ```
 
@@ -111,9 +113,9 @@ my-kb/
 ```
 team-kb/
 ├── AGENTS.md, README.md
-├── decisions/{active,archive}/
-├── tasks/{focus.md,backlog.md}
-├── log/
+├── .decisions/{active,archive}/
+├── .tasks/{focus.md,backlog.md}
+├── .kb-log/
 ├── alice/
 │   ├── inputs/ (+ digested/)
 │   └── outputs/{topics/,findings/}
@@ -126,7 +128,7 @@ Same as L2 but contributor units are teams, not people:
 
 ```
 org-unit-kb/
-├── decisions/, tasks/, workstreams/, log/
+├── .decisions/, .tasks/, workstreams/, .kb-log/
 ├── team-alpha/{inputs/,outputs/}
 └── team-beta/{inputs/,outputs/}
 ```
@@ -135,16 +137,16 @@ org-unit-kb/
 
 | Layer | Must exist |
 |-------|-----------|
-| L1 | `AGENTS.md`, `.kb-config.yaml`, `inputs/`, `references/{topics,findings,foundation}/`, `ideas/`, `decisions/active/`, `tasks/focus.md`, `log/` |
-| L2 | `AGENTS.md`, `decisions/active/`, `tasks/focus.md`, `log/`, per-contributor dirs |
-| L3 | `AGENTS.md`, `decisions/active/`, `tasks/focus.md`, `workstreams/`, `log/`, per-team dirs |
+| L1 | `AGENTS.md`, `.kb-config.yaml`, `.inputs/`, `.references/{topics,findings,foundation}/`, `.ideas/`, `.decisions/active/`, `.tasks/focus.md`, `.kb-log/` |
+| L2 | `AGENTS.md`, `.decisions/active/`, `.tasks/focus.md`, `.kb-log/`, per-contributor dirs |
+| L3 | `AGENTS.md`, `.decisions/active/`, `.tasks/focus.md`, `workstreams/`, `.kb-log/`, per-team dirs |
 | Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md` |
 
 ---
 
 ## 4. File Formats
 
-### Finding (`references/findings/YYYY-MM-DD-slug.md`)
+### Finding (`.references/findings/YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Finding: <title>
@@ -162,7 +164,7 @@ org-unit-kb/
 
 Immutable after creation. Corrections create a new finding.
 
-### Topic (`references/topics/<slug>.md`)
+### Topic (`.references/topics/<slug>.md`)
 
 ```markdown
 # Topic: <name>
@@ -178,7 +180,7 @@ Immutable after creation. Corrections create a new finding.
 
 One file per topic. Inline changelog required.
 
-### Decision (`decisions/active/D-YYYY-MM-DD-slug.md`)
+### Decision (`.decisions/active/D-YYYY-MM-DD-slug.md`)
 
 ```markdown
 # D-YYYY-MM-DD: <title>
@@ -200,7 +202,7 @@ One file per topic. Inline changelog required.
 - **Date**: resolved date
 ```
 
-### Idea (`ideas/I-YYYY-MM-DD-slug.md`)
+### Idea (`.ideas/I-YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Idea: <title>
@@ -234,7 +236,7 @@ One file per topic. Inline changelog required.
 ## Cross-Workstream Dependencies
 ```
 
-### Focus / Backlog (`tasks/focus.md`, `tasks/backlog.md`)
+### Focus / Backlog (`.tasks/focus.md`, `.tasks/backlog.md`)
 
 ```markdown
 # Focus
@@ -246,7 +248,7 @@ One file per topic. Inline changelog required.
 - [ ] @person: what they owe you
 ```
 
-### Log (`log/YYYY-MM-DD.log`)
+### Log (`.kb-log/YYYY-MM-DD.log`)
 
 ```
 HH:MM:SSZ | operation | scope | target | details
