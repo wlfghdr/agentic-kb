@@ -30,12 +30,12 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Changed
 
-- **Configuration consolidated into `.kb-config/` directory**: flat `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml` replaced by `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`. All config lives inside the personal KB — workspace root no longer hosts config YAMLs. Updated: REFERENCE.md, both SKILL.md files, all templates, spec-summary, html-artifacts, glossary, first-hour, setup-flow, migration-guide, troubleshooting, kb-operator agent.
+- **Configuration consolidated into `.kb-config/` directory**: flat `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml` replaced by `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`. All config lives inside the personal KB — workspace root no longer hosts config YAMLs. L2/L3 repos do not need config — the personal KB's `layers.yaml` is the single source of truth for layer topology. Updated: REFERENCE.md, both SKILL.md files, all templates, spec-summary, html-artifacts, glossary, first-hour, setup-flow, migration-guide, troubleshooting, kb-operator agent.
 
 ### Added
 
 - **Built-in tools in SKILL frontmatter**: both `kb-management` and `kb-setup` now declare 13 built-in tools (`run_in_terminal`, `read_file`, `create_file`, `replace_string_in_file`, `multi_replace_string_in_file`, `list_dir`, `file_search`, `grep_search`, `semantic_search`, `manage_todo_list`, `vscode_askQuestions`, `fetch_webpage`, `memory`) so the chat session has all needed tools selected by default.
-- **Setup questionnaire explanations**: each of the 12 interview questions now includes a brief `→` note explaining how the answer affects the resulting setup.
+- **Setup questionnaire explanations**: each of the 13 interview questions now includes a brief `→` note explaining how the answer affects the resulting setup.
 
 ---
 

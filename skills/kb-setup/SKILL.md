@@ -62,32 +62,38 @@ Ask each block in order. Stop and wait after each block for the user's answer be
    *→ Sets your contributor directory name in team/org KBs, and the default KB repo name (`<name>-kb`).*
 2. **Your role and themes**: one sentence + 3–5 theme keywords (these become initial workstreams).
    *→ Seeds your `me.md` foundation file, creates initial topic stubs under `_kb-references/topics/`, and pre-populates workstream files.*
-3. **Workspace root**: absolute path. Default: current directory.
+3. **Vision, mission & goals (VMG)**: provide any of:
+   - A URL to a strategy doc, OKR page, or team charter.
+   - A file path to an existing document.
+   - A short text description (vision in one sentence, mission in one sentence, 1–5 goals).
+   - "Skip" — creates the file with placeholder sections.
+   *→ Pre-fills `_kb-references/foundation/vmg.md`. If a URL or file is provided, the agent extracts vision/mission/goals and structures them. During `/kb digest team` and `/kb digest org`, upstream VMG from higher layers gets merged into this file automatically.*
+4. **Workspace root**: absolute path. Default: current directory.
    *→ All repos, config files (`AGENTS.md`, `.kb-config/`), and harness hooks are created relative to this path.*
-4. **Personal KB (L1)** — required:
+5. **Personal KB (L1)** — required:
    - Create new? → ask for name, initialize git, choose remote.
    - Onboard existing? → ask for path.
    *→ Your single source of truth. All `/kb` commands operate on this repo. "Onboard existing" runs migration analysis instead of scaffolding from scratch.*
-5. **Team KBs (L2)** — optional, multiple:
+6. **Team KBs (L2)** — optional, multiple:
    - Create new / onboard existing / skip.
    *→ Shared decision logs and cross-contributor references. Creates your contributor directory (`<name>/_kb-inputs/`, `<name>/_kb-references/`) and team-level `_kb-decisions/`, `_kb-tasks/`.*
-6. **Org-Unit KB (L3)** — optional:
+7. **Org-Unit KB (L3)** — optional:
    - Onboard existing / skip.
    *→ Links your workspace to the org-wide aggregation layer. Enables `/kb promote` to push mature content upstream.*
-7. **Marketplace (L4)** — optional:
+8. **Marketplace (L4)** — optional:
    - Install from marketplace (recommended for users).
    - Clone for contributing (for skill authors).
    - Skip.
    *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
-8. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
+9. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
    *→ Creates `_kb-workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
-9. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`.
-   *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`). Multiple selections create cross-harness compatibility.*
-10. **Integrations**: marketplace-available MCP servers / APIs to wire up.
+10. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`.
+    *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`). Multiple selections create cross-harness compatibility.*
+11. **Integrations**: marketplace-available MCP servers / APIs to wire up.
     *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
-11. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
+12. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
     *→ Controls `.kb-config/automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
-12. **HTML artifact styling**:
+13. **HTML artifact styling**:
     - *"For generated presentations and reports, what styling should the agent use?"*
     - (a) Default built-in template.
     - (b) Point to a website — agent derives a matching theme from the page.
@@ -127,7 +133,8 @@ Directories: `_kb-inputs/`, `_kb-inputs/digested/`, `_kb-references/{topics,find
 Files (from `templates/`):
 - `AGENTS.md`, `README.md`, `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`.
 - Initial `_kb-workstreams/<name>.md` per declared workstream.
-- `_kb-references/foundation/{me,context,stakeholders,sources,naming}.md`.
+- `_kb-references/foundation/{me,context,vmg,stakeholders,sources,naming}.md`.
+  - `vmg.md` is pre-filled from Q3: if the user provided a URL, fetch and extract vision/mission/goals into structured sections. If a file path, read and extract. If short text, structure directly. If skipped, write placeholder sections.
 - Initial `_kb-references/topics/<slug>.md` per declared theme (with empty changelog).
 - `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`.
 - `.kb-scripts/generate-index` — artifact index generator (from `scripts/generate-index.py`).
@@ -214,19 +221,22 @@ All templates are in `templates/`. The skill instantiates them with values from 
 
 ### Placeholder → interview-answer mapping (MUST be substituted)
 
-Every placeholder below has exactly one source — always from the interview answers collected in the 12 question blocks. If a source is missing, **ask the user again** before writing; never leave a literal `{{…}}` in an output file.
+Every placeholder below has exactly one source — always from the interview answers collected in the 13 question blocks. If a source is missing, **ask the user again** before writing; never leave a literal `{{…}}` in an output file.
 
 | Placeholder | Source (question block) |
 |-------------|------------------------|
 | `{{USER_NAME}}` | Q1 (your name) |
 | `{{ROLE}}` | Q2 (role sentence) |
 | `{{THEMES}}` | Q2 (theme keywords, rendered as a bullet list) |
-| `{{KB_NAME}}` | Q4 (personal KB name; defaults to `<user-name>-kb` if the user accepts the default) |
+| `{{KB_NAME}}` | Q5 (personal KB name; defaults to `<user-name>-kb` if the user accepts the default) |
 | `{{KB_DESCRIPTION}}` | Q2 (one-sentence role statement) |
-| `{{WORKSTREAMS}}` | Q8 (rendered as a bullet list: `- <name>: <themes>`) |
-| `{{WORKSTREAM_N_NAME}}`, `{{WORKSTREAM_N_THEMES}}` | Q8 (per declared workstream) |
-| `{{TEAM_NAME}}` | Q5 (per declared team, if any) |
-| `{{ORG_UNIT_NAME}}` | Q6 (if an org-unit KB was onboarded) |
+| `{{VMG_VISION}}` | Q3 (extracted vision statement — from URL fetch, file read, or direct text; placeholder if skipped) |
+| `{{VMG_MISSION}}` | Q3 (extracted mission statement — same sources as vision) |
+| `{{VMG_GOALS}}` | Q3 (extracted goals as table rows `| G-YYYY-Qn-N | description | horizon | active |`; placeholder row if skipped) |
+| `{{WORKSTREAMS}}` | Q9 (rendered as a bullet list: `- <name>: <themes>`) |
+| `{{WORKSTREAM_N_NAME}}`, `{{WORKSTREAM_N_THEMES}}` | Q9 (per declared workstream) |
+| `{{TEAM_NAME}}` | Q6 (per declared team, if any) |
+| `{{ORG_UNIT_NAME}}` | Q7 (if an org-unit KB was onboarded) |
 | `{{REPO_INDEX}}` | Computed — one bullet per configured KB layer with its path + role |
 | `{{KEYWORD_LOOKUP}}` | Computed — `docs/glossary.md` summary injected verbatim |
 | `{{RECENT_REPORTS}}` | Empty `<ul></ul>` on first run (will be filled by `/kb present` / `/kb report`) |

@@ -50,6 +50,7 @@ Instantiate these files from `templates/`:
 - `.kb-config/artifacts.yaml` ← `artifacts.yaml`
 - `_kb-references/foundation/me.md` ← `foundation-me.md`
 - `_kb-references/foundation/context.md` ← `foundation-context.md`
+- `_kb-references/foundation/vmg.md` ← `foundation-vmg.md` (pre-filled from Q3: URL fetch, file read, or direct text)
 - `_kb-references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
 - `_kb-references/foundation/sources.md` ← `foundation-sources.md`
 - `_kb-references/foundation/naming.md` ← `foundation-naming.md`

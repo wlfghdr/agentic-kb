@@ -81,7 +81,7 @@ Full command reference: `references/command-reference.md`.
    5. Does this already exist?
    Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only (offer idea creation if novelty detected). Score 3+ → finding + topic update + possibly new decision or idea.
 
-1b. **Check strategic alignment** when VMG is declared. Material aligned with active goals gets +1. Material contradicting a goal is captured + flagged for decision review.
+1b. **Check strategic alignment** when VMG is declared in `_kb-references/foundation/vmg.md`. Material aligned with active goals gets +1. Material contradicting a goal is captured + flagged for decision review.
 
 2. **Always suggest next steps.** Every operation output ends with 1–3 concrete follow-ups (promote, notify, update topic, generate presentation).
 
@@ -111,7 +111,7 @@ my-kb/
 ├── _kb-references/
 │   ├── topics/              # living; inline changelog required
 │   ├── findings/            # YYYY-MM-DD-slug.md; immutable
-│   ├── foundation/          # me, context, stakeholders, sources, naming
+│   ├── foundation/          # me, context, vmg, stakeholders, sources, naming
 │   ├── legacy/              # archived topics after audit
 │   └── reports/             # generated HTML artifacts
 ├── _kb-ideas/
@@ -141,8 +141,8 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `_kb-inputs/`) with safety pre-check |
 | Promote org | `/kb promote org [file]` | L2 → L3 |
 | Publish | `/kb publish [file]` | L1/L2/L3 → L4 marketplace; packages as SKILL.md; opens PR |
-| Digest team | `/kb digest team` | Pull team changes since watermark; distill new findings |
-| Digest org | `/kb digest org` | L3 → L1 equivalent |
+| Digest team | `/kb digest team` | Pull team changes since watermark; distill new findings; incorporate team VMG updates into personal `vmg.md` |
+| Digest org | `/kb digest org` | L3 → L1 equivalent; incorporate org VMG updates into personal `vmg.md` |
 | Sync team | `/kb sync team` | Cross-reference contributor topics; flag conflicts |
 | Diff team | `/kb diff team` | Show new items per contributor |
 | Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog (aliases: todo, tasks) |

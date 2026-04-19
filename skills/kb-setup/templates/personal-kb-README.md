@@ -10,7 +10,7 @@
 ├── _kb-references/
 │   ├── topics/          living positions (updated in place)
 │   ├── findings/        dated snapshots (immutable)
-│   ├── foundation/      identity: me, context, stakeholders, sources
+│   ├── foundation/      identity: me, context, vmg, stakeholders, sources
 │   └── reports/         generated HTML artifacts
 ├── _kb-decisions/
 │   ├── D-YYYY-MM-DD-slug.md  open decisions (one file each)

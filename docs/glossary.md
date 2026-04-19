@@ -16,7 +16,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Finding** | A dated, immutable snapshot capturing what was learned on a specific date. Path: `_kb-references/findings/YYYY-MM-DD-slug.md`. |
 | **Focus** | The max-3 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
 | **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources. |
-| **Goal** | A measurable target declared in `.kb-config/layers.yaml` under `vmg.goals`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer evaluation gate scoring and task prioritization. Also called **MCG** (Mission-Critical Goal). |
+| **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer evaluation gate scoring and task prioritization. Also called **MCG** (Mission-Critical Goal). |
 | **Harness** | The IDE or CLI environment where the skills run (VS Code Copilot, Claude Code, OpenCode). |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **L1 / L2 / L3 / L4 / L5** | Personal / Team / Org-Unit / Marketplace / Company-wide layers. |
@@ -30,7 +30,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Task** | An actionable work item tracked in `_kb-tasks/focus.md` or `_kb-tasks/backlog.md`. The canonical term; "todo" and "TODO" are recognized synonyms. |
 | **Topic** | A living document representing the current position on a theme. Updated in place. Path: `_kb-references/topics/<slug>.md`. |
 | **Watermark** | The subtle `v{version} · {date}` marker added to generated HTML artifacts' intro slides. |
-| **VMG** | Vision, Mission & Goals — the strategic steering model declared per layer. Vision (years), Mission (quarters), Goals (weeks–quarters). Goals are synonymous with MCGs (Mission-Critical Goals). See `12-vision-mission-goals.md`. |
+| **VMG** | Vision, Mission & Goals — the strategic steering model. Lives in `_kb-references/foundation/vmg.md`. Vision (years), Mission (quarters), Goals (weeks–quarters). Goals are synonymous with MCGs (Mission-Critical Goals). |
 | **Workstream** | A parallel track inside a personal KB with its own themes, active decisions, and status. Path: `_kb-workstreams/<name>.md`. |
 
 ## Non-Terms

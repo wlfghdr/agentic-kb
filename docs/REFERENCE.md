@@ -25,6 +25,7 @@ Implementation-critical details for building agentic-kb compatible tools. For th
 
 - Only **L1** is required. Higher layers are optional, declared in `.kb-config/layers.yaml`.
 - Content flows **up** via `promote` / `publish`; **down** via `digest`.
+- VMG (vision/mission/goals) bleeds **top-down** during digest: L3 org VMG → L2 team VMG → L1 personal VMG. Each layer's `_kb-references/foundation/vmg.md` is optional; the personal KB's is the merged view.
 - L5 is top-down only — no promotions accepted.
 - Every upward flow passes the evaluation gate.
 
@@ -88,6 +89,7 @@ my-kb/
 │   ├── foundation/
 │   │   ├── me.md
 │   │   ├── context.md
+│   │   ├── vmg.md                  # vision, mission & goals
 │   │   ├── sources.md
 │   │   ├── stakeholders.md
 │   │   └── naming.md
@@ -113,6 +115,7 @@ my-kb/
 ```
 team-kb/
 ├── AGENTS.md, README.md
+├── _kb-references/foundation/vmg.md   # team-level vision/mission/goals
 ├── _kb-decisions/{archive}/
 ├── _kb-tasks/{focus.md,backlog.md}
 ├── .kb-log/
@@ -128,6 +131,7 @@ Same as L2 but contributor units are teams, not people:
 
 ```
 org-unit-kb/
+├── _kb-references/foundation/vmg.md   # org-level vision/mission/goals
 ├── _kb-decisions/, _kb-tasks/, _kb-workstreams/, .kb-log/
 ├── team-alpha/{_kb-inputs/,_kb-references/}
 └── team-beta/{_kb-inputs/,_kb-references/}
@@ -264,7 +268,7 @@ Scopes: `personal`, `team-kb`, `org-unit`, `marketplace`, `personal→team`, `te
 
 ## 5. Configuration Files
 
-All configuration lives in a `.kb-config/` directory inside the personal KB (L1). Other KB layers (L2/L3) may have their own `.kb-config/layers.yaml` for layer declaration.
+All configuration lives in a `.kb-config/` directory inside the personal KB (L1). Higher-layer KBs (L2/L3) do **not** need configuration — they are plain repos with the required directory structure. The personal KB's `layers.yaml` is the single source of truth for layer topology; all commands (`/kb promote`, `/kb digest`, `/kb sync`) originate from L1.
 
 ```
 .kb-config/
@@ -300,15 +304,6 @@ layers:
   marketplace:
     source: https://github.com/org/marketplace
     install-mode: marketplace   # marketplace | clone
-
-vmg:
-  vision: "..."
-  mission: "..."
-  goals:
-    - id: G-2026-Q2-1
-      description: "..."
-      horizon: quarter
-      status: active
 ```
 
 ### `.kb-config/automation.yaml`

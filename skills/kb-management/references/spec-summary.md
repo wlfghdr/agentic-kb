@@ -25,7 +25,7 @@ my-kb/
 ├── _kb-references/
 │   ├── topics/              living, inline changelog
 │   ├── findings/            YYYY-MM-DD-slug.md, immutable
-│   ├── foundation/          me, context, sources, stakeholders, naming
+│   ├── foundation/          me, context, vmg, sources, stakeholders, naming
 │   ├── legacy/
 │   └── reports/             generated HTML
 ├── _kb-decisions/
