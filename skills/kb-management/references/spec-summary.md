@@ -44,7 +44,7 @@ my-kb/
 
 ```
 team-kb/
-├── _kb-decisions/{active,archive}/    RACIs required
+├── _kb-decisions/{archive}/          RACIs required
 ├── _kb-tasks/{focus,backlog}.md        RACIs required
 ├── .kb-log/
 ├── <contributor>/

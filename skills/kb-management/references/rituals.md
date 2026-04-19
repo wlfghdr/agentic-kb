@@ -11,7 +11,7 @@
 ## `/kb start-day`
 
 1. Read `_kb-tasks/focus.md`.
-2. Scan `_kb-decisions/active/` — any due soon or blocked?
+2. Scan `_kb-decisions/` — any due soon or blocked?
 3. Read today's and yesterday's `.kb-log/`.
 4. `git diff` in personal KB since last activity.
 5. `git diff` in team KB(s) since last digest.
@@ -34,7 +34,7 @@
 
 1. Full team KB digest.
 2. Review all workstream files for movement.
-3. Audit `_kb-decisions/active/` — overdue? new evidence?
+3. Audit `_kb-decisions/` — overdue? new evidence?
 4. Audit `_kb-tasks/backlog.md` for stale items (>14 days untouched).
 5. Check marketplace for new skills matching themes.
 6. **Output**: weekly briefing grouped by workstream.

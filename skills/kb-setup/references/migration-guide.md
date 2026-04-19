@@ -16,7 +16,7 @@ Produce a **diff** before applying:
 
 - Directories to create (missing required paths).
 - Files to rename (e.g., `todo.md` → split into `_kb-tasks/focus.md` + `_kb-tasks/backlog.md`).
-- Files to restructure (e.g., single `decisions/open.md` → individual `_kb-decisions/active/D-*.md` files).
+- Files to restructure (e.g., single `decisions/open.md` → individual `_kb-decisions/D-*.md` files).
 - Files to move to `_kb-references/legacy/` (material that doesn't fit).
 
 ## Apply
@@ -44,7 +44,7 @@ After:
 
 ```
 Before: decisions/open.md (multiple decisions in one file)
-After: _kb-decisions/active/D-YYYY-MM-DD-<slug>.md  (one per decision)
+After: _kb-decisions/D-YYYY-MM-DD-<slug>.md  (one per decision)
 ```
 
 ### Flat `_kb-inputs/digested/` → dated

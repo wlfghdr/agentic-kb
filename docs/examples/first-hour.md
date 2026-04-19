@@ -84,7 +84,7 @@ Expected output shape:
 
 ```
 **What I did**: briefed you.
-**Where it went**: read focus.md (0 items), _kb-decisions/active/ (0 items), .kb-log/2026-04-18.log (new), _kb-workstreams/<name>.md.
+**Where it went**: read focus.md (0 items), _kb-decisions/ (0 items), .kb-log/2026-04-18.log (new), _kb-workstreams/<name>.md.
 **Gate notes**: n/a — briefing, not capture.
 **Suggested next steps**:
   - Capture something: /kb <URL-or-paste>

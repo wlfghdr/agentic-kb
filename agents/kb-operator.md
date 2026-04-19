@@ -56,7 +56,7 @@ For each new item in `_kb-inputs/`:
 
 ### 3. Decision lifecycle
 
-Monitor `_kb-decisions/active/`:
+Monitor `_kb-decisions/`:
 
 - Due within 7 days → surface in `start-day`.
 - Overdue → escalate: suggest scheduling a meeting with stakeholders.
@@ -88,7 +88,7 @@ Two responsibilities.
 **Always-current overviews** — snapshots of current KB state:
 
 - `_kb-references/reports/inventory.html` — configured layers, external sources, workstreams, marketplace status.
-- `_kb-references/reports/open-decisions.html` — snapshot of every `_kb-decisions/active/*.md` across all layers.
+- `_kb-references/reports/open-decisions.html` — snapshot of every `_kb-decisions/*.md` across all layers.
 - `_kb-references/reports/open-tasks.html` — focus, waiting, backlog across all layers.
 - `_kb-references/reports/index.html` — chronological list of every HTML artifact.
 
@@ -137,7 +137,7 @@ for input in personal/_kb-inputs/*:
 for workstream in _kb-workstreams/*:
   re-check cross-workstream signals → surface in next start-day
 
-for decision in _kb-decisions/active/*:
+for decision in _kb-decisions/*:
   check due date + new evidence → update
 
 # v2.1+: auto-regenerate live overviews here

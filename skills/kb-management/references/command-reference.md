@@ -16,7 +16,7 @@
 |-----------|--------|
 | `/kb todo` | Show `focus.md` |
 | `/kb todo done [item]` | Complete item → archive, pull next from backlog |
-| `/kb decide [description]` | Create new `_kb-decisions/active/D-YYYY-MM-DD-slug.md` |
+| `/kb decide [description]` | Create new `_kb-decisions/D-YYYY-MM-DD-slug.md` |
 | `/kb decide resolve [D-id]` | Archive decision + update topics + close related TODOs |
 
 ## Rituals

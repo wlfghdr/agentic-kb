@@ -7,7 +7,7 @@ Org-unit knowledge base for {{ORG_UNIT_NAME}}, built on the `agentic-kb` specifi
 ```
 .
 ├── _kb-decisions/
-│   ├── active/          org-level decisions with cross-team RACIs
+│   ├── D-YYYY-MM-DD-slug.md  org-level decisions with cross-team RACIs
 │   └── archive/
 ├── _kb-tasks/
 │   ├── focus.md         org focus (with RACIs)

@@ -97,7 +97,7 @@ my-kb/
 │   ├── I-YYYY-MM-DD-slug.md
 │   └── archive/
 ├── _kb-decisions/
-│   ├── active/D-YYYY-MM-DD-slug.md
+│   ├── D-YYYY-MM-DD-slug.md       # active decisions live at root
 │   └── archive/
 ├── _kb-tasks/
 │   ├── focus.md                    # max 3 items
@@ -113,7 +113,7 @@ my-kb/
 ```
 team-kb/
 ├── AGENTS.md, README.md
-├── _kb-decisions/{active,archive}/
+├── _kb-decisions/{archive}/
 ├── _kb-tasks/{focus.md,backlog.md}
 ├── .kb-log/
 ├── alice/
@@ -137,9 +137,9 @@ org-unit-kb/
 
 | Layer | Must exist |
 |-------|-----------|
-| L1 | `AGENTS.md`, `.kb-config/layers.yaml`, `_kb-inputs/`, `_kb-references/{topics,findings,foundation}/`, `_kb-ideas/`, `_kb-decisions/active/`, `_kb-tasks/focus.md`, `.kb-log/` |
-| L2 | `AGENTS.md`, `_kb-decisions/active/`, `_kb-tasks/focus.md`, `.kb-log/`, per-contributor dirs |
-| L3 | `AGENTS.md`, `_kb-decisions/active/`, `_kb-tasks/focus.md`, `_kb-workstreams/`, `.kb-log/`, per-team dirs |
+| L1 | `AGENTS.md`, `.kb-config/layers.yaml`, `_kb-inputs/`, `_kb-references/{topics,findings,foundation}/`, `_kb-ideas/`, `_kb-decisions/`, `_kb-tasks/focus.md`, `.kb-log/` |
+| L2 | `AGENTS.md`, `_kb-decisions/`, `_kb-tasks/focus.md`, `.kb-log/`, per-contributor dirs |
+| L3 | `AGENTS.md`, `_kb-decisions/`, `_kb-tasks/focus.md`, `_kb-workstreams/`, `.kb-log/`, per-team dirs |
 | Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md` |
 
 Note: `.kb-config/automation.yaml` and `.kb-config/artifacts.yaml` are optional — defaults apply when absent.
@@ -182,7 +182,7 @@ Immutable after creation. Corrections create a new finding.
 
 One file per topic. Inline changelog required.
 
-### Decision (`_kb-decisions/active/D-YYYY-MM-DD-slug.md`)
+### Decision (`_kb-decisions/D-YYYY-MM-DD-slug.md`)
 
 ```markdown
 # D-YYYY-MM-DD: <title>

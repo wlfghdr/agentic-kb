@@ -21,7 +21,7 @@ Good morning. Here's your briefing:
   2. Schedule architecture review with @alice
   3. Review platform backlog for sprint alignment
 
-⚖️ Open Decisions (_kb-decisions/active/):
+⚖️ Open Decisions (_kb-decisions/):
   • D-2026-04-15: Progressive-delivery model (due Apr 30, status: under-discussion)
   • D-2026-04-18: Coordination model (due Apr 25, status: gathering-evidence)
 

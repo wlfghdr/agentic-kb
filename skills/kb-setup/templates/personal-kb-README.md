@@ -13,7 +13,7 @@
 │   ├── foundation/      identity: me, context, stakeholders, sources
 │   └── reports/         generated HTML artifacts
 ├── _kb-decisions/
-│   ├── active/          open decisions (one file each)
+│   ├── D-YYYY-MM-DD-slug.md  open decisions (one file each)
 │   └── archive/         resolved or superseded
 ├── _kb-tasks/
 │   ├── focus.md         max 3 items — what you're doing NOW

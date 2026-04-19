@@ -7,7 +7,7 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 ```
 .
 ├── _kb-decisions/
-│   ├── active/               open decisions with RACIs
+│   ├── D-YYYY-MM-DD-slug.md  open decisions with RACIs
 │   └── archive/
 ├── _kb-tasks/
 │   ├── focus.md              team focus (with RACIs)

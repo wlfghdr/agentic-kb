@@ -10,7 +10,7 @@ Two families of artifacts:
 | File | Source of truth | Refresh trigger |
 |------|-----------------|-----------------|
 | `_kb-references/reports/inventory.html` | `.kb-config/layers.yaml` + `_kb-references/foundation/sources.md` + git status per layer | every mutation |
-| `_kb-references/reports/open-decisions.html` | `_kb-decisions/active/*.md` across all layers | every mutation |
+| `_kb-references/reports/open-decisions.html` | `_kb-decisions/*.md` across all layers | every mutation |
 | `_kb-references/reports/open-tasks.html` | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` across all layers | every mutation |
 | `_kb-references/reports/index.html` | chronological list of everything under `_kb-references/reports/` | every artifact create/update |
 

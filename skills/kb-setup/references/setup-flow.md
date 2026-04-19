@@ -33,7 +33,7 @@ _kb-references/findings/
 _kb-references/foundation/
 _kb-references/reports/
 _kb-references/legacy/
-_kb-decisions/active/
+_kb-decisions/
 _kb-decisions/archive/
 _kb-tasks/
 _kb-tasks/archive/
@@ -61,7 +61,7 @@ Instantiate these files from `templates/`:
 ## Scaffold — team KB (if creating new)
 
 ```
-_kb-decisions/active/
+_kb-decisions/
 _kb-decisions/archive/
 _kb-tasks/archive/
 .kb-log/
@@ -77,7 +77,7 @@ _kb-tasks/archive/
 ## Scaffold — org-unit KB
 
 ```
-_kb-decisions/active/
+_kb-decisions/
 _kb-decisions/archive/
 _kb-tasks/archive/
 _kb-workstreams/
