@@ -9,10 +9,10 @@ Two families of artifacts:
 
 | File | Source of truth | Refresh trigger |
 |------|-----------------|-----------------|
-| `references/reports/inventory.html` | `.kb-config.yaml` + `references/foundation/sources.md` + git status per layer | every mutation |
-| `references/reports/open-decisions.html` | `.decisions/active/*.md` across all layers | every mutation |
-| `references/reports/open-tasks.html` | `.tasks/focus.md` + `.tasks/backlog.md` across all layers | every mutation |
-| `references/reports/index.html` | chronological list of everything under `references/reports/` | every artifact create/update |
+| `_references/reports/inventory.html` | `.kb-config.yaml` + `_references/foundation/sources.md` + git status per layer | every mutation |
+| `_references/reports/open-decisions.html` | `_decisions/active/*.md` across all layers | every mutation |
+| `_references/reports/open-tasks.html` | `_tasks/focus.md` + `_tasks/backlog.md` across all layers | every mutation |
+| `_references/reports/index.html` | chronological list of everything under `_references/reports/` | every artifact create/update |
 
 **Regenerate after**: `capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, and every ritual.
 
@@ -105,7 +105,7 @@ In all cases, build **both light and dark themes** into the output file with a t
 
 | Layer | Directory |
 |-------|-----------|
-| Personal KB | `references/reports/` |
+| Personal KB | `_references/reports/` |
 | Team KB | `<contributor>/outputs/reports/` |
 | Org-Unit KB | `reports/` |
 

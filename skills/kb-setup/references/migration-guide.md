@@ -15,9 +15,9 @@ For users who already have a knowledge base in another layout.
 Produce a **diff** before applying:
 
 - Directories to create (missing required paths).
-- Files to rename (e.g., `todo.md` → split into `.tasks/focus.md` + `.tasks/backlog.md`).
-- Files to restructure (e.g., single `decisions/open.md` → individual `.decisions/active/D-*.md` files).
-- Files to move to `references/legacy/` (material that doesn't fit).
+- Files to rename (e.g., `todo.md` → split into `_tasks/focus.md` + `_tasks/backlog.md`).
+- Files to restructure (e.g., single `decisions/open.md` → individual `_decisions/active/D-*.md` files).
+- Files to move to `_references/legacy/` (material that doesn't fit).
 
 ## Apply
 
@@ -54,7 +54,7 @@ Before: inputs/digested/*.md
 After: inputs/digested/YYYY-MM/*.md (grouped by processed month)
 ```
 
-### Missing `workstreams/`
+### Missing `_workstreams/`
 
 Prompt the user for 1–5 parallel tracks. Create files.
 

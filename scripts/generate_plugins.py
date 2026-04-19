@@ -5,10 +5,9 @@ Generate the per-plugin directory tree (plugins/<name>/) from the canonical
 
 Each plugin declared in marketplace.json gets:
   plugins/<name>/
-  ├── .claude-plugin/
-  │   └── plugin.json         # per-plugin manifest (Claude Code spec)
-  ├── skills/                 # symlinks (POSIX) or copies (Windows) of ../../skills/<skill>/
-  └── agents/                 # symlinks or copies of ../../agents/<agent>.md
+  ├── plugin.json              # per-plugin manifest (flat, with x-skills/x-agents)
+  ├── skills/                  # symlinks (POSIX) or copies (Windows) of ../../skills/<skill>/
+  └── agents/                  # symlinks or copies of ../../agents/<agent>.md
 
 References for the Claude Code plugin + marketplace spec:
   https://code.claude.com/docs/en/plugins.md
@@ -90,7 +89,6 @@ def build_plugin(plugin: dict) -> None:
         sys.exit(1)
 
     reset_dir(plugin_path)
-    (plugin_path / ".claude-plugin").mkdir(parents=True, exist_ok=True)
     (plugin_path / "skills").mkdir(parents=True, exist_ok=True)
     (plugin_path / "agents").mkdir(parents=True, exist_ok=True)
 
@@ -110,7 +108,8 @@ def build_plugin(plugin: dict) -> None:
             sys.exit(1)
         symlink_or_copy(src, plugin_path / "agents" / f"{agent}.md")
 
-    # Per-plugin manifest — this is the file Claude Code reads on install.
+    # Per-plugin manifest — flat plugin.json at plugin root
+    # (matching rnd-ai-knowledgebase marketplace convention).
     manifest = {
         "name": name,
         "description": plugin.get("description", ""),
@@ -119,7 +118,9 @@ def build_plugin(plugin: dict) -> None:
     for optional in ("author", "homepage", "license", "keywords", "category"):
         if plugin.get(optional) is not None:
             manifest[optional] = plugin[optional]
-    (plugin_path / ".claude-plugin" / "plugin.json").write_text(
+    manifest["x-skills"] = skills
+    manifest["x-agents"] = agents
+    (plugin_path / "plugin.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
 

@@ -188,13 +188,22 @@ def check_vscode_plugin() -> list[str]:
         if required not in data:
             errors.append(f"plugin.json: missing required field {required!r}")
     # Validate every referenced file path exists.
-    for key in ("skills", "agents", "prompts", "instructions"):
+    for key in ("skills", "agents", "prompts", "instructions", "plugins"):
         for entry in data.get(key, []) or []:
             if not isinstance(entry, dict):
                 continue
             p = entry.get("path")
             if p and not (REPO / p).exists():
                 errors.append(f"plugin.json: {key} entry {entry.get('name')!r} path missing: {p}")
+    # Validate per-plugin manifests when using the "plugins" key
+    for plugin_entry in data.get("plugins", []) or []:
+        if not isinstance(plugin_entry, dict):
+            continue
+        p = plugin_entry.get("path")
+        if p:
+            manifest = REPO / p / "plugin.json"
+            if not manifest.is_file():
+                errors.append(f"plugin.json: plugin {plugin_entry.get('name')!r} missing {p}/plugin.json")
     return errors
 
 

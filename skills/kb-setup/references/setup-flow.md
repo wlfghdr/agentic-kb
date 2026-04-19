@@ -26,19 +26,19 @@ For each repo (personal / team / org-unit / marketplace), offer:
 Create these directories (idempotent):
 
 ```
-.inputs/
-.inputs/digested/
-references/topics/
-references/findings/
-references/foundation/
-references/reports/
-references/legacy/
-.decisions/active/
-.decisions/archive/
-.tasks/
-.tasks/archive/
-.log/
-workstreams/
+__inputs/
+__inputs/digested/
+_references/topics/
+_references/findings/
+_references/foundation/
+_references/reports/
+_references/legacy/
+_decisions/active/
+_decisions/archive/
+_tasks/
+_tasks/archive/
+.kb-log/
+_workstreams/
 ```
 
 Instantiate these files from `templates/`:
@@ -48,45 +48,45 @@ Instantiate these files from `templates/`:
 - `.kb-config.yaml` ← `.kb-config.yaml`
 - `.kb-automation.yaml` ← `.kb-automation.yaml`
 - `.kb-artifacts.yaml` ← `.kb-artifacts.yaml`
-- `references/foundation/me.md` ← `foundation-me.md`
-- `references/foundation/context.md` ← `foundation-context.md`
-- `references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
-- `references/foundation/sources.md` ← `foundation-sources.md`
-- `references/foundation/naming.md` ← `foundation-naming.md`
-- `.tasks/focus.md` ← `focus.md`
-- `.tasks/backlog.md` ← `backlog.md`
-- Per workstream: `workstreams/<name>.md` ← `workstream.md`
-- Per theme: `references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
+- `_references/foundation/me.md` ← `foundation-me.md`
+- `_references/foundation/context.md` ← `foundation-context.md`
+- `_references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
+- `_references/foundation/sources.md` ← `foundation-sources.md`
+- `_references/foundation/naming.md` ← `foundation-naming.md`
+- `_tasks/focus.md` ← `focus.md`
+- `_tasks/backlog.md` ← `backlog.md`
+- Per workstream: `_workstreams/<name>.md` ← `workstream.md`
+- Per theme: `_references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
 
 ## Scaffold — team KB (if creating new)
 
 ```
-.decisions/active/
-.decisions/archive/
-.tasks/archive/
-.log/
-<contributor>/inputs/digested/
+_decisions/active/
+_decisions/archive/
+_tasks/archive/
+.kb-log/
+<contributor>/_inputs/digested/
 <contributor>/outputs/topics/
 <contributor>/outputs/findings/
 ```
 
 - `AGENTS.md` ← `team-kb-AGENTS.md`
 - `README.md` ← `team-kb-README.md`
-- `.tasks/focus.md`, `.tasks/backlog.md`
+- `_tasks/focus.md`, `_tasks/backlog.md`
 
 ## Scaffold — org-unit KB
 
 ```
-.decisions/active/
-.decisions/archive/
-.tasks/archive/
-workstreams/
-.log/
+_decisions/active/
+_decisions/archive/
+_tasks/archive/
+_workstreams/
+.kb-log/
 ```
 
 - `AGENTS.md` ← `org-kb-AGENTS.md`
 - `README.md` ← `org-kb-README.md`
-- `.tasks/focus.md`, `.tasks/backlog.md`
+- `_tasks/focus.md`, `_tasks/backlog.md`
 
 ## Scaffold — workspace root
 

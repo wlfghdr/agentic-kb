@@ -6,22 +6,22 @@
 
 ```
 .
-├── .inputs/             THE INBOX — drop anything here
-├── references/
+├── _inputs/             THE INBOX — drop anything here
+├── _references/
 │   ├── topics/          living positions (updated in place)
 │   ├── findings/        dated snapshots (immutable)
 │   ├── foundation/      identity: me, context, stakeholders, sources
 │   └── reports/         generated HTML artifacts
-├── .decisions/
+├── _decisions/
 │   ├── active/          open decisions (one file each)
 │   └── archive/         resolved or superseded
-├── .tasks/
+├── _tasks/
 │   ├── focus.md         max 3 items — what you're doing NOW
 │   ├── backlog.md       queued up
 │   └── archive/         monthly done archives
-├── .log/             dated processing log
+├── .kb-log/             dated processing log
 ├── .kb-scripts/         optional utility scripts
-└── workstreams/         parallel tracks
+└── _workstreams/         parallel tracks
 ```
 
 ## Commands

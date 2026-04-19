@@ -24,7 +24,20 @@ triggers:
   - "knowledge management"
   - "present"
   - "report"
-tools: []
+tools:
+  - run_in_terminal
+  - read_file
+  - create_file
+  - replace_string_in_file
+  - multi_replace_string_in_file
+  - list_dir
+  - file_search
+  - grep_search
+  - semantic_search
+  - manage_todo_list
+  - vscode_askQuestions
+  - fetch_webpage
+  - memory
 requires: []
 author: agentic-kb contributors
 homepage: https://github.com/wlfghdr/agentic-kb
@@ -74,7 +87,7 @@ Full command reference: `references/command-reference.md`.
 
 3. **Route to workstreams.** Analyze content against the workstream themes in `.kb-config.yaml`. If cross-workstream, flag the connection.
 
-4. **Log every operation** to `.log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
+4. **Log every operation** to `.kb-log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
 
 5. **Append inline changelog** entries on topic and foundation file updates (newest first, under a `---` separator).
 
@@ -91,26 +104,26 @@ my-kb/
 ├── .kb-config.yaml          # layer declaration
 ├── .kb-automation.yaml      # automation level + schedules
 ├── .kb-artifacts.yaml       # HTML artifact styling
-├── .inputs/                  # the inbox; digested/YYYY-MM/ archive
-├── references/
+├── _inputs/                  # the inbox; digested/YYYY-MM/ archive
+├── _references/
 │   ├── topics/              # living; inline changelog required
 │   ├── findings/            # YYYY-MM-DD-slug.md; immutable
 │   ├── foundation/          # me, context, stakeholders, sources, naming
 │   ├── legacy/              # archived topics after audit
 │   └── reports/             # generated HTML artifacts
-├── .ideas/
+├── _ideas/
 │   ├── I-YYYY-MM-DD-slug.md # active ideas (seed/growing/ready)
 │   └── archive/             # shipped + archived
-├── .decisions/
+├── _decisions/
 │   ├── active/              # D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── .tasks/
+├── _tasks/
 │   ├── focus.md             # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── .log/YYYY-MM-DD.log
+├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                    # optional utility scripts
-└── workstreams/<name>.md
+└── _workstreams/<name>.md
 ```
 
 See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
@@ -120,8 +133,8 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Flow | Command | What it does |
 |------|---------|--------------|
 | Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream; offer idea if novelty detected |
-| Review | `/kb review` | Process all pending items in `.inputs/` |
-| Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `inputs/`) with safety pre-check |
+| Review | `/kb review` | Process all pending items in `_inputs/` |
+| Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `_inputs/`) with safety pre-check |
 | Promote org | `/kb promote org [file]` | L2 → L3 |
 | Publish | `/kb publish [file]` | L1/L2/L3 → L4 marketplace; packages as SKILL.md; opens PR |
 | Digest team | `/kb digest team` | Pull team changes since watermark; distill new findings |

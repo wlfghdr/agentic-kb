@@ -16,18 +16,18 @@ Alex: /kb start-day
 Agent:
 Good morning. Here's your briefing:
 
-📋 Focus (from .tasks/focus.md):
+📋 Focus (from _tasks/focus.md):
   1. Finalize deployment-strategy position paper → promote to team
   2. Schedule architecture review with @alice
   3. Review platform backlog for sprint alignment
 
-⚖️ Open Decisions (.decisions/active/):
+⚖️ Open Decisions (_decisions/active/):
   • D-2026-04-15: Progressive-delivery model (due Apr 30, status: under-discussion)
   • D-2026-04-18: Coordination model (due Apr 25, status: gathering-evidence)
 
 🆕 New signals since yesterday:
   • Team KB (platform): @alice added architecture-v9-skeleton.md (3 new files)
-  • Input pending: .inputs/2026-04-17-leadership-feedback.md (unprocessed)
+  • Input pending: _inputs/2026-04-17-leadership-feedback.md (unprocessed)
 
 📊 Workstreams:
   • reliability:   coordination paper needs evidence (D-2026-04-18)
@@ -51,7 +51,7 @@ Alex: /kb https://example.org/papers/coordination-patterns — interesting paper
 
 Agent: [reads paper, applies the evaluation gate]
 
-Captured as finding: references/findings/2026-04-18-coordination-patterns.md
+Captured as finding: _references/findings/2026-04-18-coordination-patterns.md
 Workstream: reliability
 Gate: 4/5 — strengthens deployment-strategy topic, informs D-2026-04-18, actionable, durable signal.
 Decision impact: provides evidence for D-2026-04-18 (coordination model) — supports option (b).
@@ -70,13 +70,13 @@ TL;DR: Paper proposes a 3-phase coordination protocol for multi-agent systems...
 ```
 Alex: /kb review
 
-Agent: Found 1 unprocessed input: .inputs/2026-04-17-leadership-feedback.md
+Agent: Found 1 unprocessed input: _inputs/2026-04-17-leadership-feedback.md
 
 [applies the gate per item]
 
 • 2026-04-17-leadership-feedback.md
   Gate: 3/5 — informs product-strategy topic + actionable.
-  Finding: references/findings/2026-04-17-leadership-feedback-distilled.md
+  Finding: _references/findings/2026-04-17-leadership-feedback-distilled.md
   Topic update: product-strategy.md (added "leadership wants Q3 focus on error budgets")
   TODOs added:
     - Respond to leadership with a one-pager by Thursday
@@ -94,9 +94,9 @@ Alex has the "Present governance framework" task on the backlog:
 ```
 Alex: /kb present governance-framework
 
-Agent: Generating presentation from references/topics/governance-framework.md...
+Agent: Generating presentation from _references/topics/governance-framework.md...
 
-Created: references/reports/governance-framework-v1.0.html
+Created: _references/reports/governance-framework-v1.0.html
   - 7 slides: Problem → Pattern → Mechanism → Evidence → Proposal → Next Steps → Appendix
   - Intro slide: "Governance Framework — v1.0 · 2026-04-18" (subtle watermark)
   - Appendix: Changelog (v1.0: initial generation from topic file)
@@ -154,8 +154,8 @@ Promotion candidates:
   • topics/governance-framework.md → marketplace as kb-governance-framework skill (mature + generalizable)
 
 Generated:
-  • references/findings/2026-04-18-weekly-summary.md
-  • references/reports/weekly-2026-W16.html (published to gh-pages)
+  • _references/findings/2026-04-18-weekly-summary.md
+  • _references/reports/weekly-2026-W16.html (published to gh-pages)
 
 💡 Next steps:
   1. Promote coordination-patterns to team? (/kb promote)

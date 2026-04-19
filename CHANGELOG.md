@@ -19,7 +19,18 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-*(nothing yet)*
+### Fixed
+
+- **Duplicate commands in VS Code** (`kb-management` + `kb:kb-management`): root `plugin.json` now declares only a `plugins` array pointing to `plugins/kb/` instead of listing skills/agents directly. Moved `plugins/kb/.claude-plugin/plugin.json` → `plugins/kb/plugin.json` (flat, matching rnd-ai-knowledgebase marketplace convention). Added `x-skills` and `x-agents` to plugin manifest.
+- **`install.py`**: resolves skills/agents from per-plugin manifests (`x-skills`/`x-agents` in `plugins/<name>/plugin.json`) instead of from root `plugin.json` `skills`/`agents` keys (removed). Falls back to disk enumeration.
+- **`generate_plugins.py`**: generates flat `plugins/<name>/plugin.json` with `x-skills`/`x-agents` instead of nested `.claude-plugin/plugin.json`.
+- **`check_plugin_structure.py`**: validates `plugins` entries and per-plugin manifests in addition to direct `skills`/`agents`/`prompts`/`instructions` paths.
+- **`.claude-plugin/marketplace.json`**: version bumped 2.0.0 → 3.0.0.
+
+### Added
+
+- **Built-in tools in SKILL frontmatter**: both `kb-management` and `kb-setup` now declare 13 built-in tools (`run_in_terminal`, `read_file`, `create_file`, `replace_string_in_file`, `multi_replace_string_in_file`, `list_dir`, `file_search`, `grep_search`, `semantic_search`, `manage_todo_list`, `vscode_askQuestions`, `fetch_webpage`, `memory`) so the chat session has all needed tools selected by default.
+- **Setup questionnaire explanations**: each of the 12 interview questions now includes a brief `→` note explaining how the answer affects the resulting setup.
 
 ---
 
@@ -27,20 +38,22 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Breaking — Directory renames
 
-Operational KB folders are dot-prefixed to separate them from user-visible content directories:
+All KB folders use a prefix convention to separate them from user files (AGENTS.md, README.md):
 
 | Old | New | Reason |
 |-----|-----|--------|
-| `inputs/` | `.inputs/` | Operational inbox — hidden from casual browsing |
-| `ideas/` | `.ideas/` | Operational incubation — hidden |
-| `decisions/` | `.decisions/` | Operational decisions — hidden |
-| `tasks/` | `.tasks/` | Operational task tracking — hidden |
-| `log/` | `.log/` | Operational processing log — hidden |
-| *(new)* | `.kb-scripts/` | Optional utility scripts directory; dot-prefixed |
+| `inputs/` | `_inputs/` | Underscore prefix — visible, sorted to top |
+| `ideas/` | `_ideas/` | Same |
+| `decisions/` | `_decisions/` | Same |
+| `tasks/` | `_tasks/` | Same |
+| `references/` | `_references/` | Same |
+| `workstreams/` | `_workstreams/` | Same |
+| `log/` | `.kb-log/` | Dot prefix — truly hidden infra you never browse |
+| *(new)* | `.kb-scripts/` | Same — hidden infra |
 
-**Visible (unchanged)**: `references/` (curated knowledge content), `workstreams/` (content).
+Convention: `_` = visible KB structure (you browse these), `.kb-*` = hidden infrastructure.
 
-**Migration**: `git mv inputs .inputs && git mv ideas .ideas && git mv decisions .decisions && git mv tasks .tasks && git mv log .log`. Existing tools looking for the old paths will break.
+**Migration**: `git mv inputs _inputs && git mv ideas _ideas && git mv decisions _decisions && git mv tasks _tasks && git mv references _references && git mv workstreams _workstreams && git mv log .kb-log`.
 
 ### Changed
 
@@ -49,11 +62,11 @@ Operational KB folders are dot-prefixed to separate them from user-visible conte
 - `docs/examples/day-in-the-life.md` — all path references updated.
 - `docs/examples/first-hour.md` — all path references updated.
 - `skills/kb-management/SKILL.md` — directory contract, log rule, flow primitives updated.
-- `skills/kb-management/references/` — command-reference, evaluation-gate, html-artifacts, rituals, spec-summary updated.
+- `skills/kb-management/_references/` — command-reference, evaluation-gate, html-artifacts, rituals, spec-summary updated.
 - `skills/kb-setup/SKILL.md` — Step 3 (personal KB scaffold) and Step 4 (team KB scaffold) directory lists updated.
-- `skills/kb-setup/references/` — setup-flow, migration-guide updated.
+- `skills/kb-setup/_references/` — setup-flow, migration-guide updated.
 - `skills/kb-setup/templates/` — personal-kb-README, personal-kb-AGENTS, team-kb-README, team-kb-AGENTS, org-kb-README, kb.prompt, kb.instructions updated.
-- `agents/kb-operator.md` — `.inputs/` in capture loop.
+- `agents/kb-operator.md` — `_inputs/` in capture loop.
 
 ### Version bumps
 
@@ -75,7 +88,7 @@ Operational KB folders are dot-prefixed to separate them from user-visible conte
 ### Changed
 
 - `docs/REFERENCE.md` — new single-file reference replacing 23 concept/spec docs.
-- All cross-references (`README.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`, `agents/kb-operator.md`, `docs/roadmap.md`, `scripts/check_html_artifacts.py`, `skills/kb-management/references/spec-summary.md`) updated to point to `docs/REFERENCE.md`.
+- All cross-references (`README.md`, `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md`, `agents/kb-operator.md`, `docs/roadmap.md`, `scripts/check_html_artifacts.py`, `skills/kb-management/_references/spec-summary.md`) updated to point to `docs/REFERENCE.md`.
 - `README.md` — replaced `<org>` placeholders with actual repo URL (`wlfghdr/agentic-kb`). Restructured install section as "Getting started": marketplace-first flow (connect → `/kb setup`), cross-harness install script as optional secondary path.
 - `README.md` — rewrote problem section as direct questions ("Does this sound familiar?"), renamed "The solution" → "How it works".
 - `index.html` — intro now leads with the same user-facing questions; problem section renamed to "Why existing approaches fail".
@@ -168,8 +181,8 @@ Operational KB folders are dot-prefixed to separate them from user-visible conte
 ### Added
 
 - **Always-current HTML overviews** regenerated after every state-mutating `/kb` operation: `inventory.html` (configured layers + external sources + workstreams + marketplace), `open-decisions.html`, `open-todos.html`, `index.html`. Watermark: `latest · YYYY-MM-DD HH:MM`. Spec: `docs/spec/html-artifacts.md` §"Family 1".
-- **Daily summary** as a historical finding — generated by `/kb end-day`: `references/findings/YYYY-MM-DD-daily-summary.md` + rendered `references/reports/daily-YYYY-MM-DD.html`. Back-filled from the log if end-day was skipped.
-- **Weekly summary** rendered artifact — paired with the existing weekly-summary finding: `references/reports/weekly-YYYY-WW.html`.
+- **Daily summary** as a historical finding — generated by `/kb end-day`: `_references/findings/YYYY-MM-DD-daily-summary.md` + rendered `_references/reports/daily-YYYY-MM-DD.html`. Back-filled from the log if end-day was skipped.
+- **Weekly summary** rendered artifact — paired with the existing weekly-summary finding: `_references/reports/weekly-YYYY-WW.html`.
 - `docs/overview.html` moved to `index.html` at repo root — self-contained one-page visual overview with SVG diagrams (five-layer architecture, memory model, multi-harness distribution), light + dark themes, watermark, changelog appendix.
 
 ### Changed

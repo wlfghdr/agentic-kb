@@ -7,12 +7,8 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/wlfghdr/agentic-kb",
   "repository": "https://github.com/wlfghdr/agentic-kb",
-  "skills": [
-    { "name": "kb-management", "path": "skills/kb-management" },
-    { "name": "kb-setup", "path": "skills/kb-setup" }
-  ],
-  "agents": [
-    { "name": "kb-operator", "path": "agents/kb-operator.md" }
+  "plugins": [
+    { "name": "kb", "path": "plugins/kb" }
   ],
   "prompts": [
     { "name": "kb", "path": "skills/kb-setup/templates/kb.prompt.md" }

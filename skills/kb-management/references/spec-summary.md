@@ -19,41 +19,41 @@ my-kb/
 ├── .kb-config.yaml
 ├── .kb-automation.yaml
 ├── .kb-artifacts.yaml
-├── .inputs/
+├── __inputs/
 │   └── digested/YYYY-MM/
-├── references/
+├── _references/
 │   ├── topics/              living, inline changelog
 │   ├── findings/            YYYY-MM-DD-slug.md, immutable
 │   ├── foundation/          me, context, sources, stakeholders, naming
 │   ├── legacy/
 │   └── reports/             generated HTML
-├── .decisions/
+├── _decisions/
 │   ├── active/              D-YYYY-MM-DD-slug.md
 │   └── archive/
-├── .tasks/
+├── _tasks/
 │   ├── focus.md             max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── .log/YYYY-MM-DD.log
+├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                 optional utility scripts
-└── workstreams/<name>.md
+└── _workstreams/<name>.md
 ```
 
 ## Team KB layout
 
 ```
 team-kb/
-├── .decisions/{active,archive}/    RACIs required
-├── .tasks/{focus,backlog}.md        RACIs required
-├── .log/
+├── _decisions/{active,archive}/    RACIs required
+├── _tasks/{focus,backlog}.md        RACIs required
+├── .kb-log/
 ├── <contributor>/
-│   ├── inputs/digested/YYYY-MM/
+│   ├── _inputs/digested/YYYY-MM/
 │   └── outputs/{topics,findings}/
 ```
 
 ## Org-Unit KB layout
 
-Same as team minus per-contributor dirs. Adds `workstreams/`.
+Same as team minus per-contributor dirs. Adds `_workstreams/`.
 
 ## Marketplace layout
 
@@ -104,7 +104,7 @@ appendix:
   sources: true
   hidden-by-default: false
 output:
-  directory: references/reports
+  directory: _references/reports
   filename-template: "{slug}-v{version}.html"
 github-pages:
   enabled: false

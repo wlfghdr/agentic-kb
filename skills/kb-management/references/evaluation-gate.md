@@ -39,7 +39,7 @@ For every gate decision, log:
 Example log line:
 
 ```
-14:22:11Z | skipped | personal | .inputs/2026-04-18-meeting-notes.md | gate 1/5 — strengthens position but not actionable, already captured in topic
+14:22:11Z | skipped | personal | _inputs/2026-04-18-meeting-notes.md | gate 1/5 — strengthens position but not actionable, already captured in topic
 ```
 
 ## User override

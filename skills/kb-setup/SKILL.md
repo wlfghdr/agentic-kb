@@ -11,7 +11,20 @@ triggers:
   - "bootstrap workspace"
   - "create kb"
   - "scaffold knowledge base"
-tools: []
+tools:
+  - run_in_terminal
+  - read_file
+  - create_file
+  - replace_string_in_file
+  - multi_replace_string_in_file
+  - list_dir
+  - file_search
+  - grep_search
+  - semantic_search
+  - manage_todo_list
+  - vscode_askQuestions
+  - fetch_webpage
+  - memory
 requires: []
 author: agentic-kb contributors
 homepage: https://github.com/wlfghdr/agentic-kb
@@ -43,32 +56,44 @@ Concrete consequence: by the time this skill runs, the skills are already presen
 
 ## Interactive question flow
 
-Ask each block in order. Stop and wait after each block for the user's answer before proceeding.
+Ask each block in order. Stop and wait after each block for the user's answer before proceeding. Each question includes a brief explanation of how the answer shapes the setup.
 
 1. **Your name** (used for contributor directories): `your-name`.
+   *→ Sets your contributor directory name in team/org KBs, and the default KB repo name (`<name>-kb`).*
 2. **Your role and themes**: one sentence + 3–5 theme keywords (these become initial workstreams).
+   *→ Seeds your `me.md` foundation file, creates initial topic stubs under `_references/topics/`, and pre-populates workstream files.*
 3. **Workspace root**: absolute path. Default: current directory.
+   *→ All repos, config files (`AGENTS.md`, `.kb-config.yaml`), and harness hooks are created relative to this path.*
 4. **Personal KB (L1)** — required:
    - Create new? → ask for name, initialize git, choose remote.
    - Onboard existing? → ask for path.
+   *→ Your single source of truth. All `/kb` commands operate on this repo. "Onboard existing" runs migration analysis instead of scaffolding from scratch.*
 5. **Team KBs (L2)** — optional, multiple:
    - Create new / onboard existing / skip.
+   *→ Shared decision logs and cross-contributor outputs. Creates your contributor directory (`<name>/inputs/`, `<name>/outputs/`) and team-level `_decisions/`, `_tasks/`.*
 6. **Org-Unit KB (L3)** — optional:
    - Onboard existing / skip.
+   *→ Links your workspace to the org-wide aggregation layer. Enables `/kb promote` to push mature content upstream.*
 7. **Marketplace (L4)** — optional:
    - Install from marketplace (recommended for users).
    - Clone for contributing (for skill authors).
    - Skip.
+   *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
 8. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
+   *→ Creates `_workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
 9. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`.
+   *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`). Multiple selections create cross-harness compatibility.*
 10. **Integrations**: marketplace-available MCP servers / APIs to wire up.
+    *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config.yaml`. Each integration is validated for connectivity before persisting.*
 11. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
+    *→ Controls `.kb-automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
 12. **HTML artifact styling**:
     - *"For generated presentations and reports, what styling should the agent use?"*
     - (a) Default built-in template.
     - (b) Point to a website — agent derives a matching theme from the page.
     - (c) Point to a template file.
     - Always generate both light and dark themes with an in-page toggle.
+    *→ Writes `.kb-artifacts.yaml` with the chosen template path or derived color tokens. All `/kb present` and `/kb report` commands use this styling.*
 
 ## What setup does (after confirmation)
 
@@ -97,18 +122,18 @@ On abort: print the missing tool, the OS-specific install command, and exit. Do 
 - Marketplace: clone or register.
 
 ### Step 3 — Scaffold personal KB
-Directories: `.inputs/`, `.inputs/digested/`, `references/{topics,findings,foundation,reports,legacy}/`, `.ideas/`, `.ideas/archive/`, `.decisions/{active,archive}/`, `.tasks/{,archive}/`, `.log/`, `.kb-scripts/`, `workstreams/`.
+Directories: `_inputs/`, `_inputs/digested/`, `_references/{topics,findings,foundation,reports,legacy}/`, `_ideas/`, `_ideas/archive/`, `_decisions/{active,archive}/`, `_tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_workstreams/`.
 
 Files (from `templates/`):
 - `AGENTS.md`, `README.md`, `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml`.
-- Initial `workstreams/<name>.md` per declared workstream.
-- `references/foundation/{me,context,stakeholders,sources,naming}.md`.
-- Initial `references/topics/<slug>.md` per declared theme (with empty changelog).
-- `.tasks/focus.md`, `.tasks/backlog.md`.
+- Initial `_workstreams/<name>.md` per declared workstream.
+- `_references/foundation/{me,context,stakeholders,sources,naming}.md`.
+- Initial `_references/topics/<slug>.md` per declared theme (with empty changelog).
+- `_tasks/focus.md`, `_tasks/backlog.md`.
 
 ### Step 4 — Scaffold team KB (if creating new)
-- Contributor directory (`<your-name>/inputs/`, `<your-name>/outputs/{topics,findings}/`).
-- `.decisions/{active,archive}/`, `.tasks/{focus,backlog}.md`, `.log/`, `AGENTS.md`, `README.md`.
+- Contributor directory (`<your-name>/_inputs/`, `<your-name>/outputs/{topics,findings}/`).
+- `_decisions/{active,archive}/`, `_tasks/{focus,backlog}.md`, `.kb-log/`, `AGENTS.md`, `README.md`.
 
 ### Step 5 — Workspace-level configuration
 
@@ -156,7 +181,7 @@ If the user points at an existing knowledge base in another layout:
 2. Propose a diff (files to create, rename, restructure).
 3. Apply **only after explicit confirmation**.
 4. Use `git mv` to preserve history.
-5. Move material that doesn't fit into `references/legacy/` with a note — **never delete**.
+5. Move material that doesn't fit into `_references/legacy/` with a note — **never delete**.
 
 ## Idempotency
 

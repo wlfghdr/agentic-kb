@@ -193,8 +193,24 @@ def main() -> int:
         return 1
     pj = json.loads(VSCODE_PLUGIN_JSON.read_text(encoding="utf-8"))
 
-    all_skills = [s["name"] for s in pj.get("skills", []) or []]
-    all_agents = [a["name"] for a in pj.get("agents", []) or []]
+    # Resolve skills + agents: root plugin.json may list them directly
+    # (legacy: "skills"/"agents" keys) or indirectly via per-plugin manifests
+    # (current: "plugins" key → each plugin's plugin.json has "x-skills"/"x-agents").
+    all_skills: list[str] = [s["name"] for s in pj.get("skills", []) or []]
+    all_agents: list[str] = [a["name"] for a in pj.get("agents", []) or []]
+    if not all_skills and not all_agents:
+        # Current layout: resolve from per-plugin manifests
+        for plugin_entry in pj.get("plugins", []) or []:
+            plugin_path = REPO / plugin_entry["path"] / "plugin.json"
+            if plugin_path.is_file():
+                ppj = json.loads(plugin_path.read_text(encoding="utf-8"))
+                all_skills.extend(ppj.get("x-skills", []) or [])
+                all_agents.extend(ppj.get("x-agents", []) or [])
+        # Fallback: enumerate directories on disk
+        if not all_skills:
+            all_skills = sorted(p.name for p in SKILLS_DIR.iterdir() if p.is_dir())
+        if not all_agents:
+            all_agents = sorted(p.stem for p in AGENTS_DIR.glob("*.md"))
     prompts = [(p["name"], REPO / p["path"]) for p in pj.get("prompts", []) or []]
     instructions = [(i["name"], REPO / i["path"]) for i in pj.get("instructions", []) or []]
 
