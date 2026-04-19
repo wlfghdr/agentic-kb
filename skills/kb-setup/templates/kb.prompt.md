@@ -17,7 +17,7 @@ Input context:
 Follow the rules in the `kb-management` skill's SKILL.md. Always:
 
 1. Apply the five-question evaluation gate.
-2. Log the operation to `.kb-log/YYYY-MM-DD.log`.
+2. Log the operation to `.log/YYYY-MM-DD.log`.
 3. Append an inline changelog entry on any topic / foundation file update.
 4. End with 1–3 concrete next-step suggestions.
 5. Offer to commit / push / open a PR after substantive changes.

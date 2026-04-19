@@ -12,7 +12,7 @@ This is {{USER_NAME}}'s private knowledge base. The agent is a collaborator, not
 
 1. **Run the five-question gate** before persisting anything.
 2. **Append inline changelog** on every topic / foundation file update.
-3. **Log every operation** to `.kb-log/YYYY-MM-DD.log`.
+3. **Log every operation** to `.log/YYYY-MM-DD.log`.
 4. **Suggest next steps** after every operation.
 5. **Never silent failures** — surface everything.
 6. **Offer commit/push/PR** after substantive changes. Respect branch protection.

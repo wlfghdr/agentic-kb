@@ -21,7 +21,7 @@ my-kb/
 ├── .kb-artifacts.yaml
 ├── .inputs/
 │   └── digested/YYYY-MM/
-├── .references/
+├── references/
 │   ├── topics/              living, inline changelog
 │   ├── findings/            YYYY-MM-DD-slug.md, immutable
 │   ├── foundation/          me, context, sources, stakeholders, naming
@@ -34,7 +34,7 @@ my-kb/
 │   ├── focus.md             max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── .kb-log/YYYY-MM-DD.log
+├── .log/YYYY-MM-DD.log
 ├── .kb-scripts/                 optional utility scripts
 └── workstreams/<name>.md
 ```
@@ -45,7 +45,7 @@ my-kb/
 team-kb/
 ├── .decisions/{active,archive}/    RACIs required
 ├── .tasks/{focus,backlog}.md        RACIs required
-├── .kb-log/
+├── .log/
 ├── <contributor>/
 │   ├── inputs/digested/YYYY-MM/
 │   └── outputs/{topics,findings}/
@@ -104,7 +104,7 @@ appendix:
   sources: true
   hidden-by-default: false
 output:
-  directory: .references/reports
+  directory: references/reports
   filename-template: "{slug}-v{version}.html"
 github-pages:
   enabled: false

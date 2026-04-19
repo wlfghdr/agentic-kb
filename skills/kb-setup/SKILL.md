@@ -97,18 +97,18 @@ On abort: print the missing tool, the OS-specific install command, and exit. Do 
 - Marketplace: clone or register.
 
 ### Step 3 — Scaffold personal KB
-Directories: `.inputs/`, `.inputs/digested/`, `.references/{topics,findings,foundation,reports,legacy}/`, `.ideas/`, `.ideas/archive/`, `.decisions/{active,archive}/`, `.tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `workstreams/`.
+Directories: `.inputs/`, `.inputs/digested/`, `references/{topics,findings,foundation,reports,legacy}/`, `.ideas/`, `.ideas/archive/`, `.decisions/{active,archive}/`, `.tasks/{,archive}/`, `.log/`, `.kb-scripts/`, `workstreams/`.
 
 Files (from `templates/`):
 - `AGENTS.md`, `README.md`, `.kb-config.yaml`, `.kb-automation.yaml`, `.kb-artifacts.yaml`.
 - Initial `workstreams/<name>.md` per declared workstream.
-- `.references/foundation/{me,context,stakeholders,sources,naming}.md`.
-- Initial `.references/topics/<slug>.md` per declared theme (with empty changelog).
+- `references/foundation/{me,context,stakeholders,sources,naming}.md`.
+- Initial `references/topics/<slug>.md` per declared theme (with empty changelog).
 - `.tasks/focus.md`, `.tasks/backlog.md`.
 
 ### Step 4 — Scaffold team KB (if creating new)
 - Contributor directory (`<your-name>/inputs/`, `<your-name>/outputs/{topics,findings}/`).
-- `.decisions/{active,archive}/`, `.tasks/{focus,backlog}.md`, `.kb-log/`, `AGENTS.md`, `README.md`.
+- `.decisions/{active,archive}/`, `.tasks/{focus,backlog}.md`, `.log/`, `AGENTS.md`, `README.md`.
 
 ### Step 5 — Workspace-level configuration
 
@@ -156,7 +156,7 @@ If the user points at an existing knowledge base in another layout:
 2. Propose a diff (files to create, rename, restructure).
 3. Apply **only after explicit confirmation**.
 4. Use `git mv` to preserve history.
-5. Move material that doesn't fit into `.references/legacy/` with a note — **never delete**.
+5. Move material that doesn't fit into `references/legacy/` with a note — **never delete**.
 
 ## Idempotency
 

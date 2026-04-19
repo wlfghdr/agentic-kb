@@ -1,5 +1,5 @@
 ---
-applyTo: "**/.kb-config.yaml,**/.inputs/**,**/.references/**,**/.decisions/**,**/.tasks/**,**/workstreams/**,**/.kb-log/**"
+applyTo: "**/.kb-config.yaml,**/.inputs/**,**/references/**,**/.decisions/**,**/.tasks/**,**/workstreams/**,**/.log/**"
 description: Routing rules for all KB operations
 ---
 

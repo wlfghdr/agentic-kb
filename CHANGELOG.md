@@ -27,36 +27,33 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Breaking — Directory renames
 
-Three KB content directories are renamed for consistency (all dot-prefixed, avoiding collision with user-facing content):
+Operational KB folders are dot-prefixed to separate them from user-visible content directories:
 
 | Old | New | Reason |
 |-----|-----|--------|
-| `references/` | `.references/` | Dot-prefix aligns with `.inputs/`, `.decisions/`, `.tasks/`, `.ideas/` — hidden KB infrastructure, not user content |
-| `.log/` | `.kb-log/` | Avoids collision with generic `.log` dirs; makes KB ownership explicit |
-| *(new)* | `.kb-scripts/` | Optional utility scripts directory; dot-prefixed + `kb-` namespaced |
+| `inputs/` | `.inputs/` | Operational inbox — hidden from casual browsing |
+| `ideas/` | `.ideas/` | Operational incubation — hidden |
+| `decisions/` | `.decisions/` | Operational decisions — hidden |
+| `tasks/` | `.tasks/` | Operational task tracking — hidden |
+| `log/` | `.log/` | Operational processing log — hidden |
+| *(new)* | `.kb-scripts/` | Optional utility scripts directory; dot-prefixed |
 
-**Migration**: `git mv references .references && git mv .log .kb-log && mkdir -p .kb-scripts`. Existing tools looking for `references/` or `.log/` will break.
+**Visible (unchanged)**: `references/` (curated knowledge content), `workstreams/` (content).
+
+**Migration**: `git mv inputs .inputs && git mv ideas .ideas && git mv decisions .decisions && git mv tasks .tasks && git mv log .log`. Existing tools looking for the old paths will break.
 
 ### Changed
 
 - `docs/REFERENCE.md` — all L1/L2/L3 layout diagrams, required-files table, file format headings, and the five-layer ASCII overview updated to new directory names. Version bumped to 3.0.
-- `docs/glossary.md` — Finding, Foundation, Topic paths updated to `.references/`.
+- `docs/glossary.md` — Focus, Idea, Task paths updated.
 - `docs/examples/day-in-the-life.md` — all path references updated.
 - `docs/examples/first-hour.md` — all path references updated.
-- `skills/kb-management/SKILL.md` — directory contract, log rule updated. Added `.kb-scripts/` to layout.
-- `skills/kb-management/references/spec-summary.md` — full layout rewrite; also fixed pre-existing inconsistency where this file used bare `inputs/`, `decisions/`, `tasks/`, `log/` (missing dot-prefixes) while the canonical REFERENCE.md used `.inputs/`, `.decisions/`, `.tasks/`, `.log/`.
-- `skills/kb-management/references/html-artifacts.md` — overview file paths and output location updated.
-- `skills/kb-management/references/rituals.md` — decision/task/finding paths updated.
-- `skills/kb-setup/SKILL.md` — Step 3 (personal KB scaffold) and Step 4 (team KB scaffold) directory lists updated. Added `.kb-scripts/`. Migration rule updated.
-- `skills/kb-setup/templates/personal-kb-README.md` — structure tree updated.
-- `skills/kb-setup/templates/personal-kb-AGENTS.md` — log path updated.
-- `skills/kb-setup/templates/team-kb-README.md` — `.log/` → `.kb-log/`.
-- `skills/kb-setup/templates/team-kb-AGENTS.md` — clarified that decisions/tasks live at team root (`.decisions/`, `.tasks/`).
-- `skills/kb-setup/templates/org-kb-README.md` — `.log/` → `.kb-log/`.
-- `skills/kb-setup/templates/kb.prompt.md` — log path updated.
-- `skills/kb-setup/templates/kb.instructions.md` — `applyTo` glob updated (`.references/`, `.kb-log/`).
-- `skills/kb-setup/templates/.kb-artifacts.yaml` — output directory updated to `.references/reports`.
-- `agents/kb-operator.md` — `inputs/` → `.inputs/` in capture loop.
+- `skills/kb-management/SKILL.md` — directory contract, log rule, flow primitives updated.
+- `skills/kb-management/references/` — command-reference, evaluation-gate, html-artifacts, rituals, spec-summary updated.
+- `skills/kb-setup/SKILL.md` — Step 3 (personal KB scaffold) and Step 4 (team KB scaffold) directory lists updated.
+- `skills/kb-setup/references/` — setup-flow, migration-guide updated.
+- `skills/kb-setup/templates/` — personal-kb-README, personal-kb-AGENTS, team-kb-README, team-kb-AGENTS, org-kb-README, kb.prompt, kb.instructions updated.
+- `agents/kb-operator.md` — `.inputs/` in capture loop.
 
 ### Version bumps
 

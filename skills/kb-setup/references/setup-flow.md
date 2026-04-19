@@ -26,18 +26,18 @@ For each repo (personal / team / org-unit / marketplace), offer:
 Create these directories (idempotent):
 
 ```
-inputs/
-inputs/digested/
+.inputs/
+.inputs/digested/
 references/topics/
 references/findings/
 references/foundation/
 references/reports/
 references/legacy/
-decisions/active/
-decisions/archive/
-tasks/
-tasks/archive/
-log/
+.decisions/active/
+.decisions/archive/
+.tasks/
+.tasks/archive/
+.log/
 workstreams/
 ```
 
@@ -53,18 +53,18 @@ Instantiate these files from `templates/`:
 - `references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
 - `references/foundation/sources.md` ← `foundation-sources.md`
 - `references/foundation/naming.md` ← `foundation-naming.md`
-- `tasks/focus.md` ← `focus.md`
-- `tasks/backlog.md` ← `backlog.md`
+- `.tasks/focus.md` ← `focus.md`
+- `.tasks/backlog.md` ← `backlog.md`
 - Per workstream: `workstreams/<name>.md` ← `workstream.md`
 - Per theme: `references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
 
 ## Scaffold — team KB (if creating new)
 
 ```
-decisions/active/
-decisions/archive/
-tasks/archive/
-log/
+.decisions/active/
+.decisions/archive/
+.tasks/archive/
+.log/
 <contributor>/inputs/digested/
 <contributor>/outputs/topics/
 <contributor>/outputs/findings/
@@ -72,21 +72,21 @@ log/
 
 - `AGENTS.md` ← `team-kb-AGENTS.md`
 - `README.md` ← `team-kb-README.md`
-- `tasks/focus.md`, `tasks/backlog.md`
+- `.tasks/focus.md`, `.tasks/backlog.md`
 
 ## Scaffold — org-unit KB
 
 ```
-decisions/active/
-decisions/archive/
-tasks/archive/
+.decisions/active/
+.decisions/archive/
+.tasks/archive/
 workstreams/
-log/
+.log/
 ```
 
 - `AGENTS.md` ← `org-kb-AGENTS.md`
 - `README.md` ← `org-kb-README.md`
-- `tasks/focus.md`, `tasks/backlog.md`
+- `.tasks/focus.md`, `.tasks/backlog.md`
 
 ## Scaffold — workspace root
 

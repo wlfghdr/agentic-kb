@@ -74,7 +74,7 @@ Full command reference: `references/command-reference.md`.
 
 3. **Route to workstreams.** Analyze content against the workstream themes in `.kb-config.yaml`. If cross-workstream, flag the connection.
 
-4. **Log every operation** to `.kb-log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
+4. **Log every operation** to `.log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
 
 5. **Append inline changelog** entries on topic and foundation file updates (newest first, under a `---` separator).
 
@@ -92,7 +92,7 @@ my-kb/
 ├── .kb-automation.yaml      # automation level + schedules
 ├── .kb-artifacts.yaml       # HTML artifact styling
 ├── .inputs/                  # the inbox; digested/YYYY-MM/ archive
-├── .references/
+├── references/
 │   ├── topics/              # living; inline changelog required
 │   ├── findings/            # YYYY-MM-DD-slug.md; immutable
 │   ├── foundation/          # me, context, stakeholders, sources, naming
@@ -108,7 +108,7 @@ my-kb/
 │   ├── focus.md             # max 3 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
-├── .kb-log/YYYY-MM-DD.log
+├── .log/YYYY-MM-DD.log
 ├── .kb-scripts/                    # optional utility scripts
 └── workstreams/<name>.md
 ```

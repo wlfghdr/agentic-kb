@@ -13,7 +13,7 @@ Org-unit knowledge base for {{ORG_UNIT_NAME}}, built on the `agentic-kb` specifi
 │   ├── focus.md         org focus (with RACIs)
 │   └── backlog.md
 ├── workstreams/         org-level workstream coordination
-└── .kb-log/
+└── .log/
 ```
 
 ## How it aggregates

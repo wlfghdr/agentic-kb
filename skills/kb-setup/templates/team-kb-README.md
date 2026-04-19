@@ -12,7 +12,7 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 ├── .tasks/
 │   ├── focus.md              team focus (with RACIs)
 │   └── backlog.md
-├── .kb-log/                  team processing log
+├── .log/                  team processing log
 └── <contributor>/
     ├── inputs/
     │   └── digested/YYYY-MM/

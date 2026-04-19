@@ -7,7 +7,7 @@
 ```
 .
 ├── .inputs/             THE INBOX — drop anything here
-├── .references/
+├── references/
 │   ├── topics/          living positions (updated in place)
 │   ├── findings/        dated snapshots (immutable)
 │   ├── foundation/      identity: me, context, stakeholders, sources
@@ -19,7 +19,7 @@
 │   ├── focus.md         max 3 items — what you're doing NOW
 │   ├── backlog.md       queued up
 │   └── archive/         monthly done archives
-├── .kb-log/             dated processing log
+├── .log/             dated processing log
 ├── .kb-scripts/         optional utility scripts
 └── workstreams/         parallel tracks
 ```

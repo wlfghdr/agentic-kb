@@ -42,7 +42,7 @@
 
 ## `/kb end-week` — Friday 15:00
 
-1. Generate `.references/findings/YYYY-MM-DD-weekly-summary.md`.
+1. Generate `references/findings/YYYY-MM-DD-weekly-summary.md`.
 2. Full TODO cleanup (archive done, prune stale backlog).
 3. Identify promotion candidates (L1 → L2 / L4).
 4. Identify presentation-worthy items for next week.
@@ -57,4 +57,4 @@ Rituals are idempotent within a day / week — running twice doesn't duplicate l
 ## Friday 15:00 scheduling
 
 - Deliberately early — leaves slack for the user to act before the weekend.
-- If user is unavailable at 15:00, queue output as an `inputs/` item for next session.
+- If user is unavailable at 15:00, queue output as an `.inputs/` item for next session.

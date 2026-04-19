@@ -15,8 +15,8 @@ For users who already have a knowledge base in another layout.
 Produce a **diff** before applying:
 
 - Directories to create (missing required paths).
-- Files to rename (e.g., `todo.md` → split into `tasks/focus.md` + `tasks/backlog.md`).
-- Files to restructure (e.g., single `decisions/open.md` → individual `decisions/active/D-*.md` files).
+- Files to rename (e.g., `todo.md` → split into `.tasks/focus.md` + `.tasks/backlog.md`).
+- Files to restructure (e.g., single `decisions/open.md` → individual `.decisions/active/D-*.md` files).
 - Files to move to `references/legacy/` (material that doesn't fit).
 
 ## Apply
