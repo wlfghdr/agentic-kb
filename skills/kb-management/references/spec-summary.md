@@ -20,7 +20,7 @@ my-kb/
 │   ├── layers.yaml
 │   ├── automation.yaml
 │   └── artifacts.yaml
-├── __kb-inputs/
+├── _kb-inputs/
 │   └── digested/YYYY-MM/
 ├── _kb-references/
 │   ├── topics/              living, inline changelog

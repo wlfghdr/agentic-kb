@@ -116,7 +116,7 @@ my-kb/
 │   ├── I-YYYY-MM-DD-slug.md # active ideas (seed/growing/ready)
 │   └── archive/             # shipped + archived
 ├── _kb-decisions/
-│   ├── active/              # D-YYYY-MM-DD-slug.md
+│   ├── D-YYYY-MM-DD-slug.md # active decisions at root
 │   └── archive/
 ├── _kb-tasks/
 │   ├── focus.md             # max 3 items

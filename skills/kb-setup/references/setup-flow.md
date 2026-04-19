@@ -26,8 +26,8 @@ For each repo (personal / team / org-unit / marketplace), offer:
 Create these directories (idempotent):
 
 ```
-__kb-inputs/
-__kb-inputs/digested/
+_kb-inputs/
+_kb-inputs/digested/
 _kb-references/topics/
 _kb-references/findings/
 _kb-references/foundation/
