@@ -100,7 +100,7 @@ Team KB contributor folders now **mirror personal KB structure** — `_kb-inputs
 - `README.md` — rewrote problem section as direct questions ("Does this sound familiar?"), renamed "The solution" → "How it works".
 - `index.html` — intro now leads with the same user-facing questions; problem section renamed to "Why existing approaches fail".
 - `docs/concept/02-architecture.md` — L3 now has team-isolated directories (mirroring L2's person-directories). L5 clarified as reference-only (no bottom-up input). Added contributor-unit / cross-analysis summary to the ASCII diagram.
-- `docs/spec/workspace-layout.md` — L3 directory layout updated with per-team `_kb-inputs/ + _kb-references/ structure. Required-files table updated.
+- `docs/spec/workspace-layout.md` — L3 directory layout updated with per-team `_kb-inputs/` + `_kb-references/` structure. Required-files table updated.
 
 ### Added
 
