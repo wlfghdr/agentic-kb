@@ -129,12 +129,42 @@ The previous file remains on disk (different filename). Changelog appendix prese
 6. **Next Steps** — concrete follow-ups.
 7. **Appendix — Changelog + sources**.
 
+## Root artifact index (`index.html`)
+
+Every KB layer MUST maintain a root `index.html` that indexes all HTML artifacts in the repository. This is the GitHub Pages landing page and the local entry point for browsing artifacts.
+
+**Generator script**: `scripts/generate-index.py` — scans the repo for `.html` files, extracts titles from `<title>` tags, infers dates from filenames or git history, groups by category, and writes a self-contained `index.html` with Dynatrace/Strato design tokens and dark/light toggle.
+
+**Auto-regeneration**: The root `index.html` MUST be regenerated after every operation that creates or modifies an HTML artifact:
+
+- `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`
+- Any Family 1 overview regeneration
+- Any `/kb promote` that includes HTML files
+- Manual trigger: `/kb status --refresh-overviews`
+
+**Regeneration command**:
+
+```bash
+python3 scripts/generate-index.py REPO_ROOT --title "KB Name" --description "One-liner"
+```
+
+The generated `index.html`:
+
+- Self-contained — Dynatrace design tokens, Inter font, dark/light toggle
+- Groups artifacts by category (Reports, Strategy & Vision, Presentations, Journey Maps, Findings, Research, Prototypes & Mocks)
+- Shows contributor badges for team KBs
+- Displays creation dates (from filename pattern, git log, or mtime)
+- Shows stats bar (total count, categories, contributors, latest date)
+- Works on GitHub Pages with relative links
+
+**For team/org-unit KBs**, the index scans all contributor directories and tags each artifact with a contributor badge.
+
 ## GitHub Pages publishing
 
 If `github-pages.enabled: true`:
 
 1. On `end-day` / `end-week`, offer to commit + push new artifacts to the Pages branch.
-2. Maintain an `index.html` auto-regenerated on every publish — chronological list of artifacts with title, version, date, one-line summary.
+2. The root `index.html` serves as the GitHub Pages landing page — auto-regenerated on every artifact publish.
 3. If branch protection on Pages branch: open a PR instead of pushing.
 
 ## CI validation

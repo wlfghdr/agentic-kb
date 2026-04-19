@@ -97,6 +97,8 @@ Full command reference: `references/command-reference.md`.
 
 8. **Presentation-worthy detection.** When a TODO contains *present, pitch, demo, share, slide, meeting prep*, add 🎤 and offer `/kb present`.
 
+9. **Regenerate root `index.html`** after any operation that creates or modifies an HTML artifact (`present`, `report`, `end-day`, `end-week`, `promote` with HTML, `status --refresh-overviews`). Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."`. The index serves as the GitHub Pages landing page.
+
 ## Directory contract (personal KB)
 
 ```
@@ -124,7 +126,8 @@ my-kb/
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                    # optional utility scripts
-└── _kb-workstreams/<name>.md
+├── _kb-workstreams/<name>.md
+└── index.html                      # auto-generated artifact index (GitHub Pages root)
 ```
 
 See `references/spec-summary.md` §Workspace for team and org-unit KB shape.

@@ -137,6 +137,7 @@ agentic-kb/
 ├── scripts/
 │   ├── install               # cross-harness installer
 │   ├── generate_plugins.py   # rebuilds plugins/ from marketplace.json
+│   ├── generate-index.py     # generates root index.html for any KB layer
 │   ├── check_consistency.py  # versions + internal links
 │   ├── check_plugin_structure.py
 │   └── check_html_artifacts.py
