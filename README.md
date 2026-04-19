@@ -1,23 +1,53 @@
 # agentic-kb
 
-> AI-native, layered knowledge operations. A specification, a reference implementation, and a small set of portable skills for any agentic IDE.
+> **Make decisions and context travel at the same speed as creation.**
+> AI-native, layered knowledge operations. Vendor-neutral. No database. No cloud backend. Lives in your repo, next to your code.
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v2.0.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v3.0.0-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
 ---
 
-## Does this sound familiar?
+## The real problem
 
-- *"How do I actually work AI-natively — with agents, not just chat?"*
-- *"How does my team share knowledge so agents can use it — not just humans?"*
-- *"Where do decisions, positions, and context go so they survive across sessions, tools, and people?"*
-- *"Is there something I can just install and start using — one command, not a month-long rollout?"*
+Your agents made you 10× faster at creating. Nothing made you faster at *deciding*.
 
-If yes: that's what `agentic-kb` solves. One command — `/kb` — and the agent handles capture, evaluation, cross-referencing, and promotion across layers. You think, the agent does the bookkeeping.
+Prototypes appear overnight. Specs write themselves. Ideas multiply. Branches multiply. Everyone on the team produces more than they used to produce in a week — and then nobody can keep up with *reviewing, synthesizing, and deciding* what's actually worth pursuing.
+
+The bottleneck didn't move to design. It didn't move to quality. **It moved to convergence.**
+
+Symptoms you'll recognize:
+
+- *"We're shipping more than ever and somehow feel blurrier about where we're going."*
+- *"I can't get to every direction fast enough to say yes or no."*
+- *"My agents are aligned with me. Yours are aligned with you. We're not aligned with each other."*
+- *"By the time leadership catches up with what's been built, another three things got built."*
+
+If any of that sounds familiar — this is the piece of the fix we've been building.
+
+## The fix, in one breath
+
+One command — **`/kb`** — across any agentic IDE. A layered knowledge system where:
+
+- **Knowledge flows up.** Promote from personal → team → org → marketplace.
+- **Context flows down.** Vision, mission, goals, and decisions digest back into your daily work automatically.
+- **An evaluation gate at every boundary.** Five questions. Nothing silently filed. Nothing silently dropped. Every decision traced and logged.
+- **Decisions, ideas, and tasks are first-class objects** with lifecycles — not comments lost in a chat.
+
+You capture. The agent files, cross-links, promotes, and keeps humans and agents on the same page. Literally.
+
+## Why it's built this way
+
+**Vendor-neutral by design.** Works with Claude Code, VS Code Copilot, and OpenCode — same skill, same contract, one install. Switch IDE tomorrow, your KB comes with you. No Claude-memory lock-in. No ChatGPT memory lock-in. No "upgrade to the Pro tier to access your own notes" trap.
+
+**No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
+
+**Lean by construction.** One spec. Two reference skills. One reference agent. One cross-harness installer. No SaaS. No auth. No infra. Install in about a minute. Rip it out in five if it's not for you.
+
+**Human + agent at the same speed.** This is the real claim: the system is designed so that a single human — an IC, a lead, or an exec — can stay in the loop with a swarm of agents *and* a team of other humans each running their own swarms, without becoming the bottleneck themselves.
 
 ## How it works
 
