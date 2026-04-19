@@ -3,13 +3,17 @@
 
 Scans the repository for HTML artifacts (reports, presentations, specs,
 journey maps, mocks, etc.) and produces a self-contained index.html with
-Dynatrace/Strato design tokens, dark/light toggle, and GitHub-Pages-ready
-relative links.
+dark/light toggle and GitHub-Pages-ready relative links.
+
+Styling is read from .kb-config/artifacts.yaml when present (source=template
+or source=website derive tokens from the reference). Falls back to a neutral
+theme if no config exists.
 
 Usage:
     python generate-index.py [REPO_ROOT] [--title TITLE] [--description DESC]
 
 If REPO_ROOT is omitted, uses the current directory.
+Designed to be copied into .kb-scripts/ of any KB layer.
 """
 
 from __future__ import annotations
@@ -24,6 +28,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
 
+try:
+    import yaml  # PyYAML — optional
+except ImportError:
+    yaml = None  # type: ignore[assignment]
+
 
 class Artifact(NamedTuple):
     path: str          # relative to repo root
@@ -31,6 +40,122 @@ class Artifact(NamedTuple):
     date: str          # YYYY-MM-DD
     category: str      # grouping label
     contributor: str   # for team KBs, empty for personal
+
+
+# ── Theme tokens ───────────────────────────────────────────────────────
+
+# Neutral default — no brand affiliation
+DEFAULT_THEME = {
+    'dark': {
+        'bg':           '#0d1117',
+        'bg_elevated':  '#161b22',
+        'bg_card':      '#161b22',
+        'bg_hover':     '#1c2128',
+        'border':       '#30363d',
+        'border_strong':'#484f58',
+        'text':         '#e6edf3',
+        'text_sec':     '#8b949e',
+        'text_dim':     '#6e7681',
+        'accent':       '#58a6ff',
+        'accent_hover': '#79c0ff',
+        'accent_bg':    'rgba(56,139,253,0.10)',
+        'badge_bg':     'rgba(136,98,217,0.12)',
+        'badge_fg':     '#b392f0',
+        'shadow':       '0 2px 12px rgba(0,0,0,0.3)',
+    },
+    'light': {
+        'bg':           '#ffffff',
+        'bg_elevated':  '#f6f8fa',
+        'bg_card':      '#f6f8fa',
+        'bg_hover':     '#f0f2f5',
+        'border':       '#d0d7de',
+        'border_strong':'#afb8c1',
+        'text':         '#1f2328',
+        'text_sec':     '#656d76',
+        'text_dim':     '#8c959f',
+        'accent':       '#0969da',
+        'accent_hover': '#0550ae',
+        'accent_bg':    'rgba(9,105,218,0.06)',
+        'badge_bg':     'rgba(130,80,223,0.08)',
+        'badge_fg':     '#8250df',
+        'shadow':       '0 2px 12px rgba(0,0,0,0.04)',
+    },
+}
+
+
+def load_theme(repo_root: Path) -> dict:
+    """Load theme tokens from .kb-config/artifacts.yaml or return defaults."""
+    config_path = repo_root / '.kb-config' / 'artifacts.yaml'
+    if not config_path.exists() or yaml is None:
+        return DEFAULT_THEME
+
+    try:
+        with open(config_path) as f:
+            cfg = yaml.safe_load(f) or {}
+    except Exception:
+        return DEFAULT_THEME
+
+    styling = cfg.get('styling', {})
+    source = styling.get('source', 'builtin')
+
+    if source == 'template':
+        # Try to extract CSS variables from the reference template file
+        ref_file = styling.get('reference-file', '')
+        if ref_file:
+            ref_path = repo_root / ref_file
+            if ref_path.exists():
+                return extract_theme_from_template(ref_path) or DEFAULT_THEME
+
+    # For 'builtin' or 'website' (website would need runtime fetch — use builtin)
+    return DEFAULT_THEME
+
+
+def extract_theme_from_template(template_path: Path) -> dict | None:
+    """Extract CSS variable values from a template's :root and [data-theme] blocks."""
+    try:
+        text = template_path.read_text(encoding='utf-8', errors='ignore')
+    except Exception:
+        return None
+
+    # Map CSS variable names to our token names
+    var_map = {
+        '--dt-bg': 'bg', '--bg': 'bg',
+        '--dt-bg-elevated': 'bg_elevated', '--bg-elevated': 'bg_elevated',
+        '--dt-bg-card': 'bg_card', '--bg-card': 'bg_card',
+        '--dt-bg-card-hover': 'bg_hover', '--bg-hover': 'bg_hover',
+        '--dt-border': 'border', '--border': 'border',
+        '--dt-border-strong': 'border_strong', '--border-strong': 'border_strong',
+        '--dt-text': 'text', '--text': 'text', '--fg': 'text',
+        '--dt-text-secondary': 'text_sec', '--text-secondary': 'text_sec', '--fg-muted': 'text_sec',
+        '--dt-text-tertiary': 'text_dim', '--text-tertiary': 'text_dim', '--fg-dim': 'text_dim',
+        '--dt-brand': 'accent', '--accent': 'accent',
+        '--dt-brand-hover': 'accent_hover', '--accent-hover': 'accent_hover',
+        '--dt-brand-subtle': 'accent_bg', '--accent-bg': 'accent_bg',
+        '--dt-purple-bg': 'badge_bg',
+        '--dt-purple': 'badge_fg',
+        '--dt-shadow': 'shadow', '--shadow': 'shadow',
+    }
+
+    var_re = re.compile(r'(--[\w-]+)\s*:\s*([^;]+);')
+
+    # Find dark theme block (in :root or [data-theme="dark"])
+    dark_tokens = dict(DEFAULT_THEME['dark'])
+    light_tokens = dict(DEFAULT_THEME['light'])
+
+    # Simple approach: extract all var declarations
+    for m in var_re.finditer(text):
+        var_name, var_value = m.group(1), m.group(2).strip()
+        token = var_map.get(var_name)
+        if token and 'var(' not in var_value:  # skip references
+            # Determine if this is in a dark or light context
+            # by checking what's before this match
+            preceding = text[:m.start()]
+            if '[data-theme="light"]' in preceding[max(0, len(preceding)-500):]:
+                light_tokens[token] = var_value
+            else:
+                dark_tokens[token] = var_value
+
+    return {'dark': dark_tokens, 'light': light_tokens}
 
 
 # ── Discovery ──────────────────────────────────────────────────────────
@@ -140,7 +265,9 @@ def discover_artifacts(repo_root: Path) -> list[Artifact]:
 # ── HTML Generation ────────────────────────────────────────────────────
 
 def generate_html(artifacts: list[Artifact], title: str, description: str,
-                  now: str) -> str:
+                  now: str, theme: dict) -> str:
+    dark = theme['dark']
+    light = theme['light']
     # Group by category
     by_cat: dict[str, list[Artifact]] = {}
     for a in artifacts:
@@ -196,43 +323,39 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
 *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
 
 :root, [data-theme="dark"] {{
-  --bg:           #0b0d13;
-  --bg-elevated:  #10131c;
-  --bg-card:      #151a26;
-  --bg-hover:     #1b2133;
-  --border:       #1e2436;
-  --border-strong:#2a3248;
-  --text:         #eaecf2;
-  --text-sec:     #8a90a8;
-  --text-dim:     #555d76;
-  --accent:       #1496FF;
-  --accent-hover: #42aaff;
-  --accent-bg:    rgba(20,150,255,0.08);
-  --green:        #B4DC00;
-  --purple:       #6F2DA8;
-  --purple-bg:    rgba(111,45,168,0.10);
-  --shadow:       0 2px 12px rgba(0,0,0,0.3);
-  --logo-fill:    #FFFFFF;
+  --bg:           {dark['bg']};
+  --bg-elevated:  {dark['bg_elevated']};
+  --bg-card:      {dark['bg_card']};
+  --bg-hover:     {dark['bg_hover']};
+  --border:       {dark['border']};
+  --border-strong:{dark['border_strong']};
+  --text:         {dark['text']};
+  --text-sec:     {dark['text_sec']};
+  --text-dim:     {dark['text_dim']};
+  --accent:       {dark['accent']};
+  --accent-hover: {dark['accent_hover']};
+  --accent-bg:    {dark['accent_bg']};
+  --badge-bg:     {dark['badge_bg']};
+  --badge-fg:     {dark['badge_fg']};
+  --shadow:       {dark['shadow']};
 }}
 
 [data-theme="light"] {{
-  --bg:           #f4f5f8;
-  --bg-elevated:  #ffffff;
-  --bg-card:      #ffffff;
-  --bg-hover:     #f0f1f6;
-  --border:       #d8dce6;
-  --border-strong:#c0c6d4;
-  --text:         #141824;
-  --text-sec:     #4d5570;
-  --text-dim:     #7d849c;
-  --accent:       #1474cc;
-  --accent-hover: #0f62b4;
-  --accent-bg:    rgba(20,116,204,0.06);
-  --green:        #73BE28;
-  --purple:       #6F2DA8;
-  --purple-bg:    rgba(111,45,168,0.05);
-  --shadow:       0 2px 12px rgba(0,0,0,0.04);
-  --logo-fill:    #1A1A1A;
+  --bg:           {light['bg']};
+  --bg-elevated:  {light['bg_elevated']};
+  --bg-card:      {light['bg_card']};
+  --bg-hover:     {light['bg_hover']};
+  --border:       {light['border']};
+  --border-strong:{light['border_strong']};
+  --text:         {light['text']};
+  --text-sec:     {light['text_sec']};
+  --text-dim:     {light['text_dim']};
+  --accent:       {light['accent']};
+  --accent-hover: {light['accent_hover']};
+  --accent-bg:    {light['accent_bg']};
+  --badge-bg:     {light['badge_bg']};
+  --badge-fg:     {light['badge_fg']};
+  --shadow:       {light['shadow']};
 }}
 
 html, body {{
@@ -319,7 +442,7 @@ h2 {{
 .badge {{
   font-size: 0.68rem; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.04em;
-  background: var(--purple-bg); color: var(--purple);
+  background: var(--badge-bg); color: var(--badge-fg);
   padding: 0.1rem 0.45rem; border-radius: 4px;
 }}
 
@@ -400,7 +523,8 @@ def main() -> None:
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
     artifacts = discover_artifacts(repo_root)
-    out = generate_html(artifacts, title, args.description, now)
+    theme = load_theme(repo_root)
+    out = generate_html(artifacts, title, args.description, now, theme)
 
     outpath = repo_root / args.output
     outpath.write_text(out, encoding='utf-8')
