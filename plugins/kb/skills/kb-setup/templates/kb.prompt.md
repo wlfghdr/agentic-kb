@@ -1,11 +1,27 @@
 ---
 mode: agent
 description: KB operations — capture, digest, promote, decide, rituals, present, report
+tools:
+  - run_in_terminal
+  - read_file
+  - create_file
+  - replace_string_in_file
+  - multi_replace_string_in_file
+  - list_dir
+  - file_search
+  - grep_search
+  - semantic_search
+  - manage_todo_list
+  - vscode_askQuestions
+  - fetch_webpage
+  - memory
 ---
 
 # /kb — Knowledge Base
 
 The user invokes `/kb` from any harness. Route to the `kb-management` skill.
+
+> **Tool requirement.** This prompt needs file + terminal tools (declared in the frontmatter `tools:` list) to run file scaffolding, ritual scans, and git operations. On recent VS Code builds they are auto-selected from the frontmatter. If the chat session reports "no tools available" when this prompt runs, open the Chat view → gear/Configure Chat → Tools, enable the 13 built-in tools listed in the frontmatter above, and rerun `/kb`. This is a one-time per-session action.
 
 ## Routing precedence
 

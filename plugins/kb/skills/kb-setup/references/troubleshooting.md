@@ -1,5 +1,20 @@
 # Troubleshooting — kb-setup
 
+## No tools enabled in the VS Code chat session
+
+Symptom: `/kb` or `/kb setup` launches a chat session where the agent reports it has no tools available, or file operations (read / create / edit) fail.
+
+Root cause: VS Code Copilot Chat determines the tool set per session from the prompt's `tools:` frontmatter. If your VS Code build is older, the frontmatter field is ignored, or if a custom agent with a restricted tool list is active, the built-in tools are not auto-enabled.
+
+Fix (one-time per session):
+
+1. Open the Chat view.
+2. Click the gear icon → **Configure Chat** → **Tools**.
+3. Enable the 13 built-in tools the prompt requires: `run_in_terminal`, `read_file`, `create_file`, `replace_string_in_file`, `multi_replace_string_in_file`, `list_dir`, `file_search`, `grep_search`, `semantic_search`, `manage_todo_list`, `vscode_askQuestions`, `fetch_webpage`, `memory`.
+4. Rerun `/kb` or `/kb setup`.
+
+Permanent fix: update VS Code + GitHub Copilot Chat to the current stable. The `tools:` field in prompt-file frontmatter is honored on recent builds — the skills and prompts ship with the list already declared.
+
 ## SSH key missing
 
 Symptom: `git push` fails with `Permission denied (publickey)`.
