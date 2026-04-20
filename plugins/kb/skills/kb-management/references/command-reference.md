@@ -78,8 +78,26 @@ input?
 ├── URL → fetch if user confirms; treat content as text
 ├── File path inside a KB → run gate on file content
 ├── Pasted text → run gate on text directly
-└── Bare `/kb` → show status
+└── Bare `/kb` → run triage scan (see below)
 ```
+
+## Triage scan (bare `/kb`)
+
+When `/kb` is invoked with no argument, report a read-only consolidated status. Canonical signal list (also defined in `kb.prompt.md`):
+
+| Signal | Where to look |
+|---|---|
+| Setup complete? | `.kb-config/layers.yaml` exists |
+| Pending inputs | `_kb-inputs/` not yet in `_kb-inputs/digested/` |
+| Open decisions | `_kb-decisions/*.md` with `status: proposed` |
+| Overdue todos | `_kb-tasks/*.md` with status `todo`/`doing` > 7 days |
+| Rituals | Today's `.kb-log/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
+| Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |
+| Promotions due | `maturity: durable` findings/topics not yet referenced in L2/L3 |
+| Stale topics | Topics unchanged > 60 days but still cited by recent findings |
+| Artifact refresh due | `.kb-log/` shows mutating ops after last HTML artifact mtime |
+
+Triage is read-only — no mutations, no commits. Output ends with 1–3 concrete next steps.
 
 ## Gate scoring
 
