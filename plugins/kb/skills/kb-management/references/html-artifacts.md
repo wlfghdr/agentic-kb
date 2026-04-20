@@ -21,7 +21,7 @@ Two families of artifacts:
 - Deterministic (same state → byte-identical output).
 - Fast (a few seconds max — runs after every operation).
 - Bundled with the commit that triggered the change.
-- Level 1: offer before regenerating. Level 2/3: silent.
+- Regenerated automatically at every layer. Mention the refreshed paths in the operation summary, but do not make freshness depend on a follow-up confirmation.
 
 **Watermark** uses `latest · {YYYY-MM-DD HH:MM}` instead of a version number.
 
@@ -180,7 +180,7 @@ index:
 - `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`
 - Any Family 1 overview regeneration
 - Any `/kb promote` that includes HTML files
-- Manual trigger: `/kb status --refresh-overviews`
+- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path; not required for freshness)
 
 **Regeneration command**:
 

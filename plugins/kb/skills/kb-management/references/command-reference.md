@@ -95,7 +95,6 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 | Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |
 | Promotions due | `maturity: durable` findings/topics not yet referenced in L2/L3 |
 | Stale topics | Topics unchanged > 60 days but still cited by recent findings |
-| Artifact refresh due | `.kb-log/` shows mutating ops after last HTML artifact mtime |
 
 Triage is read-only — no mutations, no commits. Output ends with 1–3 concrete next steps.
 

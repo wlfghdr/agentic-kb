@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.0.0
+version: 3.1.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -47,8 +47,6 @@ license: Apache-2.0
 # Skill: KB Management
 
 This skill implements the `agentic-kb` specification. It operates on the user's workspace — a directory containing one required **personal KB** and any number of optional **team**, **org-unit**, **marketplace**, and **company** layers. See `references/spec-summary.md` for the condensed architecture.
-
-> **v2.0 scope note.** HTML overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) are regenerated **on explicit invocation** — `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`, or `/kb status --refresh-overviews`. Automatic regeneration after every state-mutating operation is planned for v2.1 (see `docs/roadmap.md`). Until then, after a mutating operation the skill **offers** the refresh but does not run it silently.
 
 ## When to invoke
 
@@ -97,9 +95,11 @@ Full command reference: `references/command-reference.md`.
 
 8. **Presentation-worthy detection.** When a TODO contains *present, pitch, demo, share, slide, meeting prep*, add 🎤 and offer `/kb present`.
 
-9. **Regenerate root `index.html`** after any operation that creates or modifies an HTML artifact (`present`, `report`, `end-day`, `end-week`, `promote` with HTML, `status --refresh-overviews`). Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."`. The index serves as the GitHub Pages landing page.
+9. **Auto-regenerate live overviews after every mutation.** After any state-mutating operation (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, `present`, `report`, `end-day`, `end-week`, and automation-loop writes), regenerate `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` before the response/commit completes. Treat these files as part of the same mutation, not as a later optional step.
 
-10. **Task handling discipline — apply on every `/kb` invocation, not only `/kb task`.** Tasks are first-class and the user's most fragile surface. Rules:
+10. **Regenerate root `index.html`** whenever a mutation creates or modifies an HTML artifact, including the live overview refresh above. Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."`. `/kb status --refresh-overviews` remains available as a manual repair/rebuild trigger, but freshness no longer depends on it. The index serves as the GitHub Pages landing page.
+
+11. **Task handling discipline — apply on every `/kb` invocation, not only `/kb task`.** Tasks are first-class and the user's most fragile surface. Rules:
 
     a. **Surface the top task.** Every response that isn't a pure status/read query ends its next-step suggestions with the current top item from `_kb-tasks/focus.md` if one exists. Format: `Next up: <focus item>` (single line, no commentary).
 
