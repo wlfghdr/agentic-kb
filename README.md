@@ -178,8 +178,9 @@ agentic-kb/
 
 1. [`index.html`](index.html) — open in a browser for a 2-minute visual overview.
 2. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
-3. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
-4. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+3. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
+4. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
+5. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 
