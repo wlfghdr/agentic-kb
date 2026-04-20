@@ -118,15 +118,15 @@ The generated `AGENTS.md` includes:
 ```markdown
 | Alias | Repo | Path |
 |-------|------|------|
-| `bb` | bluebox | bluebox/ |
+| `ba` | backend-api | backend-api/ |
 | `psb` | product-strategy-brainstorming | product-strategy-brainstorming/ |
 | `akb` | agentic-kb | agentic-kb/ |
-| `whkb` | wh-kb | wh-kb/ |
+| `pkb` | personal-kb | personal-kb/ |
 ```
 
 Alias generation rules:
 - Use initials of hyphenated segments (e.g., `product-strategy-brainstorming` → `psb`).
-- Single-word repos get first 2–3 letters (e.g., `bluebox` → `bb`).
+- Single-word repos get first 2–3 letters (e.g., `backend-api` → `ba`, or `frontend` → `fe`).
 - On collision, append a digit or use a longer prefix.
 - The user can override aliases in `.kb-config/layers.yaml` under `workspace.aliases`.
 
