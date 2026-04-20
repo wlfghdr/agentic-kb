@@ -93,13 +93,37 @@ Ask each block in order. Stop and wait after each block for the user's answer be
     *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
 12. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
     *→ Controls `.kb-config/automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
-13. **HTML artifact styling**:
-    - *"For generated presentations and reports, what styling should the agent use?"*
-    - (a) Default built-in template.
-    - (b) Point to a website — agent derives a matching theme from the page.
-    - (c) Point to a template file.
+13. **HTML artifact styling** — corporate design is mandatory, not optional:
+    - *"For generated presentations and reports, which corporate design should the agent use?"*
+    - (a) **Default built-in template** — vendor-neutral accessible tokens shipped with agentic-kb.
+    - (b) **Derive from a website** — point to a corporate web page; agent fetches, extracts colors/typography/spacing, writes a token file.
+    - (c) **Point to a corporate template file** — the preferred path for adopters with an existing brand HTML. Agent copies the file to `_kb-references/templates/<brand>-presentation.html` and anchors all artifacts to it.
     - Always generate both light and dark themes with an in-page toggle.
-    *→ Writes `.kb-config/artifacts.yaml` with the chosen template path or derived color tokens. All `/kb present` and `/kb report` commands use this styling.*
+    *→ This question configures the single source of truth for all HTML artifacts (root index, presentations, reports). Every `/kb present`, `/kb report`, and `/kb-report` run reads `.kb-config/artifacts.yaml → styling.reference-file` and reuses its CSS variables — they never improvise a fresh palette.*
+
+    **Customization contract (what the skill must do per choice):**
+
+    | Choice | Required setup actions |
+    |--------|----------------------|
+    | (a) builtin | Copy `templates/presentation-template.html` → `_kb-references/templates/presentation-template.html` **unchanged**. Write `styling.source: builtin` and `styling.reference-file: _kb-references/templates/presentation-template.html` to `.kb-config/artifacts.yaml`. Index/reports use the vendor-neutral default theme in `.kb-scripts/generate-index`. |
+    | (b) website | Copy `templates/presentation-template.html` → `_kb-references/templates/<brand>-presentation.html`. Fetch the URL, extract primary/secondary/surface/text colors + heading/body font. Rewrite only the `:root`/`[data-theme="dark"]`/`[data-theme="light"]` token blocks and the `--font-family` variable in that file — keep all layout, slide types, and scripts intact. Also offer to fetch the site's favicon/signet and inline it into the `.brand-logo` and `.bg-brand` `<svg>` slots. Set `styling.source: template`, `styling.reference-file: _kb-references/templates/<brand>-presentation.html`, `styling.reference-url: <the-url>`. |
+    | (c) template | Copy the provided file to `_kb-references/templates/<brand>-presentation.html` (preserve the original source path in a comment header). If the file is missing any of: dark theme token block, light theme token block, `.brand-logo` slot, `.bg-brand` slot, theme toggle, or timestamp meta-line on the cover — offer to merge the missing pieces from `templates/presentation-template.html` (the skill's generic baseline). Set `styling.source: template`, `styling.reference-file: _kb-references/templates/<brand>-presentation.html`. |
+
+    **The generic `templates/presentation-template.html`** is structured so that only five areas need brand customization (every customization point is marked with `CUSTOMIZE:` comments):
+    1. Dark-theme token block (`:root`, `[data-theme="dark"]`)
+    2. Light-theme token block (`[data-theme="light"]`)
+    3. `--font-family`
+    4. `.brand-logo` inline `<svg>` — the small signet in the header
+    5. `.bg-brand` inline `<svg>` — the large visible brand mark on the cover slide
+
+    Everything else (slide types, cards, callouts, badges, tables, nav, theme toggle, keyboard shortcuts, print CSS, changelog appendix, cover timestamp) is reusable as-is.
+
+    **Post-customization verification (MUST pass before Step 8 commit):**
+
+    1. Run `python3 .kb-scripts/generate-index . --title "<KB_NAME>"` and confirm the generated `index.html` contains the adopter's accent color hex value (not the neutral default unless the adopter's brand IS that color).
+    2. Open the reference template and confirm it defines both `:root`/`[data-theme="dark"]` and `[data-theme="light"]` token blocks. If the adopter's file is single-theme, the skill MUST extend it with a light-theme counterpart derived from the dark tokens (or vice versa).
+    3. Grep the generated `index.html` for the adopter's primary brand color — if zero hits, token extraction failed; report the mismatch and ask the user to fix the template or switch to builtin.
+    4. Confirm the brand template still renders a non-placeholder `.brand-logo` and `.bg-brand` SVG. If the placeholders are still there, prompt the user for the brand signet SVG and inline it before proceeding.
 
 ## What setup does (after confirmation)
 
@@ -136,14 +160,17 @@ Files (from `templates/`):
 - `_kb-references/foundation/{me,context,vmg,stakeholders,sources,naming}.md`.
   - `vmg.md` is pre-filled from Q3: if the user provided a URL, fetch and extract vision/mission/goals into structured sections. If a file path, read and extract. If short text, structure directly. If skipped, write placeholder sections.
 - Initial `_kb-references/topics/<slug>.md` per declared theme (with empty changelog).
+- `_kb-references/templates/presentation-template.html` — copied verbatim from `templates/presentation-template.html` (vendor-neutral baseline: design tokens, dark/light themes, slide nav, brand-mark slot, cover timestamp, appendix/changelog). Q13 rewrites this file in place when the adopter picks template/website; the copy is also the fallback for `source: builtin`.
 - `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`.
 - `.kb-scripts/generate-index` — artifact index generator (from `scripts/generate-index.py`).
+- `.nojekyll` — **required** empty marker file at the repo root. GitHub Pages runs Jekyll by default, which silently drops directories whose names start with `_` (e.g. `_kb-references/`, `_kb-inputs/`). Without `.nojekyll`, every artifact under an underscore-prefixed directory returns 404 on Pages. The file must be present on whichever branch Pages serves from (typically `main` or `gh-pages`).
 - `index.html` — initial root artifact index (generated by running the script).
 
 ### Step 4 — Scaffold team KB (if creating new)
 - Contributor directory (`<your-name>/_kb-inputs/`, `<your-name>/_kb-references/{topics,findings}/`).
 - `_kb-decisions/`, `_kb-decisions/archive/`, `_kb-tasks/{focus,backlog}.md`, `_kb-tasks/archive/`, `.kb-log/`, `AGENTS.md`, `README.md`.
 - `.kb-scripts/generate-index` — artifact index generator (same script as personal KB).
+- `.nojekyll` — empty marker at repo root (same reason as personal KB: Pages would otherwise 404 every `_`-prefixed path).
 - `index.html` — initial root artifact index.
 
 ### Step 5 — Workspace-level configuration
@@ -242,6 +269,11 @@ Every placeholder below has exactly one source — always from the interview ans
 | `{{RECENT_REPORTS}}` | Empty `<ul></ul>` on first run (will be filled by `/kb present` / `/kb report`) |
 | `{{DATE}}` | Today's ISO-8601 date (`YYYY-MM-DD`) |
 | `{{VERSION}}` | `1.0` on first scaffold; later artifacts bump their own version |
+| `{{BRAND_NAME}}` | Q13 — adopter brand display name (defaults to `{{KB_NAME}}` when not set) |
+| `{{CONFIDENTIAL_LABEL}}` | Q13 — e.g. `Confidential`, `Internal`, or empty string to hide |
+| `{{PRESENTATION_TITLE}}` | Left as-is in `presentation-template.html`; filled by `/kb present` |
+| `{{SUBTITLE}}`, `{{COVER_BADGE}}`, `{{CONTACT}}` | Left as-is in the template; filled per-artifact by `/kb present` |
+| `{{CREATED_ISO}}`, `{{CREATED_DATE}}`, `{{CREATED_TIME}}` | Filled at artifact render time with exact creation timestamp (ISO-8601, `YYYY-MM-DD`, `HH:MM TZ`) |
 
 ### Post-write check (MUST run before Step 8)
 

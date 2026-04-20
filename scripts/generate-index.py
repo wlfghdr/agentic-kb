@@ -41,6 +41,7 @@ class Artifact(NamedTuple):
     category: str      # grouping label
     contributor: str   # for team KBs, empty for personal
     family: str        # dedup key — normalized stem, dir-scoped
+    summary: str       # short "what is this" blurb — meta description or first heading/paragraph
 
 
 # ── Index config defaults ──────────────────────────────────────────────
@@ -49,6 +50,7 @@ DEFAULT_INDEX_CONFIG = {
     'stale_after_days': 14,
     'pinned_categories': ['Journey Maps', 'Roadmap & Status'],
     'dedup_versioned': True,
+    'drop_referenced_subpages': True,
     'category_order': 'recency',   # or 'fixed'
 }
 
@@ -140,6 +142,8 @@ def load_index_config(repo_root: Path) -> dict:
         cfg['pinned_categories'] = list(idx['pinned-categories'] or [])
     if 'dedup-versioned' in idx:
         cfg['dedup_versioned'] = bool(idx['dedup-versioned'])
+    if 'drop-referenced-subpages' in idx:
+        cfg['drop_referenced_subpages'] = bool(idx['drop-referenced-subpages'])
     if 'category-order' in idx:
         cfg['category_order'] = str(idx['category-order'])
     return cfg
@@ -227,6 +231,67 @@ def extract_title(filepath: Path) -> str | None:
     except Exception:
         pass
     return None
+
+
+_META_DESC_RE = re.compile(
+    r'''<meta\s+[^>]*name\s*=\s*["'](?:description|og:description)["']'''
+    r'''[^>]*content\s*=\s*["']([^"']+)["']''',
+    re.IGNORECASE,
+)
+_META_DESC_RE_ALT = re.compile(
+    r'''<meta\s+[^>]*content\s*=\s*["']([^"']+)["']'''
+    r'''[^>]*name\s*=\s*["'](?:description|og:description)["']''',
+    re.IGNORECASE,
+)
+_HEADING_RE = re.compile(r'<h[1-3][^>]*>(.*?)</h[1-3]>', re.IGNORECASE | re.DOTALL)
+_PARA_RE = re.compile(r'<p[^>]*>(.*?)</p>', re.IGNORECASE | re.DOTALL)
+_TAG_RE = re.compile(r'<[^>]+>')
+_WS_RE = re.compile(r'\s+')
+
+
+def _clean_text(s: str) -> str:
+    s = _TAG_RE.sub(' ', s)
+    s = html.unescape(s)
+    return _WS_RE.sub(' ', s).strip()
+
+
+def _shorten(s: str, max_chars: int = 110) -> str:
+    s = s.strip()
+    if len(s) <= max_chars:
+        return s
+    cut = s[:max_chars].rsplit(' ', 1)[0]
+    return cut.rstrip(' ,;:.-') + '…'
+
+
+def extract_summary(filepath: Path, title: str) -> str:
+    """Return a short "what's in this file" blurb.
+
+    Preference order: <meta name="description">, first <h1|h2|h3> that isn't
+    the page title, first <p>. Returns empty string if nothing usable is found.
+    """
+    try:
+        text = filepath.read_text(encoding='utf-8', errors='ignore')[:16384]
+    except Exception:
+        return ''
+    # 1. meta description
+    for rx in (_META_DESC_RE, _META_DESC_RE_ALT):
+        m = rx.search(text)
+        if m:
+            s = _clean_text(m.group(1))
+            if s:
+                return _shorten(s)
+    # 2. first heading that differs from title
+    title_norm = title.strip().lower()
+    for m in _HEADING_RE.finditer(text):
+        s = _clean_text(m.group(1))
+        if s and s.lower() != title_norm:
+            return _shorten(s)
+    # 3. first paragraph with enough substance
+    for m in _PARA_RE.finditer(text):
+        s = _clean_text(m.group(1))
+        if len(s) >= 15:
+            return _shorten(s)
+    return ''
 
 
 def extract_date(filepath: Path, repo_root: Path) -> str:
@@ -322,9 +387,10 @@ def discover_artifacts(repo_root: Path) -> list[Artifact]:
         title = extract_title(fp) or fp.stem.replace('-', ' ').replace('_', ' ').title()
         date = extract_date(fp, repo_root)
         cat, contrib = categorize(rel)
+        summary = extract_summary(fp, title)
         artifacts.append(Artifact(path=rel, title=title, date=date,
                                   category=cat, contributor=contrib,
-                                  family=family_key(rel)))
+                                  family=family_key(rel), summary=summary))
     # Sort newest first
     artifacts.sort(key=lambda a: a.date, reverse=True)
     return artifacts
@@ -338,6 +404,63 @@ def dedup_families(artifacts: list[Artifact]) -> list[Artifact]:
         if key not in seen:
             seen[key] = a
     return sorted(seen.values(), key=lambda a: a.date, reverse=True)
+
+
+# Matches href="..." / src="..." (single or double quoted).
+_HREF_RE = re.compile(r'''(?:href|src)\s*=\s*["']([^"'#?]+?\.html)(?:[?#][^"']*)?["']''',
+                      re.IGNORECASE)
+
+
+def _referenced_paths_from(fp: Path, repo_root: Path) -> set[str]:
+    """Return the set of repo-relative artifact paths referenced from this HTML.
+
+    Only same-repo relative `.html` links count; absolute URLs (http(s)://,
+    //, mailto:, fragments) are ignored. Paths are resolved relative to the
+    referring file's directory and normalized against the repo root.
+    """
+    try:
+        text = fp.read_text(encoding='utf-8', errors='ignore')
+    except Exception:
+        return set()
+    refs: set[str] = set()
+    base = fp.parent
+    for m in _HREF_RE.finditer(text):
+        url = m.group(1).strip()
+        if not url or url.startswith(('http://', 'https://', '//', 'mailto:',
+                                       'tel:', 'data:', 'javascript:')):
+            continue
+        try:
+            target = (base / url).resolve()
+            rel = target.relative_to(repo_root)
+        except (ValueError, OSError):
+            continue
+        refs.add(rel.as_posix())
+    return refs
+
+
+def drop_referenced_subpages(artifacts: list[Artifact],
+                              repo_root: Path) -> tuple[list[Artifact], int]:
+    """Drop artifacts that are linked to from another artifact in the index.
+
+    Intent: when a hub HTML (e.g. a journey map) already links to its
+    sub-pages, the sub-pages should not be listed separately in the root
+    index. The hub stays; referenced leaves are removed.
+
+    Protection: an artifact that itself references other artifacts (i.e. is
+    also a hub) is never dropped, so two hubs cross-linking each other both
+    remain visible.
+    """
+    paths = {a.path for a in artifacts}
+    referenced: set[str] = set()
+    own_refs: dict[str, set[str]] = {}
+    for a in artifacts:
+        fp = repo_root / a.path
+        out = _referenced_paths_from(fp, repo_root) & paths
+        own_refs[a.path] = out
+        referenced |= out
+    kept = [a for a in artifacts
+            if a.path not in referenced or own_refs[a.path]]
+    return kept, len(artifacts) - len(kept)
 
 
 # ── HTML Generation ────────────────────────────────────────────────────
@@ -392,6 +515,8 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
         for a in items:
             esc_title = html.escape(a.title)
             esc_path = html.escape(a.path)
+            esc_summary = (html.escape(a.summary) if a.summary
+                           else '<span class="muted">—</span>')
             badges = []
             if is_stale(a.date):
                 badges.append('<span class="badge-stale">stale</span>')
@@ -399,17 +524,25 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
                 badges.append(f'<span class="badge">{html.escape(a.contributor)}</span>')
             badges_html = ''.join(badges)
             rows.append(
-                f'        <li>'
-                f'<a href="{esc_path}">{esc_title}</a>'
-                f' <span class="meta">{badges_html} {a.date}</span>'
-                f'</li>'
+                '        <tr>'
+                f'<td class="col-title"><a href="{esc_path}">{esc_title}</a></td>'
+                f'<td class="col-summary">{esc_summary}</td>'
+                f'<td class="col-meta">{badges_html}<span class="date">{a.date}</span></td>'
+                '</tr>'
             )
         sections.append(
             f'    <h2>{html.escape(cat)}'
             f' <span class="count">{len(items)}</span></h2>\n'
-            f'    <ul class="artifact-list">\n'
+            '    <table class="artifact-table">\n'
+            '      <thead><tr>'
+            '<th class="col-title">Artifact</th>'
+            '<th class="col-summary">Summary</th>'
+            '<th class="col-meta">Meta</th>'
+            '</tr></thead>\n'
+            '      <tbody>\n'
             + '\n'.join(rows) + '\n'
-            f'    </ul>'
+            '      </tbody>\n'
+            '    </table>'
         )
 
     body_sections = '\n\n'.join(sections) if sections else (
@@ -555,6 +688,53 @@ h2 {{
   font-weight: 500; font-size: 0.92rem;
 }}
 .artifact-list a:hover {{ text-decoration: underline; }}
+
+/* Artifact table */
+.artifact-table {{
+  width: 100%; border-collapse: collapse;
+  font-size: 0.9rem;
+}}
+.artifact-table th {{
+  text-align: left; font-weight: 600;
+  font-size: 0.72rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding: 0.4rem 0.8rem 0.5rem;
+  border-bottom: 1px solid var(--border-strong);
+}}
+.artifact-table td {{
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}}
+.artifact-table tr:last-child td {{ border-bottom: none; }}
+.artifact-table tr:hover td {{ background: var(--bg-hover); }}
+.artifact-table a {{
+  color: var(--accent); text-decoration: none;
+  font-weight: 500;
+}}
+.artifact-table a:hover {{ text-decoration: underline; }}
+.col-title {{ width: 34%; }}
+.col-summary {{
+  width: 50%; color: var(--text-sec);
+  font-size: 0.85rem; line-height: 1.45;
+}}
+.col-summary .muted {{ color: var(--text-dim); }}
+.col-meta {{
+  width: 16%; white-space: nowrap;
+  font-size: 0.78rem; color: var(--text-dim);
+  text-align: right;
+}}
+.col-meta .date {{ margin-left: 0.4rem; }}
+@media (max-width: 680px) {{
+  .artifact-table, .artifact-table thead, .artifact-table tbody,
+  .artifact-table tr, .artifact-table td {{ display: block; width: 100%; }}
+  .artifact-table thead {{ display: none; }}
+  .artifact-table tr {{
+    padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+  }}
+  .artifact-table td {{ border-bottom: none; padding: 0.15rem 0.2rem; }}
+  .col-meta {{ text-align: left; }}
+}}
 .meta {{
   font-size: 0.78rem; color: var(--text-dim);
   white-space: nowrap; display: flex; align-items: center; gap: 0.4rem;
@@ -668,12 +848,20 @@ def main() -> None:
     total_before = len(artifacts)
     if index_cfg.get('dedup_versioned', True):
         artifacts = dedup_families(artifacts)
-    dropped = total_before - len(artifacts)
+    dedup_dropped = total_before - len(artifacts)
+    subpage_dropped = 0
+    if index_cfg.get('drop_referenced_subpages', True):
+        artifacts, subpage_dropped = drop_referenced_subpages(artifacts, repo_root)
     out = generate_html(artifacts, title, args.description, now, theme, index_cfg)
 
     outpath = repo_root / args.output
     outpath.write_text(out, encoding='utf-8')
-    suffix = f' ({dropped} older versions deduped)' if dropped else ''
+    parts = []
+    if dedup_dropped:
+        parts.append(f'{dedup_dropped} older versions deduped')
+    if subpage_dropped:
+        parts.append(f'{subpage_dropped} referenced sub-pages hidden')
+    suffix = f' ({"; ".join(parts)})' if parts else ''
     print(f'Generated {outpath} — {len(artifacts)} artifacts indexed{suffix}')
 
 

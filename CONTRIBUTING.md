@@ -48,11 +48,25 @@ npx markdownlint-cli2 "docs/**/*.md" "*.md"
 # Dead link check
 lychee --config .lychee.toml .
 
-# Consistency + version sync
+# Consistency + version sync + vendor-neutrality guard
 python3 scripts/check_consistency.py
 ```
 
 CI runs all three on every push and pull request.
+
+## Pre-push Hook
+
+Install a local pre-push hook that runs the same validation CI runs — this catches vendor-specific leaks, broken links, and drift before they ever reach the remote:
+
+```bash
+./scripts/install-hooks.sh
+```
+
+## Vendor-Neutrality Blocklist
+
+This spec is vendor-neutral. The consistency check reads an optional `.forbidden-terms.txt` at the repo root (gitignored) — one case-insensitive term per line, `#` for comments. Maintainers and forks can layer their own internal vocabulary there without that vocabulary ever appearing in the public spec. If `check_consistency.py` fails with a `FORBIDDEN term` error, either rephrase the doc in vendor-neutral language or justify adding an exemption.
+
+The pre-push hook enforces this before every push. Emergency bypass: `git push --no-verify` (use sparingly).
 
 ## Code of Conduct
 

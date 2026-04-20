@@ -101,6 +101,18 @@ Per `.kb-config/artifacts.yaml`:
 
 In all cases, build **both light and dark themes** into the output file with a toggle.
 
+### Corporate design contract (mandatory for every artifact)
+
+`/kb present`, `/kb report`, `/kb-report`, `/kb end-day`, `/kb end-week`, and every Family 1 overview MUST reuse the CSS variables declared in the configured reference template. They MUST NOT invent a fresh palette per run.
+
+Concrete rules every generator implements:
+
+1. **Read `.kb-config/artifacts.yaml` first.** If `styling.source: template`, load the `reference-file`, parse its `:root` / `[data-theme="dark"]` / `[data-theme="light"]` blocks, and reuse those token values (`--*-bg*`, `--*-border*`, `--*-text*`, `--*-brand*`, semantic colors, radius, shadow). If `source: website`, reuse the token file generated at setup time. If `source: builtin`, use `templates/artifact-base.html`.
+2. **Same tokens across all artifacts.** The root `index.html`, every presentation, every report, and every daily/weekly summary share the same token set — one visual system per KB. A user opening any two artifacts side by side sees a single brand.
+3. **Both themes always.** Emit `[data-theme="dark"]` and `[data-theme="light"]` blocks, plus the keyboard-accessible toggle. Default theme per `artifacts.yaml → styling.default-theme`.
+4. **Never hard-code hex values in generator logic.** Hex values belong in token blocks only. Report-specific components (metrics grid, changelog table) reference tokens via `var(--...)`.
+5. **Failure mode.** If the reference template is missing, unreadable, or lacks both theme blocks, fall back to `builtin` AND warn the user in the generator output — never silently publish with the wrong brand.
+
 ## Output location
 
 | Layer | Directory |
@@ -133,17 +145,18 @@ The previous file remains on disk (different filename). Changelog appendix prese
 
 Every KB layer MUST maintain a root `index.html` that indexes all HTML artifacts in the repository. This is the GitHub Pages landing page and the local entry point for browsing artifacts.
 
-**Generator script**: `scripts/generate-index.py` — scans the repo for `.html` files, extracts titles from `<title>` tags, infers dates from filenames or git history, groups by category, deduplicates versioned artifacts, and writes a self-contained `index.html` with neutral design tokens and a dark/light toggle.
+**Generator script**: `scripts/generate-index.py` — scans the repo for `.html` files, extracts titles from `<title>` tags, extracts a short "what is this" summary from the meta description / first heading / first paragraph, infers dates from filenames or git history, groups by category, deduplicates versioned artifacts, and writes a self-contained `index.html` (three-column table: Artifact | Summary | Meta) with neutral design tokens and a dark/light toggle.
 
 ### Index rules (all generators MUST implement)
 
 1. **Pinned categories first** — configured via `index.pinned-categories` in `.kb-config/artifacts.yaml` (defaults: `Journey Maps`, `Roadmap & Status`). These always render at the top regardless of artifact recency.
 2. **Remaining categories ordered by recency** — newest artifact in the category wins. A category with a 2026-04-18 item appears above one whose newest is 2026-04-01. Default: `index.category-order: recency`.
 3. **Dedup versioned artifacts** — only the newest artifact per family is shown. Family key = directory + stem with trailing version/date markers stripped (`-v3`, `-v5`, `-2026-04-15`, `-draft`, `-final`, `-wip`). Variant markers like `-pitch`, `-exec`, `-presentation` are preserved so different derivative kinds stay separate. Older versions remain on disk. Disable with `index.dedup-versioned: false`.
-4. **Stale badge** — artifacts older than `index.stale-after-days` (default: `14`) get a `<span class="badge-stale">stale</span>` badge and a warning in the legend. The legend states the cutoff date explicitly.
-5. **Legend block** — the generated index MUST include a visible legend line below the stats bar explaining the ordering, dedup, and stale rules, so any user opening the file understands the conventions.
-6. **Neutral default theme** — when no `.kb-config/artifacts.yaml` is present, the generator ships a vendor-neutral token set (blue accent, purple badge, neutral surfaces). Consumers can override via the `styling.source: template` pointer to their own reference file to match a house style.
-7. **Self-contained button glyphs** — theme toggle and any icons MUST use actual Unicode characters (e.g. `☾`, `☀`) in the HTML output, never escape sequences (`\u263E`) which render literally in markup contexts.
+4. **Hide referenced sub-pages** — when one indexed HTML links to another indexed HTML via a relative `href`/`src` (e.g. a journey map linking to its step pages), the linked sub-page is dropped from the index so only the hub is listed. An artifact that itself references other artifacts is always kept (two hubs cross-linking each other both stay visible). Disable with `index.drop-referenced-subpages: false`.
+5. **Stale badge** — artifacts older than `index.stale-after-days` (default: `14`) get a `<span class="badge-stale">stale</span>` badge and a warning in the legend. The legend states the cutoff date explicitly.
+6. **Legend block** — the generated index MUST include a visible legend line below the stats bar explaining the ordering, dedup, and stale rules, so any user opening the file understands the conventions.
+7. **Neutral default theme** — when no `.kb-config/artifacts.yaml` is present, the generator ships a vendor-neutral token set (blue accent, purple badge, neutral surfaces). Consumers can override via the `styling.source: template` pointer to their own reference file to match a house style.
+8. **Self-contained button glyphs** — theme toggle and any icons MUST use actual Unicode characters (e.g. `☾`, `☀`) in the HTML output, never escape sequences (`\u263E`) which render literally in markup contexts.
 
 ### Configuration contract (`.kb-config/artifacts.yaml`)
 
@@ -158,6 +171,7 @@ index:
     - Journey Maps
     - Roadmap & Status
   dedup-versioned: true            # collapse -v3, -v4, -v5 to latest
+  drop-referenced-subpages: true   # hide leaf HTMLs that a hub HTML already links to
   category-order: recency          # recency | fixed
 ```
 
@@ -212,3 +226,17 @@ The base template (in `templates/artifact-base.html`) includes:
 - Changelog appendix placeholder `{{CHANGELOG}}`.
 
 The generator fills placeholders from `.kb-config/artifacts.yaml` + topic content.
+
+### Presentation-grade template
+
+For `/kb present` (and any slide-style report), the richer **`kb-setup/templates/presentation-template.html`** is the canonical starting point. kb-setup Q13 copies it into the adopter's KB under `_kb-references/templates/presentation-template.html` (or `<brand>-presentation.html` when a brand is supplied). It ships with:
+
+- Dark + light theme token blocks (all customization points marked `CUSTOMIZE:`).
+- Slide types: `.cover`, `.section-title`, `.content`, `.full-image`, `.closing`.
+- Helpers: `.columns` / `.thirds`, `.card` variants, `.callout` variants, `.badge` variants, `.table-wrap`, `.metric-big`, `.img-placeholder`.
+- Header with brand-logo slot and theme toggle.
+- Cover slide with large visible brand-mark (`.bg-brand`), title, subtitle, and **exact creation timestamp** (`Created {{CREATED_DATE}} · {{CREATED_TIME}}`).
+- Nav bar with keyboard shortcuts (←/→, Home, End, PgUp/PgDn, Space), progress bar, print CSS.
+- Built-in appendix/changelog slide.
+
+Every `/kb present` MUST use this file (as customized by Q13) rather than regenerating a fresh layout.

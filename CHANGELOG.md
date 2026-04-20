@@ -19,9 +19,17 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+## [3.1.0] — 2026-04-20
+
+### Added
+
+- **Generic presentation template** (`plugins/kb/skills/kb-setup/templates/presentation-template.html`) — vendor-neutral reveal-style deck that adopters get via `/kb setup` Q13. Left-aligned section-title slides with a gradient underline, closing slide before an appendix divider, and a mandatory Changelog slide as the final slide.
+- **Vendor-neutrality pre-push hook** (`scripts/hooks/pre-push` + `scripts/install-hooks.sh`) — runs `check_consistency.py`, `check_plugin_structure.py`, and `check_html_artifacts.py` before every push so forbidden terms, broken structure, and drift never reach the remote. Emergency bypass documented (`git push --no-verify`).
+- **Blocklist guidance in CONTRIBUTING.md** — describes the optional `.forbidden-terms.txt` layered-vocabulary mechanism and how to install the pre-push hook locally.
+
 ### Fixed
 
-- **Duplicate commands in VS Code** (`kb-management` + `kb:kb-management`): root `plugin.json` now declares only a `plugins` array pointing to `plugins/kb/` instead of listing skills/agents directly. Moved `plugins/kb/.claude-plugin/plugin.json` → `plugins/kb/plugin.json` (flat, matching rnd-ai-knowledgebase marketplace convention). Added `x-skills` and `x-agents` to plugin manifest.
+- **Duplicate commands in VS Code** (`kb-management` + `kb:kb-management`): root `plugin.json` now declares only a `plugins` array pointing to `plugins/kb/` instead of listing skills/agents directly. Moved `plugins/kb/.claude-plugin/plugin.json` → `plugins/kb/plugin.json` (flat marketplace convention, matching common agent-plugin layouts). Added `x-skills` and `x-agents` to plugin manifest.
 - **Physical consolidation under `plugins/kb/`**: skills and the agent are no longer duplicated between top-level `skills/`, `agents/` and symlinks inside `plugins/kb/`. The real directories now live at `plugins/kb/skills/kb-management/`, `plugins/kb/skills/kb-setup/`, `plugins/kb/agents/kb-operator.md`. Top-level `skills/` and `agents/` directories are removed. This prevents VS Code Agent Plugins from registering each skill twice (once as a root-plugin skill, once as a `kb:` sub-plugin skill).
 - **`install.py`**: resolves skills/agents from per-plugin manifests (`x-skills`/`x-agents` in `plugins/<name>/plugin.json`) instead of from root `plugin.json` `skills`/`agents` keys (removed). Falls back to disk enumeration. Discovers skill/agent source paths by walking `plugins/<name>/skills/` and `plugins/<name>/agents/`.
 - **`generate_plugins.py`**: no longer materialises symlinks — plugin dirs are the canonical source. Now only regenerates the per-plugin `plugin.json` manifest with `x-skills`/`x-agents` derived from the real directory contents. Still idempotent.

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PRESENTATION_TITLE}}</title>
+<meta name="generator" content="agentic-kb presentation-template">
+<meta name="created" content="{{CREATED_ISO}}">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   AGENTIC-KB HTML PRESENTATION TEMPLATE (vendor-neutral)
+   ──────────────────────────────────────────────────────
+   Ships with kb-setup. On `/kb setup` Q13 the wizard copies this file
+   into `_kb-references/templates/<brand>-presentation.html` and rewrites
+   the token blocks below to match the adopter's corporate design.
+
+   CUSTOMIZATION POINTS (search for "CUSTOMIZE:"):
+     1. :root / [data-theme="dark"] and [data-theme="light"] token blocks
+        — primary brand color, accent, surfaces, text, semantic colors
+     2. --font-family — brand typeface
+     3. .header-bar .brand-logo — replace the placeholder <svg> with the
+        adopter's inline SVG signet (no external URLs)
+     4. .cover .bg-brand — same SVG, used as a visible watermark behind
+        the cover slide content (opacity is already tuned for visibility)
+     5. Confidential mark — remove or rename per adopter policy
+
+   SLIDE TYPES (add as class on .slide):
+     .cover          — hero with brand mark + gradient + timestamp
+     .section-title  — chapter divider with number badge
+     .content        — standard content slide
+     .full-image     — full-bleed image with floating callout
+     .closing        — thank-you / contact slide
+
+   CONTENT HELPERS:
+     .columns / .columns.wide-left / .columns.wide-right / .columns.thirds
+     .card / .card.accent / .card.success / .card.warning / .card.critical
+     .callout / .callout.success / .callout.warning / .callout.critical
+     .badge.brand / .badge.success / .badge.warning / .badge.critical / .badge.neutral
+     .table-wrap > table
+     .metric-big  — large KPI number
+     .img-placeholder — diagram/illustration slot
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── CUSTOMIZE: Design tokens — DARK theme ───────────────────────── */
+:root, [data-theme="dark"] {
+  /* Brand — override with adopter palette */
+  --brand:          #1e6bff;        /* primary accent */
+  --brand-hover:    #4d8cff;
+  --brand-deep:     #1655cc;
+  --brand-subtle:   rgba(30, 107, 255, 0.10);
+  --brand-glow:     rgba(30, 107, 255, 0.05);
+
+  /* Secondary accents — optional, used by .card.accent variants */
+  --accent-2:       #7c3aed;        /* purple-ish */
+  --accent-2-light: #a78bfa;
+  --accent-3:       #22c55e;        /* green-ish */
+
+  /* Surfaces */
+  --bg:              #0b0d13;
+  --bg-elevated:     #10131c;
+  --bg-card:         #151a26;
+  --bg-card-hover:   #1b2133;
+  --surface-overlay: rgba(11, 13, 19, 0.94);
+
+  /* Borders */
+  --border:          #1e2436;
+  --border-strong:   #2a3248;
+
+  /* Text */
+  --text:            #eaecf2;
+  --text-secondary:  #8a90a8;
+  --text-tertiary:   #555d76;
+
+  /* Semantic */
+  --success:         #2dd37a;
+  --success-bg:      rgba(45, 211, 122, 0.12);
+  --warning:         #f5b400;
+  --warning-bg:      rgba(245, 180, 0, 0.12);
+  --critical:        #ef5353;
+  --critical-bg:     rgba(239, 83, 83, 0.12);
+
+  /* Layout */
+  --radius:          14px;
+  --radius-sm:       8px;
+  --radius-xs:       4px;
+  --shadow:          0 8px 40px rgba(0,0,0,0.5);
+  --shadow-sm:       0 2px 12px rgba(0,0,0,0.3);
+
+  /* Gradients — override to match brand hero style */
+  --hero-gradient:   linear-gradient(155deg, #080a10 0%, #0c1224 30%, #10183a 55%, #0d0f1a 100%);
+  --hero-glow-1:     radial-gradient(ellipse at 25% 20%, rgba(30,107,255,0.12) 0%, transparent 50%);
+  --hero-glow-2:     radial-gradient(ellipse at 75% 80%, rgba(124,58,237,0.10) 0%, transparent 45%);
+  --section-gradient: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%);
+
+  /* Logo tint — override for brand mark on dark backgrounds */
+  --logo-text-fill:  #ffffff;
+
+  /* Typography */
+  --font-family:     'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ─── CUSTOMIZE: Design tokens — LIGHT theme ──────────────────────── */
+[data-theme="light"] {
+  --brand:           #1655cc;
+  --brand-hover:     #1e6bff;
+  --brand-deep:      #103f99;
+  --brand-subtle:    rgba(30, 107, 255, 0.08);
+  --brand-glow:      rgba(30, 107, 255, 0.04);
+
+  --accent-2:        #6d28d9;
+  --accent-2-light:  #8b5cf6;
+  --accent-3:        #15803d;
+
+  --bg:              #f4f5f8;
+  --bg-elevated:     #ffffff;
+  --bg-card:         #ffffff;
+  --bg-card-hover:   #f0f1f6;
+  --surface-overlay: rgba(244, 245, 248, 0.96);
+
+  --border:          #d8dce6;
+  --border-strong:   #c0c6d4;
+
+  --text:            #141824;
+  --text-secondary:  #4d5570;
+  --text-tertiary:   #7d849c;
+
+  --success-bg:      rgba(20, 150, 80, 0.12);
+  --warning-bg:      rgba(200, 140, 10, 0.14);
+  --critical-bg:     rgba(200, 50, 50, 0.12);
+
+  --shadow:          0 2px 16px rgba(0,0,0,0.06);
+  --shadow-sm:       0 1px 4px rgba(0,0,0,0.04);
+
+  --hero-gradient:   linear-gradient(155deg, #ffffff 0%, #eef2ff 40%, #e0e7ff 70%, #f8fafc 100%);
+  --hero-glow-1:     radial-gradient(ellipse at 25% 20%, rgba(30,107,255,0.08) 0%, transparent 50%);
+  --hero-glow-2:     radial-gradient(ellipse at 75% 80%, rgba(124,58,237,0.06) 0%, transparent 45%);
+  --section-gradient: linear-gradient(135deg, #ffffff 0%, #f4f5f8 100%);
+
+  --logo-text-fill:  #1a1a1a;
+}
+
+html, body {
+  font-family: var(--font-family);
+  background: var(--bg); color: var(--text);
+  line-height: 1.6; -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ═══ DECK LAYOUT ═══════════════════════════════════════════════════ */
+.deck { width: 100vw; height: 100vh; position: relative; }
+
+.slide {
+  position: absolute; inset: 0;
+  padding: 80px 96px 72px;
+  display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+  overflow: hidden;
+}
+.slide.active { opacity: 1; pointer-events: auto; }
+.slide-inner { width: 100%; max-width: 1100px; margin: 0 auto; position: relative; }
+
+/* ═══ COVER SLIDE ═══════════════════════════════════════════════════ */
+.slide.cover {
+  background: var(--hero-gradient);
+  padding-top: 96px;
+}
+.slide.cover::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--hero-glow-1), var(--hero-glow-2);
+  pointer-events: none;
+}
+.slide.cover .slide-inner { position: relative; z-index: 1; max-width: 900px; }
+.slide.cover .badge-line {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+  color: var(--brand); background: var(--brand-subtle);
+  border: 1px solid var(--brand-subtle);
+  padding: 6px 14px; border-radius: 999px;
+  margin-bottom: 28px;
+  text-transform: uppercase;
+}
+.slide.cover h1 {
+  font-size: 3.4rem; font-weight: 700; line-height: 1.08;
+  letter-spacing: -0.02em; margin-bottom: 24px; color: var(--text);
+}
+.slide.cover .subtitle {
+  font-size: 1.28rem; color: var(--text-secondary);
+  line-height: 1.5; margin-bottom: 56px; max-width: 760px;
+}
+.slide.cover .meta-line {
+  display: flex; gap: 32px;
+  font-size: 0.85rem; color: var(--text-tertiary);
+  flex-wrap: wrap;
+}
+.slide.cover .meta-line strong { color: var(--text); font-weight: 600; }
+
+/* CUSTOMIZE: Cover brand-mark (watermark signet behind content).
+   Replace the <svg> in .bg-brand with the adopter's signet SVG.
+   Opacity is set for visibility — not a subtle watermark. */
+.slide.cover .bg-brand {
+  position: absolute;
+  right: -4%; bottom: -8%;
+  width: 62vh; height: 62vh;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+[data-theme="light"] .slide.cover .bg-brand { opacity: 0.22; }
+
+/* ═══ SECTION-TITLE SLIDE (left-aligned, gradient underline) ═══════ */
+.slide.section-title {
+  background: var(--section-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+.slide.section-title .slide-inner { max-width: 900px; padding-left: 2vw; }
+.slide.section-title .section-num {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--brand); background: transparent; border: none;
+  padding: 0; margin-bottom: 18px;
+  text-transform: uppercase; opacity: 0.85;
+}
+.slide.section-title h2 {
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  font-weight: 800; color: var(--text);
+  letter-spacing: -0.035em; line-height: 1.02; margin-bottom: 28px;
+}
+/* Signature gradient underline */
+.slide.section-title h2::after {
+  content: ''; display: block;
+  width: 96px; height: 5px; margin-top: 28px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--brand) 0%, var(--accent-2) 60%, var(--accent-3) 100%);
+}
+.slide.section-title p { font-size: 1.12rem; color: var(--text-secondary); max-width: 640px; margin: 0; }
+
+/* ═══ CONTENT SLIDE ═════════════════════════════════════════════════ */
+.slide.content h2 {
+  font-size: 2.1rem; font-weight: 700; color: var(--text);
+  margin-bottom: 32px; letter-spacing: -0.015em; line-height: 1.15;
+}
+.slide.content h3 {
+  font-size: 1.12rem; font-weight: 600; color: var(--text);
+  margin: 18px 0 10px;
+}
+.slide.content p { font-size: 1rem; color: var(--text-secondary); margin-bottom: 14px; }
+.slide.content ul { list-style: none; padding: 0; margin: 0 0 16px; }
+.slide.content ul li {
+  position: relative; padding-left: 26px; margin-bottom: 12px;
+  font-size: 1rem; color: var(--text-secondary); line-height: 1.55;
+}
+.slide.content ul li::before {
+  content: ''; position: absolute; left: 0; top: 0.55em;
+  width: 8px; height: 8px; border-radius: 2px;
+  background: var(--brand);
+}
+.slide.content ul li strong { color: var(--text); font-weight: 600; }
+
+/* ═══ COLUMNS ═══════════════════════════════════════════════════════ */
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.columns.wide-left  { grid-template-columns: 2fr 1fr; }
+.columns.wide-right { grid-template-columns: 1fr 2fr; }
+.columns.thirds     { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+/* ═══ CARDS ═════════════════════════════════════════════════════════ */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+  box-shadow: var(--shadow-sm); margin-bottom: 16px;
+}
+.card.accent   { border-color: var(--brand);     background: linear-gradient(135deg, var(--bg-card) 0%, var(--brand-subtle) 100%); }
+.card.success  { border-color: var(--success);   background: linear-gradient(135deg, var(--bg-card) 0%, var(--success-bg) 100%); }
+.card.warning  { border-color: var(--warning);   background: linear-gradient(135deg, var(--bg-card) 0%, var(--warning-bg) 100%); }
+.card.critical { border-color: var(--critical);  background: linear-gradient(135deg, var(--bg-card) 0%, var(--critical-bg) 100%); }
+.card-title {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--text-secondary); text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.metric-big {
+  font-size: 2.6rem; font-weight: 700; color: var(--brand);
+  line-height: 1; margin: 8px 0 4px; letter-spacing: -0.02em;
+}
+.metric-label { font-size: 0.88rem; color: var(--text-secondary); }
+
+/* ═══ CALLOUTS ══════════════════════════════════════════════════════ */
+.callout {
+  background: var(--brand-subtle);
+  border-left: 3px solid var(--brand);
+  padding: 16px 22px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.98rem; color: var(--text); margin: 18px 0;
+  line-height: 1.55;
+}
+.callout.success  { background: var(--success-bg);  border-left-color: var(--success); }
+.callout.warning  { background: var(--warning-bg);  border-left-color: var(--warning); }
+.callout.critical { background: var(--critical-bg); border-left-color: var(--critical); }
+
+/* ═══ BADGES ════════════════════════════════════════════════════════ */
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--bg-card-hover); color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.badge.brand    { background: var(--brand-subtle);   color: var(--brand);    border-color: var(--brand); }
+.badge.success  { background: var(--success-bg);     color: var(--success);  border-color: var(--success); }
+.badge.warning  { background: var(--warning-bg);     color: var(--warning);  border-color: var(--warning); }
+.badge.critical { background: var(--critical-bg);    color: var(--critical); border-color: var(--critical); }
+.badge.neutral  { background: var(--bg-elevated);    color: var(--text-secondary); }
+
+/* ═══ TABLES ════════════════════════════════════════════════════════ */
+.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+th {
+  background: var(--bg-elevated); color: var(--text-secondary);
+  font-weight: 600; font-size: 0.75rem; letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--bg-card-hover); }
+
+/* ═══ FULL-IMAGE SLIDE ══════════════════════════════════════════════ */
+.slide.full-image { padding: 0; background: var(--bg); }
+.slide.full-image img { width: 100%; height: 100%; object-fit: cover; }
+.slide.full-image .callout-float {
+  position: absolute; bottom: 48px; left: 48px;
+  background: var(--surface-overlay);
+  backdrop-filter: blur(12px);
+  padding: 24px 32px; border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  max-width: 480px;
+}
+.img-placeholder {
+  background: var(--bg-elevated); border: 2px dashed var(--border-strong);
+  border-radius: var(--radius); display: grid; place-items: center;
+  text-align: center; color: var(--text-tertiary);
+  font-size: 0.88rem; min-height: 200px; padding: 24px;
+}
+
+/* ═══ CLOSING SLIDE ═════════════════════════════════════════════════ */
+.slide.closing { background: var(--section-gradient); text-align: center; }
+.slide.closing h2 {
+  font-size: 3rem; font-weight: 700; color: var(--text);
+  margin-bottom: 16px; letter-spacing: -0.02em;
+}
+.slide.closing p { font-size: 1.12rem; color: var(--text-secondary); }
+.slide.closing .contact {
+  margin-top: 40px; display: inline-flex; gap: 20px;
+  padding: 16px 28px; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 999px;
+}
+.slide.closing .contact strong { color: var(--text); }
+
+/* ═══ HEADER: LOGO + THEME TOGGLE ══════════════════════════════════ */
+.header-bar {
+  position: fixed; top: 20px; left: 28px; right: 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 100; pointer-events: none;
+}
+.header-bar > * { pointer-events: auto; }
+
+/* CUSTOMIZE: replace the inline <svg> in .brand-logo with the adopter's signet. */
+.brand-logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--logo-text-fill); text-decoration: none;
+}
+.brand-logo svg { width: 32px; height: 32px; }
+.brand-logo .brand-name {
+  font-size: 0.9rem; font-weight: 600; letter-spacing: -0.01em;
+  color: var(--logo-text-fill);
+}
+
+.theme-toggle {
+  background: var(--bg-card); color: var(--text);
+  border: 1px solid var(--border-strong);
+  width: 40px; height: 40px; border-radius: 999px;
+  display: grid; place-items: center;
+  cursor: pointer; font-size: 18px; line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+}
+.theme-toggle:hover { background: var(--bg-card-hover); border-color: var(--brand); }
+.theme-toggle:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* ═══ NAV + PROGRESS BAR ═══════════════════════════════════════════ */
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: var(--brand); z-index: 200;
+  transition: width 0.3s ease;
+}
+.nav {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 10px; align-items: center;
+  padding: 8px 14px; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 999px;
+  box-shadow: var(--shadow-sm); z-index: 100;
+}
+.nav button {
+  background: transparent; border: none; color: var(--text-secondary);
+  cursor: pointer; font-size: 14px; padding: 4px 10px;
+  border-radius: 999px;
+}
+.nav button:hover { color: var(--text); background: var(--bg-card-hover); }
+.nav .counter { font-size: 12px; color: var(--text-secondary); min-width: 48px; text-align: center; }
+
+/* ═══ CONFIDENTIAL MARK (optional) ═════════════════════════════════ */
+.confidential-mark {
+  position: fixed; bottom: 20px; right: 28px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--text-tertiary); text-transform: uppercase;
+  z-index: 90;
+}
+
+@media print {
+  html, body { overflow: visible; }
+  .slide { position: relative; inset: auto; opacity: 1; break-after: page; }
+  .nav, .theme-toggle, .progress, .header-bar { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER (logo + theme toggle) ════════════════════════════════ -->
+<div class="header-bar">
+  <!-- CUSTOMIZE: replace the <svg> below with the adopter's signet SVG.
+       The wizard copies the brand signet from Q13 setup input into here. -->
+  <a class="brand-logo" href="#" aria-label="{{BRAND_NAME}}">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2" y="2" width="28" height="28" rx="6" fill="var(--brand)"/>
+      <rect x="9" y="9" width="14" height="14" rx="3" fill="var(--bg)"/>
+    </svg>
+    <span class="brand-name">{{BRAND_NAME}}</span>
+  </a>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme" title="Toggle theme">☾</button>
+</div>
+
+<!-- ═══ CONFIDENTIAL MARK (remove if public) ════════════════════════ -->
+<div class="confidential-mark">{{CONFIDENTIAL_LABEL}}</div>
+
+<!-- ═══ PROGRESS BAR ════════════════════════════════════════════════ -->
+<div class="progress" id="progress"></div>
+
+<!-- ═══ DECK ════════════════════════════════════════════════════════ -->
+<div class="deck" id="deck">
+
+  <!-- ─── SLIDE 1 — Cover ──────────────────────────────────────── -->
+  <div class="slide cover active">
+    <div class="slide-inner">
+      <div class="badge-line">{{COVER_BADGE}}</div>
+      <h1>{{PRESENTATION_TITLE}}</h1>
+      <p class="subtitle">{{SUBTITLE}}</p>
+      <div class="meta-line">
+        <span><strong>{{USER_NAME}}</strong> · {{ROLE}}</span>
+        <span>Created {{CREATED_DATE}} · {{CREATED_TIME}}</span>
+      </div>
+    </div>
+    <!-- CUSTOMIZE: replace the <svg> below with a large, visible copy
+         of the adopter's signet. Opacity is tuned for visibility. -->
+    <svg class="bg-brand" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="2" y="2" width="28" height="28" rx="6" fill="var(--brand)"/>
+      <rect x="9" y="9" width="14" height="14" rx="3" fill="var(--accent-2)" opacity="0.7"/>
+    </svg>
+  </div>
+
+  <!-- ─── SLIDE 2 — Section Title ──────────────────────────────── -->
+  <div class="slide section-title">
+    <div class="slide-inner">
+      <div class="section-num">Section 01</div>
+      <h2>The Challenge</h2>
+      <p>Set context — describe the problem space, why it matters, and what's at stake.</p>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 3 — Content: bullets + callout ─────────────────── -->
+  <div class="slide content">
+    <div class="slide-inner">
+      <h2>Key Insights <span class="badge brand">Core</span></h2>
+      <ul>
+        <li><strong>First insight</strong> — detail that gives the audience real understanding, not a headline.</li>
+        <li><strong>Second insight</strong> — build on the previous point with evidence or example.</li>
+        <li><strong>Third insight</strong> — the culminating observation that ties the narrative together.</li>
+      </ul>
+      <div class="callout">
+        A key takeaway the audience should remember. One or two sentences.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 4 — Two columns: text + metric cards ────────────── -->
+  <div class="slide content">
+    <div class="slide-inner">
+      <h2>Impact &amp; Metrics</h2>
+      <div class="columns">
+        <div>
+          <h3>What Changed</h3>
+          <p>Describe the transformation with context so the audience grasps the significance.</p>
+          <ul>
+            <li>Evidence point with specifics</li>
+            <li>Before/after comparison</li>
+            <li>Quantified business impact</li>
+          </ul>
+        </div>
+        <div>
+          <div class="card accent">
+            <div class="card-title">Primary KPI</div>
+            <div class="metric-big">42%</div>
+            <div class="metric-label">Reduction in mean-time-to-resolution</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Secondary Metric</div>
+            <div class="metric-big" style="color:var(--accent-2-light)">3.2x</div>
+            <div class="metric-label">Faster deployment velocity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 5 — Three-card layout ──────────────────────────── -->
+  <div class="slide content">
+    <div class="slide-inner">
+      <h2>Three Pillars</h2>
+      <div class="columns thirds">
+        <div class="card accent">
+          <div class="card-title">Discovery</div>
+          <p style="font-size:0.88rem;color:var(--text-secondary);margin:0">Understand the system, gather evidence, identify the actual problem before acting.</p>
+        </div>
+        <div class="card success">
+          <div class="card-title">Execution</div>
+          <p style="font-size:0.88rem;color:var(--text-secondary);margin:0">Build with observable outcomes — every change is measurable and reversible.</p>
+        </div>
+        <div class="card warning">
+          <div class="card-title">Validation</div>
+          <p style="font-size:0.88rem;color:var(--text-secondary);margin:0">Measure impact against baselines. Confirm improvement or learn from failure.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 6 — Comparison table ───────────────────────────── -->
+  <div class="slide content">
+    <div class="slide-inner">
+      <h2>Status Overview</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Dimension</th><th>Current</th><th>Target</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Performance</strong></td><td>P95 latency 820ms</td><td>&lt; 200ms</td><td><span class="badge success">Done</span></td></tr>
+            <tr><td><strong>Coverage</strong></td><td>68% instrumented</td><td>95% instrumented</td><td><span class="badge warning">In Progress</span></td></tr>
+            <tr><td><strong>Reliability</strong></td><td>99.2% uptime</td><td>99.95% SLO</td><td><span class="badge critical">At Risk</span></td></tr>
+            <tr><td><strong>Adoption</strong></td><td>3 teams onboarded</td><td>12 teams</td><td><span class="badge neutral">Planned</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout success" style="margin-top:24px">
+        <strong>Key win:</strong> Performance target achieved ahead of schedule.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE — Closing (Thank You) — comes BEFORE Appendix ───── -->
+  <div class="slide closing">
+    <div class="slide-inner">
+      <h2>Thank You</h2>
+      <p>Questions, next steps, and follow-ups.</p>
+      <div class="contact">
+        <span><strong>{{USER_NAME}}</strong> · {{ROLE}}</span>
+        <span>{{CONTACT}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE — Appendix section-title (divider) ──────────────── -->
+  <div class="slide section-title">
+    <div class="slide-inner">
+      <div class="section-num">Appendix</div>
+      <h2>Version History &amp; References</h2>
+      <p>Changelog, sources, and supporting material.</p>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE — Changelog (LAST slide, mandatory) ─────────────── -->
+  <div class="slide content">
+    <div class="slide-inner">
+      <h2>Changelog</h2>
+      <p style="color:var(--text-secondary);margin-bottom:20px">
+        Version history for this artifact. Each regeneration creates a new dated file; this slide tracks the semantic changes across versions.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Version</th><th>Date</th><th>Change</th><th>Author</th></tr></thead>
+          <tbody>
+            <tr><td><strong>v1.0</strong></td><td>{{CREATED_DATE}}</td><td>Initial version.</td><td>{{USER_NAME}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:20px;font-size:0.82rem;color:var(--text-tertiary)">
+        Versioning: PATCH = prose edits · MINOR = structural additions · MAJOR = template or narrative restructure.
+        Source files and sibling versions live in <code>_kb-references/reports/</code>.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ NAV ═════════════════════════════════════════════════════════ -->
+<div class="nav">
+  <button id="prev" aria-label="Previous slide">‹</button>
+  <span class="counter" id="counter">1 / 1</span>
+  <button id="next" aria-label="Next slide">›</button>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var btn  = document.getElementById('themeToggle');
+  var stored = null;
+  try { stored = localStorage.getItem('akb-theme'); } catch(e) {}
+  if (stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+  function renderToggle(){ btn.textContent = root.getAttribute('data-theme') === 'light' ? '☀' : '☾'; }
+  renderToggle();
+  btn.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('akb-theme', next); } catch(e) {}
+    renderToggle();
+  });
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var idx = slides.findIndex(function(s){ return s.classList.contains('active'); });
+  if (idx < 0) idx = 0;
+  var counter = document.getElementById('counter');
+  var progress = document.getElementById('progress');
+  function show(i){
+    idx = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function(s, k){ s.classList.toggle('active', k === idx); });
+    counter.textContent = (idx + 1) + ' / ' + slides.length;
+    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+  }
+  document.getElementById('prev').addEventListener('click', function(){ show(idx - 1); });
+  document.getElementById('next').addEventListener('click', function(){ show(idx + 1); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(idx - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End')  { e.preventDefault(); show(slides.length - 1); }
+  });
+  show(idx);
+})();
+</script>
+</body>
+</html>

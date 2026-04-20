@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# agentic-kb pre-push hook
+#
+# Runs the same checks CI runs, BEFORE anything reaches the remote.
+# Install via: scripts/install-hooks.sh (or `make hooks` if you add one).
+# Bypass (emergency only): git push --no-verify
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "▶ agentic-kb pre-push: running validation…"
+
+python3 scripts/check_consistency.py
+python3 scripts/check_plugin_structure.py
+python3 scripts/check_html_artifacts.py
+
+echo "✓ agentic-kb pre-push: all checks passed"

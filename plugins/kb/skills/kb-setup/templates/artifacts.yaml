@@ -30,6 +30,7 @@ index:
     - Journey Maps
     - Roadmap & Status
   dedup-versioned: true                 # collapse -v3, -v4, -v5 etc. to the newest
+  drop-referenced-subpages: true        # if a hub HTML links to a leaf HTML, hide the leaf
   category-order: recency               # recency | fixed
 
 github-pages:
