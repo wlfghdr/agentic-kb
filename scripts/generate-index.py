@@ -201,10 +201,18 @@ def extract_theme_from_template(template_path: Path) -> dict | None:
 
 SKIP_DIRS = {'.git', 'node_modules', '.kb-scripts', '.kb-config', '.kb-log',
              '_kb-references/templates', 'templates'}
-SKIP_FILES = {'index.html'}
+# Only skipped when at the repo root (the generated output). Sub-directory
+# index.html files are hubs/entry points and MUST be indexed so that
+# drop_referenced_subpages can see their outgoing links.
+SKIP_FILES_ROOT = {'index.html'}
 
 DATE_RE = re.compile(r'(\d{4}-\d{2}-\d{2})')
 TITLE_RE = re.compile(r'<title[^>]*>(.*?)</title>', re.IGNORECASE | re.DOTALL)
+
+# Warn about filenames that can trip on static hosts (e.g. GitHub Pages
+# sometimes returns 404 for multi-dot paths). Report them instead of
+# silently indexing broken links.
+_DOTTY_STEM_RE = re.compile(r'\.[^.]')
 
 
 def should_skip(rel: str) -> bool:
@@ -214,7 +222,8 @@ def should_skip(rel: str) -> bool:
         for i in range(len(parts)):
             if parts[i:i+len(d_parts)] == d_parts:
                 return True
-    return Path(rel).name in SKIP_FILES
+    # Skip index.html only when it IS the root output file.
+    return len(parts) == 1 and parts[0] in SKIP_FILES_ROOT
 
 
 def extract_title(filepath: Path) -> str | None:
@@ -440,26 +449,68 @@ def _referenced_paths_from(fp: Path, repo_root: Path) -> set[str]:
 
 def drop_referenced_subpages(artifacts: list[Artifact],
                               repo_root: Path) -> tuple[list[Artifact], int]:
-    """Drop artifacts that are linked to from another artifact in the index.
+    """Drop artifacts linked to from a hub artifact in the index.
 
-    Intent: when a hub HTML (e.g. a journey map) already links to its
+    Intent: when a hub HTML (e.g. a journey index) already links to its
     sub-pages, the sub-pages should not be listed separately in the root
-    index. The hub stays; referenced leaves are removed.
+    index. The hub stays; referenced leaves are removed — even when leaves
+    share a navigation bar that cross-links every sibling.
 
-    Protection: an artifact that itself references other artifacts (i.e. is
-    also a hub) is never dropped, so two hubs cross-linking each other both
-    remain visible.
+    Algorithm:
+      1. Build each artifact's set of outgoing refs that land on another
+         indexed artifact (excluding self).
+      2. Collapse cliques — groups whose members all share the same
+         outward scope (`refs ∪ {self}`). These are typically pages in
+         the same nav bar. Keep one representative per clique, preferring
+         a file literally named ``index.html``, else the shortest path.
+      3. Among surviving artifacts, drop any leaf referenced by a hub
+         (≥ 2 outgoing refs) unless the leaf is itself a hub reaching
+         pages OUTSIDE the referring hub's scope.
     """
     paths = {a.path for a in artifacts}
-    referenced: set[str] = set()
-    own_refs: dict[str, set[str]] = {}
+    out_refs: dict[str, set[str]] = {}
     for a in artifacts:
         fp = repo_root / a.path
-        out = _referenced_paths_from(fp, repo_root) & paths
-        own_refs[a.path] = out
-        referenced |= out
-    kept = [a for a in artifacts
-            if a.path not in referenced or own_refs[a.path]]
+        refs = _referenced_paths_from(fp, repo_root) & paths
+        refs.discard(a.path)
+        out_refs[a.path] = refs
+
+    # ── 1. Collapse cliques ──────────────────────────────────────────
+    by_sig: dict[frozenset, list[str]] = {}
+    for p, refs in out_refs.items():
+        sig = frozenset(refs | {p})
+        by_sig.setdefault(sig, []).append(p)
+
+    def _rep_key(p: str) -> tuple[int, int, str]:
+        name = p.rsplit('/', 1)[-1]
+        return (0 if name == 'index.html' else 1, len(p), p)
+
+    clique_drops: set[str] = set()
+    for members in by_sig.values():
+        if len(members) < 2:
+            continue
+        keeper = min(members, key=_rep_key)
+        for m in members:
+            if m != keeper:
+                clique_drops.add(m)
+
+    remaining_paths = paths - clique_drops
+
+    # ── 2. Drop leaves referenced by surviving hubs ──────────────────
+    HUB_MIN_REFS = 2
+    surv_refs = {p: out_refs[p] & remaining_paths for p in remaining_paths}
+    hubs = {p for p, r in surv_refs.items() if len(r) >= HUB_MIN_REFS}
+
+    leaf_drops: set[str] = set()
+    for hub in hubs:
+        hub_scope = surv_refs[hub] | {hub}
+        for ref in surv_refs[hub]:
+            if ref in hubs and (surv_refs[ref] - hub_scope):
+                continue
+            leaf_drops.add(ref)
+
+    to_drop = clique_drops | leaf_drops
+    kept = [a for a in artifacts if a.path not in to_drop]
     return kept, len(artifacts) - len(kept)
 
 
@@ -856,6 +907,18 @@ def main() -> None:
 
     outpath = repo_root / args.output
     outpath.write_text(out, encoding='utf-8')
+
+    # Warn about dotted stems — some static hosts (e.g. GitHub Pages)
+    # return 404 for multi-dot paths like "1.1-onboarding.html".
+    dotty = [a.path for a in artifacts if _DOTTY_STEM_RE.search(Path(a.path).stem)]
+    if dotty:
+        print('Warning: filenames contain "." in stem — may 404 on some static '
+              'hosts (e.g. GitHub Pages). Prefer hyphens:', file=sys.stderr)
+        for p in dotty[:10]:
+            print(f'  {p}', file=sys.stderr)
+        if len(dotty) > 10:
+            print(f'  ... and {len(dotty) - 10} more', file=sys.stderr)
+
     parts = []
     if dedup_dropped:
         parts.append(f'{dedup_dropped} older versions deduped')
