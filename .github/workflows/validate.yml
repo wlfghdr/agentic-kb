@@ -85,3 +85,5 @@ jobs:
           python-version: "3.12"
       - name: Validate any checked-in HTML artifacts
         run: python3 scripts/check_html_artifacts.py
+      - name: Regression test generate-index against a simulated workspace
+        run: python3 scripts/test_generate_index.py

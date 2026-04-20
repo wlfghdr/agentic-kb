@@ -19,6 +19,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Added
+
+- **Simulated-workspace regression coverage for `generate-index.py`** (`scripts/test_generate_index.py`, `.github/workflows/validate.yml`) — CI now generates a root artifact index inside a temporary KB and verifies pinned-category ordering, version-family deduplication, referenced-subpage hiding, and dual-theme output.
+
+### Fixed
+
+- **`generate-index.py` self-containment** — removed the external Google Fonts import so generated root artifact indexes stay fully self-contained and comply with the HTML artifact contract.
+
 ## [3.1.0] — 2026-04-20
 
 ### Added
