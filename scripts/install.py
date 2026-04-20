@@ -57,10 +57,27 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 VSCODE_PLUGIN_JSON = REPO / "plugin.json"
-SKILLS_DIR = REPO / "skills"
-AGENTS_DIR = REPO / "agents"
 
 IS_WINDOWS = os.name == "nt"
+
+
+def discover_skill_agent_paths(pj: dict) -> tuple[dict[str, Path], dict[str, Path]]:
+    """Walk plugins/<name>/ declared in root plugin.json and return maps
+    {skill_name: path} and {agent_name: path}."""
+    skills: dict[str, Path] = {}
+    agents: dict[str, Path] = {}
+    for plugin_entry in pj.get("plugins", []) or []:
+        base = REPO / plugin_entry["path"]
+        sdir = base / "skills"
+        adir = base / "agents"
+        if sdir.is_dir():
+            for p in sdir.iterdir():
+                if p.is_dir():
+                    skills.setdefault(p.name, p)
+        if adir.is_dir():
+            for p in adir.glob("*.md"):
+                agents.setdefault(p.stem, p)
+    return skills, agents
 
 
 def workspace_targets() -> dict:
@@ -132,15 +149,16 @@ def link_or_copy(src: Path, dst: Path, force: bool) -> None:
 
 def install_claude_or_opencode(target: str, base: Path, layout: dict,
                                skills: list[str], agents: list[str],
+                               skill_paths: dict[str, Path], agent_paths: dict[str, Path],
                                commands_src: list[tuple[str, Path]], force: bool) -> None:
     print(f"\nInstalling into {base} ({target})")
     for s in skills:
-        src = SKILLS_DIR / s
-        if src.is_dir():
+        src = skill_paths.get(s)
+        if src and src.is_dir():
             link_or_copy(src, base / layout["skills"] / s, force)
     for a in agents:
-        src = AGENTS_DIR / f"{a}.md"
-        if src.is_file():
+        src = agent_paths.get(a)
+        if src and src.is_file():
             link_or_copy(src, base / layout["agents"] / f"{a}.md", force)
     # commands: .md files whose body is the prompt template
     for name, src in commands_src:
@@ -149,16 +167,17 @@ def install_claude_or_opencode(target: str, base: Path, layout: dict,
 
 
 def install_vscode(base: Path, skills: list[str], agents: list[str],
+                   skill_paths: dict[str, Path], agent_paths: dict[str, Path],
                    prompts_src: list[tuple[str, Path]],
                    instructions_src: list[tuple[str, Path]], force: bool) -> None:
     print(f"\nInstalling into {base} (vscode)")
     for s in skills:
-        src = SKILLS_DIR / s
-        if src.is_dir():
+        src = skill_paths.get(s)
+        if src and src.is_dir():
             link_or_copy(src, base / "skills" / s, force)
     for a in agents:
-        src = AGENTS_DIR / f"{a}.md"
-        if src.is_file():
+        src = agent_paths.get(a)
+        if src and src.is_file():
             # VS Code convention uses .agent.md for custom agent personas
             link_or_copy(src, base / "agents" / f"{a}.agent.md", force)
     for name, src in prompts_src:
@@ -193,6 +212,8 @@ def main() -> int:
         return 1
     pj = json.loads(VSCODE_PLUGIN_JSON.read_text(encoding="utf-8"))
 
+    skill_paths, agent_paths = discover_skill_agent_paths(pj)
+
     # Resolve skills + agents: root plugin.json may list them directly
     # (legacy: "skills"/"agents" keys) or indirectly via per-plugin manifests
     # (current: "plugins" key → each plugin's plugin.json has "x-skills"/"x-agents").
@@ -206,11 +227,11 @@ def main() -> int:
                 ppj = json.loads(plugin_path.read_text(encoding="utf-8"))
                 all_skills.extend(ppj.get("x-skills", []) or [])
                 all_agents.extend(ppj.get("x-agents", []) or [])
-        # Fallback: enumerate directories on disk
+        # Fallback: enumerate from discovered paths
         if not all_skills:
-            all_skills = sorted(p.name for p in SKILLS_DIR.iterdir() if p.is_dir())
+            all_skills = sorted(skill_paths.keys())
         if not all_agents:
-            all_agents = sorted(p.stem for p in AGENTS_DIR.glob("*.md"))
+            all_agents = sorted(agent_paths.keys())
     prompts = [(p["name"], REPO / p["path"]) for p in pj.get("prompts", []) or []]
     instructions = [(i["name"], REPO / i["path"]) for i in pj.get("instructions", []) or []]
 
@@ -235,11 +256,11 @@ def main() -> int:
     for t in targets:
         base = cfg[t]["base_global"] if args.globally else cfg[t]["base_local"]
         if t == "vscode":
-            install_vscode(base, skills, agents, prompts, instructions, args.force)
+            install_vscode(base, skills, agents, skill_paths, agent_paths, prompts, instructions, args.force)
         else:
             layout = cfg[t]["layout"]
             # For claude/opencode, each prompt becomes a "command" (slash command).
-            install_claude_or_opencode(t, base, layout, skills, agents, prompts, args.force)
+            install_claude_or_opencode(t, base, layout, skills, agents, skill_paths, agent_paths, prompts, args.force)
 
     print("\nDone.")
     return 0

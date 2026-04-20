@@ -2,7 +2,7 @@
 
 > **Version:** 3.0
 
-Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For behavioral specs, read the skill and agent files directly: [`skills/kb-management/SKILL.md`](../skills/kb-management/SKILL.md), [`skills/kb-setup/SKILL.md`](../skills/kb-setup/SKILL.md), [`agents/kb-operator.md`](../agents/kb-operator.md).
+Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
 ---
 

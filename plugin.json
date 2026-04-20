@@ -11,9 +11,9 @@
     { "name": "kb", "path": "plugins/kb" }
   ],
   "prompts": [
-    { "name": "kb", "path": "skills/kb-setup/templates/kb.prompt.md" }
+    { "name": "kb", "path": "plugins/kb/skills/kb-setup/templates/kb.prompt.md" }
   ],
   "instructions": [
-    { "name": "kb", "path": "skills/kb-setup/templates/kb.instructions.md" }
+    { "name": "kb", "path": "plugins/kb/skills/kb-setup/templates/kb.instructions.md" }
   ]
 }

@@ -24,8 +24,7 @@ from pathlib import Path
 import yaml
 
 REPO = Path(__file__).resolve().parent.parent
-SKILLS_DIR = REPO / "skills"
-AGENTS_DIR = REPO / "agents"
+PLUGINS_DIR = REPO / "plugins"
 CLAUDE_MARKETPLACE = REPO / ".claude-plugin" / "marketplace.json"
 VSCODE_PLUGIN = REPO / "plugin.json"
 
@@ -47,60 +46,73 @@ def parse_frontmatter(path: Path) -> dict | None:
         return None
 
 
+def _iter_plugin_dirs() -> list[Path]:
+    if not PLUGINS_DIR.is_dir():
+        return []
+    return sorted(p for p in PLUGINS_DIR.iterdir() if p.is_dir())
+
+
 def check_skills() -> tuple[list[str], set[str]]:
     errors: list[str] = []
     declared: set[str] = set()
-    if not SKILLS_DIR.is_dir():
-        errors.append("MISSING: skills/ directory")
+    plugin_dirs = _iter_plugin_dirs()
+    if not plugin_dirs:
+        errors.append("MISSING: plugins/ directory (no plugin subdirectories found)")
         return errors, declared
-    for skill_dir in sorted(p for p in SKILLS_DIR.iterdir() if p.is_dir()):
-        skill_md = skill_dir / "SKILL.md"
-        rel = skill_md.relative_to(REPO)
-        if not skill_md.is_file():
-            errors.append(f"MISSING: {rel}")
+    for plugin_dir in plugin_dirs:
+        sdir = plugin_dir / "skills"
+        if not sdir.is_dir():
             continue
-        fm = parse_frontmatter(skill_md)
-        if fm is None:
-            errors.append(f"BAD frontmatter: {rel}")
-            continue
-        missing = REQUIRED_SKILL_FIELDS - fm.keys()
-        if missing:
-            errors.append(f"{rel}: missing required fields {sorted(missing)}")
-        if fm.get("name") != skill_dir.name:
-            errors.append(
-                f"{rel}: frontmatter name={fm.get('name')!r} does not match dir {skill_dir.name!r}"
-            )
-        if "triggers" in fm:
-            triggers = fm["triggers"]
-            if not isinstance(triggers, list) or not triggers:
-                errors.append(f"{rel}: triggers, if present, must be a non-empty list")
-        if "version" in fm:
-            v = fm["version"]
-            if not isinstance(v, str) or not re.fullmatch(r"\d+\.\d+\.\d+", v):
-                errors.append(f"{rel}: version must be X.Y.Z, got {v!r}")
-        declared.add(skill_dir.name)
+        for skill_dir in sorted(p for p in sdir.iterdir() if p.is_dir()):
+            skill_md = skill_dir / "SKILL.md"
+            rel = skill_md.relative_to(REPO)
+            if not skill_md.is_file():
+                errors.append(f"MISSING: {rel}")
+                continue
+            fm = parse_frontmatter(skill_md)
+            if fm is None:
+                errors.append(f"BAD frontmatter: {rel}")
+                continue
+            missing = REQUIRED_SKILL_FIELDS - fm.keys()
+            if missing:
+                errors.append(f"{rel}: missing required fields {sorted(missing)}")
+            if fm.get("name") != skill_dir.name:
+                errors.append(
+                    f"{rel}: frontmatter name={fm.get('name')!r} does not match dir {skill_dir.name!r}"
+                )
+            if "triggers" in fm:
+                triggers = fm["triggers"]
+                if not isinstance(triggers, list) or not triggers:
+                    errors.append(f"{rel}: triggers, if present, must be a non-empty list")
+            if "version" in fm:
+                v = fm["version"]
+                if not isinstance(v, str) or not re.fullmatch(r"\d+\.\d+\.\d+", v):
+                    errors.append(f"{rel}: version must be X.Y.Z, got {v!r}")
+            declared.add(skill_dir.name)
     return errors, declared
 
 
 def check_agents() -> tuple[list[str], set[str]]:
     errors: list[str] = []
     declared: set[str] = set()
-    if not AGENTS_DIR.is_dir():
-        return errors, declared
-    for agent_path in sorted(AGENTS_DIR.glob("*.md")):
-        rel = agent_path.relative_to(REPO)
-        fm = parse_frontmatter(agent_path)
-        if fm is None:
-            errors.append(f"BAD frontmatter: {rel}")
+    for plugin_dir in _iter_plugin_dirs():
+        adir = plugin_dir / "agents"
+        if not adir.is_dir():
             continue
-        missing = REQUIRED_AGENT_FIELDS - fm.keys()
-        if missing:
-            errors.append(f"{rel}: missing required fields {sorted(missing)}")
-        if fm.get("name") != agent_path.stem:
-            errors.append(
-                f"{rel}: name={fm.get('name')!r} does not match filename {agent_path.stem!r}"
-            )
-        declared.add(agent_path.stem)
+        for agent_path in sorted(adir.glob("*.md")):
+            rel = agent_path.relative_to(REPO)
+            fm = parse_frontmatter(agent_path)
+            if fm is None:
+                errors.append(f"BAD frontmatter: {rel}")
+                continue
+            missing = REQUIRED_AGENT_FIELDS - fm.keys()
+            if missing:
+                errors.append(f"{rel}: missing required fields {sorted(missing)}")
+            if fm.get("name") != agent_path.stem:
+                errors.append(
+                    f"{rel}: name={fm.get('name')!r} does not match filename {agent_path.stem!r}"
+                )
+            declared.add(agent_path.stem)
     return errors, declared
 
 

@@ -22,9 +22,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 ### Fixed
 
 - **Duplicate commands in VS Code** (`kb-management` + `kb:kb-management`): root `plugin.json` now declares only a `plugins` array pointing to `plugins/kb/` instead of listing skills/agents directly. Moved `plugins/kb/.claude-plugin/plugin.json` → `plugins/kb/plugin.json` (flat, matching rnd-ai-knowledgebase marketplace convention). Added `x-skills` and `x-agents` to plugin manifest.
-- **`install.py`**: resolves skills/agents from per-plugin manifests (`x-skills`/`x-agents` in `plugins/<name>/plugin.json`) instead of from root `plugin.json` `skills`/`agents` keys (removed). Falls back to disk enumeration.
-- **`generate_plugins.py`**: generates flat `plugins/<name>/plugin.json` with `x-skills`/`x-agents` instead of nested `.claude-plugin/plugin.json`.
-- **`check_plugin_structure.py`**: validates `plugins` entries and per-plugin manifests in addition to direct `skills`/`agents`/`prompts`/`instructions` paths.
+- **Physical consolidation under `plugins/kb/`**: skills and the agent are no longer duplicated between top-level `skills/`, `agents/` and symlinks inside `plugins/kb/`. The real directories now live at `plugins/kb/skills/kb-management/`, `plugins/kb/skills/kb-setup/`, `plugins/kb/agents/kb-operator.md`. Top-level `skills/` and `agents/` directories are removed. This prevents VS Code Agent Plugins from registering each skill twice (once as a root-plugin skill, once as a `kb:` sub-plugin skill).
+- **`install.py`**: resolves skills/agents from per-plugin manifests (`x-skills`/`x-agents` in `plugins/<name>/plugin.json`) instead of from root `plugin.json` `skills`/`agents` keys (removed). Falls back to disk enumeration. Discovers skill/agent source paths by walking `plugins/<name>/skills/` and `plugins/<name>/agents/`.
+- **`generate_plugins.py`**: no longer materialises symlinks — plugin dirs are the canonical source. Now only regenerates the per-plugin `plugin.json` manifest with `x-skills`/`x-agents` derived from the real directory contents. Still idempotent.
+- **`check_plugin_structure.py`**: iterates `plugins/<name>/skills/` and `plugins/<name>/agents/` instead of the removed top-level dirs.
 - **`.claude-plugin/marketplace.json`**: version bumped 2.0.0 → 3.0.0.
 - **Remaining bare KB paths**: `rituals.md`, `spec-summary.md`, `migration-guide.md`, `troubleshooting.md` updated to use `_kb-` prefix convention consistently (`_kb-tasks/`, `_kb-decisions/`, `_kb-inputs/`, `_kb-references/`, `.kb-log/`).
 

@@ -1,36 +1,25 @@
 #!/usr/bin/env python3
 """
-Generate the per-plugin directory tree (plugins/<name>/) from the canonical
-`.claude-plugin/marketplace.json` + top-level `skills/` and `agents/` sources.
+Regenerate per-plugin `plugin.json` manifests under `plugins/<name>/` from the
+canonical `.claude-plugin/marketplace.json`.
 
-Each plugin declared in marketplace.json gets:
-  plugins/<name>/
-  ├── plugin.json              # per-plugin manifest (flat, with x-skills/x-agents)
-  ├── skills/                  # symlinks (POSIX) or copies (Windows) of ../../skills/<skill>/
-  └── agents/                  # symlinks or copies of ../../agents/<agent>.md
-
-References for the Claude Code plugin + marketplace spec:
-  https://code.claude.com/docs/en/plugins.md
-  https://code.claude.com/docs/en/plugin-marketplaces.md
+Each plugin's skills/agents are the **real directories** under
+`plugins/<name>/skills/` and `plugins/<name>/agents/` — no symlinks, no
+top-level mirror. This avoids double-registration in harnesses that
+recursively scan for `SKILL.md`.
 
 Running this script a second time with no source changes must produce no git
-diff. CI asserts this to catch drift between sources and generated artifacts.
+diff. CI asserts this to catch drift.
 """
 from __future__ import annotations
 
 import json
-import os
-import shutil
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 MARKETPLACE_JSON = REPO / ".claude-plugin" / "marketplace.json"
-SKILLS_DIR = REPO / "skills"
-AGENTS_DIR = REPO / "agents"
 PLUGINS_DIR = REPO / "plugins"
-
-IS_WINDOWS = os.name == "nt"
 
 
 def load_marketplace() -> dict:
@@ -38,45 +27,17 @@ def load_marketplace() -> dict:
         return json.load(f)
 
 
-def resolve_skills_and_agents(plugin: dict) -> tuple[list[str], list[str]]:
-    """A plugin entry may declare skills/agents explicitly; otherwise we include
-    everything under skills/ and agents/."""
-    skills = plugin.get("skills")
-    agents = plugin.get("agents")
-    if skills is None:
-        skills = sorted(p.name for p in SKILLS_DIR.iterdir() if p.is_dir())
-    if agents is None:
-        agents = sorted(p.stem for p in AGENTS_DIR.glob("*.md"))
+def discover(plugin_path: Path) -> tuple[list[str], list[str]]:
+    sdir = plugin_path / "skills"
+    adir = plugin_path / "agents"
+    skills = sorted(p.name for p in sdir.iterdir() if p.is_dir()) if sdir.is_dir() else []
+    agents = sorted(p.stem for p in adir.glob("*.md")) if adir.is_dir() else []
     return skills, agents
-
-
-def reset_dir(path: Path) -> None:
-    if path.exists():
-        shutil.rmtree(path)
-    path.mkdir(parents=True, exist_ok=True)
-
-
-def symlink_or_copy(src: Path, dst: Path) -> None:
-    if IS_WINDOWS:
-        if src.is_dir():
-            shutil.copytree(src, dst)
-        else:
-            shutil.copy2(src, dst)
-        return
-    rel = os.path.relpath(src, dst.parent)
-    try:
-        dst.symlink_to(rel)
-    except OSError:
-        if src.is_dir():
-            shutil.copytree(src, dst)
-        else:
-            shutil.copy2(src, dst)
 
 
 def build_plugin(plugin: dict) -> None:
     name = plugin["name"]
     source = plugin.get("source") or f"./plugins/{name}"
-    # We only materialize plugins whose source is a relative path inside this repo.
     if not isinstance(source, str) or not source.startswith("./"):
         print(f"  skip materializing {name!r} (non-local source: {source!r})")
         return
@@ -88,28 +49,28 @@ def build_plugin(plugin: dict) -> None:
         print(f"ERROR: plugin {name!r} source escapes the repo: {source!r}")
         sys.exit(1)
 
-    reset_dir(plugin_path)
-    (plugin_path / "skills").mkdir(parents=True, exist_ok=True)
-    (plugin_path / "agents").mkdir(parents=True, exist_ok=True)
+    if not plugin_path.is_dir():
+        print(f"ERROR: plugin directory missing: {plugin_path.relative_to(REPO)}")
+        sys.exit(1)
 
-    skills, agents = resolve_skills_and_agents(plugin)
+    skills = plugin.get("skills")
+    agents = plugin.get("agents")
+    discovered_skills, discovered_agents = discover(plugin_path)
+    if skills is None:
+        skills = discovered_skills
+    if agents is None:
+        agents = discovered_agents
 
-    for skill in skills:
-        src = SKILLS_DIR / skill
-        if not src.is_dir():
-            print(f"ERROR: skill {skill!r} referenced by plugin {name!r} does not exist")
+    # Validate declared skills/agents exist on disk
+    for s in skills:
+        if not (plugin_path / "skills" / s).is_dir():
+            print(f"ERROR: skill {s!r} declared by plugin {name!r} not found under {plugin_path / 'skills'}")
             sys.exit(1)
-        symlink_or_copy(src, plugin_path / "skills" / skill)
-
-    for agent in agents:
-        src = AGENTS_DIR / f"{agent}.md"
-        if not src.is_file():
-            print(f"ERROR: agent {agent!r} referenced by plugin {name!r} does not exist")
+    for a in agents:
+        if not (plugin_path / "agents" / f"{a}.md").is_file():
+            print(f"ERROR: agent {a!r} declared by plugin {name!r} not found under {plugin_path / 'agents'}")
             sys.exit(1)
-        symlink_or_copy(src, plugin_path / "agents" / f"{agent}.md")
 
-    # Per-plugin manifest — flat plugin.json at plugin root
-    # (matching rnd-ai-knowledgebase marketplace convention).
     manifest = {
         "name": name,
         "description": plugin.get("description", ""),
@@ -131,21 +92,21 @@ def main() -> int:
         return 1
 
     marketplace = load_marketplace()
-
     PLUGINS_DIR.mkdir(parents=True, exist_ok=True)
-    # Clear plugins that no longer exist in marketplace.json
+
     declared = {p["name"] for p in marketplace.get("plugins", []) or []}
     for existing in [p for p in PLUGINS_DIR.iterdir() if p.is_dir()]:
         if existing.name not in declared:
-            shutil.rmtree(existing)
+            print(f"WARN: plugin dir {existing.name!r} not declared in marketplace.json (leaving in place)")
 
     for plugin in marketplace.get("plugins", []) or []:
         build_plugin(plugin)
 
     n = len(marketplace.get("plugins", []) or [])
-    print(f"Generated {n} plugin directory/ies under plugins/")
+    print(f"Refreshed {n} plugin manifest(s) under plugins/")
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
+

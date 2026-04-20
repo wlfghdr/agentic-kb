@@ -179,7 +179,7 @@ agentic-kb/
 1. [`index.html`](index.html) — open in a browser for a 2-minute visual overview.
 2. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
 3. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
-4. [`skills/kb-management/SKILL.md`](skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+4. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 

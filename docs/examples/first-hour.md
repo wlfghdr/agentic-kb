@@ -55,7 +55,7 @@ From inside the harness, in the directory you want as your workspace root:
 /kb setup
 ```
 
-The wizard asks 12 question blocks (see `skills/kb-setup/SKILL.md`). Minimum viable answers for a first try:
+The wizard asks 12 question blocks (see `plugins/kb/skills/kb-setup/SKILL.md`). Minimum viable answers for a first try:
 
 | Q | Suggested first-run answer |
 |---|----------------------------|
@@ -116,7 +116,7 @@ Expected behavior:
 3. Move completed focus items to `_kb-tasks/archive/2026-04.md`.
 4. Offer `git commit` (+ push/PR if a remote is configured).
 
-The HTML report uses `skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
+The HTML report uses `plugins/kb/skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
 
 Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) are refreshed as part of `end-day`. Between rituals, run `/kb status --refresh-overviews` if you want them up to date. Automatic refresh after every mutation ships in v2.1.
 
@@ -134,7 +134,7 @@ Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.htm
 
 - [REFERENCE.md](../REFERENCE.md) — architecture, layout, formats, and contracts.
 - [day-in-the-life.md](day-in-the-life.md) — a fuller day after this first hour.
-- [kb-setup SKILL.md](../../skills/kb-setup/SKILL.md) — full onboarding flow spec.
+- [kb-setup SKILL.md](../../plugins/kb/skills/kb-setup/SKILL.md) — full onboarding flow spec.
 
 ---
 
