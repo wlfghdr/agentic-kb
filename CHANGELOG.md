@@ -47,6 +47,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - **Setup questionnaire explanations**: each of the 13 interview questions now includes a brief `→` note explaining how the answer affects the resulting setup.
 - **`docs/collaboration.md`**: added a dedicated human collaboration guide for shared KB workspaces, including layer responsibilities, review points, action-mode clarity, and failure recovery norms.
 - **`docs/first-run-acceptance.md`**: added a deterministic onboarding acceptance path with explicit install-vs-init boundaries, expected first outputs, scaffold checks, and a team-lead rollout checklist.
+- **Collaboration-safe output contract**: added `plugins/kb/skills/kb-management/references/output-contract.md`, tightened output semantics in `kb-management`, and updated examples so read-only, proposed, and applied actions are auditable for humans.
 
 ---
 

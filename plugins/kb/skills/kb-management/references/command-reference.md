@@ -116,4 +116,11 @@ Triage is read-only — no mutations, no commits. Output ends with 1–3 concret
 4. Suggested next steps (1-3 concrete follow-ups)
 ```
 
-Keep it terse.
+Collaboration-safe interpretation:
+
+- `What I did` must make the action mode obvious: read-only, proposed, or applied.
+- `Where it went` must distinguish inspected paths from written paths.
+- `Gate notes` must expose external fetches, duplication, and low-confidence judgments when relevant.
+- `Suggested next steps` must stay clearly separate from changes that already happened.
+
+See `output-contract.md` for the full wording contract and examples.
