@@ -83,7 +83,7 @@ Check for success: zero literal `{{…}}` placeholders remain anywhere in the sc
 Expected output shape:
 
 ```
-**What I did**: briefed you.
+**What I did**: Checked your personal KB and briefed you, read-only.
 **Where it went**: read focus.md (0 items), _kb-decisions/ (0 items), .kb-log/2026-04-18.log (new), _kb-workstreams/<name>.md.
 **Gate notes**: n/a — briefing, not capture.
 **Suggested next steps**:
@@ -99,7 +99,7 @@ On a clean workspace with no inputs, the briefing is a one-liner "no pending wor
 /kb https://example.com/article-about-caches
 ```
 
-Expected behavior: the skill fetches the URL (or asks for consent first), applies the five-question evaluation gate, writes `_kb-references/findings/2026-04-18-<slug>.md`, possibly updates a workstream's topic file, logs the operation, and ends with 1–3 next steps.
+Expected behavior: the skill fetches the URL (or asks for consent first), says explicitly that it used externally fetched material, applies the five-question evaluation gate, writes `_kb-references/findings/2026-04-18-<slug>.md`, possibly updates a workstream's topic file, logs the operation, and ends with 1–3 next steps that are clearly distinct from changes already applied.
 
 If the URL needs auth or is a PDF, the skill should surface the blocker — not fail silently. If it fails silently, file an issue.
 

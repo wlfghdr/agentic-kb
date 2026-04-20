@@ -14,6 +14,14 @@ Alex opens the workspace folder in their editor. The `/kb` slash command is regi
 Alex: /kb start-day
 
 Agent:
+What I did: Checked Alex's workspace and prepared a read-only morning briefing.
+Where it went: read _kb-tasks/focus.md, _kb-decisions/, team KB pointers, and today's .kb-log.
+Gate notes: n/a — briefing, not capture.
+Suggested next steps:
+  1. Digest @alice's v9 update — may have evidence for D-2026-04-18 (/kb digest team)
+  2. Process leadership feedback (/kb review)
+  3. Message @bob about the progressive-delivery analysis
+
 Good morning. Here's your briefing:
 
 📋 Focus (from _kb-tasks/focus.md):
@@ -49,13 +57,17 @@ Alex reads an interesting paper on coordination protocols, pastes the URL:
 ```
 Alex: /kb https://example.org/papers/coordination-patterns — interesting paper on agent coordination
 
-Agent: [reads paper, applies the evaluation gate]
+Agent: [fetches the paper, applies the evaluation gate]
 
-Captured as finding: _kb-references/findings/2026-04-18-coordination-patterns.md
-Workstream: reliability
-Gate: 4/5 — strengthens deployment-strategy topic, informs D-2026-04-18, actionable, durable signal.
-Decision impact: provides evidence for D-2026-04-18 (coordination model) — supports option (b).
-Added to backlog: "Update deployment-strategy with coordination patterns"
+What I did: Captured the paper as a finding after fetching the external URL.
+Where it went: wrote _kb-references/findings/2026-04-18-coordination-patterns.md, updated the reliability topic, and added one backlog item.
+Gate notes: 4/5 — externally fetched, strengthens deployment-strategy, informs D-2026-04-18, actionable, durable signal.
+Suggested next steps:
+  1. Update the deployment-strategy topic with this evidence (/kb update-topic deployment-strategy)
+  2. Advance decision D-2026-04-18 to "proposed" with this evidence
+  3. Message @alice — this is relevant to their architecture work
+  4. 🎤 Your backlog has "Present governance framework" — want me to draft a presentation?
+
 TL;DR: Paper proposes a 3-phase coordination protocol for multi-agent systems...
 
 💡 Next steps I can help with:
@@ -75,9 +87,9 @@ Agent: Found 1 unprocessed input: _kb-inputs/2026-04-17-leadership-feedback.md
 [applies the gate per item]
 
 • 2026-04-17-leadership-feedback.md
-  Gate: 3/5 — informs product-strategy topic + actionable.
-  Finding: _kb-references/findings/2026-04-17-leadership-feedback-distilled.md
-  Topic update: product-strategy.md (added "leadership wants Q3 focus on error budgets")
+  What I did: Captured and distilled one local input, applied mutation.
+  Where it went: wrote _kb-references/findings/2026-04-17-leadership-feedback-distilled.md and updated product-strategy.md.
+  Gate notes: 3/5 — local-only source, informs product-strategy, actionable.
   TODOs added:
     - Respond to leadership with a one-pager by Thursday
     - Update Q3 product-strategy doc

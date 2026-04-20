@@ -189,6 +189,14 @@ Every response follows the same shape:
 3. **Gate notes** — which of the five questions matched (if relevant).
 4. **Suggested next steps** — 1–3 concrete follow-ups.
 
+Additional collaboration-safe requirements:
+
+- Make the action mode obvious: **read-only analysis**, **proposed mutation**, or **applied mutation**.
+- If external material was fetched, say so explicitly.
+- If the action crossed layers (`promote`, `digest`, `publish`), show source and destination clearly.
+- Make uncertainty visible when the gate result is borderline, low-confidence, or partially duplicative.
+- Never blur an already-applied mutation into a mere suggestion, or a suggestion into an applied change.
+
 Keep output terse. The user reads it in a terminal/editor pane, not a full document.
 
 ## Safety rules
@@ -219,5 +227,6 @@ The templates this skill instantiates live in `templates/`:
 - `references/rituals.md` — the four rituals in detail.
 - `references/html-artifacts.md` — presentation/report generation contract.
 - `references/evaluation-gate.md` — the five-question filter, in depth.
+- `references/output-contract.md` — collaboration-safe wording and examples for read-only, proposed, and applied operations.
 
 These files are loaded **only when the specific behavior is invoked**. The skill's top-level instructions are sufficient for most operations.
