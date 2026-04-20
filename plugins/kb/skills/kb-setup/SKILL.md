@@ -239,6 +239,7 @@ Running `/kb setup` a second time:
 ## References (load on demand)
 
 - `references/setup-flow.md` — full step-by-step walkthrough with example output.
+- `../../../docs/first-run-acceptance.md` — deterministic onboarding acceptance path and rollout verification baseline.
 - `references/migration-guide.md` — how to migrate an existing KB.
 - `references/troubleshooting.md` — common setup issues.
 
