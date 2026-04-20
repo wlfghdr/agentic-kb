@@ -2,6 +2,8 @@
 
 Full walkthrough the skill follows on `/kb setup`.
 
+For the deterministic acceptance baseline used to verify real onboarding and team rollout quality, see [`docs/first-run-acceptance.md`](../../../../docs/first-run-acceptance.md).
+
 ## Prerequisites
 
 - `git` installed → fail loudly if not.
@@ -169,3 +171,5 @@ You're set up. Try:
   /kb review             → process inputs
   /kb end-day            → commit + wrap
 ```
+
+After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../docs/first-run-acceptance.md).

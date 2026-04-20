@@ -46,6 +46,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - **Built-in tools in SKILL frontmatter**: both `kb-management` and `kb-setup` now declare 13 built-in tools (`run_in_terminal`, `read_file`, `create_file`, `replace_string_in_file`, `multi_replace_string_in_file`, `list_dir`, `file_search`, `grep_search`, `semantic_search`, `manage_todo_list`, `vscode_askQuestions`, `fetch_webpage`, `memory`) so the chat session has all needed tools selected by default.
 - **Setup questionnaire explanations**: each of the 13 interview questions now includes a brief `→` note explaining how the answer affects the resulting setup.
 - **`docs/collaboration.md`**: added a dedicated human collaboration guide for shared KB workspaces, including layer responsibilities, review points, action-mode clarity, and failure recovery norms.
+- **`docs/first-run-acceptance.md`**: added a deterministic onboarding acceptance path with explicit install-vs-init boundaries, expected first outputs, scaffold checks, and a team-lead rollout checklist.
 
 ---
 
