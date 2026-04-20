@@ -50,7 +50,6 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 | Upstream digest drift | L2/L3 repos declared in `layers.yaml` whose HEAD commit differs from the watermark in `_kb-references/strategy-digests/.last-digest` (or equivalent per repo) | Suggest `/kb digest <layer>` |
 | Promotions due | Findings/topics with `maturity: durable` in frontmatter not yet referenced in any L2/L3 KB | Suggest `/kb promote <file>` |
 | Stale topics | Topics unchanged > 60 days and still referenced by recent findings | Suggest `/kb audit` |
-| Artifact refresh due | Any state-mutating op since the last `present`/`report`/`end-day` (check `.kb-log/` vs. HTML mtimes) | Offer `/kb status --refresh-overviews` |
 
 Output shape:
 
@@ -82,4 +81,3 @@ Follow the rules in the `kb-management` skill's SKILL.md. Always:
 3. Append an inline changelog entry on any topic / foundation file update.
 4. End with 1–3 concrete next-step suggestions.
 5. Offer to commit / push / open a PR after substantive changes (respect branch protection; no silent force-pushes).
-

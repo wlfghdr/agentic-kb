@@ -51,6 +51,7 @@
 |-----------|--------|
 | `/kb audit` | Check contradictions, gaps, staleness |
 | `/kb status` | Pending inputs, recent activity, todo counts, workstream summary |
+| `/kb status --refresh-overviews` | Manually rebuild `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` when you need a repair/rebuild pass |
 | `/kb present [topic/file]` | Generate HTML presentation from topic/finding |
 | `/kb report [scope]` | Generate HTML report (personal / team / org / weekly / topic) |
 | `/kb setup` | Hand off to `kb-setup` skill |
@@ -95,7 +96,6 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 | Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |
 | Promotions due | `maturity: durable` findings/topics not yet referenced in L2/L3 |
 | Stale topics | Topics unchanged > 60 days but still cited by recent findings |
-| Artifact refresh due | `.kb-log/` shows mutating ops after last HTML artifact mtime |
 
 Triage is read-only — no mutations, no commits. Output ends with 1–3 concrete next steps.
 
@@ -124,3 +124,9 @@ Collaboration-safe interpretation:
 - `Suggested next steps` must stay clearly separate from changes that already happened.
 
 See `output-contract.md` for the full wording contract and examples.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Documented `/kb status --refresh-overviews` as the explicit manual repair and rebuild path, and aligned triage guidance with always-current overviews | v3.2.0 live-overview refresh |

@@ -21,7 +21,7 @@ Two families of artifacts:
 - Deterministic (same state → byte-identical output).
 - Fast (a few seconds max — runs after every operation).
 - Bundled with the commit that triggered the change.
-- Level 1: offer before regenerating. Level 2/3: silent.
+- Regenerated automatically at every layer. Mention the refreshed paths in the operation summary, but do not make freshness depend on a follow-up confirmation.
 
 **Watermark** uses `latest · {YYYY-MM-DD HH:MM}` instead of a version number.
 
@@ -180,7 +180,7 @@ index:
 - `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`
 - Any Family 1 overview regeneration
 - Any `/kb promote` that includes HTML files
-- Manual trigger: `/kb status --refresh-overviews`
+- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path; not required for freshness)
 
 **Regeneration command**:
 
@@ -240,3 +240,9 @@ For `/kb present` (and any slide-style report), the richer **`kb-setup/templates
 - Built-in appendix/changelog slide.
 
 Every `/kb present` MUST use this file (as customized by Q13) rather than regenerating a fresh layout.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

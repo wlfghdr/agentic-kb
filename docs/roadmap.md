@@ -4,9 +4,9 @@ What's next, what's deferred, what's out of scope.
 
 ## Next
 
-- [ ] Walk-through tests against a simulated workspace
-- [ ] HTML artifact CI validation (self-contained, dual theme, watermark)
-- [ ] Auto-regeneration of overview dashboards after every `/kb` mutation
+- [x] Walk-through tests against a simulated workspace
+- [x] HTML artifact CI validation (self-contained, dual theme, watermark)
+- [x] Auto-regeneration of overview dashboards after every `/kb` mutation
 - [ ] Example marketplace repo that consumers can clone and extend
 
 ## Later
@@ -24,3 +24,9 @@ What's next, what's deferred, what's out of scope.
 - A UI (terminal- and editor-first)
 - A proprietary file format (Markdown, YAML, generated HTML only)
 - Billing, licensing, telemetry (open source)
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Marked simulated-workspace tests, HTML artifact CI validation, and automatic overview regeneration as delivered | v3.2.0 roadmap sync |

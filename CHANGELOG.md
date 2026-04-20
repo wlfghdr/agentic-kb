@@ -22,10 +22,12 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 ### Added
 
 - **Simulated-workspace regression coverage for `generate-index.py`** (`scripts/test_generate_index.py`, `.github/workflows/validate.yml`) — CI now generates a root artifact index inside a temporary KB and verifies pinned-category ordering, version-family deduplication, referenced-subpage hiding, and dual-theme output.
+- **Automatic live-overview regeneration contract** (`plugins/kb/skills/kb-management/SKILL.md`, `plugins/kb/skills/kb-management/references/html-artifacts.md`, `plugins/kb/agents/kb-operator.md`, `plugins/kb/skills/kb-setup/templates/kb.prompt.md`) — overviews are now regenerated as part of every state-mutating `/kb` operation instead of being treated as a later optional refresh.
 
 ### Fixed
 
 - **`generate-index.py` self-containment** — removed the external Google Fonts import so generated root artifact indexes stay fully self-contained and comply with the HTML artifact contract.
+- **Stale manual-refresh guidance** (`docs/examples/first-hour.md`, `plugins/kb/skills/kb-management/references/command-reference.md`, `docs/roadmap.md`) — walkthroughs, triage rules, and roadmap status now match the shipped always-current overview behavior.
 
 ## [3.1.0] — 2026-04-20
 

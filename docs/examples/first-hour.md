@@ -1,6 +1,6 @@
 # First Hour — Zero to First Briefing
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.1 | **Last updated:** 2026-04-20
 
 This walkthrough covers the minimum path from *nothing installed* to the first useful `/kb` response. Target audience: a developer who has just heard about `agentic-kb` and wants to try it on their own machine in under an hour. Runnable end-to-end — deviations from this path are where adopters usually hit friction.
 
@@ -118,7 +118,7 @@ Expected behavior:
 
 The HTML report uses `plugins/kb/skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
 
-Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) are refreshed as part of `end-day`. Between rituals, run `/kb status --refresh-overviews` if you want them up to date. Automatic refresh after every mutation ships in v2.1.
+Overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) stay current automatically after every state-mutating `/kb` operation. `/kb status --refresh-overviews` still exists as a manual rebuild path, but you should not need it during normal use.
 
 ## What to do when this walkthrough breaks
 
@@ -142,4 +142,5 @@ Note (v2.0): overviews (`inventory.html`, `open-decisions.html`, `open-tasks.htm
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-20 | Updated the walkthrough to match automatic overview regeneration after every `/kb` mutation | v3.2.0 live-overview refresh |
 | 2026-04-18 | Initial walkthrough — zero-to-first-briefing in three stages | First-hour fixture |

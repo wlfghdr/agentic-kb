@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 3.0.0
+version: 3.1.0
 uses:
   - kb-management
   - kb-setup
@@ -92,9 +92,7 @@ Two responsibilities.
 - `_kb-references/reports/open-tasks.html` — focus, waiting, backlog across all layers.
 - `_kb-references/reports/index.html` — chronological list of every HTML artifact.
 
-Regeneration (v2.0 — manual): triggered by `/kb status --refresh-overviews`, `/kb end-day`, `/kb end-week`, `/kb present`, or `/kb report`. After any other state-mutating operation, offer the refresh to the user rather than running it silently.
-
-Regeneration (v2.1 — automatic, planned): bundled with the same commit as the data change. Level 1 asks before regenerating; Level 2/3 runs silently. Tracked in [docs/roadmap.md](../docs/roadmap.md) §Near-Term.
+Regeneration: bundled with the same mutation that changed KB state. After any state-mutating operation, rewrite the live overviews before the response/commit completes. `/kb status --refresh-overviews` remains a manual rebuild path, not the primary freshness mechanism.
 
 Rules (both): deterministic, fast. Watermark uses `latest · {YYYY-MM-DD HH:MM}`.
 
@@ -140,8 +138,7 @@ for workstream in _kb-workstreams/*:
 for decision in _kb-decisions/*:
   check due date + new evidence → update
 
-# v2.1+: auto-regenerate live overviews here
-# v2.0: skipped — overviews refresh on /kb end-day or --refresh-overviews
+auto-regenerate live overviews here
 
 if changes exist:
   commit + push (or PR if branch-protected)
@@ -176,3 +173,9 @@ The loop MUST:
 ## Composition
 
 This agent is **stateless** between invocations. All state is in the file system (KB repos + log). Each invocation reads fresh.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Replaced the planned/manual overview-refresh split with the shipped always-current regeneration contract and kept `/kb status --refresh-overviews` as the manual rebuild escape hatch | v3.2.0 live-overview refresh |
