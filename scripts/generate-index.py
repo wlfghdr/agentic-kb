@@ -623,7 +623,6 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
 <meta name="generator" content="agentic-kb/generate-index">
 <meta name="generated" content="{now}">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
 
 :root, [data-theme="dark"] {{
@@ -663,7 +662,8 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
 }}
 
 html, body {{
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               'Segoe UI', sans-serif;
   background: var(--bg); color: var(--text);
   line-height: 1.6; -webkit-font-smoothing: antialiased;
 }}
