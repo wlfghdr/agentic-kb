@@ -22,6 +22,16 @@ output:
   directory: _kb-references/reports
   filename-template: "{slug}-v{version}.html"
 
+# Root index.html generation rules (see references/html-artifacts.md).
+# These apply to the index written by `.kb-scripts/generate-index`.
+index:
+  stale-after-days: 14                  # artifacts older than this get a "stale" badge
+  pinned-categories:                    # always rendered first, in this order
+    - Journey Maps
+    - Roadmap & Status
+  dedup-versioned: true                 # collapse -v3, -v4, -v5 etc. to the newest
+  category-order: recency               # recency | fixed
+
 github-pages:
   enabled: false
   branch: gh-pages

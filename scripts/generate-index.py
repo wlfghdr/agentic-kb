@@ -24,7 +24,7 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import NamedTuple
 
@@ -40,45 +40,57 @@ class Artifact(NamedTuple):
     date: str          # YYYY-MM-DD
     category: str      # grouping label
     contributor: str   # for team KBs, empty for personal
+    family: str        # dedup key — normalized stem, dir-scoped
+
+
+# ── Index config defaults ──────────────────────────────────────────────
+
+DEFAULT_INDEX_CONFIG = {
+    'stale_after_days': 14,
+    'pinned_categories': ['Journey Maps', 'Roadmap & Status'],
+    'dedup_versioned': True,
+    'category_order': 'recency',   # or 'fixed'
+}
 
 
 # ── Theme tokens ───────────────────────────────────────────────────────
 
-# Neutral default — no brand affiliation
+# Neutral default theme — vendor-neutral tokens suitable as a baseline.
+# Consumers can override via `.kb-config/artifacts.yaml` (styling.source: template).
 DEFAULT_THEME = {
     'dark': {
-        'bg':           '#0d1117',
-        'bg_elevated':  '#161b22',
-        'bg_card':      '#161b22',
-        'bg_hover':     '#1c2128',
-        'border':       '#30363d',
-        'border_strong':'#484f58',
-        'text':         '#e6edf3',
-        'text_sec':     '#8b949e',
-        'text_dim':     '#6e7681',
-        'accent':       '#58a6ff',
-        'accent_hover': '#79c0ff',
-        'accent_bg':    'rgba(56,139,253,0.10)',
-        'badge_bg':     'rgba(136,98,217,0.12)',
-        'badge_fg':     '#b392f0',
+        'bg':           '#0b0d13',
+        'bg_elevated':  '#10131c',
+        'bg_card':      '#151a26',
+        'bg_hover':     '#1b2133',
+        'border':       '#1e2436',
+        'border_strong':'#2a3248',
+        'text':         '#eaecf2',
+        'text_sec':     '#8a90a8',
+        'text_dim':     '#555d76',
+        'accent':       '#1496FF',                        # blue accent
+        'accent_hover': '#42aaff',
+        'accent_bg':    'rgba(20,150,255,0.10)',
+        'badge_bg':     'rgba(111,45,168,0.16)',          # purple badge bg
+        'badge_fg':     '#a78bfa',                        # purple light
         'shadow':       '0 2px 12px rgba(0,0,0,0.3)',
     },
     'light': {
-        'bg':           '#ffffff',
-        'bg_elevated':  '#f6f8fa',
-        'bg_card':      '#f6f8fa',
-        'bg_hover':     '#f0f2f5',
-        'border':       '#d0d7de',
-        'border_strong':'#afb8c1',
-        'text':         '#1f2328',
-        'text_sec':     '#656d76',
-        'text_dim':     '#8c959f',
-        'accent':       '#0969da',
-        'accent_hover': '#0550ae',
-        'accent_bg':    'rgba(9,105,218,0.06)',
-        'badge_bg':     'rgba(130,80,223,0.08)',
-        'badge_fg':     '#8250df',
-        'shadow':       '0 2px 12px rgba(0,0,0,0.04)',
+        'bg':           '#f4f5f8',
+        'bg_elevated':  '#ffffff',
+        'bg_card':      '#ffffff',
+        'bg_hover':     '#f0f1f6',
+        'border':       '#d8dce6',
+        'border_strong':'#c0c6d4',
+        'text':         '#141824',
+        'text_sec':     '#4d5570',
+        'text_dim':     '#8a90a8',
+        'accent':       '#1284EA',                        # blue accent (deep)
+        'accent_hover': '#1496FF',
+        'accent_bg':    'rgba(20,150,255,0.08)',
+        'badge_bg':     'rgba(111,45,168,0.10)',
+        'badge_fg':     '#591F91',                        # purple deep
+        'shadow':       '0 2px 12px rgba(0,0,0,0.06)',
     },
 }
 
@@ -108,6 +120,29 @@ def load_theme(repo_root: Path) -> dict:
 
     # For 'builtin' or 'website' (website would need runtime fetch — use builtin)
     return DEFAULT_THEME
+
+
+def load_index_config(repo_root: Path) -> dict:
+    """Load index config from .kb-config/artifacts.yaml `index:` section."""
+    cfg = dict(DEFAULT_INDEX_CONFIG)
+    config_path = repo_root / '.kb-config' / 'artifacts.yaml'
+    if not config_path.exists() or yaml is None:
+        return cfg
+    try:
+        with open(config_path) as f:
+            raw = yaml.safe_load(f) or {}
+    except Exception:
+        return cfg
+    idx = raw.get('index', {}) or {}
+    if 'stale-after-days' in idx:
+        cfg['stale_after_days'] = int(idx['stale-after-days'])
+    if 'pinned-categories' in idx:
+        cfg['pinned_categories'] = list(idx['pinned-categories'] or [])
+    if 'dedup-versioned' in idx:
+        cfg['dedup_versioned'] = bool(idx['dedup-versioned'])
+    if 'category-order' in idx:
+        cfg['category_order'] = str(idx['category-order'])
+    return cfg
 
 
 def extract_theme_from_template(template_path: Path) -> dict | None:
@@ -227,12 +262,14 @@ def categorize(rel_path: str) -> tuple[str, str]:
 
     rel_lower = '/'.join(parts).lower()
 
+    if 'roadmap' in rel_lower or 'status' in rel_lower:
+        return 'Roadmap & Status', contributor
+    if 'journey' in rel_lower:
+        return 'Journey Maps', contributor
     if 'report' in rel_lower:
         return 'Reports', contributor
     if 'strategy' in rel_lower or 'pitch' in rel_lower or 'vision' in rel_lower:
         return 'Strategy & Vision', contributor
-    if 'journey' in rel_lower:
-        return 'Journey Maps', contributor
     if 'finding' in rel_lower:
         return 'Findings', contributor
     if 'slide' in rel_lower or 'presentation' in rel_lower:
@@ -246,6 +283,36 @@ def categorize(rel_path: str) -> tuple[str, str]:
     return 'Other', contributor
 
 
+# Version/date suffix stripping patterns for dedup.
+# Each pattern trims a recognized trailing marker so that e.g.
+# "product-vision-v3", "product-vision-v4", "product-vision-v5-pitch" all
+# collapse to the same family "product-vision" (variant-aware: "-pitch" is
+# kept as a distinguishing variant so pitch and non-pitch stay separate).
+_VERSION_SUFFIX_RE = re.compile(
+    r'(?:[-_](?:v|V)\d+(?:\.\d+)?|[-_]\d{4}-\d{2}-\d{2}(?:-\d{2}-\d{2})?'
+    r'|[-_]draft|[-_]final|[-_]wip)$',
+    re.IGNORECASE,
+)
+
+
+def family_key(rel_path: str) -> str:
+    """Normalized dedup key: directory + stem with version/date suffixes stripped.
+
+    Variants like `-pitch`, `-exec`, `-presentation` are preserved so that
+    different kinds of derivative (pitch vs. exec deck) do NOT collapse.
+    Pure version bumps (`-v5` → `-v6`) and date stamps DO collapse.
+    """
+    p = Path(rel_path)
+    stem = p.stem
+    # Strip repeatedly to handle e.g. "foo-v5-2026-04-15"
+    prev = None
+    while prev != stem:
+        prev = stem
+        stem = _VERSION_SUFFIX_RE.sub('', stem)
+    # Lowercase for robustness; keep directory to scope dedup to contributor/folder
+    return f'{p.parent.as_posix().lower()}::{stem.lower()}'
+
+
 def discover_artifacts(repo_root: Path) -> list[Artifact]:
     artifacts = []
     for fp in sorted(repo_root.rglob('*.html')):
@@ -256,27 +323,66 @@ def discover_artifacts(repo_root: Path) -> list[Artifact]:
         date = extract_date(fp, repo_root)
         cat, contrib = categorize(rel)
         artifacts.append(Artifact(path=rel, title=title, date=date,
-                                  category=cat, contributor=contrib))
+                                  category=cat, contributor=contrib,
+                                  family=family_key(rel)))
     # Sort newest first
     artifacts.sort(key=lambda a: a.date, reverse=True)
     return artifacts
 
 
+def dedup_families(artifacts: list[Artifact]) -> list[Artifact]:
+    """Keep only the newest artifact per (category, family) group."""
+    seen: dict[tuple[str, str], Artifact] = {}
+    for a in artifacts:  # artifacts already newest-first
+        key = (a.category, a.family)
+        if key not in seen:
+            seen[key] = a
+    return sorted(seen.values(), key=lambda a: a.date, reverse=True)
+
+
 # ── HTML Generation ────────────────────────────────────────────────────
 
 def generate_html(artifacts: list[Artifact], title: str, description: str,
-                  now: str, theme: dict) -> str:
+                  now: str, theme: dict, index_cfg: dict) -> str:
     dark = theme['dark']
     light = theme['light']
-    # Group by category
+
+    # ── Staleness ────────────────────────────────────────────────────
+    stale_days = int(index_cfg.get('stale_after_days', 14))
+    today = datetime.now().date()
+    stale_cutoff = today - timedelta(days=stale_days)
+    stale_cutoff_str = stale_cutoff.strftime('%Y-%m-%d')
+
+    def is_stale(date_str: str) -> bool:
+        try:
+            return datetime.strptime(date_str, '%Y-%m-%d').date() < stale_cutoff
+        except ValueError:
+            return False
+
+    # ── Group + order categories ─────────────────────────────────────
     by_cat: dict[str, list[Artifact]] = {}
     for a in artifacts:
         by_cat.setdefault(a.category, []).append(a)
 
-    # Category order
-    cat_order = ['Reports', 'Strategy & Vision', 'Presentations', 'Journey Maps',
-                 'Findings', 'Research', 'Prototypes & Mocks', 'Outputs', 'Other']
+    pinned = [c for c in index_cfg.get('pinned_categories', []) if c in by_cat]
+    remaining = [c for c in by_cat if c not in pinned]
 
+    if index_cfg.get('category_order', 'recency') == 'recency':
+        # Sort remaining by newest artifact date desc
+        remaining.sort(
+            key=lambda c: max(a.date for a in by_cat[c]),
+            reverse=True,
+        )
+    else:
+        # Fixed fallback order
+        fixed = ['Reports', 'Strategy & Vision', 'Presentations', 'Journey Maps',
+                 'Findings', 'Research', 'Prototypes & Mocks', 'Outputs',
+                 'Roadmap & Status', 'Other']
+        remaining.sort(key=lambda c: fixed.index(c) if c in fixed else 999)
+
+    cat_order = pinned + remaining
+
+    # ── Build sections ───────────────────────────────────────────────
     sections = []
     for cat in cat_order:
         items = by_cat.get(cat)
@@ -286,14 +392,16 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
         for a in items:
             esc_title = html.escape(a.title)
             esc_path = html.escape(a.path)
-            contrib_badge = ''
+            badges = []
+            if is_stale(a.date):
+                badges.append('<span class="badge-stale">stale</span>')
             if a.contributor:
-                esc_c = html.escape(a.contributor)
-                contrib_badge = f'<span class="badge">{esc_c}</span> '
+                badges.append(f'<span class="badge">{html.escape(a.contributor)}</span>')
+            badges_html = ''.join(badges)
             rows.append(
                 f'        <li>'
                 f'<a href="{esc_path}">{esc_title}</a>'
-                f' <span class="meta">{contrib_badge}{a.date}</span>'
+                f' <span class="meta">{badges_html} {a.date}</span>'
                 f'</li>'
             )
         sections.append(
@@ -308,6 +416,18 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
         '    <p class="empty">No HTML artifacts found yet. '
         'Generate one with <code>/kb present</code>, <code>/kb report</code>, '
         'or <code>/kb end-day</code>.</p>'
+    )
+
+    pinned_label = ', '.join(pinned) if pinned else 'none'
+    legend_html = (
+        '  <p class="legend">'
+        f'<strong>Ordering:</strong> Pinned categories first ({html.escape(pinned_label)}); '
+        'others ordered by newest artifact. '
+        '<strong>Dedup:</strong> only the latest version of each artifact family is shown '
+        '(older versions remain on disk). '
+        f'<strong><span class="badge-stale">stale</span></strong> marks content older than '
+        f'{stale_days} days (before <code>{stale_cutoff_str}</code>) — may be outdated.'
+        '</p>'
     )
 
     return f'''<!DOCTYPE html>
@@ -445,6 +565,24 @@ h2 {{
   background: var(--badge-bg); color: var(--badge-fg);
   padding: 0.1rem 0.45rem; border-radius: 4px;
 }}
+.badge-stale {{
+  font-size: 0.62rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  background: rgba(245,180,0,0.15); color: #d4a000;
+  padding: 0.1rem 0.4rem; border-radius: 4px;
+  border: 1px solid rgba(245,180,0,0.3);
+}}
+[data-theme="light"] .badge-stale {{ color: #9a6b00; }}
+.legend {{
+  font-size: 0.78rem; color: var(--text-sec);
+  margin: 0.5rem 0 1.5rem; padding: 0.6rem 0.9rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; line-height: 1.55;
+}}
+.legend code {{
+  background: var(--bg-hover); padding: 0.05rem 0.3rem;
+  border-radius: 3px; font-size: 0.88em;
+}}
 
 .empty {{
   color: var(--text-sec); padding: 2rem 0;
@@ -475,7 +613,7 @@ h2 {{
 </head>
 <body>
 <button class="theme-toggle" type="button" aria-label="Toggle theme"
-  onclick="var h=document.documentElement,t=h.getAttribute('data-theme');h.setAttribute('data-theme',t==='dark'?'light':'dark');this.textContent=t==='dark'?'\\u2600':'\\u263E'">\\u263E</button>
+  onclick="var h=document.documentElement,t=h.getAttribute('data-theme');h.setAttribute('data-theme',t==='dark'?'light':'dark');this.textContent=t==='dark'?'\u2600':'\u263E'">\u263E</button>
 <main>
   <div class="header">
     <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -496,6 +634,8 @@ h2 {{
     <div class="stat"><div class="stat-value">{len(set(a.contributor for a in artifacts if a.contributor))}</div><div class="stat-label">Contributors</div></div>
     <div class="stat"><div class="stat-value">{artifacts[0].date if artifacts else "—"}</div><div class="stat-label">Latest</div></div>
   </div>
+
+{legend_html}
 
 {body_sections}
 
@@ -524,11 +664,17 @@ def main() -> None:
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
     artifacts = discover_artifacts(repo_root)
     theme = load_theme(repo_root)
-    out = generate_html(artifacts, title, args.description, now, theme)
+    index_cfg = load_index_config(repo_root)
+    total_before = len(artifacts)
+    if index_cfg.get('dedup_versioned', True):
+        artifacts = dedup_families(artifacts)
+    dropped = total_before - len(artifacts)
+    out = generate_html(artifacts, title, args.description, now, theme, index_cfg)
 
     outpath = repo_root / args.output
     outpath.write_text(out, encoding='utf-8')
-    print(f'Generated {outpath} — {len(artifacts)} artifacts indexed')
+    suffix = f' ({dropped} older versions deduped)' if dropped else ''
+    print(f'Generated {outpath} — {len(artifacts)} artifacts indexed{suffix}')
 
 
 if __name__ == '__main__':

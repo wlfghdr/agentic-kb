@@ -133,7 +133,33 @@ The previous file remains on disk (different filename). Changelog appendix prese
 
 Every KB layer MUST maintain a root `index.html` that indexes all HTML artifacts in the repository. This is the GitHub Pages landing page and the local entry point for browsing artifacts.
 
-**Generator script**: `scripts/generate-index.py` — scans the repo for `.html` files, extracts titles from `<title>` tags, infers dates from filenames or git history, groups by category, and writes a self-contained `index.html` with Dynatrace/Strato design tokens and dark/light toggle.
+**Generator script**: `scripts/generate-index.py` — scans the repo for `.html` files, extracts titles from `<title>` tags, infers dates from filenames or git history, groups by category, deduplicates versioned artifacts, and writes a self-contained `index.html` with neutral design tokens and a dark/light toggle.
+
+### Index rules (all generators MUST implement)
+
+1. **Pinned categories first** — configured via `index.pinned-categories` in `.kb-config/artifacts.yaml` (defaults: `Journey Maps`, `Roadmap & Status`). These always render at the top regardless of artifact recency.
+2. **Remaining categories ordered by recency** — newest artifact in the category wins. A category with a 2026-04-18 item appears above one whose newest is 2026-04-01. Default: `index.category-order: recency`.
+3. **Dedup versioned artifacts** — only the newest artifact per family is shown. Family key = directory + stem with trailing version/date markers stripped (`-v3`, `-v5`, `-2026-04-15`, `-draft`, `-final`, `-wip`). Variant markers like `-pitch`, `-exec`, `-presentation` are preserved so different derivative kinds stay separate. Older versions remain on disk. Disable with `index.dedup-versioned: false`.
+4. **Stale badge** — artifacts older than `index.stale-after-days` (default: `14`) get a `<span class="badge-stale">stale</span>` badge and a warning in the legend. The legend states the cutoff date explicitly.
+5. **Legend block** — the generated index MUST include a visible legend line below the stats bar explaining the ordering, dedup, and stale rules, so any user opening the file understands the conventions.
+6. **Neutral default theme** — when no `.kb-config/artifacts.yaml` is present, the generator ships a vendor-neutral token set (blue accent, purple badge, neutral surfaces). Consumers can override via the `styling.source: template` pointer to their own reference file to match a house style.
+7. **Self-contained button glyphs** — theme toggle and any icons MUST use actual Unicode characters (e.g. `☾`, `☀`) in the HTML output, never escape sequences (`\u263E`) which render literally in markup contexts.
+
+### Configuration contract (`.kb-config/artifacts.yaml`)
+
+```yaml
+styling:
+  source: template                 # builtin | template | website
+  reference-file: _kb-references/templates/house-style.html
+
+index:
+  stale-after-days: 14             # threshold for "stale" badge
+  pinned-categories:               # always rendered first, in this order
+    - Journey Maps
+    - Roadmap & Status
+  dedup-versioned: true            # collapse -v3, -v4, -v5 to latest
+  category-order: recency          # recency | fixed
+```
 
 **Auto-regeneration**: The root `index.html` MUST be regenerated after every operation that creates or modifies an HTML artifact:
 
@@ -148,14 +174,18 @@ Every KB layer MUST maintain a root `index.html` that indexes all HTML artifacts
 python3 scripts/generate-index.py REPO_ROOT --title "KB Name" --description "One-liner"
 ```
 
-The generated `index.html`:
+### Snapshot artifacts (cross-repo copies)
 
-- Self-contained — Dynatrace design tokens, Inter font, dark/light toggle
-- Groups artifacts by category (Reports, Strategy & Vision, Presentations, Journey Maps, Findings, Research, Prototypes & Mocks)
-- Shows contributor badges for team KBs
-- Displays creation dates (from filename pattern, git log, or mtime)
-- Shows stats bar (total count, categories, contributors, latest date)
-- Works on GitHub Pages with relative links
+When an HTML artifact is **copied** from another repo for reference (e.g. pulling a journey map or roadmap from a product repo into a strategy KB), the copy MUST include a snapshot banner:
+
+```html
+<div style="position:fixed;top:8px;left:8px;z-index:99999;background:rgba(245,180,0,0.95);color:#1a1a1a;font:600 11px/1.4 -apple-system,sans-serif;padding:6px 10px;border-radius:6px;max-width:360px;">
+  Content: {original-date-range} · Snapshot copied {YYYY-MM-DD} · Source: {source-repo-path}<br>
+  <span style="font-weight:500;opacity:0.85;">⚠ May be out of date — see source for latest</span>
+</div>
+```
+
+This makes it obvious to any reader that the file is a point-in-time copy, not the canonical source. The snapshot banner is separate from the stale-date heuristic in the index — they complement each other.
 
 **For team/org-unit KBs**, the index scans all contributor directories and tags each artifact with a contributor badge.
 
