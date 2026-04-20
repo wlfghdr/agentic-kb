@@ -51,6 +51,7 @@
 |-----------|--------|
 | `/kb audit` | Check contradictions, gaps, staleness |
 | `/kb status` | Pending inputs, recent activity, todo counts, workstream summary |
+| `/kb status --refresh-overviews` | Manually rebuild `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` when you need a repair/rebuild pass |
 | `/kb present [topic/file]` | Generate HTML presentation from topic/finding |
 | `/kb report [scope]` | Generate HTML report (personal / team / org / weekly / topic) |
 | `/kb setup` | Hand off to `kb-setup` skill |
@@ -123,3 +124,9 @@ Collaboration-safe interpretation:
 - `Suggested next steps` must stay clearly separate from changes that already happened.
 
 See `output-contract.md` for the full wording contract and examples.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Documented `/kb status --refresh-overviews` as the explicit manual repair and rebuild path, and aligned triage guidance with always-current overviews | v3.2.0 live-overview refresh |

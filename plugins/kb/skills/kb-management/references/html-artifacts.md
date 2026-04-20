@@ -240,3 +240,9 @@ For `/kb present` (and any slide-style report), the richer **`kb-setup/templates
 - Built-in appendix/changelog slide.
 
 Every `/kb present` MUST use this file (as customized by Q13) rather than regenerating a fresh layout.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

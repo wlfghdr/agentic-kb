@@ -173,3 +173,9 @@ The loop MUST:
 ## Composition
 
 This agent is **stateless** between invocations. All state is in the file system (KB repos + log). Each invocation reads fresh.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Replaced the planned/manual overview-refresh split with the shipped always-current regeneration contract and kept `/kb status --refresh-overviews` as the manual rebuild escape hatch | v3.2.0 live-overview refresh |

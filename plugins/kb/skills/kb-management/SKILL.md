@@ -230,3 +230,9 @@ The templates this skill instantiates live in `templates/`:
 - `references/output-contract.md` — collaboration-safe wording and examples for read-only, proposed, and applied operations.
 
 These files are loaded **only when the specific behavior is invoked**. The skill's top-level instructions are sufficient for most operations.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-20 | Made overview regeneration part of every state-mutating `/kb` operation and retained `/kb status --refresh-overviews` as a manual repair/rebuild trigger | v3.2.0 live-overview refresh |
