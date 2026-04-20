@@ -99,6 +99,30 @@ Full command reference: `references/command-reference.md`.
 
 9. **Regenerate root `index.html`** after any operation that creates or modifies an HTML artifact (`present`, `report`, `end-day`, `end-week`, `promote` with HTML, `status --refresh-overviews`). Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."`. The index serves as the GitHub Pages landing page.
 
+10. **Task handling discipline — apply on every `/kb` invocation, not only `/kb task`.** Tasks are first-class and the user's most fragile surface. Rules:
+
+    a. **Surface the top task.** Every response that isn't a pure status/read query ends its next-step suggestions with the current top item from `_kb-tasks/focus.md` if one exists. Format: `Next up: <focus item>` (single line, no commentary).
+
+    b. **Never create a task silently.** When the evaluation gate marks captured material as actionable (Q4 = yes), do **not** auto-append to `focus.md` or `backlog.md`. Propose the exact task line (title, workstream, optional RACI) and ask for confirmation. On confirm, add to `backlog.md` by default — only add to `focus.md` if the user says "focus" or explicitly picks it.
+
+    c. **Detect external completion.** Before `start-day`, `end-day`, `start-week`, `end-week`, `status`, or any triage scan, run this reconciliation pass:
+        - For every open task in `focus.md` / `backlog.md`, look for completion signals since the task's last mtime:
+          - closed Jira ticket referenced in the task body (via `jira-sync` if wired up)
+          - merged PR referenced in the task body (via `gh` if wired up)
+          - commits in any declared layer whose message or trailer references the task's slug / ID
+          - a shared team/org task file with the same slug now in `_kb-tasks/archive/`
+        - If found, mark the task `status: done` with a `completed-by: <source>` trailer and a `completed-at: <ISO>` timestamp, but **do not archive silently** — list the reconciled items and ask "Archive these N completed tasks?". On confirm, move to `_kb-tasks/archive/YYYY-MM.md` in one batch commit.
+
+    d. **Never delete a task.** Only move to `_kb-tasks/archive/YYYY-MM.md` with a `status:` trailer (`done`, `dropped`, `superseded-by: <id>`). Deletion requires `/kb task purge <id>` and confirmation.
+
+    e. **Shared-task safety.** Tasks in team/org KBs with a RACI **may only be closed by R or A**, or with confirmation from someone named in the RACI, or when an explicit external signal (merged PR, closed ticket) is found. In all other cases, propose the close and wait for user confirmation — never auto-close a shared task.
+
+    f. **No destructive reorder without diff.** When `end-day` / `end-week` reshuffles `focus.md` / `backlog.md`, show the diff and ask before writing.
+
+    g. **Stale signal, not stale deletion.** Backlog items untouched > 14 days get a `stale: true` annotation on the ritual pass. Annotation only — no removal.
+
+    h. **Preserve provenance.** Every task gets created with `source:` (the finding / decision / input that spawned it) and `created: <ISO>`. Retain across moves (backlog → focus → archive).
+
 ## Directory contract (personal KB)
 
 ```

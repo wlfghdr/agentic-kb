@@ -24,9 +24,12 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 | Signal | Check | Action hint |
 |---|---|---|
 | Setup complete? | `.kb-config/layers.yaml` exists and names at least the personal KB | If missing → `/kb setup` |
+| **Top task** | First item in `_kb-tasks/focus.md` (if any) | Always include as `Next up: …` |
+| **External completions** | Open focus/backlog tasks with evidence of closure (merged PR / closed Jira ticket / commit referencing the task slug / same slug already in a shared `_kb-tasks/archive/`). See SKILL.md rule #10c. | Propose archiving — never auto-close |
 | Pending inputs | Files under `_kb-inputs/` not yet in `_kb-inputs/digested/` | Count + suggest `/kb review` |
 | Open decisions | Files under `_kb-decisions/` with `status: proposed` in frontmatter | Count + suggest `/kb decide <key>` |
-| Actionable todos | Files under `_kb-tasks/` with status `todo` or `doing` older than 7 days | Count + suggest `/kb todo review` |
+| Stale tasks | `_kb-tasks/backlog.md` items untouched > 14 days | Annotate `stale: true`; list but don't remove |
+| Overdue focus | `_kb-tasks/focus.md` items with status `doing` > 7 days | Surface so user can re-plan |
 | Rituals overdue | Today's `.kb-log/YYYY-MM-DD.log` missing a `start-day` entry; current week missing `start-week` | Suggest the missing ritual |
 | Upstream digest drift | L2/L3 repos declared in `layers.yaml` whose HEAD commit differs from the watermark in `_kb-references/strategy-digests/.last-digest` (or equivalent per repo) | Suggest `/kb digest <layer>` |
 | Promotions due | Findings/topics with `maturity: durable` in frontmatter not yet referenced in any L2/L3 KB | Suggest `/kb promote <file>` |
@@ -38,18 +41,21 @@ Output shape:
 ```
 KB triage — <personal-kb-name>
   Setup: OK / MISSING
-  Pending inputs: <N>         → /kb review
-  Open decisions: <N>         → /kb decide <key>
-  Overdue todos: <N>          → /kb todo review
+  Next up: <focus[0]>                       ← always, if focus.md not empty
+  Reconciled completions: <N>               → archive? (confirm)
+  Pending inputs: <N>                       → /kb review
+  Open decisions: <N>                       → /kb decide <key>
+  Stale tasks: <N> (annotated, not removed)
+  Overdue focus items: <N>
   Rituals: start-day ✓ / ✗, start-week ✓ / ✗
-  Upstream drift: <layers>    → /kb digest team
-  Promotions due: <N>         → /kb promote <file>
-  Stale topics: <N>           → /kb audit
+  Upstream drift: <layers>                  → /kb digest team
+  Promotions due: <N>                       → /kb promote <file>
+  Stale topics: <N>                         → /kb audit
 
 Next: <top-3 concrete suggestions, most impactful first>
 ```
 
-Always end with 1–3 suggested next steps. Never run a mutating operation inside a triage scan — only read.
+Always end with 1–3 suggested next steps. **Triage is read-only** — the external-completion check surfaces candidates, it never writes or archives. Archival requires explicit confirmation via a subsequent `/kb task done <id>` or a ritual that prompts for it.
 
 ## Execution rules (apply to every `/kb` invocation)
 
