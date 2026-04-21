@@ -158,21 +158,21 @@ def extract_theme_from_template(template_path: Path) -> dict | None:
 
     # Map CSS variable names to our token names
     var_map = {
-        '--dt-bg': 'bg', '--bg': 'bg',
-        '--dt-bg-elevated': 'bg_elevated', '--bg-elevated': 'bg_elevated',
-        '--dt-bg-card': 'bg_card', '--bg-card': 'bg_card',
-        '--dt-bg-card-hover': 'bg_hover', '--bg-hover': 'bg_hover',
-        '--dt-border': 'border', '--border': 'border',
-        '--dt-border-strong': 'border_strong', '--border-strong': 'border_strong',
-        '--dt-text': 'text', '--text': 'text', '--fg': 'text',
-        '--dt-text-secondary': 'text_sec', '--text-secondary': 'text_sec', '--fg-muted': 'text_sec',
-        '--dt-text-tertiary': 'text_dim', '--text-tertiary': 'text_dim', '--fg-dim': 'text_dim',
-        '--dt-brand': 'accent', '--accent': 'accent',
-        '--dt-brand-hover': 'accent_hover', '--accent-hover': 'accent_hover',
-        '--dt-brand-subtle': 'accent_bg', '--accent-bg': 'accent_bg',
-        '--dt-purple-bg': 'badge_bg',
-        '--dt-purple': 'badge_fg',
-        '--dt-shadow': 'shadow', '--shadow': 'shadow',
+        '--bg': 'bg',
+        '--bg-elevated': 'bg_elevated',
+        '--bg-card': 'bg_card',
+        '--bg-card-hover': 'bg_hover', '--bg-hover': 'bg_hover',
+        '--border': 'border',
+        '--border-strong': 'border_strong',
+        '--text': 'text', '--fg': 'text',
+        '--text-secondary': 'text_sec', '--fg-muted': 'text_sec',
+        '--text-tertiary': 'text_dim', '--fg-dim': 'text_dim',
+        '--accent': 'accent',
+        '--accent-hover': 'accent_hover',
+        '--accent-bg': 'accent_bg',
+        '--badge-bg': 'badge_bg',
+        '--badge-fg': 'badge_fg',
+        '--shadow': 'shadow',
     }
 
     var_re = re.compile(r'(--[\w-]+)\s*:\s*([^;]+);')

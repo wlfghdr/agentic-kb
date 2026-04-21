@@ -70,7 +70,7 @@ def iter_long_lived_docs():
 
 def iter_all_docs():
     for p in REPO.rglob("*.md"):
-        if any(part in {".git", "node_modules", "plugins"} for part in p.parts):
+        if any(part in {".git", "node_modules"} for part in p.parts):
             continue
         yield p
 
@@ -128,9 +128,18 @@ def check_forbidden_terms() -> list[str]:
     if not terms:
         return []
     errors = []
-    for doc in iter_all_docs():
-        rel = doc.relative_to(REPO)
-        text_lower = doc.read_text(encoding="utf-8").lower()
+    # Scan all text files that could leak vendor-specific language.
+    exts = {".md", ".py", ".yaml", ".yml", ".html", ".json", ".sh", ".txt"}
+    for p in REPO.rglob("*"):
+        if not p.is_file() or p.suffix.lower() not in exts:
+            continue
+        if any(part in {".git", "node_modules"} for part in p.parts):
+            continue
+        rel = p.relative_to(REPO)
+        # Skip the blocklist file itself and CI config.
+        if rel.name == ".forbidden-terms.txt":
+            continue
+        text_lower = p.read_text(encoding="utf-8", errors="ignore").lower()
         for term in terms:
             if term in text_lower:
                 errors.append(f"FORBIDDEN term '{term}' in: {rel}")

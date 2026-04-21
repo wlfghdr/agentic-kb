@@ -6,11 +6,11 @@
 |-----------|--------|
 | `/kb [text/URL/path]` | Capture: assess + persist via the gate; route to workstream |
 | `/kb review` | Process all pending items in `_kb-inputs/` |
-| `/kb promote [file]` | L1 → team KB's contributor `inputs/` (ask which team if multiple) |
+| `/kb promote [file]` | L1 → team KB's contributor `_kb-inputs/` (ask which team if multiple) |
 | `/kb promote org [file]` | L2 → org-unit KB |
 | `/kb publish [file]` | L1/L2/L3 → marketplace skill (PR) |
 
-## Decisions & TODOs
+## Decisions & Tasks
 
 | Subcommand | Action |
 |-----------|--------|
@@ -129,4 +129,5 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Fixed stale `inputs/` path in promote command; renamed section from "Decisions & TODOs" to "Decisions & Tasks" | Spec review |
 | 2026-04-20 | Documented `/kb status --refresh-overviews` as the explicit manual repair and rebuild path, and aligned triage guidance with always-current overviews | v3.2.0 live-overview refresh |

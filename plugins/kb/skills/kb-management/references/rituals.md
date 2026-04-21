@@ -11,7 +11,7 @@
 ## `/kb start-day`
 
 1. Read `_kb-tasks/focus.md`.
-2. **Run task reconciliation** (see SKILL.md rule #10c) — detect external completions from Jira / GitHub / commits / shared archives. Propose closures; do not auto-archive.
+2. **Run task reconciliation** (see SKILL.md rule #11c) — detect external completions from Jira / GitHub / commits / shared archives. Propose closures; do not auto-archive.
 3. Scan `_kb-decisions/` — any due soon or blocked?
 4. Read today's and yesterday's `.kb-log/`.
 5. `git diff` in personal KB since last activity.
@@ -24,7 +24,7 @@
 ## `/kb end-day`
 
 1. Review uncommitted changes; summarize the day.
-2. **Run task reconciliation** (SKILL.md rule #10c) for anything closed during the day.
+2. **Run task reconciliation** (SKILL.md rule #11c) for anything closed during the day.
 3. Propose moving confirmed-done focus items → `_kb-tasks/archive/YYYY-MM.md`. **Do not move silently** — show the diff, ask once.
 4. Update decisions if any state changed.
 5. Propose pulling next items from `backlog.md` → `focus.md` (if space). Show diff, ask.
@@ -37,7 +37,7 @@
 1. Full team KB digest.
 2. Review all workstream files for movement.
 3. Audit `_kb-decisions/` — overdue? new evidence?
-4. **Run task reconciliation** (SKILL.md rule #10c) across `focus.md` and `backlog.md`; annotate items untouched > 14 days with `stale: true` (annotation only — no removal).
+4. **Run task reconciliation** (SKILL.md rule #11c) across `focus.md` and `backlog.md`; annotate items untouched > 14 days with `stale: true` (annotation only — no removal).
 5. Check marketplace for new skills matching themes.
 6. **Output**: weekly briefing grouped by workstream. Include reconciled completions + stale-annotated items.
 7. **Suggest**.

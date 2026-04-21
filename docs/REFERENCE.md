@@ -343,14 +343,14 @@ styling:
     format: "v{version} · {date}"
 ```
 
-  ### Optional draft-skill config blocks
+### Optional draft-skill config blocks
 
-  The same config files also host optional draft primitives:
+The same config files also host optional draft primitives:
 
-  - `.kb-config/layers.yaml` may add top-level `roadmap:` and `journeys:` blocks.
-  - `.kb-config/artifacts.yaml` may add `html-template:` and `journeys-template:` blocks for roadmap and journey rendering.
+- `.kb-config/layers.yaml` may add top-level `roadmap:` and `journeys:` blocks.
+- `.kb-config/artifacts.yaml` may add `html-template:` and `journeys-template:` blocks for roadmap and journey rendering.
 
-  These blocks are ignored unless the corresponding skills are installed and configured.
+These blocks are ignored unless the corresponding skills are installed and configured.
 
 ---
 
@@ -485,6 +485,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
-| 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree | Doc drift review |
+| 2026-04-22 | Fixed markdown-lint violations (indented heading/list, extra table column), removed stale doc-drift source column |
+| 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree |
 | 2026-04-20 | Linked the dedicated collaboration guide for shared-workspace human operating norms |
 | 2026-04-19 | Initial — consolidated from 23 concept/spec docs |

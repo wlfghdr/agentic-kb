@@ -19,18 +19,34 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Fixed
+
+- **Vendor-neutrality sweep** — removed all vendor-specific terms from scripts, templates, and plugin skill docs:
+  - `generate-dashboard.py` / `generate-index.py`: removed vendor logo SVG and vendor-prefixed CSS variable mappings (`--dt-*`); only generic token names remain.
+  - `kb-setup/templates/artifacts.yaml`: removed vendor logo option; built-in choices are now `hexagon | none` plus custom `logo-file`.
+  - `kb-journeys/SKILL.md`: removed internal-repo path reference from mock-extraction script description.
+  - `kb-roadmap` references and script: replaced vendor-specific hierarchy terms with generic equivalents (Theme, Initiative, Epic) throughout `adapters.md`, `html-template.md`, and `kb_roadmap.py`.
+- **`CONTRIBUTING.md` stale reference** — replaced `make check` (no Makefile exists) with "Local checks pass".
+- **Version alignment** — `kb-management` SKILL.md, `kb-setup` SKILL.md, and `kb-operator` agent.md now all declare `version: 3.2.0`, matching the framework version.
+- **`spec-summary.md` layout discrepancy** — decisions directory now shows active decisions at root (matching REFERENCE.md and SKILL.md), not under an `active/` subdirectory. Added missing `_kb-ideas/`, `index.html`, and `dashboard.html` entries.
+- **`command-reference.md` stale path** — promote command now references `_kb-inputs/` (not old `inputs/`). Section renamed to "Decisions & Tasks" for glossary consistency.
+- **`rituals.md` rule number drift** — task-reconciliation references updated from `#10c` to `#11c` (matching current SKILL.md rule numbering).
+- **`setup-flow.md` broken links** — fixed relative path depth for `docs/first-run-acceptance.md` cross-references (4 levels → 5 levels).
+- **`REFERENCE.md` markdown-lint violations** — removed leading whitespace on heading and list items in the draft-skill config section; fixed extra table column in the changelog.
+- **`generate-index.py` self-containment** — removed the external Google Fonts import so generated root artifact indexes stay fully self-contained and comply with the HTML artifact contract.
+- **Stale manual-refresh guidance** (`docs/examples/first-hour.md`, `plugins/kb/skills/kb-management/references/command-reference.md`, `docs/roadmap.md`) — walkthroughs, triage rules, and roadmap status now match the shipped always-current overview behavior.
+- **Manifest version drift** (`plugin.json`, `plugins/kb/plugin.json`, `.claude-plugin/marketplace.json`) — root and per-plugin marketplace metadata now match the current framework version (`3.2.0`) and describe the shipped draft extensions accurately.
+- **`kb-roadmap` config-path drift** (`plugins/kb/skills/kb-roadmap/scripts/kb_roadmap.py`) — the pilot now reads `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, with legacy fallback to the retired flat config files.
+
 ### Added
 
 - **Simulated-workspace regression coverage for `generate-index.py`** (`scripts/test_generate_index.py`, `.github/workflows/validate.yml`) — CI now generates a root artifact index inside a temporary KB and verifies pinned-category ordering, version-family deduplication, referenced-subpage hiding, and dual-theme output.
 - **Automatic live-overview regeneration contract** (`plugins/kb/skills/kb-management/SKILL.md`, `plugins/kb/skills/kb-management/references/html-artifacts.md`, `plugins/kb/agents/kb-operator.md`, `plugins/kb/skills/kb-setup/templates/kb.prompt.md`) — overviews are now regenerated as part of every state-mutating `/kb` operation instead of being treated as a later optional refresh.
 - **Top-level coverage for draft primitives** (`README.md`, `docs/REFERENCE.md`, `docs/glossary.md`, `AGENTS.md`, `CONTRIBUTING.md`) — the public spec now explicitly documents the optional `kb-roadmap` and `kb-journeys` skills, their `_kb-roadmaps/` and `_kb-journeys/` directories, and the current `plugins/kb/` source layout.
 
-### Fixed
+### Changed
 
-- **`generate-index.py` self-containment** — removed the external Google Fonts import so generated root artifact indexes stay fully self-contained and comply with the HTML artifact contract.
-- **Stale manual-refresh guidance** (`docs/examples/first-hour.md`, `plugins/kb/skills/kb-management/references/command-reference.md`, `docs/roadmap.md`) — walkthroughs, triage rules, and roadmap status now match the shipped always-current overview behavior.
-- **Manifest version drift** (`plugin.json`, `plugins/kb/plugin.json`, `.claude-plugin/marketplace.json`) — root and per-plugin marketplace metadata now match the current framework version (`3.2.0`) and describe the shipped draft extensions accurately.
-- **`kb-roadmap` config-path drift** (`plugins/kb/skills/kb-roadmap/scripts/kb_roadmap.py`) — the pilot now reads `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, with legacy fallback to the retired flat config files.
+- **`check_consistency.py` forbidden-term scanning** — extended to cover all text file types and removed the `plugins/` exclusion so skill/agent docs are also checked.
 
 ## [3.1.0] — 2026-04-20
 

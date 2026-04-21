@@ -7,11 +7,11 @@ Every `/kb roadmap` run emits a **triple artifact** (`.md` + `.html` + `.json`) 
 | # | Section id | Required | What it contains |
 |---|-----------|----------|-------------------|
 | 01 | `#overview` | yes | Hero banner (badge + title + subtitle + meta), chip strip (items · open · closed · in-delivery · shipped · GH milestones), and a short scope description. |
-| 02 | `#timeline` | yes | Hierarchical **collapsible tree** timeline with one row per item along the full parent → child chain (e.g. `KeyTheme → ValuePack → ValueIncrement → GitHub workstream → GitHub issue → sub-issue`). Each row renders a bar spanning the target-quarter range of the item plus its descendants; color reflects the dominant phase. Controls (`Expand all` / `Collapse all` / `Lanes only` / `Lanes + VIs`, plus filter checkboxes for `show closed` / `show open`) appear above the timeline. Rows carry `data-state="open|closed"` so CSS can hide closed/open subtrees. The vertical `today-line` marks the current date. |
-| 03 | `#landing-zones` | yes | Per-quarter drill-down cards. Each quarter card lists value-increments scheduled there plus GitHub-milestone rollups (native delivery landing zones) with `open` / `closed` counts and milestone due-date. Today's quarter is highlighted. |
+| 02 | `#timeline` | yes | Hierarchical **collapsible tree** timeline with one row per item along the full parent → child chain (e.g. `Theme → Initiative → Epic → GitHub workstream → GitHub issue → sub-issue`). Each row renders a bar spanning the target-quarter range of the item plus its descendants; color reflects the dominant phase. Controls (`Expand all` / `Collapse all` / `Lanes only` / `Lanes + Epics`, plus filter checkboxes for `show closed` / `show open`) appear above the timeline. Rows carry `data-state="open|closed"` so CSS can hide closed/open subtrees. The vertical `today-line` marks the current date. |
+| 03 | `#landing-zones` | yes | Per-quarter drill-down cards. Each quarter card lists epics scheduled there plus GitHub-milestone rollups (native delivery landing zones) with `open` / `closed` counts and milestone due-date. Today's quarter is highlighted. |
 | 04 | `#velocity` | yes | Velocity & forecast: burn-rate cards (closed in last 4w / 8w / 12w), issues/week 8-week average, ETA = `open ÷ weekly velocity` (guesstimate), plus per-lane open/closed breakdown with % done. |
 | 05 | `#findings` | yes | Heuristic critical-path / discrepancy findings: overdue open items, container slippage (child target > parent target), unanchored GH issues, VIs with no GH implementation, GH-milestone vs Jira-parent quarter mismatches, critical-path current-quarter VIs sorted by % done. |
-| 06 | `#kanban` | yes | One column per phase (`idea`, `defined`, `committed`, `in-delivery`, `shipped`, `archived`). **Container types (Key Theme, Value Pack, Milestone) are excluded** — the board shows deliverables only. Cards show id · title · issue-type pill · target-quarter pill. |
+| 06 | `#kanban` | yes | One column per phase (`idea`, `defined`, `committed`, `in-delivery`, `shipped`, `archived`). **Container types (Theme, Initiative, Milestone) are excluded** — the board shows deliverables only. Cards show id · title · issue-type pill · target-quarter pill. |
 | 07 | `#correlation` | yes | Tier-1 correlation matrix (items appearing in multiple trackers). Renders as a collapsible `<details>` block. |
 | 08 | `#plan` | yes | Full plan table: id · title · type · phase · status · target · lane/milestone · tracker. Collapsible. |
 | 09 | `#forward` | yes | Forward-plan callout pointing to `/kb roadmap refine <scope>` and `/kb roadmap audit`. |
@@ -22,8 +22,8 @@ Every `/kb roadmap` run emits a **triple artifact** (`.md` + `.html` + `.json`) 
 ## Derivation rules
 
 ### Timeline swimlanes
-- Items with a `parent` (milestone/key-theme id) → grouped under that parent's lane, labeled with the parent's title.
-- Items that are themselves a `Milestone` / `Key Theme` / `KeyTheme` → their own lane, labeled with their own title.
+- Items with a `parent` (milestone/theme id) → grouped under that parent's lane, labeled with the parent's title.
+- Items that are themselves a `Milestone` / `Theme` → their own lane, labeled with their own title.
 - Items with neither → an `Unscheduled` lane pinned to the bottom.
 - Lane order: earliest target quarter first, `Unscheduled` last.
 

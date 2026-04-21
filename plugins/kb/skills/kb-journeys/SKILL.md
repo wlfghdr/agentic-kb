@@ -199,8 +199,14 @@ The journey template reads the same tokens block as `kb-roadmap` (`--fg`, `--bg`
 ## Scripts
 
 - `scripts/render_journeys.py` — markdown → HTML set (neutral baseline; brand tokens merged from `.kb-config/artifacts.yaml`)
-- `scripts/extract_mocks.py` — standalone-mock pipeline (generalized from upstream inspiration in `bluebox/docs/journeys/scripts/extract-mocks.py`)
+- `scripts/extract_mocks.py` — standalone-mock extraction pipeline
 
 ## Status
 
 Draft (`v0.1.0`). Not scaffolded by default. Opt in by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml`.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-22 | Removed internal-repo reference from extract_mocks.py description | Vendor-neutrality review |

@@ -67,7 +67,7 @@ plan-sources:
 
 ## Cross-tracker parent linking
 
-Roadmap items frequently live in more than one tracker: a high-level Value Increment in Jira, and the concrete workstream issues in the team's GitHub repository. kb-roadmap attaches GitHub issues to their structural Jira parent using two mechanisms (in order):
+Roadmap items frequently live in more than one tracker: a high-level initiative in one tracker, and the concrete workstream issues in the team's GitHub repository. kb-roadmap attaches GitHub issues to their structural parent using two mechanisms (in order):
 
 ### 1. Body-reference linking (automatic)
 
@@ -101,7 +101,7 @@ issue-trackers:
 - `labels-all`: AND — item matches only if every listed label is present.
 - `title-matches`: regex tested against the item title (case-insensitive).
 
-**Order the rules narrow-to-broad.** Parent resolution walks up through lane resolution (Value Pack / Milestone / Key Theme), so assigning a Jira VI automatically places the GitHub issue under the correct swimlane.
+**Order the rules narrow-to-broad.** Parent resolution walks up through lane resolution (Initiative / Milestone / Theme), so assigning a parent initiative automatically places the GitHub issue under the correct swimlane.
 
 
 ## Shipped delivery adapters

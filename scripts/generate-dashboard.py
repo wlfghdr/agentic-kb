@@ -138,16 +138,6 @@ BRAND_LOGOS = {
         '<circle cx="50" cy="50" r="8" fill="var(--accent)"/>'
         '</svg>'
     ),
-    'dynatrace': (
-        '<svg width="30" height="30" viewBox="0 0 152 152" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dynatrace">'
-        '<path d="M47.7 12.7c-1.8 9.5-4 23.6-5.2 37.9-2.1 25.2-.8 42.1-.8 42.1L6.2 126.4s-2.7-18.9-4.1-40.2C1.3 73 1 61.4 1 54.4c0-.4.2-.8.2-1.2 0-.5.6-5.2 5.2-9.6C11.4 38.8 48.3 9.9 47.7 12.7z" fill="#1496FF"/>'
-        '<path d="M47.7 12.7c-1.8 9.5-4 23.6-5.2 37.9 0 0-39.3-4.7-41.5 4.8 0-.5.7-6.3 5.3-10.7C11.3 39.9 48.3 9.9 47.7 12.7z" fill="#1284EA"/>'
-        '<path d="M1 53.1c0 .7 0 1.4 0 2.2.4-1.7 1.1-2.9 2.5-4.8 2.9-3.7 7.6-4.7 9.5-4.9 9.6-1.3 23.8-2.8 38.1-3.2 25.3-.8 42 1.3 42 1.3L128.6 10s-18.6-3.5-39.8-6C74.9 2.3 62.7 1.4 55.8 1c-.5 0-5.4-.6-10 3.8C40.8 9.6 15.4 33.7 5.2 43.4 .6 47.8 1 52.7 1 53.1z" fill="#B4DC00"/>'
-        '<path d="M127.3 96.2c-9.6 1.3-23.8 2.9-38.1 3.4-25.3.8-42.1-1.3-42.1-1.3L11.6 132.1s18.8 3.7 40 6.1c13 1.5 24.5 2.3 31.5 2.7.5 0 1.3-.4 1.8-.4.5 0 5.4-.9 10-5.3C99.9 130.4 130.1 95.9 127.3 96.2z" fill="#6F2DA8"/>'
-        '<path d="M127.3 96.2c-9.6 1.3-23.8 2.9-38.1 3.4 0 0 2.7 39.5-6.8 41.2.5 0 7-.3 11.6-4.7C99 131.3 130.1 95.9 127.3 96.2z" fill="#591F91"/>'
-        '<path d="M84.5 141c-.7 0-1.4-.1-2.2-.1 1.8-.3 3-.9 4.9-2.3 3.8-2.7 5-7.4 5.4-9.3 1.7-9.5 4-23.6 5.1-37.9 2-25.2.8-42 .8-42l35.5-33.8s2.6 18.8 4.1 40.1c.9 13.9 1.2 26.2 1.3 33 0 .5.4 5.4-4.2 9.8-5 4.8-30.4 29-40.5 38.7C89.9 141.6 85 141 84.5 141z" fill="#73BE28"/>'
-        '</svg>'
-    ),
     'none': '',
 }
 
@@ -156,7 +146,7 @@ def render_brand_logo(repo_root: Path, dash: dict) -> str:
     """Return the inline SVG/HTML for the dashboard brand logo.
 
     Config keys (all under `brand:`):
-      - logo: one of the named logos ('hexagon' default, 'dynatrace', 'none')
+      - logo: one of the named logos ('hexagon' default, 'none')
       - logo-file: optional path to a .svg file (relative to repo root); overrides `logo`
     """
     brand = (dash.get('brand') or {}) if dash else {}
@@ -195,21 +185,21 @@ def _extract_theme_from_template(template_path: Path) -> dict | None:
     except Exception:
         return None
     var_map = {
-        '--dt-bg': 'bg', '--bg': 'bg',
-        '--dt-bg-elevated': 'bg_elevated', '--bg-elevated': 'bg_elevated',
-        '--dt-bg-card': 'bg_card', '--bg-card': 'bg_card',
-        '--dt-bg-card-hover': 'bg_hover', '--bg-hover': 'bg_hover',
-        '--dt-border': 'border', '--border': 'border',
-        '--dt-border-strong': 'border_strong', '--border-strong': 'border_strong',
-        '--dt-text': 'text', '--text': 'text',
-        '--dt-text-secondary': 'text_sec', '--text-secondary': 'text_sec',
-        '--dt-text-tertiary': 'text_dim', '--text-tertiary': 'text_dim',
-        '--dt-brand': 'accent', '--accent': 'accent',
-        '--dt-brand-hover': 'accent_hover', '--accent-hover': 'accent_hover',
-        '--dt-brand-subtle': 'accent_bg', '--accent-bg': 'accent_bg',
-        '--dt-purple-bg': 'badge_bg',
-        '--dt-purple': 'badge_fg',
-        '--dt-shadow': 'shadow', '--shadow': 'shadow',
+        '--bg': 'bg',
+        '--bg-elevated': 'bg_elevated',
+        '--bg-card': 'bg_card',
+        '--bg-card-hover': 'bg_hover', '--bg-hover': 'bg_hover',
+        '--border': 'border',
+        '--border-strong': 'border_strong',
+        '--text': 'text', '--fg': 'text',
+        '--text-secondary': 'text_sec', '--fg-muted': 'text_sec',
+        '--text-tertiary': 'text_dim', '--fg-dim': 'text_dim',
+        '--accent': 'accent',
+        '--accent-hover': 'accent_hover',
+        '--accent-bg': 'accent_bg',
+        '--badge-bg': 'badge_bg',
+        '--badge-fg': 'badge_fg',
+        '--shadow': 'shadow',
     }
     var_re = re.compile(r'(--[\w-]+)\s*:\s*([^;]+);')
     dark = dict(DEFAULT_THEME['dark'])

@@ -45,12 +45,12 @@ class Item:
     tracker: str
     url: str = ""
     labels: list[str] = field(default_factory=list)
-    issue_type: str = ""         # KeyTheme / Milestone / ValuePack / ValueIncrement / Story / Issue / ...
-    parent: str = ""             # id of structural parent (VI → VP, VP → KT, GH issue → VI)
+    issue_type: str = ""         # Theme / Milestone / Initiative / Epic / Story / Issue / ...
+    parent: str = ""             # id of structural parent (Epic → Initiative, Initiative → Theme, GH issue → Epic)
     parent_title: str = ""
     milestone: str = ""          # id of associated delivery milestone (may differ from parent)
     milestone_title: str = ""
-    lane: str = ""               # id of top-level swimlane ancestor (VP / Milestone / KT)
+    lane: str = ""               # id of top-level swimlane ancestor (Initiative / Milestone / Theme)
     lane_title: str = ""
     target: str = ""             # human-readable target window ("2026 CQ2", "Jun 2026", ...)
     target_quarter: str = ""     # normalized "YYYY-Qn" when derivable
@@ -167,7 +167,7 @@ def _derive_parent(front: dict, body: str) -> tuple[str, str]:
             milestone = milestone or mm.group(1)
             continue
         if not label_parent:
-            lm = re.match(r"(?:keytheme|parent|epic|valuepack|vp)[_:-]([A-Z]{2,}-\d+)", s, re.IGNORECASE)
+            lm = re.match(r"(?:theme|parent|epic|initiative|vp)[_:-]([A-Z]{2,}-\d+)", s, re.IGNORECASE)
             if lm:
                 label_parent = lm.group(1)
     if not structural:
@@ -466,8 +466,8 @@ def collect_items(scope_cfg: dict, roadmap_cfg: dict, kb_root: Path) -> list[Ite
                 it.parent = rule.get("parent", "")
                 break
     # Resolve parent titles + walk up to compute lane (top-level ancestor
-    # Milestone / Value Pack / Key Theme) + propagate target.
-    lane_types = {"Milestone", "Value Pack", "ValuePack", "Key Theme", "KeyTheme"}
+    # Milestone / Initiative / Theme) + propagate target.
+    lane_types = {"Milestone", "Initiative", "Initiative", "Theme", "Theme"}
     for it in items:
         if it.parent and it.parent in by_id:
             it.parent_title = by_id[it.parent].title
@@ -845,7 +845,7 @@ footer {{ text-align:center; color:var(--text-muted); font-size:0.76rem; padding
 
 <section id="timeline">
   <h2><span class="sec-num">02</span>Timeline</h2>
-  <p class="lead">Hierarchical tree grouped by <code>KeyTheme → ValuePack → ValueIncrement → GitHub workstream → GitHub issue</code>. Each row's bar spans the target-quarter range of the item plus all descendants; color reflects the dominant phase (for containers, aggregated from children). Click any row to expand or collapse its subtree. The vertical line marks today.</p>
+  <p class="lead">Hierarchical tree grouped by <code>Theme → Initiative → Epic → GitHub workstream → GitHub issue</code>. Each row's bar spans the target-quarter range of the item plus all descendants; color reflects the dominant phase (for containers, aggregated from children). Click any row to expand or collapse its subtree. The vertical line marks today.</p>
   <div class="timeline-controls">
     <button data-action="tree-expand-all">Expand all</button>
     <button data-action="tree-collapse-all">Collapse all</button>
@@ -863,7 +863,7 @@ footer {{ text-align:center; color:var(--text-muted); font-size:0.76rem; padding
 
 <section id="landing-zones">
   <h2><span class="sec-num">03</span>Landing zones by quarter</h2>
-  <p class="lead">Drill-down per quarter. Shows GitHub milestones (native delivery landing zones) plus Jira value-increments scheduled for each quarter, with open/closed counts. Use this to spot an over-loaded quarter or a milestone that should shift.</p>
+  <p class="lead">Drill-down per quarter. Shows GitHub milestones (native delivery landing zones) plus Jira epics scheduled for each quarter, with open/closed counts. Use this to spot an over-loaded quarter or a milestone that should shift.</p>
   {landing_zones_html}
 </section>
 
@@ -881,7 +881,7 @@ footer {{ text-align:center; color:var(--text-muted); font-size:0.76rem; padding
 
 <section id="kanban">
   <h2><span class="sec-num">06</span>Status board</h2>
-  <p class="lead">Items grouped by phase. <strong>Containers</strong> (Key Theme, Value Pack, Milestone) are excluded — the board shows deliverables only. Phases derive from tracker statuses via the <code>roadmap.phases</code> mapping.</p>
+  <p class="lead">Items grouped by phase. <strong>Containers</strong> (Theme, Initiative, Milestone) are excluded — the board shows deliverables only. Phases derive from tracker statuses via the <code>roadmap.phases</code> mapping.</p>
   <div class="kanban">
 {kanban_cols_html}
   </div>
@@ -1029,7 +1029,7 @@ def _today_axis_offset(axis: list[str]) -> float:
 
 def _group_swimlanes(items: list[Item]) -> list[tuple[str, str, list[Item]]]:
     """Return (lane_id, lane_label, items) — one lane per top-level ancestor
-    (Value Pack / Milestone / Key Theme) when resolvable, else a fallback
+    (Initiative / Milestone / Theme) when resolvable, else a fallback
     'Unscheduled' lane for orphans.
     """
     lanes: dict[str, list[Item]] = {}
@@ -1043,7 +1043,7 @@ def _group_swimlanes(items: list[Item]) -> list[tuple[str, str, list[Item]]]:
             lanes.setdefault("__unscheduled__", []).append(it)
             labels["__unscheduled__"] = "Unscheduled"
 
-    # Order: lanes that contain a Value Pack / Milestone / Key Theme header
+    # Order: lanes that contain a Initiative / Milestone / Theme header
     # item first, ranked by that item's target quarter; __unscheduled__ last.
     def lane_sort_key(kv):
         lane_id, items_ = kv
@@ -1076,10 +1076,10 @@ def _build_item_tree(items: list[Item]) -> tuple[list[Item], dict[str, list[Item
 
     def sort_key(it: Item) -> tuple:
         # Lane-worthy items first, then by target quarter, then id.
-        type_rank = 0 if it.issue_type in ("Key Theme", "KeyTheme") else \
-                    1 if it.issue_type in ("Value Pack", "ValuePack") else \
+        type_rank = 0 if it.issue_type in ("Theme", "Theme") else \
+                    1 if it.issue_type in ("Initiative", "Initiative") else \
                     2 if it.issue_type == "Milestone" else \
-                    3 if it.issue_type == "ValueIncrement" else 4
+                    3 if it.issue_type == "Epic" else 4
         return (type_rank, it.target_quarter or "~", it.id)
 
     roots.sort(key=sort_key)
@@ -1108,7 +1108,7 @@ def _dominant_phase(it: Item, children: dict[str, list[Item]]) -> str:
     phase if it has a non-empty phase AND its issue_type is not a container
     (VP/KT/Milestone); otherwise pick the phase most common among descendants.
     """
-    container_types = {"Key Theme", "KeyTheme", "Value Pack", "ValuePack", "Milestone"}
+    container_types = {"Theme", "Theme", "Initiative", "Initiative", "Milestone"}
     if it.issue_type not in container_types and it.phase:
         return it.phase
     # Aggregate over descendants.
@@ -1158,7 +1158,7 @@ def _render_tree_row(it: Item, children: dict[str, list[Item]], axis: list[str],
 
     phase = _dominant_phase(it, children)
     # Count leaf items in subtree (excluding containers).
-    container_types = {"Key Theme", "KeyTheme", "Value Pack", "ValuePack", "Milestone"}
+    container_types = {"Theme", "Theme", "Initiative", "Initiative", "Milestone"}
     leaf_count = 0
     stack = [it]
     seen_ids: set[str] = set()
@@ -1243,7 +1243,7 @@ def _render_tree_row(it: Item, children: dict[str, list[Item]], axis: list[str],
 
 def _render_timeline(items: list[Item], axis: list[str]) -> tuple[str, str]:
     """Return (rows_html, legend_html). Renders a collapsible hierarchical tree:
-    KeyTheme → ValuePack → ValueIncrement → GitHub issues → sub-issues, based
+    Theme → Initiative → Epic → GitHub issues → sub-issues, based
     on resolved parent/child relationships. Each level renders one row with a
     bar spanning the target-quarter range of the item plus its descendants.
     """
@@ -1260,7 +1260,7 @@ def _render_timeline(items: list[Item], axis: list[str]) -> tuple[str, str]:
     # Roots that are lane-worthy (KT/VP/Milestone) are rendered directly.
     # Everything else is bucketed into an 'Unscheduled' synthetic root so the
     # tree view does not hide orphans.
-    lane_types = {"Key Theme", "KeyTheme", "Value Pack", "ValuePack", "Milestone"}
+    lane_types = {"Theme", "Theme", "Initiative", "Initiative", "Milestone"}
     lane_roots = [r for r in roots if r.issue_type in lane_types]
     orphan_roots = [r for r in roots if r.issue_type not in lane_types]
 
@@ -1318,7 +1318,7 @@ def _render_timeline(items: list[Item], axis: list[str]) -> tuple[str, str]:
 
 
 
-CONTAINER_TYPES = {"Key Theme", "KeyTheme", "Value Pack", "ValuePack", "Milestone"}
+CONTAINER_TYPES = {"Theme", "Theme", "Initiative", "Initiative", "Milestone"}
 
 
 def _render_landing_zones(items: list[Item], axis: list[str]) -> str:
@@ -1345,7 +1345,7 @@ def _render_landing_zones(items: list[Item], axis: list[str]) -> str:
         q = effective_q(it)
         if not q:
             continue
-        if it.issue_type == "ValueIncrement":
+        if it.issue_type == "Epic":
             by_q_vis.setdefault(q, []).append(it)
         # GitHub issue?
         if re.fullmatch(r"#\d+", it.id):
@@ -1397,7 +1397,7 @@ def _render_landing_zones(items: list[Item], axis: list[str]) -> str:
         cards.append(
             f'<div class="lz-card{" lz-today" if is_today else ""}">'
             f'<h3>{html.escape(q_label)}<span class="lz-count">{total_gh + len(vis)} items</span></h3>'
-            + (f'<h4>Value increments · {len(vis)}</h4><ul>{vis_rows}</ul>' if vis else '')
+            + (f'<h4>Epics · {len(vis)}</h4><ul>{vis_rows}</ul>' if vis else '')
             + (f'<h4>GitHub milestones · {len(gh_ms)}</h4><ul>{ms_rows}{orphan_row}</ul>'
                if (gh_ms or orphan["open"] or orphan["closed"]) else '')
             + '</div>'
@@ -1559,10 +1559,10 @@ def _render_findings(items: list[Item], axis: list[str]) -> str:
     if orphans:
         findings.append(("medium", f"Unanchored — GH issues without milestone or Jira parent ({len(orphans)})", orphans[:12]))
 
-    # 4. Value Increments without any GitHub issue attached.
+    # 4. Epics without any GitHub issue attached.
     vi_without_gh: list[str] = []
     for it in items:
-        if it.issue_type != "ValueIncrement":
+        if it.issue_type != "Epic":
             continue
         has_gh = any(re.fullmatch(r"#\d+", c.id) for c in children.get(it.id, []))
         if not has_gh:
@@ -1591,7 +1591,7 @@ def _render_findings(items: list[Item], axis: list[str]) -> str:
     critical: list[str] = []
     if today_q:
         for it in items:
-            if it.issue_type != "ValueIncrement" or it.target_quarter != today_q:
+            if it.issue_type != "Epic" or it.target_quarter != today_q:
                 continue
             gh_children = [c for c in children.get(it.id, []) if re.fullmatch(r"#\d+", c.id)]
             if not gh_children:
@@ -1624,7 +1624,7 @@ def _render_findings(items: list[Item], axis: list[str]) -> str:
 
 
 def _render_kanban(items: list[Item]) -> str:
-    # Exclude container types (Key Theme / Value Pack / Milestone) — the kanban
+    # Exclude container types (Theme / Initiative / Milestone) — the kanban
     # is a deliverables board, not a planning rollup.
     items = [it for it in items if it.issue_type not in CONTAINER_TYPES]
     by_phase: dict[str, list[Item]] = {p: [] for p in PHASE_ORDER}
@@ -1697,7 +1697,7 @@ def render_html(scope: str, date: str, items: list[Item], groups: dict[str, list
     ) or "<tr><td colspan='3'><em>no multi-tracker correlations</em></td></tr>"
     multi = sum(1 for g in groups.values() if len(g) > 1)
     single = sum(1 for g in groups.values() if len(g) == 1)
-    milestone_count = sum(1 for it in items if it.issue_type in ("Milestone", "Key Theme", "KeyTheme"))
+    milestone_count = sum(1 for it in items if it.issue_type in ("Milestone", "Theme", "Theme"))
     in_delivery_count = sum(1 for it in items if it.phase == "in-delivery")
     shipped_count = sum(1 for it in items if it.phase == "shipped")
     open_count = sum(1 for it in items if it.state != "closed" and it.issue_type not in CONTAINER_TYPES)

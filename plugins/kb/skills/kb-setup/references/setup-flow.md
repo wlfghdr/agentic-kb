@@ -2,7 +2,7 @@
 
 Full walkthrough the skill follows on `/kb setup`.
 
-For the deterministic acceptance baseline used to verify real onboarding and team rollout quality, see [`docs/first-run-acceptance.md`](../../../../docs/first-run-acceptance.md).
+For the deterministic acceptance baseline used to verify real onboarding and team rollout quality, see [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
 
 ## Prerequisites
 
@@ -172,4 +172,4 @@ You're set up. Try:
   /kb end-day            → commit + wrap
 ```
 
-After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../docs/first-run-acceptance.md).
+After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).

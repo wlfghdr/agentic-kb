@@ -40,10 +40,10 @@ github-pages:
 
 # Brand logo for generated HTML overviews (dashboard.html, index.html).
 # Vendor-neutral default is `hexagon`. Adopters with their own brand can
-# set `logo: <name>` (built-in: hexagon, dynatrace, none) or supply
+# set `logo: <name>` (built-in: hexagon, none) or supply
 # `logo-file: path/to/logo.svg` (inlined into the generated HTML).
 brand:
-  logo: hexagon                         # hexagon | dynatrace | none
+  logo: hexagon                         # hexagon | none
   # logo-file: ""                       # optional path to a .svg file
 
 # Dashboard (command-center) generation — see scripts/generate-dashboard.py.

@@ -11,10 +11,10 @@
   ],
   "category": "productivity",
   "x-skills": [
+    "kb-journeys",
     "kb-management",
-    "kb-setup",
     "kb-roadmap",
-    "kb-journeys"
+    "kb-setup"
   ],
   "x-agents": [
     "kb-operator"

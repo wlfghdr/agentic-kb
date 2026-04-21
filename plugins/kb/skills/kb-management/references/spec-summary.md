@@ -28,8 +28,11 @@ my-kb/
 │   ├── foundation/          me, context, vmg, sources, stakeholders, naming
 │   ├── legacy/
 │   └── reports/             generated HTML
+├── _kb-ideas/
+│   ├── I-YYYY-MM-DD-slug.md
+│   └── archive/
 ├── _kb-decisions/
-│   ├── active/              D-YYYY-MM-DD-slug.md
+│   ├── D-YYYY-MM-DD-slug.md   active decisions at root
 │   └── archive/
 ├── _kb-tasks/
 │   ├── focus.md             max 6 items
@@ -37,7 +40,9 @@ my-kb/
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                 optional utility scripts
-└── _kb-workstreams/<name>.md
+├── _kb-workstreams/<name>.md
+├── index.html                   auto-generated artifact index
+└── dashboard.html               auto-generated command center
 ```
 
 ## Team KB layout

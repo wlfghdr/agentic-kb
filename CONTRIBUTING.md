@@ -31,7 +31,7 @@ Read:
 - [ ] Spec doc changelog updated (if a spec doc changed)
 - [ ] Root `CHANGELOG.md` updated under `## [Unreleased]`
 - [ ] `VERSION` bumped if the change is user-visible
-- [ ] `make check` passes locally (or CI green)
+- [ ] Local checks pass (or CI green)
 - [ ] No vendor-specific terms added to spec docs (see `scripts/check_consistency.py` guard list)
 
 ## Proposing Bigger Changes
