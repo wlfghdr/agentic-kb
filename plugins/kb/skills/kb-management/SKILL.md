@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.2.0
+version: 3.3.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -162,7 +162,7 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 |------|---------|--------------|
 | Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream; offer idea if novelty detected |
 | Review | `/kb review` | Process all pending items in `_kb-inputs/` |
-| Promote | `/kb promote [file]` | L1 → L2 (team KB's contributor `_kb-inputs/`) with safety pre-check |
+| Promote | `/kb promote [file]` | L1 → L2 intake + immediate L2 review for local team KBs: stage in the contributor `_kb-inputs/`, process in team context, archive under `_kb-inputs/digested/YYYY-MM/`, and leave the reviewed result in `_kb-references/` |
 | Promote org | `/kb promote org [file]` | L2 → L3 |
 | Publish | `/kb publish [file]` | L1/L2/L3 → L4 marketplace; packages as SKILL.md; opens PR |
 | Digest team | `/kb digest team` | Pull team changes since watermark; distill new findings; incorporate team VMG updates into personal `vmg.md` |
@@ -207,6 +207,27 @@ Keep output terse. The user reads it in a terminal/editor pane, not a full docum
 - **Never force-push or rebase** without explicit confirmation.
 - **Always inform before fetching external URLs.**
 
+## Promote semantics
+
+`/kb promote` is a composite applied mutation, not a mailbox drop.
+
+When promoting from L1 to a team KB that exists in the current workspace, the
+agent must:
+
+1. run the promotion safety check (team relevance, secrets/PII, audience fit),
+2. copy the source artifact into the target contributor `_kb-inputs/`,
+3. immediately switch to the destination team context and apply the L2 review
+  gate there,
+4. write the reviewed result to the contributor `_kb-references/` area,
+5. archive the staged intake under `_kb-inputs/digested/YYYY-MM/`, and
+6. log both the cross-layer intake and the review result in the team KB's
+  `.kb-log/`.
+
+Only stop after step 2 when the destination layer is unavailable locally,
+explicitly remote-only, or blocked by a concrete error. In those cases, say that
+the promote completed as an intake-only fallback and name the missing review
+step.
+
 ## Templates
 
 The templates this skill instantiates live in `templates/`:
@@ -235,5 +256,6 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | `/kb promote` now performs destination-layer review for local team KBs instead of stopping at the team inbox; version bumped to 3.3.0 | Team promote flow fix |
 | 2026-04-22 | Version aligned to 3.2.0 | Spec review |
 | 2026-04-20 | Made overview regeneration part of every state-mutating `/kb` operation and retained `/kb status --refresh-overviews` as a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

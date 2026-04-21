@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v3.2.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v3.3.0-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -73,7 +73,7 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb                        → status
 /kb [text/URL/path]        → capture + evaluate
 /kb review                 → process inputs/
-/kb promote [file]         → push to team KB
+/kb promote [file]         → promote to team KB and complete local team review
 /kb digest team            → pull team changes
 /kb idea [text]            → create an idea (seed)
 /kb develop [idea]         → sparring session on an idea
@@ -199,7 +199,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v3.2.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v3.3.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode) |

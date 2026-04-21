@@ -139,7 +139,7 @@ A team using `agentic-kb` seriously should agree on at least these norms:
 
 1. **One canonical personal KB per person.**
 2. **One shared team KB per actual working team.**
-3. **Promotions are reviewed before being treated as team truth.**
+3. **Promotions include a destination-layer review before being treated as team truth.**
 4. **Team decisions are not left without owners or dates.**
 5. **Conflicts are captured explicitly, not flattened away.**
 6. **Agents log what they changed.**

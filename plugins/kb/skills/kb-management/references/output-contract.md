@@ -53,7 +53,7 @@ Use when files or tracked state actually changed.
 Examples:
 - capture wrote a finding
 - digest created a digest finding
-- promote copied material into another layer
+- promote moved material across layers and completed the destination-layer review
 - decision opened or updated
 - task changed
 
@@ -95,6 +95,7 @@ Good examples:
 - `Checked personal KB status, read-only.`
 - `Proposed a team promotion candidate, no files changed.`
 - `Captured the article as a finding after fetching the URL.`
+- `Promoted a personal finding into the team KB and completed the team review.`
 - `Digested new team changes into the personal KB and updated VMG.`
 
 ### 2. Where it went
@@ -109,7 +110,7 @@ Good examples:
 
 - `Read alice-kb/.kb-config/layers.yaml and alice-kb/_kb-tasks/focus.md.`
 - `Wrote alice-kb/_kb-references/findings/2026-04-20-cache-paper.md.`
-- `Moved alice-kb/_kb-references/findings/... -> team-kb/alice/_kb-inputs/...`.
+- `Copied alice-kb/_kb-references/findings/... -> team-kb/alice/_kb-inputs/...; wrote team-kb/alice/_kb-references/findings/...; archived team-kb/alice/_kb-inputs/digested/YYYY-MM/...`.
 
 ### 3. Gate notes
 
@@ -188,12 +189,12 @@ Suggested next steps:
 ### Promote example
 
 ```text
-What I did: Promoted one personal finding to the team KB.
-Where it went: Moved alice-kb/_kb-references/findings/2026-04-20-cache-paper.md -> team-kb/alice/_kb-inputs/2026-04-20-cache-paper.md.
-Gate notes: Reused existing gate result, team-relevant, no secret or PII indicators detected.
+What I did: Promoted one personal finding to the team KB and completed the team-layer review.
+Where it went: Copied alice-kb/_kb-references/findings/2026-04-20-cache-paper.md -> team-kb/alice/_kb-inputs/2026-04-20-cache-paper.md; wrote team-kb/alice/_kb-references/findings/2026-04-20-cache-paper.md; archived team-kb/alice/_kb-inputs/digested/2026-04/2026-04-20-cache-paper.md.
+Gate notes: Reused the L1 gate for promotion safety, then applied the L2 review gate in team context; team-relevant, no secret or PII indicators detected.
 Suggested next steps:
-- Ask the team KB to digest the promoted finding.
 - Open a shared decision if the team needs alignment.
+- Cross-reference the new team finding via `/kb sync team` if the topic is already active.
 ```
 
 ### Digest example

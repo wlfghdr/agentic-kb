@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 3.2.0
+version: 3.3.0
 uses:
   - kb-management
   - kb-setup
@@ -178,4 +178,5 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Version aligned to 3.3.0 after the local-team `/kb promote` flow changed in `kb-management` | Team promote flow fix |
 | 2026-04-20 | Replaced the planned/manual overview-refresh split with the shipped always-current regeneration contract and kept `/kb status --refresh-overviews` as the manual rebuild escape hatch | v3.2.0 live-overview refresh |

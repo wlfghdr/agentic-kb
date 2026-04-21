@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures IDE harnesses (VS Code Copilot, Claude Code, OpenCode), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 3.2.0
+version: 3.3.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -79,7 +79,7 @@ Ask each block in order. Stop and wait after each block for the user's answer be
    *→ Shared decision logs and cross-contributor references. Creates your contributor directory (`<name>/_kb-inputs/`, `<name>/_kb-references/`) and team-level `_kb-decisions/`, `_kb-tasks/`.*
 7. **Org-Unit KB (L3)** — optional:
    - Onboard existing / skip.
-   *→ Links your workspace to the org-wide aggregation layer. Enables `/kb promote` to push mature content upstream.*
+   *→ Links your workspace to the org-wide aggregation layer. Enables `/kb promote` to push mature content upstream and, for local team KBs, complete the team-layer intake review in the same operation.*
 8. **Marketplace (L4)** — optional:
    - Install from marketplace (recommended for users).
    - Clone for contributing (for skill authors).
@@ -276,6 +276,19 @@ Running `/kb setup` a second time:
 - Never creates a remote repo without asking.
 - Never pushes to a remote without asking.
 
+## Promote handoff expectation
+
+Scaffolded team KBs must teach the same promote contract as `kb-management`:
+
+- L1 → L2 promotion is not mailbox-only.
+- If the destination team KB is available locally, `/kb promote` stages the
+   artifact in `<contributor>/_kb-inputs/`, performs the contributor-local team
+   review immediately, archives the staged intake under `digested/YYYY-MM/`, and
+   leaves the durable result in `<contributor>/_kb-references/`.
+- Team READMEs and prompts must describe `/kb review` as the command for
+   material created directly inside the team repo, not as a mandatory second step
+   after every L1 promotion.
+
 ## References (load on demand)
 
 - `references/setup-flow.md` — full step-by-step walkthrough with example output.
@@ -332,3 +345,10 @@ grep -rn '{{[A-Z_0-9]*}}' <workspace-root> || true
 ```
 
 A zero-hit run is the gate for Step 8.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-22 | Team-KB scaffolding now explains that `/kb promote` completes local team intake review during the same operation; version bumped to 3.3.0 | Team promote flow fix |
+| 2026-04-22 | Version aligned to 3.2.0 | Spec review |

@@ -19,6 +19,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Changed
+
+- **`/kb promote` for local team KBs** — promotion is now a composite operation: stage the intake in the target contributor `_kb-inputs/`, run the L2 review immediately in team context, archive the staged input under `_kb-inputs/digested/YYYY-MM/`, and leave the reviewed result in `_kb-references/`. Updated `kb-management`, its command/output docs, the team-scaffold template, and collaboration guidance so promote no longer teaches a mandatory second manual `/kb review` after every L1 promotion.
+
 ### Fixed
 
 - **Vendor-neutrality sweep** — removed all vendor-specific terms from scripts, templates, and plugin skill docs:
