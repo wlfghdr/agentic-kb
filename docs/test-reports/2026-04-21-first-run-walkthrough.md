@@ -98,7 +98,7 @@ Tested by creating two obvious team-relevant findings
 | `/kb status` / dashboard | Focus parser counts `(none)` under `## Waiting` as a task; renders HTML-comment metadata raw; conflates sections. | #23 |
 | Root `index.html` | Only indexes HTML artifacts — findings, topics, ideas, decisions invisible on the public face. | #21 |
 | Dashboard panels | No topics panel — durable accreting knowledge never shows up. | #22 |
-| Three of five "live overviews" in rule 9 have no generator (`inventory.html`, `open-decisions.html`, `open-tasks.html`). | #18 |
+| Rule-9 live overviews | Three of five have no generator (`inventory.html`, `open-decisions.html`, `open-tasks.html`). | #18 |
 | Evaluation gate | Q5 has inverted polarity vs Q1–Q4; examples' ✅/❌ counts don't add up to the reported score. | #30 |
 
 ---
