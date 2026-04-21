@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v3.0.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v3.2.0-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -66,9 +66,10 @@ L1 Personal  ──promote──▶  L2 Team  ──promote──▶  L3 Org-Uni
 
 Only **L1** is required. Higher layers are optional and declared in the user's config.
 
-There is exactly one user-facing command: **`/kb`**. The agent infers the layer and action from context.
+There is exactly one user-facing command: **`/kb`**. The core plugin ships stable knowledge-ops flows, and optional draft skills extend the same command with roadmap and journey subcommands when adopters opt in via config.
 
 ```
+# Stable core flows
 /kb                        → status
 /kb [text/URL/path]        → capture + evaluate
 /kb review                 → process inputs/
@@ -82,6 +83,10 @@ There is exactly one user-facing command: **`/kb`**. The agent infers the layer 
 /kb end-week               → Friday 15:00 summary
 /kb present [topic]        → versioned HTML presentation (light + dark)
 /kb setup                  → interactive onboarding
+
+# Optional draft flows (installed with the plugin, not scaffolded by default)
+/kb roadmap                → reconcile plan truth vs delivery reality
+/kb journeys               → author and render journey specs + mocks
 ```
 
 ### The evaluation gate
@@ -97,6 +102,8 @@ Never silent. Every accept and reject carries a rationale.
 ## Getting started
 
 Connect this repo as a marketplace in your IDE, then run `/kb setup` — that's it.
+
+Marketplace install gives you the core plugin (`kb-management`, `kb-setup`, `kb-operator`) plus two opt-in draft skills (`kb-roadmap`, `kb-journeys`). The draft skills stay dormant until their config blocks are added to `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`.
 
 ### Claude Code
 
@@ -147,19 +154,23 @@ scripts/install --target all --global        # all harnesses
 ```
 agentic-kb/
 ├── README.md
-├── plugin.json               # VS Code Agent Plugin manifest
+├── plugin.json               # root marketplace manifest
 ├── .claude-plugin/
 │   └── marketplace.json      # Claude Code plugin marketplace manifest
-├── skills/                   # cross-agent skills (source of truth)
-│   ├── kb-management/
-│   └── kb-setup/
-├── agents/
-│   └── kb-operator.md
-├── plugins/                  # generated from marketplace.json
+├── plugins/
 │   └── kb/
+│       ├── plugin.json       # per-plugin manifest
+│       ├── skills/           # canonical skill source tree
+│       │   ├── kb-management/
+│       │   ├── kb-setup/
+│       │   ├── kb-roadmap/
+│       │   └── kb-journeys/
+│       └── agents/
+│           └── kb-operator.md
 ├── docs/
-│   ├── concept/              # principles, architecture, memory model, decisions, flows, …
-│   ├── spec/                 # workspace layout, commands, rituals, marketplace, harnesses, HTML artifacts
+│   ├── REFERENCE.md          # implementation-critical structure and contracts
+│   ├── collaboration.md      # shared-workspace human collaboration contract
+│   ├── first-run-acceptance.md
 │   ├── examples/
 │   ├── roadmap.md
 │   └── glossary.md
@@ -188,10 +199,9 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Concept | Stable (v2.0) |
-| Spec | Stable (v2.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
-| Reference skills (`kb-management`, `kb-setup`) | Scaffolded |
-| Reference agent (`kb-operator`) | Scaffolded |
+| Framework spec | Stable (v3.2.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
+| Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
 

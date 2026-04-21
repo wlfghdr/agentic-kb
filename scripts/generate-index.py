@@ -517,9 +517,18 @@ def drop_referenced_subpages(artifacts: list[Artifact],
 # ── HTML Generation ────────────────────────────────────────────────────
 
 def generate_html(artifacts: list[Artifact], title: str, description: str,
-                  now: str, theme: dict, index_cfg: dict) -> str:
+                  now: str, theme: dict, index_cfg: dict,
+                  has_dashboard: bool = False) -> str:
     dark = theme['dark']
     light = theme['light']
+
+    dashboard_nav = (
+        '  <nav class="top-nav">\n'
+        '    <a href="dashboard.html" class="nav-dashboard">'
+        '&rarr; Dashboard &mdash; focus, ideas, decisions, tasks</a>\n'
+        '  </nav>'
+        if has_dashboard else ''
+    )
 
     # ── Staleness ────────────────────────────────────────────────────
     stale_days = int(index_cfg.get('stale_after_days', 14))
@@ -840,6 +849,21 @@ h2 {{
   text-transform: uppercase; letter-spacing: 0.06em;
 }}
 @media (max-width: 600px) {{ .stats {{ flex-wrap: wrap; gap: 1rem; }} }}
+
+/* Top nav (dashboard link) */
+.top-nav {{
+  display: flex; gap: 0.6rem; margin: 0.75rem 0 1.25rem; flex-wrap: wrap;
+}}
+.top-nav a {{
+  font-size: 0.85rem; color: var(--accent); text-decoration: none;
+  padding: 0.4rem 0.85rem; border: 1px solid var(--border);
+  background: var(--bg-card); border-radius: 999px;
+  font-weight: 500;
+}}
+.top-nav a:hover {{ border-color: var(--accent); background: var(--accent-bg); }}
+.top-nav a.nav-dashboard {{
+  border-color: var(--accent); background: var(--accent-bg);
+}}
 </style>
 </head>
 <body>
@@ -858,6 +882,8 @@ h2 {{
     </div>
   </div>
   <p class="watermark">latest &middot; {now} &middot; {len(artifacts)} artifact{"s" if len(artifacts) != 1 else ""}</p>
+
+{dashboard_nav}
 
   <div class="stats">
     <div class="stat"><div class="stat-value">{len(artifacts)}</div><div class="stat-label">Total</div></div>
@@ -903,7 +929,9 @@ def main() -> None:
     subpage_dropped = 0
     if index_cfg.get('drop_referenced_subpages', True):
         artifacts, subpage_dropped = drop_referenced_subpages(artifacts, repo_root)
-    out = generate_html(artifacts, title, args.description, now, theme, index_cfg)
+    has_dashboard = (repo_root / 'dashboard.html').exists()
+    out = generate_html(artifacts, title, args.description, now, theme, index_cfg,
+                        has_dashboard=has_dashboard)
 
     outpath = repo_root / args.output
     outpath.write_text(out, encoding='utf-8')

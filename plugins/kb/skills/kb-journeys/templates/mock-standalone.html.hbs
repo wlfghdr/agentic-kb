@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="kb-journeys v{{skill_version}}">
+  <title>{{mock_title}} · Mock</title>
+  <link rel="stylesheet" href="../shared.css">
+  <style>
+    body { padding: 32px 16px 64px; }
+    .mock-standalone-bar {
+      max-width: 1100px; margin: 0 auto 18px; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .mock-standalone-bar .crumbs { font-size: 0.82rem; color: var(--text-dim); }
+    .mock-standalone-bar .crumbs a { color: var(--accent-2); text-decoration: none; }
+    .mock-standalone-bar .crumbs a:hover { text-decoration: underline; }
+    .mock-standalone-bar .title { font-weight: 600; color: var(--text); }
+    .mock-standalone-wrap { max-width: 1100px; margin: 0 auto; }
+    .mock-standalone-wrap .mockup-block { margin: 0; }
+  </style>
+  {{{mock_local_styles}}}
+</head>
+<body>
+  <div class="mock-standalone-bar">
+    <div class="crumbs">
+      <a href="../index.html">Overview</a> ·
+      <a href="../{{journey_href}}">{{journey_label}}</a> ·
+      <span class="title">{{mock_title}}</span>
+    </div>
+    <a class="back-link" href="../{{journey_href}}">← Back to journey step</a>
+  </div>
+  <div class="mock-standalone-wrap">
+    {{{mock_body_html}}}
+  </div>
+  {{{mock_local_scripts}}}
+</body>
+</html>

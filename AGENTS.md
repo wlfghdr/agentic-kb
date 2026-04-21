@@ -52,7 +52,7 @@ When in doubt, add a section rather than rewrite one. The changelog makes intent
 - `docs/examples/` — illustrative walkthroughs. Not normative.
 - `docs/roadmap.md` — open items, explicitly unresolved.
 - `docs/glossary.md` — authoritative terms.
-- `skills/*/SKILL.md` + `agents/*.md` — the behavioral spec. These ARE the spec.
+- `plugins/kb/skills/*/SKILL.md` + `plugins/kb/agents/*.md` — the behavioral spec. These ARE the spec.
 
 The skills and agent files are the source of truth for behavior. `REFERENCE.md` is the source of truth for structure and formats.
 
@@ -66,11 +66,12 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 
 1. Read this file.
 2. Read [README.md](README.md).
-3. Identify which docs your change touches (`docs/REFERENCE.md`, skills, or agent).
-4. Draft the change.
-5. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
-6. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
-7. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
+3. Read [docs/collaboration.md](docs/collaboration.md) if the change affects shared layers, human handoffs, or multi-user behavior.
+4. Identify which docs your change touches (`docs/REFERENCE.md`, plugin skill docs, or agent docs).
+5. Draft the change.
+6. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
+7. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+8. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
 
 ---
 
@@ -78,5 +79,6 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Updated behavioral-spec paths to `plugins/kb/` and added the collaboration guide to the mandatory shared-workspace reading list | Doc drift review |
 | 2026-04-18 | Initial file | Spec bootstrapping |
 | 2026-04-18 | Added blank lines around `### N.` rule headings and rule 3's bullet list (markdownlint MD022/MD032); no semantic change | CI fix |

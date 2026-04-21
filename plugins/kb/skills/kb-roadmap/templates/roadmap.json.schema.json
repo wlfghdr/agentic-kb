@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wlfghdr/agentic-kb/plugins/kb/skills/kb-roadmap/templates/roadmap.json.schema.json",
+  "title": "kb-roadmap JSON sidecar",
+  "type": "object",
+  "required": ["version", "generated_at", "scope", "timeframe", "plan_sources", "delivery_sources", "correlations", "mismatches", "counts"],
+  "properties": {
+    "version": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "scope": { "type": "string" },
+    "timeframe": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["week", "month", "quarter", "since", "range"] },
+        "since": { "type": "string", "format": "date" },
+        "until": { "type": "string", "format": "date" }
+      }
+    },
+    "plan_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "adapter", "items"],
+        "properties": {
+          "name": { "type": "string" },
+          "adapter": { "type": "string" },
+          "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+        }
+      }
+    },
+    "delivery_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "adapter", "items"],
+        "properties": {
+          "name": { "type": "string" },
+          "adapter": { "type": "string" },
+          "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+        }
+      }
+    },
+    "correlations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["plan_id", "delivery_id", "tier", "signal", "confidence"],
+        "properties": {
+          "plan_id": { "type": "string" },
+          "delivery_id": { "type": "string" },
+          "tier": { "type": "integer", "minimum": 1, "maximum": 4 },
+          "signal": { "type": "string" },
+          "confidence": { "enum": ["high", "medium", "speculative"] },
+          "proposed": { "type": "boolean" },
+          "rationale": { "type": ["string", "null"] },
+          "reviewed_by": { "type": ["string", "null"] },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "mismatches": {
+      "type": "object",
+      "properties": {
+        "delivered-unplanned": { "type": "array" },
+        "planned-undelivered": { "type": "array" },
+        "traceability-gap": { "type": "array" },
+        "stalled-in-progress": { "type": "array" }
+      }
+    },
+    "sections": {
+      "type": "object",
+      "properties": {
+        "A": { "type": "object" },
+        "B": { "type": "object" },
+        "C": { "type": "object" },
+        "D": { "type": "object" },
+        "E": { "type": "object" },
+        "F": { "type": "object" },
+        "G": { "type": "object" }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "plan_items": { "type": "integer" },
+        "delivery_items": { "type": "integer" },
+        "matches_by_tier": {
+          "type": "object",
+          "properties": {
+            "1": { "type": "integer" },
+            "2": { "type": "integer" },
+            "3": { "type": "integer" },
+            "4": { "type": "integer" }
+          }
+        },
+        "matches_total": { "type": "integer" },
+        "mismatches_total": { "type": "integer" }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "required": ["kind", "id", "title"],
+      "properties": {
+        "kind": { "enum": ["plan", "delivery"] },
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "assignee": { "type": ["string", "null"] },
+        "labels": { "type": "array", "items": { "type": "string" } },
+        "created_at": { "type": ["string", "null"], "format": "date-time" },
+        "updated_at": { "type": ["string", "null"], "format": "date-time" },
+        "closed_at": { "type": ["string", "null"], "format": "date-time" },
+        "hierarchy": { "type": "array", "items": { "type": "string" } },
+        "source": { "type": "string" },
+        "url": { "type": ["string", "null"], "format": "uri" }
+      }
+    }
+  }
+}

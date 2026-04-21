@@ -95,9 +95,9 @@ Full command reference: `references/command-reference.md`.
 
 8. **Presentation-worthy detection.** When a TODO contains *present, pitch, demo, share, slide, meeting prep*, add 🎤 and offer `/kb present`.
 
-9. **Auto-regenerate live overviews after every mutation.** After any state-mutating operation (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, `present`, `report`, `end-day`, `end-week`, and automation-loop writes), regenerate `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` before the response/commit completes. Treat these files as part of the same mutation, not as a later optional step.
+9. **Auto-regenerate live overviews after every mutation.** After any state-mutating operation (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, `present`, `report`, `end-day`, `end-week`, and automation-loop writes), regenerate `inventory.html`, `open-decisions.html`, `open-tasks.html`, `dashboard.html`, and the root artifact `index.html` before the response/commit completes. Treat these files as part of the same mutation, not as a later optional step.
 
-10. **Regenerate root `index.html`** whenever a mutation creates or modifies an HTML artifact, including the live overview refresh above. Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."`. `/kb status --refresh-overviews` remains available as a manual repair/rebuild trigger, but freshness no longer depends on it. The index serves as the GitHub Pages landing page.
+10. **Regenerate root `index.html` and `dashboard.html`** whenever a mutation creates or modifies KB state, including the live overview refresh above. Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."` and `python3 scripts/generate-dashboard.py REPO_ROOT --title "..." --description "..."` (or the `.kb-scripts/` copies). `/kb status --refresh-overviews` remains available as a manual repair/rebuild trigger, but freshness no longer depends on it. `index.html` serves as the GitHub Pages landing page (artifact inventory); `dashboard.html` is the owner-facing command center (focus, ideas, decisions, inputs, recent findings/digests/reports, workstreams, opt-in GitHub/Jira).
 
 11. **Task handling discipline — apply on every `/kb` invocation, not only `/kb task`.** Tasks are first-class and the user's most fragile surface. Rules:
 
@@ -177,7 +177,7 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Present | `/kb present [topic/file]` | HTML presentation — see `references/html-artifacts.md` |
 | Report | `/kb report [scope]` | HTML report (personal / team / org) |
 | Browse / Install | `/kb browse` / `/kb install [skill]` | Marketplace queries |
-| Audit | `/kb audit` | Contradictions, gaps, staleness |
+| Audit | `/kb audit` | Contradictions, gaps, staleness. Runs KB-wide checks and delegates scope-specific audits to `kb-roadmap` (mappings · timeline · scope · structural) and `kb-journeys` (structure · citations · coverage) when those skills are installed. See `references/audit.md`. |
 | Status | `/kb status` | Pending inputs, recent activity, task counts, goal status |
 
 ## Output contract

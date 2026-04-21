@@ -1,0 +1,54 @@
+# {{tier}}.{{phase}} — {{title}}
+
+> **Sub-Journey**: {{summary}}
+> **Tier**: {{tier_label}}
+> **Target duration**: {{target_duration}}
+> **Version**: {{version}} | **Last updated**: {{last_updated}}
+
+---
+
+## Entry Conditions
+
+- {{entry_condition_1}}
+- {{entry_condition_2}}
+
+## Exit Conditions
+
+- {{exit_condition_1}}
+- {{exit_condition_2}}
+
+## Interfaces
+
+| Direction | Sub-Journey | What |
+|-----------|-------------|------|
+| OUT → | `{{out_slug}}` | {{out_summary}} |
+| IN ← | `{{in_slug}}` | {{in_summary}} |
+
+---
+
+## Flow
+
+### Step 1: {{step1_title}} · `J{{tier}}.{{phase}}-S1` · `[{{step1_actor}}]`
+
+{{step1_description}}
+
+#### Readiness
+<span class="status-chip feasible">Green</span> — {{step1_readiness_rationale}}
+
+#### Mock
+<!-- mock-begin: {{step1_mock_slug}} -->
+<div class="mockup-block" data-mock="{{step1_mock_slug}}">
+  <div class="mockup-header">
+    <span class="mockup-title">{{step1_mock_title}}</span>
+  </div>
+  <div class="mockup-body">
+    <!-- mock content -->
+  </div>
+</div>
+<!-- mock-end: {{step1_mock_slug}} -->
+
+#### Alternates
+- **If {{step1_failure_condition}}** → {{step1_failure_route}}
+
+<!-- status: drafted @ {{now_iso}} -->
+<!-- authored-by: ideate @ {{now_iso}} -->

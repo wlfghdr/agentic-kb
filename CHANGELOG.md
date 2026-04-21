@@ -13,7 +13,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 | **MINOR** | New sections, new spec rules, new commands — non-breaking additions |
 | **MAJOR** | Breaking changes to the directory layout, command surface, or file formats that invalidate existing implementations |
 
-**Versioning**: the root-level `VERSION` file and this `CHANGELOG.md` track the aggregate framework version. The behavioral spec lives in `skills/*/SKILL.md` and `agents/*.md`; the structural reference is `docs/REFERENCE.md`.
+**Versioning**: the root-level `VERSION` file and this `CHANGELOG.md` track the aggregate framework version. The behavioral spec lives in `plugins/kb/skills/*/SKILL.md` and `plugins/kb/agents/*.md`; the structural reference is `docs/REFERENCE.md`.
 
 ---
 
@@ -23,11 +23,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 - **Simulated-workspace regression coverage for `generate-index.py`** (`scripts/test_generate_index.py`, `.github/workflows/validate.yml`) — CI now generates a root artifact index inside a temporary KB and verifies pinned-category ordering, version-family deduplication, referenced-subpage hiding, and dual-theme output.
 - **Automatic live-overview regeneration contract** (`plugins/kb/skills/kb-management/SKILL.md`, `plugins/kb/skills/kb-management/references/html-artifacts.md`, `plugins/kb/agents/kb-operator.md`, `plugins/kb/skills/kb-setup/templates/kb.prompt.md`) — overviews are now regenerated as part of every state-mutating `/kb` operation instead of being treated as a later optional refresh.
+- **Top-level coverage for draft primitives** (`README.md`, `docs/REFERENCE.md`, `docs/glossary.md`, `AGENTS.md`, `CONTRIBUTING.md`) — the public spec now explicitly documents the optional `kb-roadmap` and `kb-journeys` skills, their `_kb-roadmaps/` and `_kb-journeys/` directories, and the current `plugins/kb/` source layout.
 
 ### Fixed
 
 - **`generate-index.py` self-containment** — removed the external Google Fonts import so generated root artifact indexes stay fully self-contained and comply with the HTML artifact contract.
 - **Stale manual-refresh guidance** (`docs/examples/first-hour.md`, `plugins/kb/skills/kb-management/references/command-reference.md`, `docs/roadmap.md`) — walkthroughs, triage rules, and roadmap status now match the shipped always-current overview behavior.
+- **Manifest version drift** (`plugin.json`, `plugins/kb/plugin.json`, `.claude-plugin/marketplace.json`) — root and per-plugin marketplace metadata now match the current framework version (`3.2.0`) and describe the shipped draft extensions accurately.
+- **`kb-roadmap` config-path drift** (`plugins/kb/skills/kb-roadmap/scripts/kb_roadmap.py`) — the pilot now reads `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, with legacy fallback to the retired flat config files.
 
 ## [3.1.0] — 2026-04-20
 

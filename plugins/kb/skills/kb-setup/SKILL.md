@@ -91,8 +91,46 @@ Ask each block in order. Stop and wait after each block for the user's answer be
     *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`). Multiple selections create cross-harness compatibility.*
 11. **Integrations**: marketplace-available MCP servers / APIs to wire up.
     *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
+
+11b. **Roadmap trackers** (only if `kb-roadmap` is installed or selected in Q8):
+    For each workstream declared in Q9, ask:
+    - *"Where do plans live for `<workstream>`?"* — options: GitHub issues, Jira, Linear, markdown export (jira-sync, etc.), skip.
+    - *"Where does delivery happen for `<workstream>`?"* — option: one or more git repo paths.
+    - *"What search parameters identify items in scope?"* — free-text for JQL / GitHub issue filter / label set / component, with examples per tracker.
+    - *"Should the skill be allowed to write back (comments, status transitions, links)?"* — default no; if yes, which capabilities (`write-comments`, `write-status`, `write-link`, `write-item`) and which env var holds the auth token.
+    - *"Opt in to continuous config tuning?"* — default yes. Skill produces a post-run digest of zero-match filters, low-match filters, and suspected noise; user walks them via `/kb roadmap tune`.
+
+    *→ Writes `.kb-config/layers.yaml roadmap.issue-trackers[]` + `roadmap.scopes.<workstream>.trackers[]` with the declared search params. Also writes `roadmap.tune.enabled: true|false`. These values are the starting point; the tune command refines them over time.*
+
+11c. **Import / export tools** (general, not scoped to a single primitive):
+    - *"Which tools should the agent use to export content out of your trackers for offline processing?"* — options: native API (needs auth env var), CLI tool already on PATH (e.g. a sync CLI), pre-generated markdown dump, custom script. Multi-select.
+    - *"Which tools can the agent call to reference a ticket from inside a KB file?"* — options: link only (URL), link + fetch summary on demand (requires read capability), deep-embed (mirror ticket body into the KB file; refresh on demand).
+    - *"Ticket-reference pattern"* — free-text regex for matching ticket keys in prose (e.g. `[A-Z]+-\d+` for Jira, `#\d+` for GitHub issues, `<slug>-\d+` for Linear). Default: detect from Q11b tracker selections.
+    - *"Branch / commit trailer convention"* — does your team encode ticket keys in branch names (`feat/<KEY>`, `feat/#<n>`) or commit trailers (`Refs: <KEY>`)? Both? Neither? Drives the correlation ladder's tier-2 heuristic.
+    *→ Writes `.kb-config/layers.yaml integrations.tools[]` + `integrations.reference-patterns[]` + `integrations.correlation-hints.branch-patterns`. Applies to roadmap + journeys + any future primitive needing tracker correlation.*
+
+11d. **Journeys** (only if `kb-journeys` is installed or selected in Q8):
+    - *"Do you want to author user/customer/product journeys in this KB?"* — yes/no.
+    - If yes:
+      - *"Where should journey source markdown live?"* — options: inside this KB under `_kb-journeys/`, or in an external repo path (agent reads, writes HTML back into KB).
+      - *"Tier taxonomy"* — default `Tier 1 / Tier 2 / Tier 3` or custom list of (key, label) pairs.
+      - *"Readiness chip taxonomy"* — default `Green / Amber / Red`, or custom.
+      - *"Actor vocabulary"* — default `CLI, WEB UI, AGENT, SYSTEM, PERSONA`, or custom list.
+      - *"Link journeys to a roadmap scope?"* — if `kb-roadmap` is also enabled, offer to bind journeys to one of the declared roadmap scopes for bidirectional traceability.
+    *→ Writes `.kb-config/layers.yaml journeys:` block with `source-dir`, `output-dir`, `tiers`, `readiness-levels`, `actors`, optional `roadmap-link.scope`. Scaffolds `_kb-journeys/` folder with a starter `overview.md` and an empty `html/` target. Binds journey HTML generation to the same brand tokens as presentations (Q13) — no separate brand choice.*
 12. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
-    *→ Controls `.kb-config/automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
+    *→Surfaces affected by this single choice** (the token file is reused across every HTML artifact — never re-pick per surface):
+
+    | Surface | Template bound | Config key |
+    |---------|---------------|-----------|
+    | KB root index + reports | `_kb-references/templates/<brand>-presentation.html` | `styling.reference-file` |
+    | Presentations | same | same |
+    | Roadmap HTML (`kb-roadmap`) | `kb-roadmap/templates/roadmap.html.hbs` + adopter's tokens CSS | `html-template.base` + `html-template.tokens` in `.kb-config/artifacts.yaml` |
+    | Journey HTML + mocks (`kb-journeys`, if enabled in Q11d) | `kb-journeys/templates/journey.html.hbs` + `kb-journeys/templates/shared.css.hbs` + adopter's tokens CSS | `journeys-template.base` + `journeys-template.tokens` in `.kb-config/artifacts.yaml` |
+
+    For (b) website and (c) template paths, the skill extracts the adopter's `:root` / `[data-theme="dark"]` / `[data-theme="light"]` token blocks into a **single brand tokens CSS file** (default location `_kb-references/templates/brand/tokens.css`) and points **all four** surface configs at it. This ensures presentations, reports, roadmaps, and journeys share one source of brand truth.
+
+    ** Controls `.kb-config/automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
 13. **HTML artifact styling** — corporate design is mandatory, not optional:
     - *"For generated presentations and reports, which corporate design should the agent use?"*
     - (a) **Default built-in template** — vendor-neutral accessible tokens shipped with agentic-kb.
@@ -113,6 +151,8 @@ Ask each block in order. Stop and wait after each block for the user's answer be
     1. Dark-theme token block (`:root`, `[data-theme="dark"]`)
     2. Light-theme token block (`[data-theme="light"]`)
     3. `--font-family`
+    5. **If journeys are enabled (Q11d)**: render the starter `_kb-journeys/overview.md` via `kb-journeys render --dry-run`; confirm the generated `shared.css` `:root` block contains the same primary brand hex as the presentation template. If not, the token extraction missed a surface — abort Step 3 and rerun.
+    6. **If roadmap is enabled (Q11b)**: render a no-op `/kb roadmap <default-scope>` to verify the roadmap HTML uses the same tokens. Zero hex drift across the three surfaces is the exit criterion.
     4. `.brand-logo` inline `<svg>` — the small signet in the header
     5. `.bg-brand` inline `<svg>` — the large visible brand mark on the cover slide
 

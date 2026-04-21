@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="kb-journeys v{{skill_version}}">
+  <meta name="date" content="{{generated_at}}">
+  <title>{{journey_title}}</title>
+  <link rel="stylesheet" href="shared.css">
+  {{#if logo_light}}<link rel="icon" href="{{logo_light}}">{{/if}}
+</head>
+<body>
+  <nav class="nav" aria-label="Journey navigation">
+    <a href="index.html" class="nav-home">Overview</a>
+    {{#each nav_entries}}
+    <a class="{{tier_class}}" href="{{href}}">{{label}}</a>
+    {{/each}}
+    <button class="theme-toggle" aria-label="Toggle theme" data-action="toggle-theme">☾</button>
+  </nav>
+
+  <div class="view-mode-bar">
+    <span class="view-mode-label">View mode</span>
+    <div class="view-mode-controls" role="tablist">
+      <button class="view-mode-btn" data-view-target="descriptions" type="button">Only description</button>
+      <button class="view-mode-btn" data-view-target="mocks" type="button">Only mocks</button>
+      <button class="view-mode-btn active" data-view-target="both" type="button">Show both</button>
+    </div>
+  </div>
+
+  <header class="journey-header">
+    {{#if logo_light}}
+    <img class="brand-logo brand-logo-light" src="{{logo_light}}" alt="">
+    {{/if}}
+    {{#if logo_dark}}
+    <img class="brand-logo brand-logo-dark" src="{{logo_dark}}" alt="">
+    {{/if}}
+    <h1>{{journey_title}}</h1>
+    <div class="subtitle">{{subtitle}}</div>
+    <div class="meta">
+      <span>Tier: {{tier_label}}</span> ·
+      <span>Target duration: {{target_duration}}</span> ·
+      <span class="timestamp">Updated {{last_updated}}</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="journey-readiness {{readiness_class}}">
+      <span class="status-chip {{readiness_chip}}">{{readiness_label}}</span>
+      <p>{{readiness_rationale}}</p>
+    </section>
+
+    <section class="journey-summary" aria-label="Step summary">
+      <h2>Journey summary</h2>
+      <ol class="step-index">
+        {{#each steps}}
+        <li>
+          <code class="sid">{{id}}</code>
+          <a class="stitle" href="#{{id}}">{{title}}</a>
+          <span class="actor-chip">{{actor}}</span>
+        </li>
+        {{/each}}
+      </ol>
+    </section>
+
+    <section class="journey-flow" aria-label="Flow">
+      {{{rendered_flow_html}}}
+    </section>
+
+    <section class="journey-interfaces" aria-label="Interfaces">
+      <h2>Interfaces</h2>
+      {{{rendered_interfaces_html}}}
+    </section>
+  </main>
+
+  <footer class="journey-footer">
+    <span>kb-journeys v{{skill_version}}</span> ·
+    <span>Generated {{generated_at}}</span>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var saved = localStorage.getItem('kb-journeys-theme');
+      if (saved) root.setAttribute('data-theme', saved);
+      document.querySelectorAll('[data-action="toggle-theme"]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var cur = root.getAttribute('data-theme') || 'auto';
+          var next = cur === 'dark' ? 'light' : cur === 'light' ? 'auto' : 'dark';
+          root.setAttribute('data-theme', next);
+          localStorage.setItem('kb-journeys-theme', next);
+        });
+      });
+      var modeKey = 'kb-journeys-view-mode';
+      var savedMode = localStorage.getItem(modeKey);
+      if (savedMode) {
+        document.body.setAttribute('data-view-mode', savedMode);
+        document.querySelectorAll('.view-mode-btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.viewTarget === savedMode);
+        });
+      }
+      document.querySelectorAll('.view-mode-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var v = btn.dataset.viewTarget;
+          document.body.setAttribute('data-view-mode', v);
+          localStorage.setItem(modeKey, v);
+          document.querySelectorAll('.view-mode-btn').forEach(function (b) {
+            b.classList.toggle('active', b === btn);
+          });
+        });
+      });
+    })();
+  </script>
+  {{#if include_terminal_anim}}
+  <script src="shared-terminal-anim.js"></script>
+  {{/if}}
+</body>
+</html>

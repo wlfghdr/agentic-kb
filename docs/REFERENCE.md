@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.0
+> **Version:** 3.0.1
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -13,8 +13,8 @@ Implementation-critical details for building agentic-kb compatible tools. For th
 │  L1 Personal │──►│   L2 Team    │──►│  L3 Org-Unit  │──►│L4 Marketplace│◄──│ L5 Company  │
 │  (required)  │   │  (optional)  │   │   (optional)  │   │  (optional)  │   │ (top-down)  │
 │              │   │  (multiple)  │   │               │   │              │   │             │
-│ _kb-inputs/  │   │<you>/_kb-inp │   │<team>/_kb-inp │   │ skills/<name>│   │ OKRs, MCG   │
-│ _kb-referenc/│   │<you>/_kb-ref │   │<team>/_kb-ref │   │ agents/<name>│   │ strategy    │
+│ _kb-inputs/  │   │<you>/_kb-inp │   │<team>/_kb-inp │   │ plugins/<nm> │   │ OKRs, MCG   │
+│ _kb-referenc/│   │<you>/_kb-ref │   │<team>/_kb-ref │   │              │   │ strategy    │
 │ _kb-ideas/   │   │ _kb-decision/│   │ _kb-decision/ │   │ plugins/<nm> │   │ directives  │
 │ _kb-decision/│   │ _kb-tasks/   │   │ _kb-workstrm/ │   │              │   │             │
 │ _kb-tasks/   │   │ .kb-log/     │   │ _kb-tasks/    │   │              │   │             │
@@ -28,6 +28,7 @@ Implementation-critical details for building agentic-kb compatible tools. For th
 - VMG (vision/mission/goals) bleeds **top-down** during digest: L3 org VMG → L2 team VMG → L1 personal VMG. Each layer's `_kb-references/foundation/vmg.md` is optional; the personal KB's is the merged view.
 - L5 is top-down only — no promotions accepted.
 - Every upward flow passes the evaluation gate.
+- Optional draft primitives extend L1 with `_kb-roadmaps/` and `_kb-journeys/` when adopters opt in. They remain outside the default scaffold until configured.
 
 ---
 
@@ -107,7 +108,9 @@ my-kb/
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log
 ├── .kb-scripts/                    # optional utility scripts
-└── _kb-workstreams/<name>.md
+├── _kb-workstreams/<name>.md
+├── _kb-roadmaps/                   # optional; `kb-roadmap` output root
+└── _kb-journeys/                   # optional; `kb-journeys` source + HTML root
 ```
 
 ### Team KB (L2)
@@ -147,6 +150,8 @@ org-unit-kb/
 | Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md` |
 
 Note: `.kb-config/automation.yaml` and `.kb-config/artifacts.yaml` are optional — defaults apply when absent.
+
+Optional draft directories: `_kb-roadmaps/` is created only when `kb-roadmap` is configured; `_kb-journeys/` is created only when `kb-journeys` is configured.
 
 ---
 
@@ -338,6 +343,15 @@ styling:
     format: "v{version} · {date}"
 ```
 
+  ### Optional draft-skill config blocks
+
+  The same config files also host optional draft primitives:
+
+  - `.kb-config/layers.yaml` may add top-level `roadmap:` and `journeys:` blocks.
+  - `.kb-config/artifacts.yaml` may add `html-template:` and `journeys-template:` blocks for roadmap and journey rendering.
+
+  These blocks are ignored unless the corresponding skills are installed and configured.
+
 ---
 
 ## 6. HTML Artifacts
@@ -348,6 +362,21 @@ Two families:
 |--------|-----------|----------|
 | **Overviews** (inventory, open-decisions, open-tasks, index) | Overwritten on every mutation | Stable names |
 | **Historical** (presentations, reports, pitches, daily/weekly) | Immutable, versioned | Include version or date |
+| **Dashboard** (`dashboard.html`) | Overwritten on every mutation | Stable name |
+
+### Dashboard (command center)
+
+`dashboard.html` is the owner-facing counterpart to `index.html`. Where
+the index lists generated artifacts, the dashboard surfaces **live KB
+state**: focus tasks, backlog, pending inputs, active ideas, open
+decisions, recent findings / digests / reports, workstream freshness,
+and — opt-in — external work-items from GitHub (`gh` CLI) and Jira
+(jira-sync-style markdown export).
+
+- Script: `scripts/generate-dashboard.py` (copy into `.kb-scripts/` like `generate-index.py`).
+- Config: `.kb-config/artifacts.yaml` → `dashboard:` section. Panels list is ordered; unknown or empty panels are skipped.
+- External panels are OFF by default. Adopters opt in per tool and configure the data source. No vendor lock-in: Jira is read from a configurable directory of frontmatter-bearing markdown files, not a vendor API.
+- Regenerated as part of the same mutation flow as overviews and `index.html` (see `kb-management` rule 9–10).
 
 ### Shared contract
 
@@ -419,17 +448,21 @@ Everything is Git + Markdown + local agent. No external service required. Offlin
 
 ```
 marketplace-repo/
-├── skills/<name>/
-│   ├── SKILL.md              # frontmatter + instructions
-│   ├── templates/            # optional
-│   └── _kb-references/           # optional
-├── agents/<name>.md
-├── plugins/<harness>/        # generated per-harness mirrors
+├── plugin.json               # root marketplace manifest
+├── .claude-plugin/
+│   └── marketplace.json      # Claude Code marketplace manifest
+├── plugins/
+│   └── <plugin>/
+│       ├── plugin.json       # per-plugin manifest
+│       ├── skills/<name>/
+│       │   ├── SKILL.md      # frontmatter + instructions
+│       │   ├── templates/    # optional
+│       │   └── references/   # optional
+│       └── agents/<name>.md
 ├── scripts/
 │   ├── install.py
 │   ├── check_consistency.py
 │   └── generate_plugins.py
-└── plugin.json               # marketplace metadata
 ```
 
 Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`, `license` in YAML frontmatter.
@@ -452,5 +485,6 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree | Doc drift review |
 | 2026-04-20 | Linked the dedicated collaboration guide for shared-workspace human operating norms |
 | 2026-04-19 | Initial — consolidated from 23 concept/spec docs |

@@ -37,3 +37,56 @@ github-pages:
   enabled: false
   branch: gh-pages
   index-file: index.html
+
+# Brand logo for generated HTML overviews (dashboard.html, index.html).
+# Vendor-neutral default is `hexagon`. Adopters with their own brand can
+# set `logo: <name>` (built-in: hexagon, dynatrace, none) or supply
+# `logo-file: path/to/logo.svg` (inlined into the generated HTML).
+brand:
+  logo: hexagon                         # hexagon | dynatrace | none
+  # logo-file: ""                       # optional path to a .svg file
+
+# Dashboard (command-center) generation — see scripts/generate-dashboard.py.
+# The dashboard surfaces live KB state the owner should have in mind:
+# focus tasks, pending inputs, active ideas, open decisions, recent
+# findings/digests/reports, workstream freshness, and opt-in external
+# work-items from GitHub and Jira. Panels with no data are skipped
+# automatically. External panels are OFF by default — enable per-adopter.
+dashboard:
+  enabled: true
+  panels:
+    - focus-tasks
+    - backlog
+    - pending-inputs
+    - active-ideas
+    - open-decisions
+    - recent-findings
+    - recent-digests
+    - recent-reports
+    - workstreams
+    # - github                           # opt-in, requires authenticated gh CLI
+    # - jira                             # opt-in, requires jira-sync-style markdown export
+  limits:
+    recent-findings: 5
+    recent-digests: 3
+    recent-reports: 3
+    active-ideas: 8
+    open-decisions: 8
+    workstreams: 10
+    github: 10
+    jira: 10
+  external:
+    github:
+      enabled: false
+      query: "assignee:@me is:open"     # gh search issues query
+      repos: []                          # optional --repo filters
+    jira:
+      enabled: false
+      source: path                       # path | (future: api, acli)
+      path: ""                           # path to jira-sync issues dir
+      assignee: ""                       # substring match on frontmatter `assignee`
+      status_exclude:                    # drop items in these statuses
+        - Done
+        - Closed
+        - Resolved
+        - Cancelled

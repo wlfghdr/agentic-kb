@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}}</title>
+  <meta name="generator" content="kb-roadmap" />
+  <meta name="version" content="{{VERSION}}" />
+  <meta name="date" content="{{GENERATED_AT}}" />
+  <style>
+    /* Neutral palette. Adopters override via .kb-config/artifacts.yaml html-template.tokens. */
+    :root {
+      --fg: #1a1a1a;
+      --bg: #ffffff;
+      --bg-elevated: #fafafa;
+      --muted: #666;
+      --accent: #0366d6;
+      --accent-subtle: #e7f0fb;
+      --border: #e0e0e0;
+      --ok: #1a7f37;
+      --warn: #9a6700;
+      --risk: #cf222e;
+      --tier-1: #1a7f37;
+      --tier-2: #1f6feb;
+      --tier-3: #9a6700;
+      --tier-4: #8250df;
+      --tier-5: #cf222e;
+    }
+    [data-theme="dark"] {
+      --fg: #e6e6e6;
+      --bg: #121212;
+      --bg-elevated: #1a1a1a;
+      --muted: #9a9a9a;
+      --accent: #6ea8fe;
+      --accent-subtle: #1b2a3f;
+      --border: #2a2a2a;
+      --ok: #3fb950;
+      --warn: #d29922;
+      --risk: #f85149;
+      --tier-1: #3fb950;
+      --tier-2: #6ea8fe;
+      --tier-3: #d29922;
+      --tier-4: #a371f7;
+      --tier-5: #f85149;
+    }
+    @media (prefers-color-scheme: dark) {
+      [data-theme="auto"] {
+        --fg: #e6e6e6;
+        --bg: #121212;
+        --bg-elevated: #1a1a1a;
+        --muted: #9a9a9a;
+        --accent: #6ea8fe;
+        --accent-subtle: #1b2a3f;
+        --border: #2a2a2a;
+        --ok: #3fb950;
+        --warn: #d29922;
+        --risk: #f85149;
+        --tier-1: #3fb950;
+        --tier-2: #6ea8fe;
+        --tier-3: #d29922;
+        --tier-4: #a371f7;
+        --tier-5: #f85149;
+      }
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.55;
+    }
+
+    header.doc-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo-slot {
+      display: flex;
+      align-items: center;
+      height: 28px;
+    }
+    .logo-slot svg, .logo-slot img { height: 28px; width: auto; }
+    .logo-slot.theme-light-only { display: flex; }
+    .logo-slot.theme-dark-only { display: none; }
+    [data-theme="dark"] .logo-slot.theme-light-only { display: none; }
+    [data-theme="dark"] .logo-slot.theme-dark-only { display: flex; }
+    @media (prefers-color-scheme: dark) {
+      [data-theme="auto"] .logo-slot.theme-light-only { display: none; }
+      [data-theme="auto"] .logo-slot.theme-dark-only { display: flex; }
+    }
+
+    .doc-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin: 0;
+      flex: 1;
+      color: var(--fg);
+    }
+    .doc-title .scope { color: var(--muted); font-weight: 400; }
+
+    .theme-toggle {
+      padding: 0.35rem 0.7rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--fg);
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      gap: 1.5rem;
+    }
+    @media (max-width: 780px) {
+      .layout { grid-template-columns: 1fr; }
+      nav.toc { position: static; }
+    }
+
+    nav.toc {
+      position: sticky;
+      top: 60px;
+      align-self: start;
+      font-size: 0.85rem;
+      border-right: 1px solid var(--border);
+      padding-right: 1rem;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    nav.toc ol { list-style: none; padding: 0; margin: 0; }
+    nav.toc li { margin: 0.3rem 0; }
+    nav.toc a {
+      color: var(--muted);
+      text-decoration: none;
+      display: block;
+      padding: 0.15rem 0;
+    }
+    nav.toc a:hover, nav.toc a:focus { color: var(--accent); }
+
+    main { min-width: 0; }
+    main h1 { font-size: 2rem; margin-top: 0; }
+    main h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; margin-top: 2.5rem; }
+    main h3 { font-size: 1.05rem; color: var(--muted); margin-top: 1.5rem; }
+
+    .summary-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin: 1rem 0 2rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.85rem;
+    }
+    .chip b { font-weight: 600; }
+    .chip.t1 { border-color: var(--tier-1); }
+    .chip.t2 { border-color: var(--tier-2); }
+    .chip.t3 { border-color: var(--tier-3); }
+    .chip.t4 { border-color: var(--tier-4); }
+    .chip.miss { border-color: var(--tier-5); }
+
+    table { border-collapse: collapse; width: 100%; margin: 0.75rem 0 1.25rem; font-size: 0.9rem; }
+    th, td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: var(--bg-elevated); font-weight: 600; }
+
+    ul.bare { list-style: none; padding: 0; margin: 0; }
+    ul.bare li { padding: 0.35rem 0; border-bottom: 1px dashed var(--border); }
+    ul.bare li:last-child { border-bottom: none; }
+
+    .empty { color: var(--muted); font-style: italic; padding: 0.75rem 0; }
+
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.05rem 0.4rem;
+      border-radius: 3px;
+      color: var(--bg);
+      margin-right: 0.4rem;
+    }
+    .tier-badge.t1 { background: var(--tier-1); }
+    .tier-badge.t2 { background: var(--tier-2); }
+    .tier-badge.t3 { background: var(--tier-3); }
+    .tier-badge.t4 { background: var(--tier-4); }
+    .tier-badge.t5 { background: var(--tier-5); }
+
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+    .kanban-col {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+    .kanban-col h4 { margin: 0 0 0.5rem; font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .kanban-col ul { list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
+    .kanban-col li { padding: 0.35rem 0; border-bottom: 1px solid var(--border); }
+    .kanban-col li:last-child { border-bottom: none; }
+
+    footer.doc-footer {
+      margin: 3rem 0 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    footer.doc-footer a { color: var(--muted); }
+
+    .warning-banner {
+      background: var(--accent-subtle);
+      border-left: 3px solid var(--warn);
+      padding: 0.5rem 0.75rem;
+      margin: 0.75rem 0;
+      font-size: 0.85rem;
+    }
+
+    @media print {
+      header.doc-header { position: static; }
+      nav.toc, .theme-toggle { display: none; }
+      .layout { grid-template-columns: 1fr; max-width: none; padding: 0; }
+      a { color: inherit; text-decoration: underline; }
+      section { page-break-inside: avoid; }
+    }
+
+    a { color: var(--accent); }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <header class="doc-header" role="banner">
+    {{LOGO_SLOT}}
+    <h1 class="doc-title">Roadmap <span class="scope">· {{SCOPE}} · {{GENERATED_DATE}}</span></h1>
+    <button
+      class="theme-toggle"
+      type="button"
+      aria-label="Toggle light and dark theme"
+      onclick="(function(){var h=document.documentElement,t=h.getAttribute('data-theme'),n=t==='dark'?'light':(t==='light'?'auto':'dark');h.setAttribute('data-theme',n);try{localStorage.setItem('kb-roadmap-theme',n);}catch(e){}})()">
+      Theme
+    </button>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Section navigation">
+      <ol>
+        <li><a href="#section-a">A · Plan baseline</a></li>
+        <li><a href="#section-b">B · Delivery baseline</a></li>
+        <li><a href="#section-c">C · Correlation matrix</a></li>
+        <li><a href="#section-d">D · Delta</a></li>
+        <li><a href="#section-e">E · Mismatch findings</a></li>
+        <li><a href="#section-f">F · Forward plan</a></li>
+        <li><a href="#section-g">G · Decisions needed</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <div class="summary-strip" role="status" aria-label="Run summary">
+        <span class="chip"><b>{{COUNT_PLAN}}</b> plan items</span>
+        <span class="chip"><b>{{COUNT_DELIVERY}}</b> delivery items</span>
+        <span class="chip t1"><b>{{COUNT_T1}}</b> T1 matches</span>
+        <span class="chip t2"><b>{{COUNT_T2}}</b> T2 matches</span>
+        <span class="chip t3"><b>{{COUNT_T3}}</b> T3 matches</span>
+        <span class="chip t4"><b>{{COUNT_T4}}</b> T4 proposed</span>
+        <span class="chip miss"><b>{{COUNT_MISMATCH}}</b> mismatches</span>
+      </div>
+
+      {{WARNINGS_BLOCK}}
+
+      <section id="section-a" aria-labelledby="h-section-a">
+        <h2 id="h-section-a">A. Plan baseline</h2>
+        {{SECTION_A}}
+      </section>
+
+      <section id="section-b" aria-labelledby="h-section-b">
+        <h2 id="h-section-b">B. Delivery baseline</h2>
+        {{SECTION_B}}
+      </section>
+
+      <section id="section-c" aria-labelledby="h-section-c">
+        <h2 id="h-section-c">C. Correlation matrix</h2>
+        {{SECTION_C}}
+      </section>
+
+      <section id="section-d" aria-labelledby="h-section-d">
+        <h2 id="h-section-d">D. Delta since {{TIMEFRAME_SINCE}}</h2>
+        {{SECTION_D}}
+      </section>
+
+      <section id="section-e" aria-labelledby="h-section-e">
+        <h2 id="h-section-e">E. Mismatch findings</h2>
+        {{SECTION_E}}
+      </section>
+
+      <section id="section-f" aria-labelledby="h-section-f">
+        <h2 id="h-section-f">F. Forward plan</h2>
+        {{SECTION_F}}
+      </section>
+
+      <section id="section-g" aria-labelledby="h-section-g">
+        <h2 id="h-section-g">G. Decisions needed</h2>
+        {{SECTION_G}}
+      </section>
+
+      <footer class="doc-footer" role="contentinfo">
+        Generated by <a href="https://github.com/wlfghdr/agentic-kb">kb-roadmap</a> v{{VERSION}} · {{GENERATED_AT}}
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Restore stored theme preference, progressive enhancement only.
+    (function () {
+      try {
+        var stored = localStorage.getItem('kb-roadmap-theme');
+        if (stored === 'light' || stored === 'dark' || stored === 'auto') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+</body>
+</html>
