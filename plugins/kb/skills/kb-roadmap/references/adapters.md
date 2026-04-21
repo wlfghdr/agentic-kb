@@ -47,7 +47,7 @@ plan-sources:
     adapter: ticket-export-markdown
     path: ../ticket-export
     filter:
-      labels-any: [ai-first]
+      labels-any: [roadmap:active]
       status-exclude: [Closed, Won't Do]
     hierarchy: [Program, Package, Item]
 ```
@@ -171,3 +171,9 @@ Contracts:
 3. Adapters in any team/org-unit KB referenced by `.kb-config/layers.yaml`
 
 Collisions raise an explicit error — no silent override.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-22 | Replaced an internal example label with a generic one to keep the roadmap adapter reference vendor-neutral | Vendor-neutrality rescreen |

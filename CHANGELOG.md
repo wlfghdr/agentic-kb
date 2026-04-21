@@ -25,8 +25,9 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **Residual vendor-neutrality cleanup** — removed the last internal-specific residue from the public spec by replacing an internal example label in `kb-roadmap` adapter docs and generalizing a changelog note that still exposed a vendor-prefixed token pattern.
 - **Vendor-neutrality sweep** — removed all vendor-specific terms from scripts, templates, and plugin skill docs:
-  - `generate-dashboard.py` / `generate-index.py`: removed vendor logo SVG and vendor-prefixed CSS variable mappings (`--dt-*`); only generic token names remain.
+  - `generate-dashboard.py` / `generate-index.py`: removed vendor logo SVG and vendor-prefixed CSS variable mappings; only generic token names remain.
   - `kb-setup/templates/artifacts.yaml`: removed vendor logo option; built-in choices are now `hexagon | none` plus custom `logo-file`.
   - `kb-journeys/SKILL.md`: removed internal-repo path reference from mock-extraction script description.
   - `kb-roadmap` references and script: replaced vendor-specific hierarchy terms with generic equivalents (Theme, Initiative, Epic) throughout `adapters.md`, `html-template.md`, and `kb_roadmap.py`.
