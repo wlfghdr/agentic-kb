@@ -32,7 +32,7 @@ my-kb/
 │   ├── active/              D-YYYY-MM-DD-slug.md
 │   └── archive/
 ├── _kb-tasks/
-│   ├── focus.md             max 3 items
+│   ├── focus.md             max 6 items
 │   ├── backlog.md
 │   └── archive/YYYY-MM.md
 ├── .kb-log/YYYY-MM-DD.log

@@ -14,7 +14,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Evaluation gate** | The five-question relevance filter applied at every persistence boundary. |
 | **External anchor** | A link from the KB to an authoritative external source (dashboard, runbook, CMDB). Registered in `sources.md` via an alias. |
 | **Finding** | A dated, immutable snapshot capturing what was learned on a specific date. Path: `_kb-references/findings/YYYY-MM-DD-slug.md`. |
-| **Focus** | The max-3 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
+| **Focus** | The max-6 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
 | **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources. |
 | **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer evaluation gate scoring and task prioritization. Also called **MCG** (Mission-Critical Goal). |
 | **Harness** | The IDE or CLI environment where the skills run (VS Code Copilot, Claude Code, OpenCode). |

@@ -16,7 +16,7 @@
 │   ├── D-YYYY-MM-DD-slug.md  open decisions (one file each)
 │   └── archive/         resolved or superseded
 ├── _kb-tasks/
-│   ├── focus.md         max 3 items — what you're doing NOW
+│   ├── focus.md         max 6 items — what you're doing NOW
 │   ├── backlog.md       queued up
 │   └── archive/         monthly done archives
 ├── .kb-log/             dated processing log
