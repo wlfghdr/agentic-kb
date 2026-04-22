@@ -193,7 +193,7 @@ On abort: print the missing tool, the OS-specific install command, and exit. Do 
 - Marketplace: clone or register.
 
 ### Step 3 — Scaffold personal KB
-Directories: `_kb-inputs/`, `_kb-inputs/digested/`, `_kb-references/{topics,findings,foundation,reports,legacy}/`, `_kb-ideas/`, `_kb-ideas/archive/`, `_kb-decisions/`, `_kb-decisions/archive/`, `_kb-tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_kb-workstreams/`.
+Directories: `_kb-inputs/`, `_kb-inputs/digested/`, `_kb-references/{topics,findings,foundation,reports,legacy,strategy-digests}/`, `_kb-ideas/`, `_kb-ideas/archive/`, `_kb-decisions/`, `_kb-decisions/archive/`, `_kb-tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_kb-workstreams/`.
 
 Files (from the scaffold template set):
 - `AGENTS.md`, `README.md`, `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml` from `kb-setup/templates/`.

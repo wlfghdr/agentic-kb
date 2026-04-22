@@ -95,6 +95,7 @@ my-kb/
 │   │   ├── sources.md
 │   │   ├── stakeholders.md
 │   │   └── naming.md
+│   ├── strategy-digests/           # per-layer digest findings + `.last-digest` watermark
 │   ├── legacy/                     # archived material
 │   └── reports/                    # generated HTML artifacts
 ├── _kb-ideas/
@@ -495,6 +496,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 | Date | What changed |
 |------|-------------|
 | 2026-04-22 | Dashboard command-center contract now explicitly includes topics as a first-class live panel so accreting knowledge is visible alongside decisions, ideas, and findings |
+| 2026-04-22 | Added `_kb-references/strategy-digests/` to the §3 workspace layout so the digest watermark and per-layer digest findings have a declared home |
 | 2026-04-22 | Collapsed the HTML-artifact families table to the two that actually ship — `dashboard.html` + root `index.html` — after dropping the phantom `inventory.html` / `open-decisions.html` / `open-tasks.html` overviews whose signals already live in `dashboard.html` panels |
 | 2026-04-22 | Corrected the workspace-root required-files row so `.github/prompts/kb.prompt.md` is no longer universal, and added the harness-specific workspace prompt/instruction note for VS Code, Claude Code, OpenCode, and compatible CLI workflows |
 | 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty and removed the obsolete VMG score bonus so the rubric matches the detailed gate reference and skill behavior |
