@@ -19,7 +19,7 @@ It is intentionally narrow:
 - one user,
 - one personal KB,
 - no team or org KB yet,
-- one supported harness at a time,
+- one documented harness path at a time,
 - manual automation level,
 - builtin HTML styling.
 
@@ -103,6 +103,19 @@ Install phase is accepted when:
 - the skills are discoverable by OpenCode,
 - `/kb setup` is available in the target workspace.
 
+### Codex CLI
+
+Install path:
+
+- bootstrap the workspace through one first-class supported harness, **or** clone this repo and follow the repo-local prompt/instruction flow manually
+- in Codex CLI, operate from the initialized workspace so `AGENTS.md`, `CLAUDE.md`, and any generated prompt files are in scope
+
+Install phase is accepted when:
+
+- the workspace has already been initialized by `/kb setup` or an equivalent supported-harness bootstrap,
+- Codex can operate against the same repo-local KB files without path/layout drift,
+- any missing native command wiring is called out explicitly as a manual step, not implied to be automatic.
+
 ## Canonical first-run scenario
 
 ## Step 1 — Preconditions
@@ -110,7 +123,7 @@ Install phase is accepted when:
 Required before starting:
 
 - `git` installed,
-- one supported harness installed,
+- one first-class supported harness installed, or a Codex CLI workflow attached to an already initialized workspace,
 - write access to the target workspace path.
 
 Recommended:
@@ -334,4 +347,5 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Added Codex CLI acceptance guidance and clarified the difference between first-class supported harnesses and compatible CLI workflows | Compatibility expansion |
 | 2026-04-20 | Initial deterministic first-run acceptance path for onboarding verification | Issue #6 |

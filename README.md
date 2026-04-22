@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v3.3.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v3.4.0-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -41,7 +41,7 @@ You capture. The agent files, cross-links, promotes, and keeps humans and agents
 
 ## Why it's built this way
 
-**Vendor-neutral by design.** Works with Claude Code, VS Code Copilot, and OpenCode — same skill, same contract, one install. Switch IDE tomorrow, your KB comes with you. No Claude-memory lock-in. No ChatGPT memory lock-in. No "upgrade to the Pro tier to access your own notes" trap.
+**Vendor-neutral by design.** Works with Claude Code, VS Code Copilot, OpenCode, and compatible CLI workflows such as Codex CLI under one portability contract. Switch IDE tomorrow, your KB comes with you. No Claude-memory lock-in. No ChatGPT memory lock-in. No "upgrade to the Pro tier to access your own notes" trap.
 
 **No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
 
@@ -127,6 +127,16 @@ Add to `settings.json`:
 
 Install from the Extensions view (reads [`plugin.json`](plugin.json)), then run `/kb setup` in Copilot Chat.
 
+### Compatibility model
+
+`agentic-kb` now distinguishes three setup tiers so additional harnesses can be documented consistently:
+
+| Tier | Meaning | Current examples |
+|------|---------|------------------|
+| First-class supported harness | Native install path and documented day-to-day workflow | Claude Code, VS Code Copilot Chat, OpenCode |
+| Compatible CLI workflow | The harness can use the same repo-local prompts, skills, and files, but setup is driven through the workspace rather than a native marketplace contract | Codex CLI |
+| Partial/manual path | The harness can use the scaffolded KB files, but some command wiring or automation must be supplied by the adopter | Future harnesses that can read the repo but do not yet expose the full `/kb` command surface |
+
 ### OpenCode
 
 No official plugin marketplace yet. Clone and install manually:
@@ -138,6 +148,16 @@ scripts/install --target opencode --global
 ```
 
 OpenCode natively reads `.claude/skills/` — a Claude Code install in the same workspace is picked up automatically. Then run `/kb setup`.
+
+### Codex CLI
+
+Codex CLI is a **compatible CLI workflow**, not yet a first-class marketplace harness. The KB layout, prompts, and generated files are compatible, but setup is slightly more manual:
+
+1. Install `agentic-kb` into at least one first-class supported harness first, or clone this repo into the workspace.
+2. Keep the workspace-level files that `/kb setup` creates, especially `AGENTS.md`, `CLAUDE.md`, and `.github/prompts/kb.prompt.md` when VS Code style prompt files are desired.
+3. Run the documented install flow in a first-class supported harness when you want native `/kb setup` command wiring. In Codex-driven work today, use the generated KB files plus repo-local instructions as the operating contract.
+
+Current gap: Codex CLI does not yet have a documented native marketplace/install target in `scripts/install`. That means Codex users should treat `agentic-kb` as a repo-local compatible workflow, with a first-class supported harness handling initial plugin installation when needed.
 
 ### Cross-harness install (optional)
 
@@ -199,7 +219,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v3.3.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v3.4.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode) |

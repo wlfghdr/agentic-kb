@@ -25,6 +25,8 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **Missing `idea.md` scaffold template** — restored `plugins/kb/skills/kb-management/templates/idea.md` so `/kb idea` has a canonical file source again, matching the behavioral spec and REFERENCE docs.
+- **`/kb setup` scaffold source ambiguity** — clarified in `plugins/kb/skills/kb-setup/SKILL.md` which personal-KB scaffold files come from `kb-setup/templates/` versus `kb-management/templates/`, so implementers no longer have to guess across two directories.
 - **Residual vendor-neutrality cleanup** — removed the last internal-specific residue from the public spec by replacing an internal example label in `kb-roadmap` adapter docs and generalizing a changelog note that still exposed a vendor-prefixed token pattern.
 - **Vendor-neutrality sweep** — removed all vendor-specific terms from scripts, templates, and plugin skill docs:
   - `generate-dashboard.py` / `generate-index.py`: removed vendor logo SVG and vendor-prefixed CSS variable mappings; only generic token names remain.
@@ -49,9 +51,25 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - **Automatic live-overview regeneration contract** (`plugins/kb/skills/kb-management/SKILL.md`, `plugins/kb/skills/kb-management/references/html-artifacts.md`, `plugins/kb/agents/kb-operator.md`, `plugins/kb/skills/kb-setup/templates/kb.prompt.md`) — overviews are now regenerated as part of every state-mutating `/kb` operation instead of being treated as a later optional refresh.
 - **Top-level coverage for draft primitives** (`README.md`, `docs/REFERENCE.md`, `docs/glossary.md`, `AGENTS.md`, `CONTRIBUTING.md`) — the public spec now explicitly documents the optional `kb-roadmap` and `kb-journeys` skills, their `_kb-roadmaps/` and `_kb-journeys/` directories, and the current `plugins/kb/` source layout.
 
-### Changed
+### Tooling
 
 - **`check_consistency.py` forbidden-term scanning** — extended to cover all text file types and removed the `plugins/` exclusion so skill/agent docs are also checked.
+
+## [3.4.0] — 2026-04-22
+
+### Added
+
+- **Codex CLI compatibility model** (`README.md`, `docs/REFERENCE.md`, `docs/first-run-acceptance.md`, `docs/examples/first-hour.md`, `plugins/kb/skills/kb-setup/SKILL.md`, `plugins/kb/skills/kb-setup/references/setup-flow.md`, `docs/glossary.md`) — documented Codex CLI as a compatible repo-local workflow, distinguished first-class supported harnesses from partial/manual paths, and updated onboarding plus harness-support guidance to leave room for additional CLIs and IDEs under the same model.
+
+### Version bumps
+
+- Root `VERSION`: 3.3.0 → 3.4.0.
+- `plugin.json`: 3.3.0 → 3.4.0.
+- `plugins/kb/plugin.json`: 3.3.0 → 3.4.0.
+- `.claude-plugin/marketplace.json`: 3.3.0 → 3.4.0.
+- `plugins/kb/skills/kb-setup/SKILL.md`: 3.3.0 → 3.4.0.
+- `plugins/kb/skills/kb-management/SKILL.md`: 3.3.0 → 3.4.0.
+- `plugins/kb/agents/kb-operator.md`: 3.3.0 → 3.4.0.
 
 ## [3.1.0] — 2026-04-20
 
