@@ -14,10 +14,21 @@
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb todo` | Show `focus.md` |
-| `/kb todo done [item]` | Complete item → archive, pull next from backlog |
+| `/kb task` | Show `focus.md` (top item is "Next up") |
+| `/kb task done [item]` | Complete item → archive, pull next from backlog |
 | `/kb decide [description]` | Create new `_kb-decisions/D-YYYY-MM-DD-slug.md` |
-| `/kb decide resolve [D-id]` | Archive decision + update topics + close related TODOs |
+| `/kb decide resolve [D-id]` | Archive decision + update topics + close related tasks |
+
+`/kb todo` and `/kb tasks` are accepted aliases of `/kb task` (and mirror in subcommands — `/kb todo done [item]` ≡ `/kb task done [item]`). The canonical verb in the spec is `task`; it matches the `_kb-tasks/` directory and avoids confusion with in-code TODO comments.
+
+## Ideas
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb idea [text]` | Create `_kb-ideas/I-YYYY-MM-DD-slug.md` (`**Stage**: seed`) |
+| `/kb develop [idea]` | Sparring session: probe assumptions, contradictions, gaps, convergence; append an entry to the idea's Development Log |
+
+Ideas progress through `seed` → `growing` → `ready` → `shipped` → `archived` (see `docs/REFERENCE.md` §Idea). `/kb develop` is the sparring pass that moves an idea forward; a mature idea is either cited by a decision, converted into a finding/topic, or shipped into a roadmap item. Edit the `**Stage**:` line directly when the idea reaches a new stage.
 
 ## Rituals
 
@@ -91,7 +102,8 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 | Setup complete? | `.kb-config/layers.yaml` exists |
 | Pending inputs | `_kb-inputs/` not yet in `_kb-inputs/digested/` |
 | Open decisions | `_kb-decisions/*.md` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` |
-| Overdue todos | `_kb-tasks/*.md` with status `todo`/`doing` > 7 days |
+| Overdue focus | Bullets in `_kb-tasks/focus.md` with `status: doing` held > 7 days (`focus-overdue-days`) |
+| Stale backlog | Bullets in `_kb-tasks/backlog.md` untouched > 14 days (`backlog-stale-days`) — annotated `stale: true`, never removed |
 | Rituals | Today's `.kb-log/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
 | Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |
 | Promotions due | `**Maturity**: durable` findings/topics not yet referenced in L2/L3 |
@@ -129,6 +141,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | `/kb task` named as the canonical task verb (with `todo` / `tasks` as accepted aliases); new Ideas section covering `/kb idea` + `/kb develop`; triage stale-task rule split into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching `kb.prompt.md` and SKILL rule 11g | Fixes #24, #25, #26 |
 | 2026-04-22 | Reframed `/kb promote` as a composite local-team operation: intake plus immediate team review and archival, not a pure inbox copy | Team promote flow fix |
 | 2026-04-22 | Fixed stale `inputs/` path in promote command; renamed section from "Decisions & TODOs" to "Decisions & Tasks" | Spec review |
 | 2026-04-20 | Documented `/kb status --refresh-overviews` as the explicit manual repair and rebuild path, and aligned triage guidance with always-current overviews | v3.2.0 live-overview refresh |
