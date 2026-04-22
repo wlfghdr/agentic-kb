@@ -43,7 +43,7 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 | **Top task** | First item in `_kb-tasks/focus.md` (if any) | Always include as `Next up: …` |
 | **External completions** | Open focus/backlog tasks with evidence of closure (merged PR / closed Jira ticket / commit referencing the task slug / same slug already in a shared `_kb-tasks/archive/`). See SKILL.md rule #10c. | Propose archiving — never auto-close |
 | Pending inputs | Files under `_kb-inputs/` not yet in `_kb-inputs/digested/` | Count + suggest `/kb review` |
-| Open decisions | Files under `_kb-decisions/` with `status: proposed` in frontmatter | Count + suggest `/kb decide <key>` |
+| Open decisions | Files under `_kb-decisions/` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` | Count + suggest `/kb decide <key>` |
 | Stale tasks | `_kb-tasks/backlog.md` items untouched > 14 days | Annotate `stale: true`; list but don't remove |
 | Overdue focus | `_kb-tasks/focus.md` items with status `doing` > 7 days | Surface so user can re-plan |
 | Rituals overdue | Today's `.kb-log/YYYY-MM-DD.log` missing a `start-day` entry; current week missing `start-week` | Suggest the missing ritual |
