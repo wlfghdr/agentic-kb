@@ -138,6 +138,7 @@ my-kb/
 │   ├── topics/              # living; inline changelog required
 │   ├── findings/            # YYYY-MM-DD-slug.md; immutable
 │   ├── foundation/          # me, context, vmg, stakeholders, sources, naming
+│   ├── strategy-digests/    # per-layer digest findings + `.last-digest` watermark; created on first `/kb digest team`
 │   ├── legacy/              # archived topics after audit
 │   └── reports/             # generated HTML artifacts
 ├── _kb-ideas/
@@ -259,6 +260,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-22 | Added topics to the dashboard command-center contract and bumped the declared skill version to 3.4.3 so first-class accreting knowledge is visible in live overviews | Fixes #22 |
+| 2026-04-22 | Added `_kb-references/strategy-digests/` to the personal-KB directory contract + REFERENCE.md workspace layout + `kb-setup` Step 3 scaffold — it was already used in practice (digest findings + `.last-digest` watermark read by the upstream-drift triage signal) but wasn't declared | Fixes #19 |
 | 2026-04-22 | Bumped declared skill version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
 | 2026-04-22 | Simplified rule 9 to regenerate only `dashboard.html` and the root `index.html` after every mutation — dropped the three phantom overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals live in dashboard panels | Fixes #18 |
 | 2026-04-22 | Canonicalized the idea lifecycle field as `**Stage**:` across audit K5 and the command-reference blurb so dashboard and audit agree with the REFERENCE and template | Fixes #35 |
