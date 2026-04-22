@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures documented harness workflows (VS Code Copilot, Claude Code, OpenCode, plus compatible CLI guidance such as Codex CLI), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 3.4.0
+version: 3.4.1
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -338,17 +338,21 @@ Every placeholder below has exactly one source — always from the interview ans
 
 ### Post-write check (MUST run before Step 8)
 
-After all files are written and before the initial commit, scan the scaffolded workspace for any remaining `{{` sequence. If any match is found:
+After all files are written and before the initial commit, scan the scaffolded workspace for any remaining `{{` sequence **outside** the deliberate deferred-placeholder set. If any match is found:
 
 1. Stop — do not commit.
 2. List the (file, line, placeholder) triples to the user.
 3. Ask for the missing values.
 4. Re-render, then re-scan.
 
+Deferred-placeholder exemption: the presentation template (`_kb-references/templates/presentation-template.html` — or `<brand>-presentation.html` when Q13 branded it) intentionally keeps its placeholders unfilled because they are per-artifact fields filled at presentation time by `/kb present`. Exempt this file from the gate. The exempted placeholders are `{{PRESENTATION_TITLE}}`, `{{SUBTITLE}}`, `{{COVER_BADGE}}`, `{{CONTACT}}`, `{{CREATED_ISO}}`, `{{CREATED_DATE}}`, `{{CREATED_TIME}}` (see §Templates).
+
 Concrete grep the skill must run (or equivalent):
 
 ```
-grep -rn '{{[A-Z_0-9]*}}' <workspace-root> || true
+grep -rn --exclude-dir=node_modules \
+     --exclude '*-presentation.html' --exclude 'presentation-template.html' \
+     '{{[A-Z_0-9]*}}' <workspace-root> || true
 ```
 
 A zero-hit run is the gate for Step 8.
@@ -357,6 +361,8 @@ A zero-hit run is the gate for Step 8.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Bumped declared skill version to 3.4.1 so the placeholder-gate behavior change ships under the current framework patch version | Version alignment |
+| 2026-04-22 | Post-write placeholder gate now exempts `presentation-template.html` (and its branded sibling) because its `{{…}}` markers are deliberately deferred for `/kb present` — setup Step 8 no longer blocks on the shipped template | Fixes #17 |
 | 2026-04-22 | Clarified which personal-KB scaffold files come from `kb-setup` templates versus `kb-management` templates and required setup to stop explicitly if a referenced template file is missing | Scaffold source contract |
 | 2026-04-22 | Clarified which personal-KB scaffold files come from `kb-setup` templates versus `kb-management` templates so `/kb setup` is implementable without guesswork | System test follow-up |
 | 2026-04-22 | Added Codex CLI as a documented compatible workflow and clarified that first-class install support still belongs to Claude Code, VS Code, and OpenCode; version bumped to 3.4.0 | Compatibility expansion |
