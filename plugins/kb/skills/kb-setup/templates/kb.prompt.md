@@ -48,7 +48,7 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 | Overdue focus | `_kb-tasks/focus.md` items with status `doing` > 7 days | Surface so user can re-plan |
 | Rituals overdue | Today's `.kb-log/YYYY-MM-DD.log` missing a `start-day` entry; current week missing `start-week` | Suggest the missing ritual |
 | Upstream digest drift | L2/L3 repos declared in `layers.yaml` whose HEAD commit differs from the watermark in `_kb-references/strategy-digests/.last-digest` (or equivalent per repo) | Suggest `/kb digest <layer>` |
-| Promotions due | Findings/topics with `maturity: durable` in frontmatter not yet referenced in any L2/L3 KB | Suggest `/kb promote <file>` |
+| Promotions due | Findings/topics declaring `**Maturity**: durable` not yet referenced in any L2/L3 KB | Suggest `/kb promote <file>` |
 | Stale topics | Topics unchanged > 60 days and still referenced by recent findings | Suggest `/kb audit` |
 
 Output shape:

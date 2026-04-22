@@ -79,6 +79,8 @@ Full command reference: `references/command-reference.md`.
    5. Does this already exist?
    Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only (offer idea creation if novelty detected). Score 3+ → finding + topic update + possibly new decision or idea.
 
+   **Set `**Maturity**:` from the gate outcome** when writing the finding/topic: score 1–2 → `raw`; score 3+ → `emerging`. Only promote to `durable` on explicit user confirmation ("this is ready to share") or when a second corroborating capture lands. The `Promotions due` triage signal and audit rule K1 read this field — never leave it blank.
+
 1b. **Check strategic alignment** when VMG is declared in `_kb-references/foundation/vmg.md`. Material aligned with active goals gets +1. Material contradicting a goal is captured + flagged for decision review.
 
 2. **Always suggest next steps.** Every operation output ends with 1–3 concrete follow-ups (promote, notify, update topic, generate presentation).
@@ -256,6 +258,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Wired `**Maturity**:` into the capture flow so bare `/kb` triage and audit K1 can read the field they were designed for | Fixes #14 + #31 |
 | 2026-04-22 | Restored the missing `idea.md` scaffold template so `/kb idea` has a canonical file source again | System test follow-up |
 | 2026-04-22 | Version aligned to 3.4.0 after documenting Codex CLI compatibility in the public setup/onboarding contract | Compatibility expansion |
 | 2026-04-22 | `/kb promote` now performs destination-layer review for local team KBs instead of stopping at the team inbox; version bumped to 3.3.0 | Team promote flow fix |

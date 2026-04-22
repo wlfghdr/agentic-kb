@@ -13,7 +13,7 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 
 | # | Rule | Violation class | Correction offered |
 |---|------|----------------|---------------------|
-| K1 | Every finding has a `maturity:` marker (`raw` / `emerging` / `durable`) | `finding-maturity-missing` | Propose classification from content |
+| K1 | Every finding and topic has a `**Maturity**:` line (`raw` / `emerging` / `durable`) | `maturity-missing` | Propose classification from content |
 | K2 | Every `durable` finding is referenced from at least one topic | `durable-finding-orphan` | Offer to cite it in the closest-matching topic |
 | K3 | Every topic's `sources.md` entries resolve to existing files or URLs | `broken-source` | Offer removal or update |
 | K4 | Every decision (`_kb-decisions/D-*.md`) has a `status:` and — if resolved — a resolution date | `decision-status-missing` | Prompt for status |

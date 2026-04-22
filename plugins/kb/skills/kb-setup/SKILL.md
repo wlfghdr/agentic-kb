@@ -328,6 +328,7 @@ Every placeholder below has exactly one source — always from the interview ans
 | `{{KEYWORD_LOOKUP}}` | Computed — `docs/glossary.md` summary injected verbatim |
 | `{{RECENT_REPORTS}}` | Empty `<ul></ul>` on first run (will be filled by `/kb present` / `/kb report`) |
 | `{{DATE}}` | Today's ISO-8601 date (`YYYY-MM-DD`) |
+| `{{MATURITY}}` | `raw` for the initial topic-stub scaffold (empty positions). Findings written later by `/kb` capture set it from the gate outcome — see `kb-management/SKILL.md` rule 1. |
 | `{{VERSION}}` | `1.0` on first scaffold; later artifacts bump their own version |
 | `{{BRAND_NAME}}` | Q13 — adopter brand display name (defaults to `{{KB_NAME}}` when not set) |
 | `{{CONFIDENTIAL_LABEL}}` | Q13 — e.g. `Confidential`, `Internal`, or empty string to hide |
