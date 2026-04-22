@@ -329,6 +329,10 @@ Every placeholder below has exactly one source — always from the interview ans
 | `{{RECENT_REPORTS}}` | Empty `<ul></ul>` on first run (will be filled by `/kb present` / `/kb report`) |
 | `{{DATE}}` | Today's ISO-8601 date (`YYYY-MM-DD`) |
 | `{{MATURITY}}` | `raw` for the initial topic-stub scaffold (empty positions). Findings written later by `/kb` capture set it from the gate outcome — see `kb-management/SKILL.md` rule 1. |
+| `{{WORKSPACE_ROOT}}` | Q4 — absolute workspace path (default: current directory). Used in `.kb-config/layers.yaml`. |
+| `{{ALIAS_INDEX}}` | Computed — one row per configured workspace alias (short-alias table described at §Workspace-level configuration). Used in workspace-root `AGENTS.md`. |
+| `{{ACTIVE_DECISIONS}}`, `{{KEY_TOPICS}}`, `{{ACTIVE_THREADS}}`, `{{DEPENDENCIES}}` | Empty placeholder literal `(none yet)` on first scaffold (these workstream fields accrete as `/kb` captures and decisions land). Used in `kb-management/templates/workstream.md`. |
+| `{{CURRENT_STATE}}` | `TBD — first briefing via /kb start-day` on first scaffold. The first `start-day` ritual replaces it with the current state summary. Used in `kb-management/templates/workstream.md`. |
 | `{{VERSION}}` | `1.0` on first scaffold; later artifacts bump their own version |
 | `{{BRAND_NAME}}` | Q13 — adopter brand display name (defaults to `{{KB_NAME}}` when not set) |
 | `{{CONFIDENTIAL_LABEL}}` | Q13 — e.g. `Confidential`, `Internal`, or empty string to hide |
@@ -361,6 +365,7 @@ A zero-hit run is the gate for Step 8.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Placeholder mapping table now declares `{{WORKSPACE_ROOT}}`, `{{ALIAS_INDEX}}`, and the five workstream-stub placeholders (`{{ACTIVE_DECISIONS}}`, `{{KEY_TOPICS}}`, `{{CURRENT_STATE}}`, `{{ACTIVE_THREADS}}`, `{{DEPENDENCIES}}`) so strict post-write-gate runs no longer fall back on improvisation or block the commit | Fixes #20 |
 | 2026-04-22 | Bumped declared skill version to 3.4.1 so the placeholder-gate behavior change ships under the current framework patch version | Version alignment |
 | 2026-04-22 | Post-write placeholder gate now exempts `presentation-template.html` (and its branded sibling) because its `{{…}}` markers are deliberately deferred for `/kb present` — setup Step 8 no longer blocks on the shipped template | Fixes #17 |
 | 2026-04-22 | Clarified which personal-KB scaffold files come from `kb-setup` templates versus `kb-management` templates and required setup to stop explicitly if a referenced template file is missing | Scaffold source contract |
