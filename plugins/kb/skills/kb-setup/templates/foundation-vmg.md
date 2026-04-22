@@ -24,7 +24,7 @@ Active, measurable targets. Lifecycle: `active → achieved | deferred | dropped
 
 ## How agents use this
 
-- **Evaluation gate rule 1b**: material aligned with active goals gets +1 in the five-question gate. Material contradicting a goal is captured + flagged for decision review.
+- **Evaluation gate rule 1b**: material aligned with active goals is a prioritization signal during the five-question gate. Material contradicting a goal is captured + flagged for decision review.
 - **Start-day ritual**: the morning briefing surfaces goal progress and blockers.
 - **Task prioritization**: focus items are ranked against active goals.
 - **Top-down bleed**: during `/kb digest team` and `/kb digest org`, the agent incorporates upstream VMG changes from higher layers — new goals get appended, updated priorities get flagged, retired goals get marked. This file is the merged view: org context + team context + individual goals.
