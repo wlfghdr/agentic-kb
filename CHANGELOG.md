@@ -25,6 +25,8 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **Missing `idea.md` scaffold template** — restored `plugins/kb/skills/kb-management/templates/idea.md` so `/kb idea` has a canonical file source again, matching the behavioral spec and REFERENCE docs.
+- **`/kb setup` scaffold source ambiguity** — clarified in `plugins/kb/skills/kb-setup/SKILL.md` which personal-KB scaffold files come from `kb-setup/templates/` versus `kb-management/templates/`, so implementers no longer have to guess across two directories.
 - **Residual vendor-neutrality cleanup** — removed the last internal-specific residue from the public spec by replacing an internal example label in `kb-roadmap` adapter docs and generalizing a changelog note that still exposed a vendor-prefixed token pattern.
 - **Vendor-neutrality sweep** — removed all vendor-specific terms from scripts, templates, and plugin skill docs:
   - `generate-dashboard.py` / `generate-index.py`: removed vendor logo SVG and vendor-prefixed CSS variable mappings; only generic token names remain.

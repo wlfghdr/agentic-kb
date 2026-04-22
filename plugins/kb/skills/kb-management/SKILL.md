@@ -256,6 +256,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Restored the missing `idea.md` scaffold template so `/kb idea` has a canonical file source again | System test follow-up |
 | 2026-04-22 | `/kb promote` now performs destination-layer review for local team KBs instead of stopping at the team inbox; version bumped to 3.3.0 | Team promote flow fix |
 | 2026-04-22 | Version aligned to 3.2.0 | Spec review |
 | 2026-04-20 | Made overview regeneration part of every state-mutating `/kb` operation and retained `/kb status --refresh-overviews` as a manual repair/rebuild trigger | v3.2.0 live-overview refresh |
