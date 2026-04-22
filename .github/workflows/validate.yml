@@ -87,3 +87,7 @@ jobs:
         run: python3 scripts/check_html_artifacts.py
       - name: Regression test generate-index against a simulated workspace
         run: python3 scripts/test_generate_index.py
+      - name: Install PyYAML for dashboard test
+        run: pip install pyyaml
+      - name: Regression test generate-dashboard focus/backlog parsing
+        run: python3 scripts/test_generate_dashboard.py
