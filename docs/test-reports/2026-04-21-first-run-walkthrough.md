@@ -7,6 +7,10 @@ This report captures a systematic, end-to-end dry-run of agentic-kb v3.3.0: inst
 produced by an AI agent acting as a first-time adopter, following the spec strictly. Every
 spec inconsistency the agent hit on the way was filed as a GitHub issue (#14–#31).
 
+> **Snapshot:** the findings below reflect the state of `main` at `21fe0e8`
+> (v3.3.0). Issue #16 (`idea.md` template) was fixed on main in #40; other
+> issues remain open as of publication.
+
 ---
 
 ## 1. Installation
