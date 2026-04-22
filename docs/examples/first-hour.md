@@ -77,7 +77,7 @@ The wizard asks 12 question blocks (see `plugins/kb/skills/kb-setup/SKILL.md`). 
 
 The wizard then runs Steps 1–9. Step 9 verifies with `/kb status` (expects clean state) and `/kb start-day` (expects a briefing).
 
-Check for success: zero literal `{{…}}` placeholders remain anywhere in the scaffolded workspace. The skill's post-write check enforces this before Step 8.
+Check for success: zero literal `{{…}}` placeholders remain anywhere in the scaffolded workspace **except** inside the presentation template (`_kb-references/templates/presentation-template.html` or its branded sibling) — those placeholders are filled per-artifact by `/kb present`. The skill's post-write check enforces this before Step 8.
 
 ## Stage 3 — First three commands (15 min)
 

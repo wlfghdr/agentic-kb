@@ -223,7 +223,7 @@ demo-agentic-kb/
 
 Acceptance checks:
 
-- no literal `{{PLACEHOLDER}}` tokens remain,
+- no literal `{{PLACEHOLDER}}` tokens remain (except inside `_kb-references/templates/presentation-template.html` or its branded sibling — those placeholders are filled per-artifact by `/kb present`, see `kb-setup/SKILL.md` §Post-write check),
 - `.kb-config/layers.yaml` exists,
 - `_kb-tasks/focus.md` exists,
 - at least one workstream file exists,
