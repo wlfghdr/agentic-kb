@@ -51,6 +51,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -59,6 +60,7 @@ REPO = Path(__file__).resolve().parent.parent
 VSCODE_PLUGIN_JSON = REPO / "plugin.json"
 
 IS_WINDOWS = os.name == "nt"
+VERSION_LINE_RE = re.compile(r"^version:\s*([^\s]+)\s*$")
 
 
 def discover_skill_agent_paths(pj: dict) -> tuple[dict[str, Path], dict[str, Path]]:
@@ -118,10 +120,95 @@ def detect_targets() -> list[str]:
     return hits or ["claude"]
 
 
+def read_frontmatter_version(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except UnicodeDecodeError:
+        return None
+    if not lines or lines[0].strip() != "---":
+        return None
+    for line in lines[1:]:
+        stripped = line.strip()
+        if stripped == "---":
+            return None
+        match = VERSION_LINE_RE.match(stripped)
+        if match:
+            return match.group(1).strip("\"'")
+    return None
+
+
+def versioned_artifact_path(path: Path) -> Path | None:
+    if path.is_symlink():
+        try:
+            path = path.resolve(strict=True)
+        except FileNotFoundError:
+            return None
+    elif not path.exists():
+        return None
+    if path.is_dir():
+        skill_doc = path / "SKILL.md"
+        return skill_doc if skill_doc.is_file() else None
+    if path.is_file() and path.suffix.lower() == ".md":
+        return path
+    return None
+
+
+def artifact_version(path: Path) -> str | None:
+    doc = versioned_artifact_path(path)
+    if doc is None:
+        return None
+    return read_frontmatter_version(doc)
+
+
+def parse_version(version: str | None) -> tuple[int, ...] | None:
+    if version is None:
+        return None
+    parts = version.split(".")
+    if not parts or any(not part.isdigit() for part in parts):
+        return None
+    return tuple(int(part) for part in parts)
+
+
+def compare_versions(left: str | None, right: str | None) -> int | None:
+    left_parts = parse_version(left)
+    right_parts = parse_version(right)
+    if left_parts is None or right_parts is None:
+        return None
+    width = max(len(left_parts), len(right_parts))
+    left_padded = left_parts + (0,) * (width - len(left_parts))
+    right_padded = right_parts + (0,) * (width - len(right_parts))
+    if left_padded > right_padded:
+        return 1
+    if left_padded < right_padded:
+        return -1
+    return 0
+
+
 def link_or_copy(src: Path, dst: Path, force: bool) -> None:
     if dst.exists() or dst.is_symlink():
         if not force:
-            print(f"  skip (exists): {dst}")
+            src_version = artifact_version(src)
+            dst_version = artifact_version(dst)
+            version_cmp = compare_versions(src_version, dst_version)
+            if version_cmp == 0 and src_version is not None:
+                print(f"  up-to-date (v{src_version}): {dst}")
+            elif version_cmp == 1 and dst_version is not None and src_version is not None:
+                print(
+                    f"  stale (v{dst_version} -> v{src_version}): {dst} "
+                    "(run with --force to reinstall / update)"
+                )
+            elif version_cmp == -1 and dst_version is not None and src_version is not None:
+                print(
+                    f"  newer installed (v{dst_version} > v{src_version}): {dst} "
+                    "(run with --force to reinstall / downgrade)"
+                )
+            else:
+                print(
+                    f"  skip (exists): {dst} "
+                    "(run with --force to reinstall / update)"
+                )
             return
         if dst.is_dir() and not dst.is_symlink():
             shutil.rmtree(dst)

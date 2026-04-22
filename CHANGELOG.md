@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **`scripts/install.py` drift detection** — existing installs now compare source and installed front-matter `version:` values for skills and agents before skipping. Re-runs report `up-to-date` when versions match, `stale (old -> new)` when a copied install is behind, and the generic `skip (exists)` path now tells adopters to rerun with `--force` to reinstall/update. Fixes #29.
 - **Evaluation gate Q5 polarity and scoring examples** — `kb-management` now frames Q5 as "materially new compared to existing topics", defines the numeric score as the count of yes answers across Q1-Q5, removes the obsolete VMG `+1` bonus from the normative summaries, and fixes the worked examples/log wording. Fixes #30.
 - **`**Maturity**:` never written on findings/topics** — added the field to `finding.md` and `topic.md` templates, wired the capture flow in `kb-management/SKILL.md` to set it from the gate outcome, and aligned the triage signal (`kb.prompt.md`, `command-reference.md`) and audit rule K1 (`audit.md`) to read the same bold-bullet form. Fixes the broken `capture → promote` surfacing loop (#14, #31).
 - **Open-decisions triage signal never fires** — aligned the `/kb` triage rule and audit K4 to read the decision template's `**Status**:` bold-bullet form instead of a non-existent `status: proposed` YAML frontmatter. Triage now counts open decisions as files under `_kb-decisions/` whose status is not `resolved` / `superseded` / `dropped`. Fixes #15.
