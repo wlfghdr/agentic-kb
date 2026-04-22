@@ -8,7 +8,7 @@ Applied at **every persistence boundary**. The gate is the system's immune syste
 2. **Does this inform a decision?** (open or emerging?)
 3. **Would the user reference this again?** (durable signal or passing observation?)
 4. **Is this actionable?** (TODO, meeting, promotion?)
-5. **Does this already exist?** (topic already covers it?)
+5. **Is this materially new compared to existing topics?** (not already covered?)
 
 ## Scoring
 
@@ -17,6 +17,8 @@ Applied at **every persistence boundary**. The gate is the system's immune syste
 | 0 | Discard; log reason | `skipped` |
 | 1–2 | Finding only | `capture` |
 | 3+ | Finding + topic update + possibly decision | `capture` + `update-topic` (+ optional `decide`) |
+
+Matches are the count of ✅ "yes" answers across Q1-Q5.
 
 ## Applied per stage
 
@@ -39,7 +41,7 @@ For every gate decision, log:
 Example log line:
 
 ```
-14:22:11Z | skipped | personal | _kb-inputs/2026-04-18-meeting-notes.md | gate 1/5 — strengthens position but not actionable, already captured in topic
+14:22:11Z | skipped | personal | _kb-inputs/2026-04-18-meeting-notes.md | gate 1/5 — strengthens position but not actionable, not materially new compared to the existing topic
 ```
 
 ## User override
@@ -56,7 +58,7 @@ The gate is **not a hard blocker**. If the user insists after being told the rat
 - ✅ informs D-2026-04-18 (coordination model)
 - ✅ durable signal
 - ✅ actionable ("update topic")
-- ❌ not already captured
+- ✅ materially new compared to current coordination topics
 
 → Finding + topic update + decision evidence trail entry.
 
@@ -68,7 +70,7 @@ The gate is **not a hard blocker**. If the user insists after being told the rat
 - ❌ no decision impact
 - ✅ might be worth revisiting
 - ❌ not actionable today
-- ❌ not already captured
+- ❌ not materially new compared to existing topics
 
 → Finding only, low signal.
 
@@ -79,3 +81,9 @@ The gate is **not a hard blocker**. If the user insists after being told the rat
 - ❌ all five
 
 → Skipped. Log: `gate 0/5 — logistical noise`.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-22 | Reframed Q5 as positive novelty, clarified that the gate score is the count of ✅ yes answers, and fixed the worked examples/log wording to match the rubric | Fixes #30 |

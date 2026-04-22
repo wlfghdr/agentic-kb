@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.1.0
+> **Version:** 3.4.1
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -40,9 +40,9 @@ Before persisting anything, the agent scores against five questions:
 2. Does this inform a decision?
 3. Would you reference this again?
 4. Is this actionable?
-5. Does this already exist?
+5. Is this materially new compared to existing topics?
 
-**+1 bonus** if it aligns with declared VMG goals.
+The gate score is the count of "yes" answers across those five questions. VMG alignment is a separate prioritization signal, not a numeric bonus.
 
 | Score | Outcome |
 |-------|---------|
@@ -487,6 +487,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty and removed the obsolete VMG score bonus so the rubric matches the detailed gate reference and skill behavior |
 | 2026-04-22 | Added Codex CLI to the harness support model as a compatible CLI workflow, clarified first-class vs partial/manual support tiers |
 | 2026-04-22 | Fixed markdown-lint violations (indented heading/list, extra table column), removed stale doc-drift source column |
 | 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree |

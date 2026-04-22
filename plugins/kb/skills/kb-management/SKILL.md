@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.4.0
+version: 3.4.1
 triggers:
   - "/kb"
   - "knowledge base"
@@ -76,12 +76,12 @@ Full command reference: `references/command-reference.md`.
    2. Does this inform a decision?
    3. Would the user reference this again?
    4. Is this actionable?
-   5. Does this already exist?
-   Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only (offer idea creation if novelty detected). Score 3+ → finding + topic update + possibly new decision or idea.
+   5. Is this materially new compared to existing topics?
+   Score = count of "yes" answers across Q1-Q5. Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only (offer idea creation if novelty detected). Score 3+ → finding + topic update + possibly new decision or idea.
 
    **Set `**Maturity**:` from the gate outcome** when writing the finding/topic: score 1–2 → `raw`; score 3+ → `emerging`. Only promote to `durable` on explicit user confirmation ("this is ready to share") or when a second corroborating capture lands. The `Promotions due` triage signal and audit rule K1 read this field — never leave it blank.
 
-1b. **Check strategic alignment** when VMG is declared in `_kb-references/foundation/vmg.md`. Material aligned with active goals gets +1. Material contradicting a goal is captured + flagged for decision review.
+1b. **Check strategic alignment** when VMG is declared in `_kb-references/foundation/vmg.md`. VMG alignment does not change the numeric gate score; use it to prioritize accepted material. Material contradicting a goal is captured + flagged for decision review.
 
 2. **Always suggest next steps.** Every operation output ends with 1–3 concrete follow-ups (promote, notify, update topic, generate presentation).
 
@@ -258,6 +258,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty (`materially new compared to existing topics`) and removed the obsolete VMG `+1` bonus from the core rule so the score is always the count of yes answers | Fixes #30 |
 | 2026-04-22 | Wired `**Maturity**:` into the capture flow so bare `/kb` triage and audit K1 can read the field they were designed for | Fixes #14 + #31 |
 | 2026-04-22 | Aligned open-decisions triage + audit K4 to read the template's `**Status**:` bold-bullet form so `/kb` triage finally counts open decisions | Fixes #15 |
 | 2026-04-22 | Restored the missing `idea.md` scaffold template so `/kb idea` has a canonical file source again | System test follow-up |
