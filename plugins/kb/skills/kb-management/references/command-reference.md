@@ -90,7 +90,7 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 |---|---|
 | Setup complete? | `.kb-config/layers.yaml` exists |
 | Pending inputs | `_kb-inputs/` not yet in `_kb-inputs/digested/` |
-| Open decisions | `_kb-decisions/*.md` with `status: proposed` |
+| Open decisions | `_kb-decisions/*.md` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` |
 | Overdue todos | `_kb-tasks/*.md` with status `todo`/`doing` > 7 days |
 | Rituals | Today's `.kb-log/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
 | Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |

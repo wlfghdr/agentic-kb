@@ -16,7 +16,7 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 | K1 | Every finding and topic has a `**Maturity**:` line (`raw` / `emerging` / `durable`) | `maturity-missing` | Propose classification from content |
 | K2 | Every `durable` finding is referenced from at least one topic | `durable-finding-orphan` | Offer to cite it in the closest-matching topic |
 | K3 | Every topic's `sources.md` entries resolve to existing files or URLs | `broken-source` | Offer removal or update |
-| K4 | Every decision (`_kb-decisions/D-*.md`) has a `status:` and — if resolved — a resolution date | `decision-status-missing` | Prompt for status |
+| K4 | Every decision (`_kb-decisions/D-*.md`) has a `**Status**:` line and — if `resolved` — a resolution date in the evidence trail | `decision-status-missing` | Prompt for status |
 | K5 | Every idea (`_kb-ideas/I-*.md`) has a `status:` marker | `idea-status-missing` | Prompt for status |
 | K6 | No pending inputs older than `freshness.inputs-days` without being triaged | `stale-input` | Offer triage now |
 | K7 | Foundation files present: `me.md`, `context.md`, `vmg.md`, `sources.md`, `naming.md` | `foundation-incomplete` | Offer scaffold |
@@ -84,7 +84,7 @@ The KB-wide audit composes over the primitive-skill resolution commands — it d
 - `/kb decide resolve <id>` for incomplete decisions
 - Inline `accept | defer | suppress` for KB-wide violations that don't need further routing
 
-Every resolution respects the existing safety gates (tracker writes need `--apply`; config edits get diff previews; decisions route to `_kb-decisions/` with `status: proposed`).
+Every resolution respects the existing safety gates (tracker writes need `--apply`; config edits get diff previews; decisions route to `_kb-decisions/` with `**Status**: gathering-evidence` per the template default).
 
 ## Exit codes
 

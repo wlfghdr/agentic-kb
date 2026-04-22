@@ -259,6 +259,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-22 | Wired `**Maturity**:` into the capture flow so bare `/kb` triage and audit K1 can read the field they were designed for | Fixes #14 + #31 |
+| 2026-04-22 | Aligned open-decisions triage + audit K4 to read the template's `**Status**:` bold-bullet form so `/kb` triage finally counts open decisions | Fixes #15 |
 | 2026-04-22 | Restored the missing `idea.md` scaffold template so `/kb idea` has a canonical file source again | System test follow-up |
 | 2026-04-22 | Version aligned to 3.4.0 after documenting Codex CLI compatibility in the public setup/onboarding contract | Compatibility expansion |
 | 2026-04-22 | `/kb promote` now performs destination-layer review for local team KBs instead of stopping at the team inbox; version bumped to 3.3.0 | Team promote flow fix |
