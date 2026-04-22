@@ -7,7 +7,7 @@
     "url": "https://github.com/wlfghdr/agentic-kb"
   },
   "metadata": {
-    "version": "3.4.0",
+    "version": "3.4.3",
     "homepage": "https://github.com/wlfghdr/agentic-kb",
     "license": "Apache-2.0"
   },
@@ -16,7 +16,7 @@
       "name": "kb",
       "source": "./plugins/kb",
       "description": "Knowledge-ops plugin: stable kb-management + kb-setup skills, the kb-operator agent, and opt-in draft kb-roadmap/kb-journeys skills.",
-      "version": "3.4.0",
+      "version": "3.4.3",
       "category": "productivity",
       "keywords": ["knowledge-management", "kb", "agents", "notes", "decisions"]
     }
