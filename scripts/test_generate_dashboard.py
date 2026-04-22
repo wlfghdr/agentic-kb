@@ -27,10 +27,34 @@ BACKLOG_MD = """# Backlog
 - (empty)
 """
 
+# Canonical idea uses `**Stage**:` per REFERENCE.md and idea.md template.
+IDEA_STAGE_MD = """# Idea: Swarm-as-code
+
+**Stage**: growing
+**Created**: 2026-04-22
+**Workstream**: agent-orchestration
+**Sparring rounds**: 2
+
+## Seed
+
+Declarative swarm topology in the KB itself.
+"""
+
+# Legacy idea using `**Status**:` — parser should accept it as an alias
+# so pre-3.5 files still render instead of silently defaulting to `seed`.
+IDEA_STATUS_LEGACY_MD = """# Idea: Legacy alias test
+
+**Status**: ready
+**Created**: 2026-04-22
+**Workstream**: kb-internals
+**Sparring rounds**: 1
+"""
+
 ARTIFACTS_YAML = """dashboard:
   panels:
     - focus-tasks
     - backlog
+    - active-ideas
 """
 
 
@@ -50,6 +74,9 @@ def main() -> int:
         (tempdir / '_kb-tasks').mkdir(parents=True, exist_ok=True)
         (tempdir / '_kb-tasks' / 'focus.md').write_text(FOCUS_MD, encoding='utf-8')
         (tempdir / '_kb-tasks' / 'backlog.md').write_text(BACKLOG_MD, encoding='utf-8')
+        (tempdir / '_kb-ideas').mkdir(parents=True, exist_ok=True)
+        (tempdir / '_kb-ideas' / 'I-2026-04-22-swarm-as-code.md').write_text(IDEA_STAGE_MD, encoding='utf-8')
+        (tempdir / '_kb-ideas' / 'I-2026-04-22-legacy.md').write_text(IDEA_STATUS_LEGACY_MD, encoding='utf-8')
         (tempdir / '.kb-config').mkdir(parents=True, exist_ok=True)
         (tempdir / '.kb-config' / 'artifacts.yaml').write_text(ARTIFACTS_YAML, encoding='utf-8')
 
@@ -75,6 +102,15 @@ def main() -> int:
         # Bug 3: placeholder `- (empty)` under Backlog must not render or count.
         assert_not_contains(output, '>(empty)<')
         assert_contains(output, '0 items total')
+
+        # #35: idea with `**Stage**: growing` renders with the correct badge.
+        assert_contains(output, 'Swarm-as-code')
+        assert_contains(output, 'growing')
+
+        # #35 back-compat: legacy idea with `**Status**: ready` still renders
+        # with the correct badge rather than silently defaulting to `seed`.
+        assert_contains(output, 'Legacy alias test')
+        assert_contains(output, 'ready')
 
         print('generate-dashboard regression test: OK')
         return 0

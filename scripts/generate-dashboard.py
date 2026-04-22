@@ -378,17 +378,22 @@ def panel_active_ideas(repo_root: Path, dash: dict) -> Panel | None:
     files = []
     for fp in sorted(ideas_dir.glob('I-*.md')):
         text = _read_text(fp)
-        status = _parse_meta_field(text, 'Status').lower()
-        if status in ('shipped', 'archived', 'dropped'):
+        # Canonical idea lifecycle field is `**Stage**:` (see REFERENCE.md
+        # + idea.md template). Accept `Status` as a legacy alias for
+        # backwards compatibility with pre-3.5 idea files.
+        stage = _parse_meta_field(text, 'Stage').lower()
+        if not stage:
+            stage = _parse_meta_field(text, 'Status').lower()
+        if stage in ('shipped', 'archived', 'dropped'):
             continue
         m = IDEA_TITLE_RE.search(text)
         title = m.group(1).strip() if m else fp.stem
-        files.append((fp, title, status or 'seed'))
+        files.append((fp, title, stage or 'seed'))
     files.sort(key=lambda x: x[0].stat().st_mtime, reverse=True)
-    for fp, title, status in files[:limit]:
+    for fp, title, stage in files[:limit]:
         rel = str(fp.relative_to(repo_root))
         panel.rows.append(Row(title=title, href=rel,
-                              badges=[status] if status else []))
+                              badges=[stage] if stage else []))
     panel.count = len(files)
     return panel
 
