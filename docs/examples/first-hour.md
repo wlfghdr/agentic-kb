@@ -1,6 +1,6 @@
 # First Hour — Zero to First Briefing
 
-> **Version:** 0.1 | **Last updated:** 2026-04-20
+> **Version:** 0.2 | **Last updated:** 2026-04-22
 
 This walkthrough covers the minimum path from *nothing installed* to the first useful `/kb` response. Target audience: a developer who has just heard about `agentic-kb` and wants to try it on their own machine in under an hour. Runnable end-to-end — deviations from this path are where adopters usually hit friction.
 
@@ -58,22 +58,23 @@ From inside the harness, in the directory you want as your workspace root:
 /kb setup
 ```
 
-The wizard asks 12 question blocks (see `plugins/kb/skills/kb-setup/SKILL.md`). Minimum viable answers for a first try:
+The wizard asks 13 core question blocks, with optional follow-up blocks for roadmap and journeys when those draft skills are in scope (see `plugins/kb/skills/kb-setup/SKILL.md`). Minimum viable answers for a first try:
 
 | Q | Suggested first-run answer |
 |---|----------------------------|
 | Q1 Name | `alice` |
 | Q2 Role & themes | `engineer on distributed systems — caching, reliability, observability` |
-| Q3 Workspace root | current directory (accept default) |
-| Q4 Personal KB | *create new* → `alice-kb`, skip remote for first try |
-| Q5 Team KB | *skip* |
-| Q6 Org-Unit KB | *skip* |
-| Q7 Marketplace | *skip* (you already installed it) |
-| Q8 Workstreams | one workstream matching Q2 themes |
-| Q9 IDE targets | just the harness you're in |
-| Q10 Integrations | *skip* |
-| Q11 Automation level | `1` (manual) — good default for first try |
-| Q12 HTML styling | `builtin` |
+| Q3 Vision, mission & goals (VMG) | *skip* for the first try, or paste a short strategy summary if you have one |
+| Q4 Workspace root | current directory (accept default) |
+| Q5 Personal KB | *create new* → `alice-kb`, skip remote for first try |
+| Q6 Team KB | *skip* |
+| Q7 Org-Unit KB | *skip* |
+| Q8 Marketplace | *skip* (you already installed it) |
+| Q9 Workstreams | one workstream matching Q2 themes |
+| Q10 IDE targets | just the harness you're in |
+| Q11 Integrations | *skip* |
+| Q12 Automation level | `1` (manual) — good default for first try |
+| Q13 HTML styling | `builtin` |
 
 The wizard then runs Steps 1–9. Step 9 verifies with `/kb status` (expects clean state) and `/kb start-day` (expects a briefing).
 
@@ -149,6 +150,7 @@ After Stage 2, you can work from the same initialized workspace in Codex CLI. To
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Corrected the setup walkthrough to match the current `kb-setup` interview order: 13 core question blocks, VMG at Q3, and downstream questions renumbered accordingly | Fixes #27 |
 | 2026-04-22 | Exempted the presentation template placeholder scan from the first-run success criteria because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
 | 2026-04-22 | Added Codex CLI guidance as a compatible repo-local workflow after supported-harness bootstrap | Compatibility expansion |
 | 2026-04-20 | Updated the walkthrough to match automatic overview regeneration after every `/kb` mutation | v3.2.0 live-overview refresh |

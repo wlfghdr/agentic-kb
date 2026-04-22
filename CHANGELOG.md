@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **`docs/examples/first-hour.md` setup-flow drift** — the first-hour walkthrough now matches the current `kb-setup` interview order: 13 core question blocks, VMG explicitly documented as Q3, and the remaining onboarding answers renumbered through Q13. Fixes #27.
 - **`docs/REFERENCE.md` workspace-root prompt contract** — the required-files row no longer treats `.github/prompts/kb.prompt.md` as universal. `REFERENCE.md` now mirrors the established harness-specific setup contract: VS Code uses `.github/prompts/` + `.github/instructions/`, Claude Code and OpenCode do not require workspace prompt files, and compatible CLI workflows reuse whatever prompt/instruction files are already present in the initialized workspace. Fixes #28.
 - **`kb-setup` version alignment** — bumped `plugins/kb/skills/kb-setup/SKILL.md` from `3.4.0` to `3.4.1` so the shipped placeholder-gate behavior fix is versioned under the current framework patch release.
 - **Setup post-write placeholder gate blocked on shipped template** — `kb-setup` Step 8 scanned every file in the scaffolded workspace for residual `{{…}}` markers and refused to commit when it found any. The shipped `presentation-template.html` (and its branded sibling) intentionally keep seven `{{…}}` fields because they are filled per-artifact by `/kb present`, so the gate failed on every first run. The post-write check + `docs/examples/first-hour.md` + `docs/first-run-acceptance.md` now exempt those filenames. Fixes #17.
