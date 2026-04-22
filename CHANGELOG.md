@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **Root `index.html` visibility for first-class KB objects** — `scripts/generate-index.py` now indexes canonical KB markdown in `_kb-references/{findings,topics}/`, `_kb-ideas/`, and `_kb-decisions/` alongside generated HTML, so the public landing page exposes durable knowledge instead of only generated pages. Regression coverage added in `scripts/test_generate_index.py`; `kb-management`, `kb-operator`, and the HTML-artifact contract now describe the broader landing-page surface. Fixes #21.
 - **Version metadata and shipped dashboard copy aligned for v3.4.3** — `README.md` now advertises `spec-v3.4.3`, the root/plugin/Claude marketplace manifests now all report `3.4.3`, and the shipped `kb-management` `index.html` template describes `dashboard.html` as including live topics. Follow-up for PR #54.
 - **Dashboard topics visibility** — `scripts/generate-dashboard.py` now renders a dedicated `topics` panel from `_kb-references/topics/`, the default `artifacts.yaml` dashboard panel list includes it, and the dashboard contract docs (`docs/REFERENCE.md`, `kb-management`, `kb-operator`, `html-artifacts.md`) now describe topics as first-class live dashboard state. Fixes #22.
 - **Version metadata aligned for the phantom-overview fix** — bumped `plugins/kb/skills/kb-management/SKILL.md` from `3.4.1` to `3.4.2` and `plugins/kb/agents/kb-operator.md` from `3.4.0` to `3.4.2` so the shipped behavioral change is versioned under the current framework patch release.

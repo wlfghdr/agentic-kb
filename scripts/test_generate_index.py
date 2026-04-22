@@ -107,6 +107,41 @@ def main() -> int:
             'Launch Journey Step 2',
             'Second leaf page that should also be hidden from the root index.',
         )
+        (tempdir / '_kb-references' / 'findings').mkdir(parents=True, exist_ok=True)
+        (tempdir / '_kb-references' / 'topics').mkdir(parents=True, exist_ok=True)
+        (tempdir / '_kb-ideas').mkdir(parents=True, exist_ok=True)
+        (tempdir / '_kb-decisions').mkdir(parents=True, exist_ok=True)
+        (tempdir / '_kb-references' / 'findings' / '2026-04-19-latency-spike.md').write_text(
+            """# Latency spike in review path
+
+Captured elevated review latency after the latest import batch, with a repeatable trace.
+""",
+            encoding='utf-8',
+        )
+        (tempdir / '_kb-references' / 'topics' / 'review-pipeline.md').write_text(
+            """---
+title: Review pipeline
+summary: Living synthesis of the review pipeline bottlenecks and the current operating position.
+---
+
+# Review pipeline
+""",
+            encoding='utf-8',
+        )
+        (tempdir / '_kb-ideas' / 'async-triage.md').write_text(
+            """# Async triage
+
+Use an asynchronous triage pass to reduce operator wait time during inbox review.
+""",
+            encoding='utf-8',
+        )
+        (tempdir / '_kb-decisions' / 'decision-queue-ownership.md').write_text(
+            """# Queue ownership
+
+Clarify who owns queue health so escalations stop bouncing between contributors.
+""",
+            encoding='utf-8',
+        )
 
         subprocess.run(
             ['python3', str(SCRIPT), str(tempdir), '--title', 'Simulated KB', '--description', 'Regression test'],
@@ -128,6 +163,17 @@ def main() -> int:
         assert_not_contains(output, 'strategy-report-v1-2026-04-17.html')
         assert_contains(output, 'launch-journey.html')
         assert_not_contains(output, 'step-1.html')
+        assert_contains(output, '<h2>Findings')
+        assert_contains(output, '<h2>Topics')
+        assert_contains(output, '<h2>Ideas')
+        assert_contains(output, '<h2>Decisions')
+        assert_contains(output, '_kb-references/findings/2026-04-19-latency-spike.md')
+        assert_contains(output, '_kb-references/topics/review-pipeline.md')
+        assert_contains(output, '_kb-ideas/async-triage.md')
+        assert_contains(output, '_kb-decisions/decision-queue-ownership.md')
+        assert_contains(output, 'Latency spike in review path')
+        assert_contains(output, 'Review pipeline')
+        assert_contains(output, 'Items</div>')
 
         print('generate-index regression test: OK')
         return 0

@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.4.3
+version: 3.4.4
 triggers:
   - "/kb"
   - "knowledge base"
@@ -99,7 +99,7 @@ Full command reference: `references/command-reference.md`.
 
 9. **Auto-regenerate live overviews after every mutation.** After any state-mutating operation (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, `present`, `report`, `end-day`, `end-week`, and automation-loop writes), regenerate `dashboard.html` and the root artifact `index.html` before the response/commit completes. Treat these two files as part of the same mutation, not as a later optional step.
 
-10. **Regenerate root `index.html` and `dashboard.html`** whenever a mutation creates or modifies KB state, including the live overview refresh above. Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."` and `python3 scripts/generate-dashboard.py REPO_ROOT --title "..." --description "..."` (or the `.kb-scripts/` copies). `/kb status --refresh-overviews` remains available as a manual repair/rebuild trigger, but freshness no longer depends on it. `index.html` serves as the GitHub Pages landing page (artifact inventory); `dashboard.html` is the owner-facing command center (focus, ideas, decisions, topics, inputs, recent findings/digests/reports, workstreams, opt-in GitHub/Jira).
+10. **Regenerate root `index.html` and `dashboard.html`** whenever a mutation creates or modifies KB state, including the live overview refresh above. Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."` and `python3 scripts/generate-dashboard.py REPO_ROOT --title "..." --description "..."` (or the `.kb-scripts/` copies). `/kb status --refresh-overviews` remains available as a manual repair/rebuild trigger, but freshness no longer depends on it. `index.html` serves as the GitHub Pages landing page surfacing HTML artifacts plus first-class KB objects (`findings`, `topics`, `ideas`, `decisions`); `dashboard.html` is the owner-facing command center (focus, ideas, decisions, topics, inputs, recent findings/digests/reports, workstreams, opt-in GitHub/Jira).
 
 11. **Task handling discipline — apply on every `/kb` invocation, not only `/kb task`.** Tasks are first-class and the user's most fragile surface. Rules:
 
@@ -258,6 +258,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Root `index.html` now surfaces first-class KB objects (`findings`, `topics`, `ideas`, `decisions`) alongside HTML artifacts, and the declared skill version is bumped to 3.4.4 for the shipped landing-page visibility fix | Fixes #21 |
 | 2026-04-22 | Added topics to the dashboard command-center contract and bumped the declared skill version to 3.4.3 so first-class accreting knowledge is visible in live overviews | Fixes #22 |
 | 2026-04-22 | Bumped declared skill version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
 | 2026-04-22 | Simplified rule 9 to regenerate only `dashboard.html` and the root `index.html` after every mutation — dropped the three phantom overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals live in dashboard panels | Fixes #18 |

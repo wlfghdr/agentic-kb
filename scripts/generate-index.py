@@ -2,8 +2,9 @@
 """Generate a root index.html for an agentic-kb layer.
 
 Scans the repository for HTML artifacts (reports, presentations, specs,
-journey maps, mocks, etc.) and produces a self-contained index.html with
-dark/light toggle and GitHub-Pages-ready relative links.
+journey maps, mocks, etc.) plus first-class KB knowledge objects
+(`findings`, `topics`, `ideas`, `decisions`) and produces a self-contained
+index.html with dark/light toggle and GitHub-Pages-ready relative links.
 
 Styling is read from .kb-config/artifacts.yaml when present (source=template
 or source=website derive tokens from the reference). Falls back to a neutral
@@ -208,6 +209,13 @@ SKIP_FILES_ROOT = {'index.html'}
 
 DATE_RE = re.compile(r'(\d{4}-\d{2}-\d{2})')
 TITLE_RE = re.compile(r'<title[^>]*>(.*?)</title>', re.IGNORECASE | re.DOTALL)
+MD_HEADING_RE = re.compile(r'^\s*#\s+(.+?)\s*$', re.MULTILINE)
+MD_FRONTMATTER_RE = re.compile(r'^---\n(.*?)\n---\n?', re.DOTALL)
+MD_FRONTMATTER_TITLE_RE = re.compile(r'^\s*title:\s*(.+?)\s*$', re.MULTILINE | re.IGNORECASE)
+MD_FRONTMATTER_SUMMARY_RE = re.compile(
+    r'^\s*(?:summary|description|abstract):\s*(.+?)\s*$',
+    re.MULTILINE | re.IGNORECASE,
+)
 
 # Warn about filenames that can trip on static hosts (e.g. GitHub Pages
 # sometimes returns 404 for multi-dot paths). Report them instead of
@@ -239,6 +247,40 @@ def extract_title(filepath: Path) -> str | None:
             return t
     except Exception:
         pass
+    return None
+
+
+def _strip_markdown(s: str) -> str:
+    s = re.sub(r'!\[[^\]]*\]\([^)]+\)', ' ', s)
+    s = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', s)
+    s = re.sub(r'[`*_>#-]+', ' ', s)
+    s = html.unescape(s)
+    return _WS_RE.sub(' ', s).strip()
+
+
+def _split_markdown_frontmatter(text: str) -> tuple[str, str]:
+    m = MD_FRONTMATTER_RE.match(text)
+    if not m:
+        return '', text
+    return m.group(1), text[m.end():]
+
+
+def extract_markdown_title(filepath: Path) -> str | None:
+    try:
+        text = filepath.read_text(encoding='utf-8', errors='ignore')[:8192]
+    except Exception:
+        return None
+    frontmatter, body = _split_markdown_frontmatter(text)
+    m = MD_FRONTMATTER_TITLE_RE.search(frontmatter)
+    if m:
+        title = _strip_markdown(m.group(1).strip().strip('"\''))
+        if title:
+            return title
+    m = MD_HEADING_RE.search(body)
+    if m:
+        title = _strip_markdown(m.group(1))
+        if title:
+            return title
     return None
 
 
@@ -303,6 +345,38 @@ def extract_summary(filepath: Path, title: str) -> str:
     return ''
 
 
+def extract_markdown_summary(filepath: Path, title: str) -> str:
+    try:
+        text = filepath.read_text(encoding='utf-8', errors='ignore')[:16384]
+    except Exception:
+        return ''
+    frontmatter, body = _split_markdown_frontmatter(text)
+    m = MD_FRONTMATTER_SUMMARY_RE.search(frontmatter)
+    if m:
+        summary = _strip_markdown(m.group(1).strip().strip('"\''))
+        if summary:
+            return _shorten(summary)
+
+    title_norm = title.strip().lower()
+    for raw_line in body.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith(('---', '```')):
+            continue
+        if line.startswith('#'):
+            heading = _strip_markdown(line.lstrip('#').strip())
+            if heading and heading.lower() != title_norm:
+                return _shorten(heading)
+            continue
+        if line.startswith(('* ', '- ', '> ', '|', '**', '_', '<!--')):
+            continue
+        summary = _strip_markdown(line)
+        if len(summary) >= 15:
+            return _shorten(summary)
+    return ''
+
+
 def extract_date(filepath: Path, repo_root: Path) -> str:
     """Get date from filename pattern, then git, then mtime."""
     m = DATE_RE.search(filepath.stem)
@@ -336,6 +410,14 @@ def categorize(rel_path: str) -> tuple[str, str]:
 
     rel_lower = '/'.join(parts).lower()
 
+    if rel_lower.startswith('_kb-references/topics/') or '/_kb-references/topics/' in rel_lower:
+        return 'Topics', contributor
+    if rel_lower.startswith('_kb-references/findings/') or '/_kb-references/findings/' in rel_lower:
+        return 'Findings', contributor
+    if rel_lower.startswith('_kb-ideas/') or '/_kb-ideas/' in rel_lower:
+        return 'Ideas', contributor
+    if rel_lower.startswith('_kb-decisions/') or '/_kb-decisions/' in rel_lower:
+        return 'Decisions', contributor
     if 'roadmap' in rel_lower or 'status' in rel_lower:
         return 'Roadmap & Status', contributor
     if 'journey' in rel_lower:
@@ -400,6 +482,30 @@ def discover_artifacts(repo_root: Path) -> list[Artifact]:
         artifacts.append(Artifact(path=rel, title=title, date=date,
                                   category=cat, contributor=contrib,
                                   family=family_key(rel), summary=summary))
+    knowledge_patterns = [
+        '_kb-references/findings/*.md',
+        '_kb-references/topics/*.md',
+        '_kb-ideas/*.md',
+        '_kb-decisions/*.md',
+        '*/_kb-references/findings/*.md',
+        '*/_kb-references/topics/*.md',
+        '*/_kb-ideas/*.md',
+        '*/_kb-decisions/*.md',
+    ]
+    seen_md: set[str] = set()
+    for pattern in knowledge_patterns:
+        for fp in sorted(repo_root.glob(pattern)):
+            rel = str(fp.relative_to(repo_root))
+            if rel in seen_md:
+                continue
+            seen_md.add(rel)
+            title = extract_markdown_title(fp) or fp.stem.replace('-', ' ').replace('_', ' ').title()
+            date = extract_date(fp, repo_root)
+            cat, contrib = categorize(rel)
+            summary = extract_markdown_summary(fp, title)
+            artifacts.append(Artifact(path=rel, title=title, date=date,
+                                      category=cat, contributor=contrib,
+                                      family=family_key(rel), summary=summary))
     # Sort newest first
     artifacts.sort(key=lambda a: a.date, reverse=True)
     return artifacts
@@ -558,8 +664,9 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
         )
     else:
         # Fixed fallback order
-        fixed = ['Reports', 'Strategy & Vision', 'Presentations', 'Journey Maps',
-                 'Findings', 'Research', 'Prototypes & Mocks', 'Outputs',
+        fixed = ['Topics', 'Findings', 'Ideas', 'Decisions', 'Reports',
+                 'Strategy & Vision', 'Presentations', 'Journey Maps',
+                 'Research', 'Prototypes & Mocks', 'Outputs',
                  'Roadmap & Status', 'Other']
         remaining.sort(key=lambda c: fixed.index(c) if c in fixed else 999)
 
@@ -606,17 +713,18 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
         )
 
     body_sections = '\n\n'.join(sections) if sections else (
-        '    <p class="empty">No HTML artifacts found yet. '
-        'Generate one with <code>/kb present</code>, <code>/kb report</code>, '
-        'or <code>/kb end-day</code>.</p>'
+        '    <p class="empty">No HTML artifacts or KB knowledge objects found yet. '
+        'Capture with <code>/kb [text]</code> or generate HTML with '
+        '<code>/kb present</code>, <code>/kb report</code>, or '
+        '<code>/kb end-day</code>.</p>'
     )
 
     pinned_label = ', '.join(pinned) if pinned else 'none'
     legend_html = (
         '  <p class="legend">'
         f'<strong>Ordering:</strong> Pinned categories first ({html.escape(pinned_label)}); '
-        'others ordered by newest artifact. '
-        '<strong>Dedup:</strong> only the latest version of each artifact family is shown '
+        'others ordered by newest item. '
+        '<strong>Dedup:</strong> only the latest version of each item family is shown '
         '(older versions remain on disk). '
         f'<strong><span class="badge-stale">stale</span></strong> marks content older than '
         f'{stale_days} days (before <code>{stale_cutoff_str}</code>) — may be outdated.'
@@ -628,7 +736,7 @@ def generate_html(artifacts: list[Artifact], title: str, description: str,
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{html.escape(title)} — Artifact Index</title>
+<title>{html.escape(title)} — KB Index</title>
 <meta name="generator" content="agentic-kb/generate-index">
 <meta name="generated" content="{now}">
 <style>
@@ -881,12 +989,12 @@ h2 {{
       <p class="lead">{html.escape(description)}</p>
     </div>
   </div>
-  <p class="watermark">latest &middot; {now} &middot; {len(artifacts)} artifact{"s" if len(artifacts) != 1 else ""}</p>
+  <p class="watermark">latest &middot; {now} &middot; {len(artifacts)} item{"s" if len(artifacts) != 1 else ""}</p>
 
 {dashboard_nav}
 
   <div class="stats">
-    <div class="stat"><div class="stat-value">{len(artifacts)}</div><div class="stat-label">Total</div></div>
+    <div class="stat"><div class="stat-value">{len(artifacts)}</div><div class="stat-label">Items</div></div>
     <div class="stat"><div class="stat-value">{len(set(a.category for a in artifacts))}</div><div class="stat-label">Categories</div></div>
     <div class="stat"><div class="stat-value">{len(set(a.contributor for a in artifacts if a.contributor))}</div><div class="stat-label">Contributors</div></div>
     <div class="stat"><div class="stat-value">{artifacts[0].date if artifacts else "—"}</div><div class="stat-label">Latest</div></div>
@@ -904,7 +1012,7 @@ h2 {{
 # ── Main ───────────────────────────────────────────────────────────────
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description='Generate artifact index.html')
+    parser = argparse.ArgumentParser(description='Generate KB index.html')
     parser.add_argument('root', nargs='?', default='.', help='Repository root')
     parser.add_argument('--title', default=None, help='KB title')
     parser.add_argument('--description', default='', help='One-line description')
@@ -953,7 +1061,7 @@ def main() -> None:
     if subpage_dropped:
         parts.append(f'{subpage_dropped} referenced sub-pages hidden')
     suffix = f' ({"; ".join(parts)})' if parts else ''
-    print(f'Generated {outpath} — {len(artifacts)} artifacts indexed{suffix}')
+    print(f'Generated {outpath} — {len(artifacts)} items indexed{suffix}')
 
 
 if __name__ == '__main__':
