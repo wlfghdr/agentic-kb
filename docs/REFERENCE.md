@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.4.1
+> **Version:** 3.4.2
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -60,10 +60,11 @@ The gate score is the count of "yes" answers across those five questions. VMG al
 my-workspace/
 ├── AGENTS.md                       # master index (all repos, keyword lookup)
 ├── CLAUDE.md → AGENTS.md           # symlink
-├── .github/prompts/kb.prompt.md
-├── .github/instructions/kb.instructions.md
-├── .claude/                        # Claude Code harness
-├── .opencode/                      # OpenCode harness
+├── .github/                        # VS Code Copilot workspace hooks (optional)
+│   ├── prompts/kb.prompt.md
+│   └── instructions/kb.instructions.md
+├── .claude/                        # Claude Code harness (if installed)
+├── .opencode/                      # OpenCode harness (if installed)
 ├── my-kb/                          # L1 Personal KB
 ├── team-kb/                        # L2 Team KB (optional)
 ├── org-unit-kb/                    # L3 Org-Unit KB (optional)
@@ -147,9 +148,16 @@ org-unit-kb/
 | L1 | `AGENTS.md`, `.kb-config/layers.yaml`, `_kb-inputs/`, `_kb-references/{topics,findings,foundation}/`, `_kb-ideas/`, `_kb-decisions/`, `_kb-tasks/focus.md`, `.kb-log/` |
 | L2 | `AGENTS.md`, `_kb-decisions/`, `_kb-tasks/focus.md`, `.kb-log/`, per-contributor dirs |
 | L3 | `AGENTS.md`, `_kb-decisions/`, `_kb-tasks/focus.md`, `_kb-workstreams/`, `.kb-log/`, per-team dirs |
-| Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`, `.github/prompts/kb.prompt.md` |
+| Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`; add harness-specific prompt/instruction files only when that harness uses them |
 
 Note: `.kb-config/automation.yaml` and `.kb-config/artifacts.yaml` are optional — defaults apply when absent.
+
+Harness-specific workspace prompt / instruction contract:
+
+- VS Code Copilot: `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md`
+- Claude Code: no required workspace prompt file; install/bootstrap is handled through `.claude/`
+- OpenCode: no required workspace prompt file; install/bootstrap is handled through `.opencode/`
+- Compatible CLI workflows (for example Codex CLI): reuse `AGENTS.md`, `CLAUDE.md`, and any generated prompt/instruction files already present in the initialized workspace; do not imply a native prompt-file path of their own
 
 Optional draft directories: `_kb-roadmaps/` is created only when `kb-roadmap` is configured; `_kb-journeys/` is created only when `kb-journeys` is configured.
 
@@ -487,6 +495,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-22 | Corrected the workspace-root required-files row so `.github/prompts/kb.prompt.md` is no longer universal, and added the harness-specific workspace prompt/instruction note for VS Code, Claude Code, OpenCode, and compatible CLI workflows |
 | 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty and removed the obsolete VMG score bonus so the rubric matches the detailed gate reference and skill behavior |
 | 2026-04-22 | Added Codex CLI to the harness support model as a compatible CLI workflow, clarified first-class vs partial/manual support tiers |
 | 2026-04-22 | Fixed markdown-lint violations (indented heading/list, extra table column), removed stale doc-drift source column |
