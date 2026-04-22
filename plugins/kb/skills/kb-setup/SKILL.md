@@ -1,7 +1,7 @@
 ---
 name: kb-setup
-description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures IDE harnesses (VS Code Copilot, Claude Code, OpenCode), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 3.3.0
+description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures documented harness workflows (VS Code Copilot, Claude Code, OpenCode, plus compatible CLI guidance such as Codex CLI), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
+version: 3.4.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -87,8 +87,8 @@ Ask each block in order. Stop and wait after each block for the user's answer be
    *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
 9. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
    *→ Creates `_kb-workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
-10. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`.
-    *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`). Multiple selections create cross-harness compatibility.*
+10. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`, `codex-cli`.
+    *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`) and whether the setup summary must explain a compatible CLI workflow. Multiple selections create cross-harness compatibility.*
 11. **Integrations**: marketplace-available MCP servers / APIs to wire up.
     *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
 
@@ -174,7 +174,8 @@ Required (setup cannot proceed without these):
 | Tool | Check | Abort message if missing |
 |------|-------|--------------------------|
 | `git` | `git --version` exits 0 | macOS: `xcode-select --install` · Debian/Ubuntu: `sudo apt install git` · Fedora: `sudo dnf install git` · Windows: [git-scm.com/download/win](https://git-scm.com/download/win) |
-| Harness CLI (at least one: `claude`, `code`, or `opencode`) | binary on PATH | Install the harness first; the skill can't install itself into an absent harness |
+| Harness CLI (at least one first-class target: `claude`, `code`, or `opencode`) | binary on PATH | Install the harness first; the skill can't install itself into an absent harness |
+| Optional compatible CLI: `codex` | binary on PATH when Codex workflow is selected | Not required for bootstrap. If present, include Codex-specific repo-local workflow notes in the final setup summary. |
 
 Recommended (warn, do not abort):
 
@@ -194,14 +195,14 @@ On abort: print the missing tool, the OS-specific install command, and exit. Do 
 ### Step 3 — Scaffold personal KB
 Directories: `_kb-inputs/`, `_kb-inputs/digested/`, `_kb-references/{topics,findings,foundation,reports,legacy}/`, `_kb-ideas/`, `_kb-ideas/archive/`, `_kb-decisions/`, `_kb-decisions/archive/`, `_kb-tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_kb-workstreams/`.
 
-Files (from `templates/`):
-- `AGENTS.md`, `README.md`, `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`.
-- Initial `_kb-workstreams/<name>.md` per declared workstream.
-- `_kb-references/foundation/{me,context,vmg,stakeholders,sources,naming}.md`.
+Files (from the scaffold template set):
+- `AGENTS.md`, `README.md`, `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml` from `kb-setup/templates/`.
+- Initial `_kb-workstreams/<name>.md` per declared workstream from `kb-management/templates/workstream.md`.
+- `_kb-references/foundation/{me,context,vmg,stakeholders,sources,naming}.md` from `kb-setup/templates/`.
   - `vmg.md` is pre-filled from Q3: if the user provided a URL, fetch and extract vision/mission/goals into structured sections. If a file path, read and extract. If short text, structure directly. If skipped, write placeholder sections.
-- Initial `_kb-references/topics/<slug>.md` per declared theme (with empty changelog).
-- `_kb-references/templates/presentation-template.html` — copied verbatim from `templates/presentation-template.html` (vendor-neutral baseline: design tokens, dark/light themes, slide nav, brand-mark slot, cover timestamp, appendix/changelog). Q13 rewrites this file in place when the adopter picks template/website; the copy is also the fallback for `source: builtin`.
-- `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`.
+- Initial `_kb-references/topics/<slug>.md` per declared theme (with empty changelog) from `kb-management/templates/topic.md`.
+- `_kb-references/templates/presentation-template.html` — copied verbatim from `kb-setup/templates/presentation-template.html` (vendor-neutral baseline: design tokens, dark/light themes, slide nav, brand-mark slot, cover timestamp, appendix/changelog). Q13 rewrites this file in place when the adopter picks template/website; the copy is also the fallback for `source: builtin`.
+- `_kb-tasks/focus.md`, `_kb-tasks/backlog.md` from `kb-management/templates/{focus,backlog}.md`.
 - `.kb-scripts/generate-index` — artifact index generator (from `scripts/generate-index.py`).
 - `.nojekyll` — **required** empty marker file at the repo root. GitHub Pages runs Jekyll by default, which silently drops directories whose names start with `_` (e.g. `_kb-references/`, `_kb-inputs/`). Without `.nojekyll`, every artifact under an underscore-prefixed directory returns 404 on Pages. The file must be present on whichever branch Pages serves from (typically `main` or `gh-pages`).
 - `index.html` — initial root artifact index (generated by running the script).
@@ -228,6 +229,7 @@ Optional workspace-level harness hooks (only written if the harness was **not** 
 
 - VS Code selected → write `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md` from `templates/` **only if missing**.
 - Claude Code / OpenCode selected → nothing to write at workspace level; plugin/install handles `.claude/` and `.opencode/`.
+- Codex CLI selected → do not claim native install support. Reuse the workspace-level `AGENTS.md`, `CLAUDE.md`, and any generated prompt/instruction files as the documented operating contract.
 
 ### Step 6 — Configure additional IDE targets
 
@@ -236,6 +238,7 @@ For any harness the user selected that is **not yet installed**, run the install
 - **Claude Code**: recommend `/plugin marketplace add <repo-url>` + `/plugin install kb@agentic-kb` from inside Claude Code (preferred — handles updates). Fall back to `<marketplace>/scripts/install --target claude` for dev installs.
 - **VS Code**: point the user at `chat.plugins.marketplaces` in `settings.json` for one-click install, or run `<marketplace>/scripts/install --target vscode` for direct workspace copy.
 - **OpenCode**: no marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global`. OpenCode also reads `.claude/skills/`, so a Claude Code install in the same workspace is picked up automatically.
+- **Codex CLI**: no native marketplace/install target yet. Mark it as a compatible CLI workflow, explain that `/kb setup` bootstrap should happen through a first-class supported harness (or a repo-local manual setup path), and point Codex users at the generated workspace files as the runtime contract.
 
 Never re-install into a harness that already has the skills — that causes symlink/file conflicts with `link_or_copy` falling back to "skip (exists)".
 
@@ -350,5 +353,7 @@ A zero-hit run is the gate for Step 8.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Clarified which personal-KB scaffold files come from `kb-setup` templates versus `kb-management` templates so `/kb setup` is implementable without guesswork | System test follow-up |
+| 2026-04-22 | Added Codex CLI as a documented compatible workflow and clarified that first-class install support still belongs to Claude Code, VS Code, and OpenCode; version bumped to 3.4.0 | Compatibility expansion |
 | 2026-04-22 | Team-KB scaffolding now explains that `/kb promote` completes local team intake review during the same operation; version bumped to 3.3.0 | Team promote flow fix |
 | 2026-04-22 | Version aligned to 3.2.0 | Spec review |

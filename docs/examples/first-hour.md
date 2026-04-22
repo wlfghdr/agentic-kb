@@ -9,7 +9,8 @@ This walkthrough covers the minimum path from *nothing installed* to the first u
 | Tool | Check | If missing |
 |------|-------|-----------|
 | `git` | `git --version` | macOS: `xcode-select --install` · Debian/Ubuntu: `sudo apt install git` · Windows: [git-scm.com/download/win](https://git-scm.com/download/win) |
-| At least one harness: Claude Code, VS Code (Copilot Chat), or OpenCode | launch the harness | install it first — this walkthrough assumes Claude Code |
+| At least one first-class harness: Claude Code, VS Code (Copilot Chat), or OpenCode | launch the harness | install it first — this walkthrough assumes Claude Code |
+| Optional compatible CLI workflow: Codex CLI | `codex --help` | optional for this walkthrough — use it after the workspace is initialized |
 | `gh` | `gh --version` | recommended, not required — [cli.github.com](https://cli.github.com/) |
 
 Stop here if `git` or the harness is missing. The setup skill's Step 1 will abort anyway.
@@ -32,6 +33,8 @@ The `/plugin marketplace add` command reads `.claude-plugin/marketplace.json` fr
 VS Code equivalent: add the repo to `chat.plugins.marketplaces` in `settings.json`, then install from the Extensions view (reads top-level `plugin.json`).
 
 OpenCode: no marketplace; use Option B.
+
+Codex CLI: compatible after the workspace is initialized, but not yet a native marketplace/install target. Treat it as a repo-local workflow that consumes the scaffolded files created by `/kb setup`.
 
 ### Option B — Dev install from a clone
 
@@ -130,6 +133,10 @@ Overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.ht
 | URL capture prints nothing | The skill couldn't fetch the URL (auth, PDF, CORS-only content) | Paste the text directly: `/kb <paste the article text>` |
 | Claude Code Level-3 automation doesn't trigger | VS Code-only limitation applies? Check `ide-support.md` capability matrix | Schedule via OS cron + CLI invocation instead |
 
+### Codex CLI after setup
+
+After Stage 2, you can work from the same initialized workspace in Codex CLI. Today that means using the generated repo-local instructions and KB files, not a Codex-specific marketplace install. If you need native `/kb setup` command discovery, do the bootstrap in a first-class supported harness first, then continue daily work in Codex CLI.
+
 ## Related
 
 - [REFERENCE.md](../REFERENCE.md) — architecture, layout, formats, and contracts.
@@ -142,5 +149,6 @@ Overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.ht
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Added Codex CLI guidance as a compatible repo-local workflow after supported-harness bootstrap | Compatibility expansion |
 | 2026-04-20 | Updated the walkthrough to match automatic overview regeneration after every `/kb` mutation | v3.2.0 live-overview refresh |
 | 2026-04-18 | Initial walkthrough — zero-to-first-briefing in three stages | First-hour fixture |

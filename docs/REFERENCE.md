@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.0.1
+> **Version:** 3.1.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -471,13 +471,15 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 ## 10. Harness Support
 
-| Harness | Skill location | Agent location | Config |
-|---------|---------------|----------------|--------|
-| VS Code Copilot | `.github/skills/<name>/SKILL.md` | `.github/agents/<name>.agent.md` | `.github/prompts/`, `.github/instructions/` |
-| Claude Code | `.claude/skills/<name>/SKILL.md` | `.claude/agents/<name>.md` | `.claude/settings.json` |
-| OpenCode | `.opencode/skills/<name>/SKILL.md` | `.opencode/agents/<name>.md` | `.opencode/config.yaml` |
+| Harness tier | Harness | Skill location | Agent location | Config / notes |
+|--------------|---------|----------------|----------------|----------------|
+| First-class supported harness | VS Code Copilot | `.github/skills/<name>/SKILL.md` | `.github/agents/<name>.agent.md` | `.github/prompts/`, `.github/instructions/` |
+| First-class supported harness | Claude Code | `.claude/skills/<name>/SKILL.md` | `.claude/agents/<name>.md` | `.claude/settings.json` |
+| First-class supported harness | OpenCode | `.opencode/skills/<name>/SKILL.md` | `.opencode/agents/<name>.md` | `.opencode/config.yaml` |
+| Compatible CLI workflow | Codex CLI | repo-local prompt / instruction files | repo-local agent instructions | No native marketplace target yet. Use the scaffolded workspace files and a supported harness for install/bootstrap when needed. |
+| Partial/manual path | Other CLIs / IDEs | adopter-defined | adopter-defined | Can use the KB file model, but command wiring and automation may need manual setup. |
 
-`scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree.
+`scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for first-class supported harnesses. Compatible CLI workflows reuse the same workspace contract even when no native installer target exists yet.
 
 ---
 
@@ -485,6 +487,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-22 | Added Codex CLI to the harness support model as a compatible CLI workflow, clarified first-class vs partial/manual support tiers |
 | 2026-04-22 | Fixed markdown-lint violations (indented heading/list, extra table column), removed stale doc-drift source column |
 | 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree |
 | 2026-04-20 | Linked the dedicated collaboration guide for shared-workspace human operating norms |
