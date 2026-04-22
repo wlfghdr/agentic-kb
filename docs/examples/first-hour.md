@@ -149,6 +149,7 @@ After Stage 2, you can work from the same initialized workspace in Codex CLI. To
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Exempted the presentation template placeholder scan from the first-run success criteria because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
 | 2026-04-22 | Added Codex CLI guidance as a compatible repo-local workflow after supported-harness bootstrap | Compatibility expansion |
 | 2026-04-20 | Updated the walkthrough to match automatic overview regeneration after every `/kb` mutation | v3.2.0 live-overview refresh |
 | 2026-04-18 | Initial walkthrough — zero-to-first-briefing in three stages | First-hour fixture |
