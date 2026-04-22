@@ -62,7 +62,7 @@ Ideas progress through `seed` → `growing` → `ready` → `shipped` → `archi
 |-----------|--------|
 | `/kb audit` | Check contradictions, gaps, staleness |
 | `/kb status` | Pending inputs, recent activity, todo counts, workstream summary |
-| `/kb status --refresh-overviews` | Manually rebuild `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` when you need a repair/rebuild pass |
+| `/kb status --refresh-overviews` | Manually rebuild `dashboard.html` and the root artifact `index.html` when you need a repair/rebuild pass |
 | `/kb present [topic/file]` | Generate HTML presentation from topic/finding |
 | `/kb report [scope]` | Generate HTML report (personal / team / org / weekly / topic) |
 | `/kb setup` | Hand off to `kb-setup` skill |
@@ -143,6 +143,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Clarified that `--refresh-overviews` is the manual repair path for rebuilding `dashboard.html` and the root artifact `index.html`, replacing the prior always-current/phantom-overview wording | PR #53 fix |
 | 2026-04-22 | Added the missing `Top task` and `External completions` triage signals so the bare-`/kb` status table fully matches `kb.prompt.md` and the task-handling rules | PR #49 follow-up |
 | 2026-04-22 | `/kb task` named as the canonical task verb (with `todo` / `tasks` as accepted aliases); new Ideas section covering `/kb idea` + `/kb develop`; triage stale-task rule split into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching `kb.prompt.md` and SKILL rule 11g | Fixes #24, #25, #26 |
 | 2026-04-22 | Reframed `/kb promote` as a composite local-team operation: intake plus immediate team review and archival, not a pure inbox copy | Team promote flow fix |

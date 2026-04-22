@@ -7,12 +7,12 @@ Two families of artifacts:
 
 ## Family 1 — Live overviews (auto-regenerated)
 
-| File | Source of truth | Refresh trigger |
-|------|-----------------|-----------------|
-| `_kb-references/reports/inventory.html` | `.kb-config/layers.yaml` + `_kb-references/foundation/sources.md` + git status per layer | every mutation |
-| `_kb-references/reports/open-decisions.html` | `_kb-decisions/*.md` across all layers | every mutation |
-| `_kb-references/reports/open-tasks.html` | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` across all layers | every mutation |
-| `_kb-references/reports/index.html` | chronological list of everything under `_kb-references/reports/` | every artifact create/update |
+| File | Source of truth | Refresh trigger | Generator |
+|------|-----------------|-----------------|-----------|
+| `dashboard.html` (owner-facing command center) | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` + `_kb-inputs/` + `_kb-ideas/` + `_kb-decisions/` + `_kb-references/{findings,reports,digests}/` + `_kb-workstreams/` + optional GitHub/Jira | every mutation | `scripts/generate-dashboard.py` |
+| `index.html` (public GitHub Pages landing page — artifact inventory) | every `*.html` under the repo, deduped per the config in `.kb-config/artifacts.yaml` | every mutation | `scripts/generate-index.py` |
+
+The dashboard is the single owner-facing surface for live state — it renders focus, backlog, pending inputs, active ideas, open decisions, recent findings/digests/reports, workstreams, and optional GitHub/Jira panels. There are no separate `inventory.html`, `open-decisions.html`, or `open-tasks.html` files; the equivalent signals are panels inside `dashboard.html`.
 
 **Regenerate after**: `capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, and every ritual.
 
@@ -245,4 +245,5 @@ Every `/kb present` MUST use this file (as customized by Q13) rather than regene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Dropped the three phantom Family-1 overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals already live in `dashboard.html` panels | Fixes #18 |
 | 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

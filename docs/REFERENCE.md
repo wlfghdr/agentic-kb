@@ -368,9 +368,8 @@ Two families:
 
 | Family | Lifecycle | Filename |
 |--------|-----------|----------|
-| **Overviews** (inventory, open-decisions, open-tasks, index) | Overwritten on every mutation | Stable names |
+| **Live overviews** (`dashboard.html`, root `index.html`) | Overwritten on every mutation | Stable names |
 | **Historical** (presentations, reports, pitches, daily/weekly) | Immutable, versioned | Include version or date |
-| **Dashboard** (`dashboard.html`) | Overwritten on every mutation | Stable name |
 
 ### Dashboard (command center)
 
@@ -495,6 +494,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-22 | Collapsed the HTML-artifact families table to the two that actually ship — `dashboard.html` + root `index.html` — after dropping the phantom `inventory.html` / `open-decisions.html` / `open-tasks.html` overviews whose signals already live in `dashboard.html` panels |
 | 2026-04-22 | Corrected the workspace-root required-files row so `.github/prompts/kb.prompt.md` is no longer universal, and added the harness-specific workspace prompt/instruction note for VS Code, Claude Code, OpenCode, and compatible CLI workflows |
 | 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty and removed the obsolete VMG score bonus so the rubric matches the detailed gate reference and skill behavior |
 | 2026-04-22 | Added Codex CLI to the harness support model as a compatible CLI workflow, clarified first-class vs partial/manual support tiers |
