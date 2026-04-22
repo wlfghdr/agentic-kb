@@ -48,10 +48,11 @@ brand:
 
 # Dashboard (command-center) generation — see scripts/generate-dashboard.py.
 # The dashboard surfaces live KB state the owner should have in mind:
-# focus tasks, pending inputs, active ideas, open decisions, recent
-# findings/digests/reports, workstream freshness, and opt-in external
-# work-items from GitHub and Jira. Panels with no data are skipped
-# automatically. External panels are OFF by default — enable per-adopter.
+# focus tasks, pending inputs, active ideas, open decisions, topics,
+# recent findings/digests/reports, workstream freshness, and opt-in
+# external work-items from GitHub and Jira. Panels with no data are
+# skipped automatically. External panels are OFF by default — enable
+# per-adopter.
 dashboard:
   enabled: true
   panels:
@@ -60,6 +61,7 @@ dashboard:
     - pending-inputs
     - active-ideas
     - open-decisions
+    - topics
     - recent-findings
     - recent-digests
     - recent-reports
@@ -72,6 +74,7 @@ dashboard:
     recent-reports: 3
     active-ideas: 8
     open-decisions: 8
+    topics: 8
     workstreams: 10
     github: 10
     jira: 10

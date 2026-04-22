@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.4.2
+> **Version:** 3.4.3
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -376,8 +376,8 @@ Two families:
 `dashboard.html` is the owner-facing counterpart to `index.html`. Where
 the index lists generated artifacts, the dashboard surfaces **live KB
 state**: focus tasks, backlog, pending inputs, active ideas, open
-decisions, recent findings / digests / reports, workstream freshness,
-and — opt-in — external work-items from GitHub (`gh` CLI) and Jira
+decisions, topics, recent findings / digests / reports, workstream
+freshness, and — opt-in — external work-items from GitHub (`gh` CLI) and Jira
 (jira-sync-style markdown export).
 
 - Script: `scripts/generate-dashboard.py` (copy into `.kb-scripts/` like `generate-index.py`).
@@ -494,6 +494,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-22 | Dashboard command-center contract now explicitly includes topics as a first-class live panel so accreting knowledge is visible alongside decisions, ideas, and findings |
 | 2026-04-22 | Collapsed the HTML-artifact families table to the two that actually ship — `dashboard.html` + root `index.html` — after dropping the phantom `inventory.html` / `open-decisions.html` / `open-tasks.html` overviews whose signals already live in `dashboard.html` panels |
 | 2026-04-22 | Corrected the workspace-root required-files row so `.github/prompts/kb.prompt.md` is no longer universal, and added the harness-specific workspace prompt/instruction note for VS Code, Claude Code, OpenCode, and compatible CLI workflows |
 | 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty and removed the obsolete VMG score bonus so the rubric matches the detailed gate reference and skill behavior |
