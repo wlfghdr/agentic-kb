@@ -122,7 +122,7 @@ Expected behavior:
 
 The HTML report uses `plugins/kb/skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
 
-Overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) stay current automatically after every state-mutating `/kb` operation. `/kb status --refresh-overviews` still exists as a manual rebuild path, but you should not need it during normal use.
+Overviews (`dashboard.html`, `index.html`) stay current automatically after every state-mutating `/kb` operation. `/kb status --refresh-overviews` still exists as a manual rebuild path, but you should not need it during normal use.
 
 ## What to do when this walkthrough breaks
 

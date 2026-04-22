@@ -62,7 +62,7 @@ Ideas progress through `seed` → `growing` → `ready` → `shipped` → `archi
 |-----------|--------|
 | `/kb audit` | Check contradictions, gaps, staleness |
 | `/kb status` | Pending inputs, recent activity, todo counts, workstream summary |
-| `/kb status --refresh-overviews` | Manually rebuild `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` when you need a repair/rebuild pass |
+| `/kb status --refresh-overviews` | Manually rebuild `dashboard.html` and the root artifact `index.html` when you need a repair/rebuild pass |
 | `/kb present [topic/file]` | Generate HTML presentation from topic/finding |
 | `/kb report [scope]` | Generate HTML report (personal / team / org / weekly / topic) |
 | `/kb setup` | Hand off to `kb-setup` skill |
