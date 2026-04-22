@@ -241,6 +241,12 @@ class Panel:
 # ── Panel collectors ───────────────────────────────────────────────────
 
 TASK_ITEM_RE = re.compile(r'^\s*(?:\d+\.|[-*])\s+(.*)$')
+# Placeholder bullet bodies we skip (after the bullet marker is stripped):
+# `(none)`, `(none yet)`, `(empty)`, `(empty — something)`, `—`, `-`.
+# Optional leading `[ ]` / `[x]` checkbox is tolerated.
+PLACEHOLDER_BODY_RE = re.compile(
+    r'^(?:\[[ xX]\]\s*)?(?:\(none(?:\s+yet)?\)|\(empty(?:\s*[—-]\s*[^)]*)?\)|[-—])\s*$'
+)
 
 
 def _read_text(path: Path) -> str:
@@ -251,20 +257,50 @@ def _read_text(path: Path) -> str:
 
 
 def _strip_md(s: str) -> str:
+    # HTML comments (single-line) — drop before other markdown cleanup so
+    # metadata like `<!-- workstream: … -->` doesn't leak into the UI.
+    s = re.sub(r'<!--.*?-->', '', s)
     s = re.sub(r'\*\*(.+?)\*\*', r'\1', s)
     s = re.sub(r'`(.+?)`', r'\1', s)
     s = re.sub(r'\[(.+?)\]\([^)]+\)', r'\1', s)
     return s.strip()
 
 
-def _parse_list_items(md: str, limit: int) -> list[str]:
-    items = []
+def _parse_list_items(md: str, limit: int, *, section_title: str | None = None) -> list[str]:
+    """Parse bullet items from markdown, respecting section boundaries.
+
+    When `section_title` is given, only bullets under the top-level heading
+    whose text matches `section_title` (case-insensitive) — or, if no such
+    heading exists, bullets before the first `##` subheading — are returned.
+    Placeholder bullets (`(none)`, `(empty)`, `—`, `-`) are skipped.
+    """
+    in_target_section = section_title is None
+    items: list[str] = []
     for line in md.splitlines():
-        if line.startswith('#') or line.startswith('>'):
+        stripped = line.lstrip()
+        if stripped.startswith('# '):
+            # Top-level heading — if we're targeting a section, enter it iff the title matches.
+            if section_title is not None:
+                in_target_section = stripped[2:].strip().lower() == section_title.lower()
+            continue
+        if stripped.startswith('## '):
+            # Sub-heading — leaves the target "pre-##" region. Never count bullets past it.
+            in_target_section = False
+            continue
+        if stripped.startswith('>'):
+            continue
+        if not in_target_section:
             continue
         m = TASK_ITEM_RE.match(line)
-        if m:
-            items.append(_strip_md(m.group(1)))
+        if not m:
+            continue
+        body = m.group(1).strip()
+        if PLACEHOLDER_BODY_RE.match(body):
+            continue
+        title = _strip_md(body)
+        if not title:
+            continue
+        items.append(title)
         if len(items) >= limit:
             break
     return items
@@ -274,7 +310,7 @@ def panel_focus_tasks(repo_root: Path, dash: dict) -> Panel | None:
     fp = repo_root / '_kb-tasks' / 'focus.md'
     if not fp.exists():
         return None
-    items = _parse_list_items(_read_text(fp), limit=10)
+    items = _parse_list_items(_read_text(fp), limit=10, section_title='Focus')
     panel = Panel(key='focus-tasks', title='Focus', note='Max 6 — what you\'re on right now',
                   empty='No focus items — add with `/kb task`.')
     for item in items:
@@ -286,8 +322,11 @@ def panel_backlog_count(repo_root: Path, dash: dict) -> Panel | None:
     fp = repo_root / '_kb-tasks' / 'backlog.md'
     if not fp.exists():
         return None
-    items = _parse_list_items(_read_text(fp), limit=5)
-    total = len([l for l in _read_text(fp).splitlines() if TASK_ITEM_RE.match(l)])
+    text = _read_text(fp)
+    # Full list (no limit) for the accurate count, then truncate for display.
+    all_items = _parse_list_items(text, limit=10_000, section_title='Backlog')
+    total = len(all_items)
+    items = all_items[:5]
     panel = Panel(key='backlog', title='Backlog',
                   note=f'{total} item{"s" if total != 1 else ""} total — showing top 5',
                   empty='Backlog clean.')
