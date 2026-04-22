@@ -3,9 +3,9 @@
 
 Complements generate-index.py. While index.html lists HTML artifacts,
 dashboard.html surfaces live KB state the owner should have in mind:
-focus tasks, active ideas, open decisions, pending inputs, recent
-findings & reports, workstream freshness, and (opt-in) external
-work-items from GitHub and Jira.
+focus tasks, active ideas, open decisions, pending inputs, living
+topics, recent findings & reports, workstream freshness, and (opt-in)
+external work-items from GitHub and Jira.
 
 Panels are config-driven via .kb-config/artifacts.yaml → `dashboard:`
 section. Unknown or disabled panels are silently skipped so the same
@@ -64,7 +64,7 @@ DEFAULT_DASHBOARD = {
     'enabled': True,
     'panels': [
         'focus-tasks', 'pending-inputs', 'active-ideas', 'open-decisions',
-        'recent-findings', 'recent-reports', 'workstreams',
+        'topics', 'recent-findings', 'recent-reports', 'workstreams',
     ],
     'limits': {
         'recent-findings': 5,
@@ -72,6 +72,7 @@ DEFAULT_DASHBOARD = {
         'recent-digests': 3,
         'active-ideas': 8,
         'open-decisions': 8,
+        'topics': 8,
         'workstreams': 10,
         'github': 10,
         'jira': 10,
@@ -423,6 +424,34 @@ def panel_open_decisions(repo_root: Path, dash: dict) -> Panel | None:
     return panel
 
 
+def panel_topics(repo_root: Path, dash: dict) -> Panel | None:
+    topics_dir = repo_root / '_kb-references' / 'topics'
+    if not topics_dir.is_dir():
+        return None
+    limit = int(dash.get('limits', {}).get('topics', 8))
+    panel = Panel(
+        key='topics',
+        title='Topics',
+        note='Living positions under `_kb-references/topics/`',
+        empty='No topics yet.',
+    )
+    files = []
+    for fp in sorted(topics_dir.glob('*.md')):
+        text = _read_text(fp)
+        title_m = re.search(r'^#\s+(?:Topic:\s*)?(.+?)\s*$', text, re.MULTILINE)
+        title = title_m.group(1).strip() if title_m else fp.stem.replace('-', ' ')
+        maturity = _parse_meta_field(text, 'Maturity').lower()
+        files.append((fp, title, maturity))
+    files.sort(key=lambda item: item[0].stat().st_mtime, reverse=True)
+    for fp, title, maturity in files[:limit]:
+        badges = [maturity] if maturity else []
+        rel = str(fp.relative_to(repo_root))
+        updated = datetime.fromtimestamp(fp.stat().st_mtime).strftime('%Y-%m-%d')
+        panel.rows.append(Row(title=title, href=rel, meta=updated, badges=badges))
+    panel.count = len(files)
+    return panel
+
+
 FINDING_FILENAME_RE = re.compile(r'(\d{4}-\d{2}-\d{2})-(.+?)\.md$')
 
 
@@ -674,6 +703,7 @@ PANEL_BUILDERS = {
     'pending-inputs': panel_pending_inputs,
     'active-ideas': panel_active_ideas,
     'open-decisions': panel_open_decisions,
+    'topics': panel_topics,
     'recent-findings': panel_recent_findings,
     'recent-digests': panel_recent_digests,
     'recent-reports': panel_recent_reports,

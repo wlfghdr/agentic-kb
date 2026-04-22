@@ -55,6 +55,23 @@ ARTIFACTS_YAML = """dashboard:
     - focus-tasks
     - backlog
     - active-ideas
+    - topics
+"""
+
+TOPIC_MD = """# Topic: Deployment strategy
+
+**Maturity**: durable
+**Updated**: 2026-04-22
+
+## Current position
+
+Prefer convergent delivery paths that keep shared review cost low.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-22 | Initial topic stub for dashboard visibility regression coverage | Issue #22 |
 """
 
 
@@ -77,6 +94,8 @@ def main() -> int:
         (tempdir / '_kb-ideas').mkdir(parents=True, exist_ok=True)
         (tempdir / '_kb-ideas' / 'I-2026-04-22-swarm-as-code.md').write_text(IDEA_STAGE_MD, encoding='utf-8')
         (tempdir / '_kb-ideas' / 'I-2026-04-22-legacy.md').write_text(IDEA_STATUS_LEGACY_MD, encoding='utf-8')
+        (tempdir / '_kb-references' / 'topics').mkdir(parents=True, exist_ok=True)
+        (tempdir / '_kb-references' / 'topics' / 'deployment-strategy.md').write_text(TOPIC_MD, encoding='utf-8')
         (tempdir / '.kb-config').mkdir(parents=True, exist_ok=True)
         (tempdir / '.kb-config' / 'artifacts.yaml').write_text(ARTIFACTS_YAML, encoding='utf-8')
 
@@ -111,6 +130,12 @@ def main() -> int:
         # with the correct badge rather than silently defaulting to `seed`.
         assert_contains(output, 'Legacy alias test')
         assert_contains(output, 'ready')
+
+        # #22: topics are first-class dashboard state and must render as a
+        # dedicated panel with their maturity badge.
+        assert_contains(output, 'Topics')
+        assert_contains(output, 'Deployment strategy')
+        assert_contains(output, 'durable')
 
         print('generate-dashboard regression test: OK')
         return 0
