@@ -94,7 +94,7 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 | Overdue todos | `_kb-tasks/*.md` with status `todo`/`doing` > 7 days |
 | Rituals | Today's `.kb-log/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
 | Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |
-| Promotions due | `maturity: durable` findings/topics not yet referenced in L2/L3 |
+| Promotions due | `**Maturity**: durable` findings/topics not yet referenced in L2/L3 |
 | Stale topics | Topics unchanged > 60 days but still cited by recent findings |
 
 Triage is read-only — no mutations, no commits. Output ends with 1–3 concrete next steps.

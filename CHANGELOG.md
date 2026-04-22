@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **`**Maturity**:` never written on findings/topics** — added the field to `finding.md` and `topic.md` templates, wired the capture flow in `kb-management/SKILL.md` to set it from the gate outcome, and aligned the triage signal (`kb.prompt.md`, `command-reference.md`) and audit rule K1 (`audit.md`) to read the same bold-bullet form. Fixes the broken `capture → promote` surfacing loop (#14, #31).
 - **Missing `idea.md` scaffold template** — restored `plugins/kb/skills/kb-management/templates/idea.md` so `/kb idea` has a canonical file source again, matching the behavioral spec and REFERENCE docs.
 - **`/kb setup` scaffold source ambiguity** — clarified in `plugins/kb/skills/kb-setup/SKILL.md` which personal-KB scaffold files come from `kb-setup/templates/` versus `kb-management/templates/`, so implementers no longer have to guess across two directories.
 - **Residual vendor-neutrality cleanup** — removed the last internal-specific residue from the public spec by replacing an internal example label in `kb-roadmap` adapter docs and generalizing a changelog note that still exposed a vendor-prefixed token pattern.
