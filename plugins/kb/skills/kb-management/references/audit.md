@@ -17,7 +17,7 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 | K2 | Every `durable` finding is referenced from at least one topic | `durable-finding-orphan` | Offer to cite it in the closest-matching topic |
 | K3 | Every topic's `sources.md` entries resolve to existing files or URLs | `broken-source` | Offer removal or update |
 | K4 | Every decision (`_kb-decisions/D-*.md`) has a `**Status**:` line and — if `resolved` — a resolution date in the evidence trail | `decision-status-missing` | Prompt for status |
-| K5 | Every idea (`_kb-ideas/I-*.md`) has a `status:` marker | `idea-status-missing` | Prompt for status |
+| K5 | Every idea (`_kb-ideas/I-*.md`) has a `**Stage**:` line (`seed` / `growing` / `ready` / `shipped` / `archived`) | `idea-stage-missing` | Prompt for stage |
 | K6 | No pending inputs older than `freshness.inputs-days` without being triaged | `stale-input` | Offer triage now |
 | K7 | Foundation files present: `me.md`, `context.md`, `vmg.md`, `sources.md`, `naming.md` | `foundation-incomplete` | Offer scaffold |
 | K8 | Topics last updated more than `freshness.topic-days` days ago that are still cited by recent findings | `stale-cited-topic` | Offer `/kb develop <topic>` |
@@ -61,7 +61,7 @@ If `.kb-config/layers.yaml` has a `journeys:` block, run `/kb journeys audit` to
 |---|------|----------------|---------------------|
 | X1 | Every ADR referenced by an item-escape-hatch exists under `roadmap.audit.adr-glob` | `adr-link-broken` | Offer to update the link or remove the escape-hatch claim |
 | X2 | Every decision (`_kb-decisions/D-*`) citing a journey step cites a valid id | `decision-journey-citation-broken` | Offer rename or removal |
-| X3 | Every idea (`_kb-ideas/I-*`) that was promoted to a roadmap item retains a back-link in its `status: promoted` trail | `idea-promotion-traceability-gap` | Offer to backfill the link |
+| X3 | Every idea (`_kb-ideas/I-*`) that was promoted to a roadmap item retains a back-link in its Development Log (stage moved to `shipped` with a log entry citing the roadmap item id) | `idea-promotion-traceability-gap` | Offer to backfill the link |
 | X4 | Every finding under `_kb-references/findings/` with class `journey-*` has a matching open journey-review task until resolved | `journey-finding-unresolved` | Offer to open `/kb journeys review --from-finding` |
 
 ## Output

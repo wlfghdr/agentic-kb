@@ -172,7 +172,7 @@ See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
 | Sync team | `/kb sync team` | Cross-reference contributor topics; flag conflicts |
 | Diff team | `/kb diff team` | Show new items per contributor |
 | Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog (aliases: todo, tasks) |
-| Idea | `/kb idea [text]` | Create a new idea (seed status) |
+| Idea | `/kb idea [text]` | Create a new idea (`**Stage**: seed`) |
 | Develop | `/kb develop [idea]` | Sparring: assumptions, contradictions, gaps, convergence |
 | Decide | `/kb decide [desc]` / `/kb decide resolve [D-id]` | Open/resolve a decision; update affected topics |
 | Start-day / End-day / Start-week / End-week | rituals | See `references/rituals.md` |
@@ -258,6 +258,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Canonicalized the idea lifecycle field as `**Stage**:` across audit K5 and the command-reference blurb so dashboard and audit agree with the REFERENCE and template | Fixes #35 |
 | 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty (`materially new compared to existing topics`) and removed the obsolete VMG `+1` bonus from the core rule so the score is always the count of yes answers | Fixes #30 |
 | 2026-04-22 | Wired `**Maturity**:` into the capture flow so bare `/kb` triage and audit K1 can read the field they were designed for | Fixes #14 + #31 |
 | 2026-04-22 | Aligned open-decisions triage + audit K4 to read the template's `**Status**:` bold-bullet form so `/kb` triage finally counts open decisions | Fixes #15 |
