@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **`kb-setup` version alignment** — bumped `plugins/kb/skills/kb-setup/SKILL.md` from `3.4.0` to `3.4.1` so the shipped placeholder-gate behavior fix is versioned under the current framework patch release.
 - **Setup post-write placeholder gate blocked on shipped template** — `kb-setup` Step 8 scanned every file in the scaffolded workspace for residual `{{…}}` markers and refused to commit when it found any. The shipped `presentation-template.html` (and its branded sibling) intentionally keep seven `{{…}}` fields because they are filled per-artifact by `/kb present`, so the gate failed on every first run. The post-write check + `docs/examples/first-hour.md` + `docs/first-run-acceptance.md` now exempt those filenames. Fixes #17.
 - **Idea lifecycle field canonicalized to `**Stage**:`** — `generate-dashboard.py` now reads the `**Stage**:` bold-bullet field on idea files (matching `docs/REFERENCE.md` and the `idea.md` template) and accepts a legacy `**Status**:` fallback so pre-3.5 idea files keep rendering. Audit K5 + cross-primitive rule X3 updated to the canonical field. `test_generate_dashboard.py` gains a regression case covering both forms. Fixes #35.
 - **`command-reference.md` triage table completeness** — the bare-`/kb` signal list now includes `Top task` and `External completions`, matching the generated `kb.prompt.md` contract and the task-handling rules already defined in `kb-management`. Follow-up within PR #49.
