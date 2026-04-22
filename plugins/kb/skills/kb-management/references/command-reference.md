@@ -100,6 +100,8 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 | Signal | Where to look |
 |---|---|
 | Setup complete? | `.kb-config/layers.yaml` exists |
+| Top task | First item in `_kb-tasks/focus.md` (if any) — always surface as `Next up: ...` |
+| External completions | Open focus/backlog tasks with evidence of closure (merged PR / closed ticket / commit reference / same slug already archived upstream) — propose archiving only; never auto-close in triage |
 | Pending inputs | `_kb-inputs/` not yet in `_kb-inputs/digested/` |
 | Open decisions | `_kb-decisions/*.md` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` |
 | Overdue focus | Bullets in `_kb-tasks/focus.md` with `status: doing` held > 7 days (`focus-overdue-days`) |
@@ -141,6 +143,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Added the missing `Top task` and `External completions` triage signals so the bare-`/kb` status table fully matches `kb.prompt.md` and the task-handling rules | PR #49 follow-up |
 | 2026-04-22 | `/kb task` named as the canonical task verb (with `todo` / `tasks` as accepted aliases); new Ideas section covering `/kb idea` + `/kb develop`; triage stale-task rule split into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching `kb.prompt.md` and SKILL rule 11g | Fixes #24, #25, #26 |
 | 2026-04-22 | Reframed `/kb promote` as a composite local-team operation: intake plus immediate team review and archival, not a pure inbox copy | Team promote flow fix |
 | 2026-04-22 | Fixed stale `inputs/` path in promote command; renamed section from "Decisions & TODOs" to "Decisions & Tasks" | Spec review |
