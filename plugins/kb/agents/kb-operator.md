@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 3.4.0
+version: 3.4.2
 uses:
   - kb-management
   - kb-setup
@@ -176,6 +176,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Bumped declared agent version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
 | 2026-04-22 | Output contract §Always-current overviews now lists only `dashboard.html` + root `index.html` after dropping the phantom three-overview family from rule 9 | Fixes #18 |
 | 2026-04-22 | Version aligned to 3.4.0 after documenting Codex CLI compatibility in the public setup/onboarding contract | Compatibility expansion |
 | 2026-04-22 | Version aligned to 3.3.0 after the local-team `/kb promote` flow changed in `kb-management` | Team promote flow fix |

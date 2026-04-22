@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.4.1
+version: 3.4.2
 triggers:
   - "/kb"
   - "knowledge base"
@@ -258,6 +258,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Bumped declared skill version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
 | 2026-04-22 | Simplified rule 9 to regenerate only `dashboard.html` and the root `index.html` after every mutation — dropped the three phantom overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals live in dashboard panels | Fixes #18 |
 | 2026-04-22 | Canonicalized the idea lifecycle field as `**Stage**:` across audit K5 and the command-reference blurb so dashboard and audit agree with the REFERENCE and template | Fixes #35 |
 | 2026-04-22 | `command-reference.md` now declares `/kb task` canonical (with `todo` / `tasks` aliases), documents `/kb idea` + `/kb develop` in a new Ideas section, and splits the stale-task triage rule into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching the bullet-in-file data model | Fixes #24 + #25 + #26 |
