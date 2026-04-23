@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.4.3
+version: 3.4.4
 triggers:
   - "/kb"
   - "knowledge base"
@@ -259,6 +259,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-23 | HTML artifact contract sharpened: (a) default filename pattern for Family-2 artifacts is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every layer; (b) styling is explicitly layer-agnostic \u2014 the configured `styling.reference-file` is THE template for all Family-2 artifacts in that layer; (c) after any Family-2 create/update the skill MUST offer root-`index.html` regeneration and proceed only on confirmation (automation levels 2/3 run silently) | Real-world friction during ISO 42001 presentation generation |
 | 2026-04-22 | Added topics to the dashboard command-center contract and bumped the declared skill version to 3.4.3 so first-class accreting knowledge is visible in live overviews | Fixes #22 |
 | 2026-04-22 | Added `_kb-references/strategy-digests/` to the personal-KB directory contract + REFERENCE.md workspace layout + `kb-setup` Step 3 scaffold — it was already used in practice (digest findings + `.last-digest` watermark read by the upstream-drift triage signal) but wasn't declared | Fixes #19 |
 | 2026-04-22 | Bumped declared skill version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
