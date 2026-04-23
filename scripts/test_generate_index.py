@@ -108,6 +108,40 @@ def main() -> int:
             'Second leaf page that should also be hidden from the root index.',
         )
 
+        # #21: markdown sources must also surface on the public index.
+        finding = tempdir / '_kb-references' / 'findings' / '2026-04-22-cache-hit-rate.md'
+        finding.parent.mkdir(parents=True, exist_ok=True)
+        finding.write_text(
+            '# Finding: Cache hit rate drops on deploy\n\n'
+            '**Date**: 2026-04-22\n**Workstream**: platform\n'
+            '**Maturity**: emerging\n\n## TL;DR\n\nLatency spike.\n',
+            encoding='utf-8',
+        )
+        topic = tempdir / '_kb-references' / 'topics' / 'deployment-strategy.md'
+        topic.parent.mkdir(parents=True, exist_ok=True)
+        topic.write_text(
+            '# Topic: Deployment strategy\n\n**Maturity**: durable\n\n'
+            '## Current position\n\nPrefer convergent delivery.\n',
+            encoding='utf-8',
+        )
+        idea = tempdir / '_kb-ideas' / 'I-2026-04-22-swarm-as-code.md'
+        idea.parent.mkdir(parents=True, exist_ok=True)
+        idea.write_text(
+            '# Idea: Swarm-as-code\n\n**Stage**: growing\n**Created**: 2026-04-22\n',
+            encoding='utf-8',
+        )
+        archived_idea = tempdir / '_kb-ideas' / 'archive' / 'I-2026-01-01-old.md'
+        archived_idea.parent.mkdir(parents=True, exist_ok=True)
+        archived_idea.write_text(
+            '# Idea: Old and archived\n\n**Stage**: archived\n', encoding='utf-8'
+        )
+        decision = tempdir / '_kb-decisions' / 'D-2026-04-22-cache-tier.md'
+        decision.parent.mkdir(parents=True, exist_ok=True)
+        decision.write_text(
+            '# D-2026-04-22-cache-tier: Cache tiering shape\n\n'
+            '- **Status**: gathering-evidence\n', encoding='utf-8'
+        )
+
         subprocess.run(
             ['python3', str(SCRIPT), str(tempdir), '--title', 'Simulated KB', '--description', 'Regression test'],
             check=True,
@@ -128,6 +162,25 @@ def main() -> int:
         assert_not_contains(output, 'strategy-report-v1-2026-04-17.html')
         assert_contains(output, 'launch-journey.html')
         assert_not_contains(output, 'step-1.html')
+
+        # #21: markdown sources render with extracted titles and link to the .md.
+        assert_contains(output, 'Cache hit rate drops on deploy')
+        assert_contains(output, '2026-04-22-cache-hit-rate.md')
+        assert_contains(output, 'Deployment strategy')
+        assert_contains(output, 'deployment-strategy.md')
+        assert_contains(output, 'Swarm-as-code')
+        assert_contains(output, 'I-2026-04-22-swarm-as-code.md')
+        assert_contains(output, 'Cache tiering shape')
+        assert_contains(output, 'D-2026-04-22-cache-tier.md')
+
+        # #21: archived ideas must not leak into the public index.
+        assert_not_contains(output, 'Old and archived')
+        assert_not_contains(output, 'I-2026-01-01-old.md')
+
+        # #21: category headings for markdown kinds exist.
+        assert_contains(output, '<h2>Topics')
+        assert_contains(output, '<h2>Ideas')
+        assert_contains(output, '<h2>Decisions')
 
         print('generate-index regression test: OK')
         return 0

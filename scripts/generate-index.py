@@ -405,6 +405,75 @@ def discover_artifacts(repo_root: Path) -> list[Artifact]:
     return artifacts
 
 
+# ── Markdown source discovery (issue #21) ──────────────────────────────
+#
+# Scans the canonical human-authored directories so the public landing
+# page actually surfaces the KB's knowledge, not just its HTML artifacts.
+# Markdown sources bypass dedup_families / drop_referenced_subpages —
+# they are leaf content, not versioned or hub-child HTML.
+
+_MD_H1_RE = re.compile(r'^\s*#\s+(.+?)\s*$', re.MULTILINE)
+# Strips the canonical object-kind prefix (`Finding:`/`Topic:`/`Idea:`) or the
+# decision-id prefix (`D-YYYY-MM-DD-slug:`) from the raw heading text.
+_MD_TITLE_STRIP_RE = re.compile(
+    r'^(?:(?:Finding|Topic|Idea)\s*:\s*|(?:[DI]-\d{4}-\d{2}-\d{2}-[\w-]+)\s*:\s*)',
+    re.IGNORECASE,
+)
+_MD_DATE_FIELD_RE = re.compile(
+    r'^\*\*(?:Date|Created)\*\*\s*:\s*(\d{4}-\d{2}-\d{2})', re.MULTILINE
+)
+
+# (dir, category, optional-exclude-subdir)
+_MD_SOURCES: list[tuple[str, str, str | None]] = [
+    ('_kb-references/findings', 'Findings', None),
+    ('_kb-references/topics', 'Topics', None),
+    ('_kb-ideas', 'Ideas', 'archive'),
+    ('_kb-decisions', 'Decisions', 'archive'),
+]
+
+
+def _extract_md_title(text: str, fallback: str) -> str:
+    m = _MD_H1_RE.search(text)
+    if m:
+        raw = m.group(1).strip()
+        stripped = _MD_TITLE_STRIP_RE.sub('', raw).strip()
+        return stripped or raw
+    return fallback.replace('-', ' ').replace('_', ' ').title()
+
+
+def _extract_md_date(text: str, filename: str) -> str:
+    m = DATE_RE.search(filename)
+    if m:
+        return m.group(1)
+    m = _MD_DATE_FIELD_RE.search(text)
+    if m:
+        return m.group(1)
+    return ''
+
+
+def discover_markdown_sources(repo_root: Path) -> list[Artifact]:
+    items: list[Artifact] = []
+    for rel_dir, category, exclude_sub in _MD_SOURCES:
+        src_dir = repo_root / rel_dir
+        if not src_dir.is_dir():
+            continue
+        for fp in sorted(src_dir.glob('*.md')):
+            if exclude_sub and exclude_sub in fp.parts:
+                continue
+            try:
+                text = fp.read_text(encoding='utf-8', errors='ignore')[:4096]
+            except Exception:
+                continue
+            title = _extract_md_title(text, fp.stem)
+            date = _extract_md_date(text, fp.name)
+            rel = str(fp.relative_to(repo_root))
+            items.append(Artifact(path=rel, title=title, date=date,
+                                  category=category, contributor='',
+                                  family=f'md::{rel}', summary=''))
+    items.sort(key=lambda a: (a.date or '0000-00-00'), reverse=True)
+    return items
+
+
 def dedup_families(artifacts: list[Artifact]) -> list[Artifact]:
     """Keep only the newest artifact per (category, family) group."""
     seen: dict[tuple[str, str], Artifact] = {}
@@ -929,6 +998,11 @@ def main() -> None:
     subpage_dropped = 0
     if index_cfg.get('drop_referenced_subpages', True):
         artifacts, subpage_dropped = drop_referenced_subpages(artifacts, repo_root)
+    # Append markdown sources (findings / topics / ideas / decisions) AFTER
+    # dedup + subpage-drop — they are leaf content, not versioned HTML, and
+    # must not interact with those filters.
+    md_sources = discover_markdown_sources(repo_root)
+    artifacts = artifacts + md_sources
     has_dashboard = (repo_root / 'dashboard.html').exists()
     out = generate_html(artifacts, title, args.description, now, theme, index_cfg,
                         has_dashboard=has_dashboard)

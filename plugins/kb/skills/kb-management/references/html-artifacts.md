@@ -10,7 +10,7 @@ Two families of artifacts:
 | File | Source of truth | Refresh trigger | Generator |
 |------|-----------------|-----------------|-----------|
 | `dashboard.html` (owner-facing command center) | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` + `_kb-inputs/` + `_kb-ideas/` + `_kb-decisions/` + `_kb-references/{topics,findings,reports,digests}/` + `_kb-workstreams/` + optional GitHub/Jira | every mutation | `scripts/generate-dashboard.py` |
-| `index.html` (public GitHub Pages landing page — artifact inventory) | every `*.html` under the repo, deduped per the config in `.kb-config/artifacts.yaml` | every mutation | `scripts/generate-index.py` |
+| `index.html` (public GitHub Pages landing page — artifact inventory) | every `*.html` under the repo (deduped per `.kb-config/artifacts.yaml`) plus every `*.md` under `_kb-references/{findings,topics}/`, `_kb-ideas/`, `_kb-decisions/` (archived subdirs excluded) | every mutation | `scripts/generate-index.py` |
 
 The dashboard is the single owner-facing surface for live state — it renders focus, backlog, pending inputs, active ideas, open decisions, topics, recent findings/digests/reports, workstreams, and optional GitHub/Jira panels. There are no separate `inventory.html`, `open-decisions.html`, or `open-tasks.html` files; the equivalent signals are panels inside `dashboard.html`.
 
@@ -245,6 +245,7 @@ Every `/kb present` MUST use this file (as customized by Q13) rather than regene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-22 | Root `index.html` source-of-truth row now lists findings/topics/ideas/decisions markdown alongside HTML artifacts, matching the shipped generator behavior | Fixes #21 |
 | 2026-04-22 | Added topics to the dashboard Family-1 contract and source-of-truth table so living positions are visible alongside findings, ideas, and decisions | Fixes #22 |
 | 2026-04-22 | Dropped the three phantom Family-1 overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals already live in `dashboard.html` panels | Fixes #18 |
 | 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |
