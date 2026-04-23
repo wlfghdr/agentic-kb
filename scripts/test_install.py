@@ -101,5 +101,72 @@ class InstallDriftDetectionTests(unittest.TestCase):
             )
 
 
+class MultiHarnessInstallTests(unittest.TestCase):
+    """Smoke tests for the codex/gemini/kiro install paths."""
+
+    def _sample_command(self, root: Path) -> tuple[str, Path]:
+        src = root / "kb.prompt.md"
+        src.write_text(
+            "---\n"
+            "mode: agent\n"
+            'description: KB ops — capture, digest, promote\n'
+            "---\n"
+            "\n"
+            "# /kb — Knowledge Base\n"
+            "\n"
+            "Route to kb-management.\n",
+            encoding="utf-8",
+        )
+        return ("kb", src)
+
+    def test_codex_writes_md_with_frontmatter_stripped(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            install.install_codex(root, [self._sample_command(root)], force=False)
+            dst = root / "prompts" / "kb.md"
+            self.assertTrue(dst.is_file())
+            content = dst.read_text(encoding="utf-8")
+            self.assertNotIn("---\nmode:", content)
+            self.assertIn("# /kb — Knowledge Base", content)
+
+    def test_gemini_generates_toml_wrapper_with_description(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            install.install_gemini(root, [self._sample_command(root)], force=False)
+            dst = root / "commands" / "kb.toml"
+            self.assertTrue(dst.is_file())
+            content = dst.read_text(encoding="utf-8")
+            self.assertIn('description = "KB ops', content)
+            self.assertIn('prompt = """', content)
+            self.assertIn("# /kb — Knowledge Base", content)
+
+    def test_kiro_copies_md_verbatim_into_agents(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            install.install_kiro(root, [self._sample_command(root)], force=False)
+            dst = root / "agents" / "kb.md"
+            self.assertTrue(dst.exists())
+            content = dst.read_text(encoding="utf-8")
+            # Kiro keeps frontmatter and body intact — it ignores unknown keys.
+            self.assertIn("mode: agent", content)
+            self.assertIn("# /kb — Knowledge Base", content)
+
+    def test_detect_targets_discovers_new_harnesses(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            import os
+            cwd = os.getcwd()
+            try:
+                os.chdir(tmp)
+                for sub in (".codex", ".gemini", ".kiro"):
+                    Path(tmp, sub).mkdir()
+                hits = set(install.detect_targets())
+            finally:
+                os.chdir(cwd)
+            # codex detect only probes ~/.codex, so it's environment-dependent;
+            # gemini + kiro have local probes and MUST be picked up.
+            self.assertIn("gemini", hits)
+            self.assertIn("kiro", hits)
+
+
 if __name__ == "__main__":
     unittest.main()

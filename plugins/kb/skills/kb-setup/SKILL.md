@@ -87,8 +87,8 @@ Ask each block in order. Stop and wait after each block for the user's answer be
    *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
 9. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
    *→ Creates `_kb-workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
-10. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`, `codex-cli`.
-    *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`) and whether the setup summary must explain a compatible CLI workflow. Multiple selections create cross-harness compatibility.*
+10. **IDE targets**: multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`. Each selection gets the `/kb` slash command wired natively via `scripts/install --target <harness>`.
+    *→ Determines which harness directories receive files (`.claude/commands/`, `.github/prompts/`, `.opencode/commands/`, `~/.codex/prompts/`, `.gemini/commands/kb.toml`, `.kiro/agents/`). Multiple selections create cross-harness compatibility — the same `/kb` works in every selected harness.*
 11. **Integrations**: marketplace-available MCP servers / APIs to wire up.
     *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
 
@@ -365,6 +365,7 @@ A zero-hit run is the gate for Step 8.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-23 | Q10 IDE-targets offer extends to `codex`, `gemini`, `kiro` alongside `claude-code`, `vscode`, `opencode`; setup writes the native `/kb` command file for every selected harness | Multi-harness parity |
 | 2026-04-22 | Placeholder mapping table now declares `{{WORKSPACE_ROOT}}`, `{{ALIAS_INDEX}}`, and the five workstream-stub placeholders (`{{ACTIVE_DECISIONS}}`, `{{KEY_TOPICS}}`, `{{CURRENT_STATE}}`, `{{ACTIVE_THREADS}}`, `{{DEPENDENCIES}}`) so strict post-write-gate runs no longer fall back on improvisation or block the commit | Fixes #20 |
 | 2026-04-22 | Bumped declared skill version to 3.4.1 so the placeholder-gate behavior change ships under the current framework patch version | Version alignment |
 | 2026-04-22 | Post-write placeholder gate now exempts `presentation-template.html` (and its branded sibling) because its `{{…}}` markers are deliberately deferred for `/kb present` — setup Step 8 no longer blocks on the shipped template | Fixes #17 |

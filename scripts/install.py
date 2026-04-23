@@ -40,8 +40,11 @@ Usage examples:
   scripts/install --target claude --global        # ~/.claude/
   scripts/install --target opencode --global
   scripts/install --target vscode                 # workspace .github/
+  scripts/install --target codex --global         # ~/.codex/prompts/ (global-only)
+  scripts/install --target gemini --global        # ~/.gemini/commands/*.toml (generated)
+  scripts/install --target kiro                   # .kiro/agents/ (works as slash-cmd)
   scripts/install --force
-  scripts/install --target all --global
+  scripts/install --target all --global           # claude + opencode + vscode + codex + gemini + kiro
 
 Only copies/links content from this repo. Never runs anything on the user's
 machine beyond file operations.
@@ -104,6 +107,30 @@ def workspace_targets() -> dict:
                 "instructions": "instructions",
             },
         },
+        # Codex CLI — markdown prompts only (no skills/agents); per Codex
+        # design these live in `~/.codex/prompts/`. Local project prompts
+        # are not discovered by Codex as of v0.4.
+        "codex": {
+            "base_local": REPO.cwd() / ".codex",
+            "base_global": Path(os.path.expanduser("~/.codex")),
+            "layout": {"prompts": "prompts"},
+        },
+        # Gemini CLI — custom commands are TOML files under
+        # `.gemini/commands/` (local) or `~/.gemini/commands/` (global).
+        # This installer emits a minimal TOML wrapper whose `prompt` field
+        # embeds the markdown command body.
+        "gemini": {
+            "base_local": REPO.cwd() / ".gemini",
+            "base_global": Path(os.path.expanduser("~/.gemini")),
+            "layout": {"commands": "commands"},
+        },
+        # Kiro IDE — "custom agents" double as slash commands. Files live
+        # in `.kiro/agents/` (local) or `~/.kiro/agents/` (global).
+        "kiro": {
+            "base_local": REPO.cwd() / ".kiro",
+            "base_global": Path(os.path.expanduser("~/.kiro")),
+            "layout": {"agents": "agents"},
+        },
     }
 
 
@@ -114,6 +141,9 @@ def detect_targets() -> list[str]:
         "claude": [cwd / ".claude", Path(os.path.expanduser("~/.claude"))],
         "opencode": [cwd / ".opencode", Path(os.path.expanduser("~/.config/opencode"))],
         "vscode": [cwd / ".github", cwd / ".vscode", Path(os.path.expanduser("~/.copilot"))],
+        "codex": [Path(os.path.expanduser("~/.codex"))],
+        "gemini": [cwd / ".gemini", Path(os.path.expanduser("~/.gemini"))],
+        "kiro": [cwd / ".kiro", Path(os.path.expanduser("~/.kiro"))],
     }.items():
         if any(p.exists() for p in probes):
             hits.append(name)
@@ -253,6 +283,89 @@ def install_claude_or_opencode(target: str, base: Path, layout: dict,
             link_or_copy(src, base / layout["commands"] / f"{name}.md", force)
 
 
+def _strip_markdown_frontmatter(text: str) -> tuple[dict[str, str], str]:
+    """Return ({frontmatter-keys-as-strings}, body) for a markdown file."""
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return {}, text
+    fm: dict[str, str] = {}
+    for i, line in enumerate(lines[1:], start=1):
+        stripped = line.rstrip()
+        if stripped == "---":
+            body = "\n".join(lines[i + 1:]).lstrip("\n")
+            return fm, body
+        m = re.match(r"^([A-Za-z_][\w-]*)\s*:\s*(.*)$", stripped)
+        if m:
+            fm[m.group(1)] = m.group(2).strip().strip('"').strip("'")
+    return {}, text
+
+
+def install_codex(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
+    """Install markdown command files into `<base>/prompts/` for Codex CLI.
+
+    Codex discovers any `.md` in `~/.codex/prompts/` and registers
+    `/prompts:<filename>` (and often just `/<filename>`). The command body
+    minus YAML frontmatter becomes the prompt.
+    """
+    print(f"\nInstalling into {base} (codex)")
+    out_dir = base / "prompts"
+    for name, src in commands_src:
+        if not src.is_file():
+            continue
+        _, body = _strip_markdown_frontmatter(src.read_text(encoding="utf-8"))
+        dst = out_dir / f"{name}.md"
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if dst.exists() and not force:
+            print(f"  skip (exists): {dst} (run with --force to overwrite)")
+            continue
+        dst.write_text(body, encoding="utf-8")
+        print(f"  wrote: {dst}")
+
+
+def install_gemini(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
+    """Install a TOML wrapper per command into `<base>/commands/` for Gemini CLI.
+
+    Gemini's custom-command format is TOML. We emit a minimal wrapper
+    (`description` + multi-line `prompt`) whose prompt is the markdown
+    body of the command. Frontmatter `description` field (if present) is
+    reused as the TOML description.
+    """
+    print(f"\nInstalling into {base} (gemini)")
+    out_dir = base / "commands"
+    for name, src in commands_src:
+        if not src.is_file():
+            continue
+        fm, body = _strip_markdown_frontmatter(src.read_text(encoding="utf-8"))
+        desc = fm.get("description", "").replace("\n", " ")
+        safe_desc = desc.replace('"', '\\"')
+        safe_body = body.replace('"""', '\\"\\"\\"')
+        toml = (
+            f'description = "{safe_desc}"\n'
+            f'prompt = """\n{safe_body}\n"""\n'
+        )
+        dst = out_dir / f"{name}.toml"
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if dst.exists() and not force:
+            print(f"  skip (exists): {dst} (run with --force to overwrite)")
+            continue
+        dst.write_text(toml, encoding="utf-8")
+        print(f"  wrote: {dst}")
+
+
+def install_kiro(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
+    """Install markdown command files as Kiro custom agents.
+
+    Kiro's custom agents in `.kiro/agents/` (or `~/.kiro/agents/`) surface
+    as `/<name>` slash commands. Markdown body + YAML frontmatter pass
+    through unchanged; Kiro ignores frontmatter keys it doesn't know.
+    """
+    print(f"\nInstalling into {base} (kiro)")
+    out_dir = base / "agents"
+    for name, src in commands_src:
+        if src.is_file():
+            link_or_copy(src, out_dir / f"{name}.md", force)
+
+
 def install_vscode(base: Path, skills: list[str], agents: list[str],
                    skill_paths: dict[str, Path], agent_paths: dict[str, Path],
                    prompts_src: list[tuple[str, Path]],
@@ -283,7 +396,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Install agentic-kb artifacts into a harness.")
     parser.add_argument(
         "--target",
-        choices=["claude", "opencode", "vscode", "all", "auto"],
+        choices=["claude", "opencode", "vscode", "codex", "gemini", "kiro", "all", "auto"],
         default="auto",
         help="Which harness to install into (default: auto-detect).",
     )
@@ -336,7 +449,7 @@ def main() -> int:
 
     targets = {
         "auto": detect_targets(),
-        "all": ["claude", "opencode", "vscode"],
+        "all": ["claude", "opencode", "vscode", "codex", "gemini", "kiro"],
     }.get(args.target, [args.target])
 
     cfg = workspace_targets()
@@ -344,6 +457,13 @@ def main() -> int:
         base = cfg[t]["base_global"] if args.globally else cfg[t]["base_local"]
         if t == "vscode":
             install_vscode(base, skills, agents, skill_paths, agent_paths, prompts, instructions, args.force)
+        elif t == "codex":
+            # Codex discovers prompts only in ~/.codex/prompts — no local.
+            install_codex(cfg[t]["base_global"], prompts, args.force)
+        elif t == "gemini":
+            install_gemini(base, prompts, args.force)
+        elif t == "kiro":
+            install_kiro(base, prompts, args.force)
         else:
             layout = cfg[t]["layout"]
             # For claude/opencode, each prompt becomes a "command" (slash command).
