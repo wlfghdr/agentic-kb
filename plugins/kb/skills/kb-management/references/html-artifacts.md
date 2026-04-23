@@ -89,7 +89,8 @@ Every generated artifact:
 3. **Version watermark** on the intro slide / top of report — subtle, format: `v{version} · {date}`.
 4. **Changelog appendix** — the final slide (presentation) or section (report) lists versions.
 5. **Accessible** — semantic HTML, WCAG AA contrast, keyboard nav, alt text on images.
-6. **Versioned filenames** — `<slug>-v<major>.<minor>.html`. Regeneration writes a new file; does NOT overwrite old.
+6. **Versioned, dated filenames** — default pattern `YYYY-MM-DD-<slug>-v<major>.<minor>.html` for any topic-bound artifact (presentations, reports, pitches). Regeneration writes a new file; does NOT overwrite old. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for personal, team, and org-unit KBs.
+7. **Layer-agnostic styling** — the configured reference template in `.kb-config/artifacts.yaml` (`styling.reference-file`) is THE template for every Family-2 artifact in that layer. Never hand-roll a fresh palette or layout per run. If the user works in a workspace with multiple KB layers, each layer reuses its own configured template — but within one layer, every artifact looks like it comes from one brand.
 
 ## Styling sources
 
@@ -175,12 +176,14 @@ index:
   category-order: recency          # recency | fixed
 ```
 
-**Auto-regeneration**: The root `index.html` MUST be regenerated after every operation that creates or modifies an HTML artifact:
+**Auto-regeneration with confirmation**: After every operation that creates or modifies an HTML artifact, the skill MUST **offer** to regenerate the affected layer's root `index.html` — and proceed only on user confirmation (unless automation level is `2` or `3` per `.kb-config/automation.yaml`, in which case it runs silently). Regeneration targets the repo that received the new artifact, not every layer in the workspace.
+
+Triggers that prompt the offer:
 
 - `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`
 - Any Family 1 overview regeneration
-- Any `/kb promote` that includes HTML files
-- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path; not required for freshness)
+- Any `/kb promote` that copies HTML files across layers (offer for both source and destination layer)
+- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path; runs without prompting since it was explicitly invoked)
 
 **Regeneration command**:
 
@@ -245,6 +248,7 @@ Every `/kb present` MUST use this file (as customized by Q13) rather than regene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-23 | Family-2 filename default is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every KB layer; styling contract is explicitly layer-agnostic (configured reference template is THE template per layer); root-`index.html` regeneration is now an explicit offer-then-confirm step after every Family-2 create/update (automation levels 2/3 still run silently) | ISO 42001 presentation generation friction |
 | 2026-04-22 | Root `index.html` source-of-truth row now lists findings/topics/ideas/decisions markdown alongside HTML artifacts, matching the shipped generator behavior | Fixes #21 |
 | 2026-04-22 | Added topics to the dashboard Family-1 contract and source-of-truth table so living positions are visible alongside findings, ideas, and decisions | Fixes #22 |
 | 2026-04-22 | Dropped the three phantom Family-1 overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals already live in `dashboard.html` panels | Fixes #18 |
