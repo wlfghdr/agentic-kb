@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.2 | **Last updated:** 2026-04-25
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -60,6 +60,15 @@ The skills and agent files are the source of truth for behavior. `REFERENCE.md` 
 
 If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't invent synonyms mid-doc. If a better term is found, update the glossary and all references in the same PR.
 
+### 11. Keep artifact control points explicit
+
+If a change affects capture, reporting, presentations, or any artifact flow that reads beyond local KB files, the instructions and spec must keep two control points visible:
+
+- external reads require a preflight summary before fetch,
+- HTML artifacts are not complete at file-write; they complete only after the defined QA sweep passes.
+
+Keep this stated once, crisply, and point to the owning contract instead of restating the whole checklist.
+
 ---
 
 ## Before Starting Any Task
@@ -67,11 +76,12 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 1. Read this file.
 2. Read [README.md](README.md).
 3. Read [docs/collaboration.md](docs/collaboration.md) if the change affects shared layers, human handoffs, or multi-user behavior.
-4. Identify which docs your change touches (`docs/REFERENCE.md`, plugin skill docs, or agent docs).
-5. Draft the change.
-6. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
-7. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
-8. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
+4. Read [plugins/kb/skills/kb-management/references/html-artifacts.md](plugins/kb/skills/kb-management/references/html-artifacts.md) if the change affects artifact generation, external-source reads during generation, or artifact completion criteria.
+5. Identify which docs your change touches (`docs/REFERENCE.md`, plugin skill docs, or agent docs).
+6. Draft the change.
+7. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
+8. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+9. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
 
 ---
 
@@ -79,6 +89,7 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added an explicit artifact-control rule: external-read preflights and post-generation QA sweeps must stay visible in repo instructions; bumped AGENTS version to 0.2 | Follow-up to the v3.5.0 artifact contract update |
 | 2026-04-22 | Updated behavioral-spec paths to `plugins/kb/` and added the collaboration guide to the mandatory shared-workspace reading list | Doc drift review |
 | 2026-04-18 | Initial file | Spec bootstrapping |
 | 2026-04-18 | Added blank lines around `### N.` rule headings and rule 3's bullet list (markdownlint MD022/MD032); no semantic change | CI fix |
