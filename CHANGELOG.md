@@ -19,6 +19,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+## [4.0.0] — 2026-04-25
+
+> **Why MAJOR:** two breaking semantic changes for downstream implementations: (1) `/kb promote` for local team KBs is now a composite operation that runs the destination-layer review and archives the staged input rather than stopping at the team inbox, and (2) every artifact flow that performs external reads MUST emit a structured preflight summary before fetching, and HTML artifacts only complete after a defined post-generation QA sweep. Implementations that rely on the older `promote` semantics or that treat artifact write as completion will fail the new contracts.
+
 ### Changed
 
 - **`/kb promote` for local team KBs** — promotion is now a composite operation: stage the intake in the target contributor `_kb-inputs/`, run the L2 review immediately in team context, archive the staged input under `_kb-inputs/digested/YYYY-MM/`, and leave the reviewed result in `_kb-references/`. Updated `kb-management`, its command/output docs, the team-scaffold template, and collaboration guidance so promote no longer teaches a mandatory second manual `/kb review` after every L1 promotion.

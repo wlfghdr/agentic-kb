@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.2 | **Last updated:** 2026-04-25
+> **Version:** 0.3 | **Last updated:** 2026-04-25
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -89,6 +89,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | v4.0.0 release alignment — kb-setup skill caught up from 3.4.4 to 4.0.0, README status row updated from v3.4.0 to v4.0.0, manifests and skill/agent versions all set to 4.0.0 | v4.0.0 release alignment |
 | 2026-04-25 | Added an explicit artifact-control rule: external-read preflights and post-generation QA sweeps must stay visible in repo instructions; bumped AGENTS version to 0.2 | Follow-up to the v3.5.0 artifact contract update |
 | 2026-04-22 | Updated behavioral-spec paths to `plugins/kb/` and added the collaboration guide to the mandatory shared-workspace reading list | Doc drift review |
 | 2026-04-18 | Initial file | Spec bootstrapping |

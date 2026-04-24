@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures documented harness workflows (VS Code Copilot, Claude Code, OpenCode, plus compatible CLI guidance such as Codex CLI), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 3.4.4
+version: 4.0.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -365,6 +365,7 @@ A zero-hit run is the gate for Step 8.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release; catches up the kb-setup skill from 3.4.4 after multi-harness install parity (Codex/Gemini/Kiro) and mandatory artifact preflight/QA gate adoption | v4.0.0 release alignment |
 | 2026-04-24 | Q10 and Step 6 now describe Codex and Kiro via their documented skill locations (`.agents/skills/`, `.kiro/skills/`), and roadmap tracker setup now recommends markdown exports as the lean first proof path | Harness and roadmap proof correction |
 | 2026-04-23 | Q10 IDE-targets offer extends to `codex`, `gemini`, `kiro` alongside `claude-code`, `vscode`, `opencode`; setup writes the native `/kb` command file for every selected harness | Multi-harness parity |
 | 2026-04-22 | Placeholder mapping table now declares `{{WORKSPACE_ROOT}}`, `{{ALIAS_INDEX}}`, and the five workstream-stub placeholders (`{{ACTIVE_DECISIONS}}`, `{{KEY_TOPICS}}`, `{{CURRENT_STATE}}`, `{{ACTIVE_THREADS}}`, `{{DEPENDENCIES}}`) so strict post-write-gate runs no longer fall back on improvisation or block the commit | Fixes #20 |
