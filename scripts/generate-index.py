@@ -525,6 +525,11 @@ def drop_referenced_subpages(artifacts: list[Artifact],
     index. The hub stays; referenced leaves are removed — even when leaves
     share a navigation bar that cross-links every sibling.
 
+     Standalone mock trees are also treated as subordinate navigation when a
+     parent overview exists. For example, `_kb-journeys/html/index.html`
+     should surface on the root index, while `_kb-journeys/html/mocks/` stays
+     reachable only from the journey set itself.
+
     Algorithm:
       1. Build each artifact's set of outgoing refs that land on another
          indexed artifact (excluding self).
@@ -532,7 +537,9 @@ def drop_referenced_subpages(artifacts: list[Artifact],
          outward scope (`refs ∪ {self}`). These are typically pages in
          the same nav bar. Keep one representative per clique, preferring
          a file literally named ``index.html``, else the shortest path.
-      3. Among surviving artifacts, drop any leaf referenced by a hub
+        3. Drop any artifact under a `mocks/` subtree when the parent
+            directory already has an `index.html` overview in the index.
+        4. Among surviving artifacts, drop any leaf referenced by a hub
          (≥ 2 outgoing refs) unless the leaf is itself a hub reaching
          pages OUTSIDE the referring hub's scope.
     """
@@ -565,6 +572,22 @@ def drop_referenced_subpages(artifacts: list[Artifact],
 
     remaining_paths = paths - clique_drops
 
+    # Drop mock indexes and standalone mock pages when a parent overview
+    # page already serves as the canonical entry point for that artifact set.
+    mock_drops: set[str] = set()
+    for p in remaining_paths:
+        rel = Path(p)
+        if 'mocks' not in rel.parts:
+            continue
+        mock_index = rel.parts.index('mocks')
+        if mock_index == 0:
+            continue
+        parent_overview = Path(*rel.parts[:mock_index], 'index.html').as_posix()
+        if parent_overview in remaining_paths:
+            mock_drops.add(p)
+
+    remaining_paths -= mock_drops
+
     # ── 2. Drop leaves referenced by surviving hubs ──────────────────
     HUB_MIN_REFS = 2
     surv_refs = {p: out_refs[p] & remaining_paths for p in remaining_paths}
@@ -578,7 +601,7 @@ def drop_referenced_subpages(artifacts: list[Artifact],
                 continue
             leaf_drops.add(ref)
 
-    to_drop = clique_drops | leaf_drops
+    to_drop = clique_drops | mock_drops | leaf_drops
     kept = [a for a in artifacts if a.path not in to_drop]
     return kept, len(artifacts) - len(kept)
 

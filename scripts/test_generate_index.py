@@ -93,20 +93,33 @@ def main() -> int:
             'Newest version that should remain after deduplication.',
         )
         write_html(
+            tempdir / '_kb-references' / 'journeys' / 'index.html',
+            'Journey Overview',
+            'Canonical overview page for the journey set.',
+            '<a href="launch-journey.html">Launch</a><a href="team-journey.html">Team</a>',
+        )
+        write_html(
             tempdir / '_kb-references' / 'journeys' / 'launch-journey.html',
             'Launch Journey',
-            'Hub page that links to sub-pages.',
-            '<a href="step-1.html">Step 1</a><a href="step-2.html">Step 2</a>',
+            'Peer journey page that should stay behind the overview.',
+            '<a href="index.html">Overview</a><a href="team-journey.html">Team</a>',
         )
         write_html(
-            tempdir / '_kb-references' / 'journeys' / 'step-1.html',
-            'Launch Journey Step 1',
-            'Leaf page that should be hidden from the root index.',
+            tempdir / '_kb-references' / 'journeys' / 'team-journey.html',
+            'Team Journey',
+            'Second journey leaf that should stay behind the overview.',
+            '<a href="index.html">Overview</a><a href="launch-journey.html">Launch</a>',
         )
         write_html(
-            tempdir / '_kb-references' / 'journeys' / 'step-2.html',
-            'Launch Journey Step 2',
-            'Second leaf page that should also be hidden from the root index.',
+            tempdir / '_kb-references' / 'journeys' / 'mocks' / 'index.html',
+            'Journey Mocks',
+            'Nested mocks index that should stay behind the overview.',
+            '<a href="launch-step-1-mock.html">Standalone mock</a>',
+        )
+        write_html(
+            tempdir / '_kb-references' / 'journeys' / 'mocks' / 'launch-step-1-mock.html',
+            'Launch Journey Mock',
+            'Standalone mock that should be hidden from the root index.',
         )
 
         # #21: markdown sources must also surface on the public index.
@@ -161,8 +174,11 @@ def main() -> int:
         assert_before(output, '<h2>Journey Maps', '<h2>Reports')
         assert_contains(output, 'strategy-report-v2-2026-04-18.html')
         assert_not_contains(output, 'strategy-report-v1-2026-04-17.html')
-        assert_contains(output, 'launch-journey.html')
-        assert_not_contains(output, 'step-1.html')
+        assert_contains(output, '_kb-references/journeys/index.html')
+        assert_not_contains(output, 'launch-journey.html')
+        assert_not_contains(output, 'team-journey.html')
+        assert_not_contains(output, 'mocks/index.html')
+        assert_not_contains(output, 'launch-step-1-mock.html')
 
         # #21: markdown sources render with extracted titles and link to the .md.
         assert_contains(output, 'Cache hit rate drops on deploy')
