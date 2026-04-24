@@ -83,11 +83,17 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
       - name: Validate any checked-in HTML artifacts
         run: python3 scripts/check_html_artifacts.py
+      - name: Regression test shipped HTML templates are self-contained
+        run: python3 scripts/test_html_templates.py
       - name: Regression test generate-index against a simulated workspace
         run: python3 scripts/test_generate_index.py
-      - name: Install PyYAML for dashboard test
-        run: pip install pyyaml
       - name: Regression test generate-dashboard focus/backlog parsing
         run: python3 scripts/test_generate_dashboard.py
+      - name: Regression test layered acceptance fixture
+        run: python3 scripts/test_acceptance_fixture.py
+      - name: Regression test export-backed roadmap fixture
+        run: python3 scripts/test_kb_roadmap.py

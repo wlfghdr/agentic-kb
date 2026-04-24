@@ -13,6 +13,18 @@ Every organization has at least two sources of "planning truth" — tickets, mil
 3. Classifies every unmatched item (delivered-unplanned, planned-undelivered, traceability-gap, stalled)
 4. Emits a roadmap artifact in three formats: Markdown (human), HTML (presentation, themed), JSON (machine)
 
+## Lean first proof path
+
+Start with exported tracker markdown before live APIs:
+
+1. export a small GitHub or Jira slice to markdown,
+2. bind those directories with `adapter: ticket-export-markdown`,
+3. run the roadmap pilot or `/kb roadmap digest`,
+4. inspect the JSON sidecar and HTML output,
+5. only then add live tracker adapters or write-back.
+
+That keeps the first adoption proof deterministic, token-free, and easy to run in CI.
+
 ## Vendor-neutral by construction
 
 This skill ships zero vendor-specific names, colors, or adapters beyond the generic minimum. Adopters supply:

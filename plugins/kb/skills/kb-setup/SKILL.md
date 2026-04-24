@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures documented harness workflows (VS Code Copilot, Claude Code, OpenCode, plus compatible CLI guidance such as Codex CLI), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 3.4.1
+version: 3.4.4
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -87,8 +87,8 @@ Ask each block in order. Stop and wait after each block for the user's answer be
    *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
 9. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
    *→ Creates `_kb-workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
-10. **IDE targets**: multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`. Each selection gets the `/kb` slash command wired natively via `scripts/install --target <harness>`.
-    *→ Determines which harness directories receive files (`.claude/commands/`, `.github/prompts/`, `.opencode/commands/`, `~/.codex/prompts/`, `.gemini/commands/kb.toml`, `.kiro/agents/`). Multiple selections create cross-harness compatibility — the same `/kb` works in every selected harness.*
+10. **IDE targets**: multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`. Each selection gets the documented native command or skill surface wired via `scripts/install --target <harness>`.
+   *→ Determines which harness directories receive files (`.claude/commands/`, `.github/prompts/`, `.opencode/commands/`, `.agents/skills/kb/SKILL.md`, `.gemini/commands/kb.toml`, `.kiro/skills/kb/SKILL.md`). Multiple selections create cross-harness compatibility — the same KB workflow is available everywhere, even when Codex uses a skill picker instead of a custom `/kb` slash command.*
 11. **Integrations**: marketplace-available MCP servers / APIs to wire up.
     *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
 
@@ -100,7 +100,7 @@ Ask each block in order. Stop and wait after each block for the user's answer be
     - *"Should the skill be allowed to write back (comments, status transitions, links)?"* — default no; if yes, which capabilities (`write-comments`, `write-status`, `write-link`, `write-item`) and which env var holds the auth token.
     - *"Opt in to continuous config tuning?"* — default yes. Skill produces a post-run digest of zero-match filters, low-match filters, and suspected noise; user walks them via `/kb roadmap tune`.
 
-    *→ Writes `.kb-config/layers.yaml roadmap.issue-trackers[]` + `roadmap.scopes.<workstream>.trackers[]` with the declared search params. Also writes `roadmap.tune.enabled: true|false`. These values are the starting point; the tune command refines them over time.*
+   *→ Writes `.kb-config/layers.yaml roadmap.issue-trackers[]` + `roadmap.scopes.<workstream>.trackers[]` with the declared search params. Also writes `roadmap.tune.enabled: true|false`. For first adoption, prefer markdown exports over live APIs — they are deterministic, token-free, and CI-friendly. These values are the starting point; the tune command refines them over time.*
 
 11c. **Import / export tools** (general, not scoped to a single primitive):
     - *"Which tools should the agent use to export content out of your trackers for offline processing?"* — options: native API (needs auth env var), CLI tool already on PATH (e.g. a sync CLI), pre-generated markdown dump, custom script. Multi-select.
@@ -232,7 +232,7 @@ Optional workspace-level harness hooks (only written if the harness was **not** 
 
 - VS Code selected → write `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md` from `templates/` **only if missing**.
 - Claude Code / OpenCode selected → nothing to write at workspace level; plugin/install handles `.claude/` and `.opencode/`.
-- Codex CLI selected → do not claim native install support. Reuse the workspace-level `AGENTS.md`, `CLAUDE.md`, and any generated prompt/instruction files as the documented operating contract.
+- Codex CLI selected → install the documented `kb` skill into `.agents/skills/` (or `~/.agents/skills/` for global setup) and explain that Codex uses `AGENTS.md` plus the skill picker or `$kb`, not a custom `/kb` slash command.
 
 ### Step 6 — Configure additional IDE targets
 
@@ -241,7 +241,7 @@ For any harness the user selected that is **not yet installed**, run the install
 - **Claude Code**: recommend `/plugin marketplace add <repo-url>` + `/plugin install kb@agentic-kb` from inside Claude Code (preferred — handles updates). Fall back to `<marketplace>/scripts/install --target claude` for dev installs.
 - **VS Code**: point the user at `chat.plugins.marketplaces` in `settings.json` for one-click install, or run `<marketplace>/scripts/install --target vscode` for direct workspace copy.
 - **OpenCode**: no marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global`. OpenCode also reads `.claude/skills/`, so a Claude Code install in the same workspace is picked up automatically.
-- **Codex CLI**: no native marketplace/install target yet. Mark it as a compatible CLI workflow, explain that `/kb setup` bootstrap should happen through a first-class supported harness (or a repo-local manual setup path), and point Codex users at the generated workspace files as the runtime contract.
+- **Codex CLI**: no marketplace path yet, but there is a documented repo/user skill path. Run `<marketplace>/scripts/install --target codex` (workspace) or `--global`. Explain that Codex uses `AGENTS.md` plus `.agents/skills/kb/SKILL.md`, invoked through the skill picker or `$kb`.
 
 Never re-install into a harness that already has the skills — that causes symlink/file conflicts with `link_or_copy` falling back to "skip (exists)".
 
@@ -365,6 +365,7 @@ A zero-hit run is the gate for Step 8.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-24 | Q10 and Step 6 now describe Codex and Kiro via their documented skill locations (`.agents/skills/`, `.kiro/skills/`), and roadmap tracker setup now recommends markdown exports as the lean first proof path | Harness and roadmap proof correction |
 | 2026-04-23 | Q10 IDE-targets offer extends to `codex`, `gemini`, `kiro` alongside `claude-code`, `vscode`, `opencode`; setup writes the native `/kb` command file for every selected harness | Multi-harness parity |
 | 2026-04-22 | Placeholder mapping table now declares `{{WORKSPACE_ROOT}}`, `{{ALIAS_INDEX}}`, and the five workstream-stub placeholders (`{{ACTIVE_DECISIONS}}`, `{{KEY_TOPICS}}`, `{{CURRENT_STATE}}`, `{{ACTIVE_THREADS}}`, `{{DEPENDENCIES}}`) so strict post-write-gate runs no longer fall back on improvisation or block the commit | Fixes #20 |
 | 2026-04-22 | Bumped declared skill version to 3.4.1 so the placeholder-gate behavior change ships under the current framework patch version | Version alignment |

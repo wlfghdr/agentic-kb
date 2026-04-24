@@ -110,24 +110,53 @@ class MultiHarnessInstallTests(unittest.TestCase):
             "---\n"
             "mode: agent\n"
             'description: KB ops — capture, digest, promote\n'
+            "tools:\n"
+            "  - vscode_askQuestions\n"
             "---\n"
             "\n"
             "# /kb — Knowledge Base\n"
             "\n"
-            "Route to kb-management.\n",
+            "The user invokes `/kb` from any harness. Route to the `kb-management` skill.\n"
+            "\n"
+            "> **Tool requirement.** This prompt needs file + terminal tools (declared in the frontmatter `tools:` list) to run file scaffolding, ritual scans, and git operations. On recent VS Code builds they are auto-selected from the frontmatter. If the chat session reports \"no tools available\" when this prompt runs, open the Chat view → gear/Configure Chat → Tools, enable the 13 built-in tools listed in the frontmatter above, and rerun `/kb`. This is a one-time per-session action.\n"
+            "\n"
+            "## Routing precedence\n",
             encoding="utf-8",
         )
         return ("kb", src)
 
-    def test_codex_writes_md_with_frontmatter_stripped(self) -> None:
+    def test_opencode_command_rewrites_vscode_specific_prompt(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            install.install_claude_or_opencode(
+                "opencode",
+                root,
+                {"skills": "skills", "agents": "agents", "commands": "commands"},
+                [],
+                [],
+                {},
+                {},
+                [self._sample_command(root)],
+                force=False,
+            )
+            dst = root / "commands" / "kb.md"
+            self.assertTrue(dst.is_file())
+            content = dst.read_text(encoding="utf-8")
+            self.assertIn("description: KB ops", content)
+            self.assertNotIn("vscode_askQuestions", content)
+            self.assertNotIn("Configure Chat", content)
+
+    def test_codex_writes_repo_skill(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             install.install_codex(root, [self._sample_command(root)], force=False)
-            dst = root / "prompts" / "kb.md"
+            dst = root / "skills" / "kb" / "SKILL.md"
             self.assertTrue(dst.is_file())
             content = dst.read_text(encoding="utf-8")
-            self.assertNotIn("---\nmode:", content)
+            self.assertIn("name: kb", content)
             self.assertIn("# /kb — Knowledge Base", content)
+            self.assertNotIn("Configure Chat", content)
+            self.assertIn("Codex equivalent of `/kb`", content)
 
     def test_gemini_generates_toml_wrapper_with_description(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -139,17 +168,18 @@ class MultiHarnessInstallTests(unittest.TestCase):
             self.assertIn('description = "KB ops', content)
             self.assertIn('prompt = """', content)
             self.assertIn("# /kb — Knowledge Base", content)
+            self.assertNotIn("Configure Chat", content)
 
-    def test_kiro_copies_md_verbatim_into_agents(self) -> None:
+    def test_kiro_writes_skill_directory(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             install.install_kiro(root, [self._sample_command(root)], force=False)
-            dst = root / "agents" / "kb.md"
-            self.assertTrue(dst.exists())
+            dst = root / "skills" / "kb" / "SKILL.md"
+            self.assertTrue(dst.is_file())
             content = dst.read_text(encoding="utf-8")
-            # Kiro keeps frontmatter and body intact — it ignores unknown keys.
-            self.assertIn("mode: agent", content)
+            self.assertIn("name: kb", content)
             self.assertIn("# /kb — Knowledge Base", content)
+            self.assertNotIn("Configure Chat", content)
 
     def test_detect_targets_discovers_new_harnesses(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -157,13 +187,12 @@ class MultiHarnessInstallTests(unittest.TestCase):
             cwd = os.getcwd()
             try:
                 os.chdir(tmp)
-                for sub in (".codex", ".gemini", ".kiro"):
+                for sub in (".agents", ".gemini", ".kiro"):
                     Path(tmp, sub).mkdir()
                 hits = set(install.detect_targets())
             finally:
                 os.chdir(cwd)
-            # codex detect only probes ~/.codex, so it's environment-dependent;
-            # gemini + kiro have local probes and MUST be picked up.
+            self.assertIn("codex", hits)
             self.assertIn("gemini", hits)
             self.assertIn("kiro", hits)
 

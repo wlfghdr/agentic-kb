@@ -22,15 +22,32 @@ Paths per harness (as of late 2025 / early 2026):
     - Note: OpenCode also reads .claude/skills/<name>/SKILL.md for
             cross-agent compatibility.
 
-  vscode  (GitHub Copilot Chat — Agent Skills + Agent Plugins)
+    vscode  (GitHub Copilot Chat — Agent Skills + Agent Plugins)
     - Workspace:    .github/skills/<name>/ (preferred — Agent Skill),
                     .github/prompts/<name>.prompt.md (slash command),
                     .github/instructions/<name>.instructions.md (scoped rules),
                     .github/agents/<name>.agent.md (custom agent persona).
     - User:         ~/.copilot/skills/, ~/.copilot/agents/,
                     ~/.copilot/prompts/, ~/.copilot/instructions/.
-    - Easiest for users: add this repo to chat.plugins.marketplaces in
-      settings.json and install via the Extensions view (reads plugin.json).
+        - Easiest for users: add this repo to chat.plugins.marketplaces in
+            settings.json and install via the Extensions view (reads plugin.json).
+
+    codex
+        - Repository / local authoring: .agents/skills/<name>/SKILL.md
+        - User-global:                 ~/.agents/skills/<name>/SKILL.md
+        - Codex reads AGENTS.md for project instructions and `.agents/skills/`
+            for reusable skills. This installer emits a `kb` skill instead of a
+            custom slash command.
+
+    gemini
+        - Project:      .gemini/commands/<name>.toml
+        - User-global:  ~/.gemini/commands/<name>.toml
+
+    kiro
+        - Project:      .kiro/skills/<name>/SKILL.md
+        - User-global:  ~/.kiro/skills/<name>/SKILL.md
+        - Kiro exposes skills as slash commands, so the installer emits a `kb`
+            skill rather than a free-form agent markdown file.
 
 Symlinks on POSIX, copies on Windows (or when symlinks fail).
 
@@ -40,9 +57,10 @@ Usage examples:
   scripts/install --target claude --global        # ~/.claude/
   scripts/install --target opencode --global
   scripts/install --target vscode                 # workspace .github/
-  scripts/install --target codex --global         # ~/.codex/prompts/ (global-only)
+    scripts/install --target codex                  # .agents/skills/kb/SKILL.md
+    scripts/install --target codex --global         # ~/.agents/skills/kb/SKILL.md
   scripts/install --target gemini --global        # ~/.gemini/commands/*.toml (generated)
-  scripts/install --target kiro                   # .kiro/agents/ (works as slash-cmd)
+    scripts/install --target kiro                   # .kiro/skills/kb/SKILL.md
   scripts/install --force
   scripts/install --target all --global           # claude + opencode + vscode + codex + gemini + kiro
 
@@ -64,6 +82,10 @@ VSCODE_PLUGIN_JSON = REPO / "plugin.json"
 
 IS_WINDOWS = os.name == "nt"
 VERSION_LINE_RE = re.compile(r"^version:\s*([^\s]+)\s*$")
+VS_CODE_TOOL_REQUIREMENT_RE = re.compile(
+    r"\n> \*\*Tool requirement\.\*\*.*?(?:\n\n|\Z)",
+    re.DOTALL,
+)
 
 
 def discover_skill_agent_paths(pj: dict) -> tuple[dict[str, Path], dict[str, Path]]:
@@ -107,13 +129,12 @@ def workspace_targets() -> dict:
                 "instructions": "instructions",
             },
         },
-        # Codex CLI — markdown prompts only (no skills/agents); per Codex
-        # design these live in `~/.codex/prompts/`. Local project prompts
-        # are not discovered by Codex as of v0.4.
+        # Codex CLI — reusable workflows live in `.agents/skills/`
+        # (repo-scoped) or `~/.agents/skills/` (user-global).
         "codex": {
-            "base_local": REPO.cwd() / ".codex",
-            "base_global": Path(os.path.expanduser("~/.codex")),
-            "layout": {"prompts": "prompts"},
+            "base_local": REPO.cwd() / ".agents",
+            "base_global": Path(os.path.expanduser("~/.agents")),
+            "layout": {"skills": "skills"},
         },
         # Gemini CLI — custom commands are TOML files under
         # `.gemini/commands/` (local) or `~/.gemini/commands/` (global).
@@ -124,12 +145,12 @@ def workspace_targets() -> dict:
             "base_global": Path(os.path.expanduser("~/.gemini")),
             "layout": {"commands": "commands"},
         },
-        # Kiro IDE — "custom agents" double as slash commands. Files live
-        # in `.kiro/agents/` (local) or `~/.kiro/agents/` (global).
+        # Kiro IDE — skills live in `.kiro/skills/` (local) or
+        # `~/.kiro/skills/` (global) and show up as slash commands.
         "kiro": {
             "base_local": REPO.cwd() / ".kiro",
             "base_global": Path(os.path.expanduser("~/.kiro")),
-            "layout": {"agents": "agents"},
+            "layout": {"skills": "skills"},
         },
     }
 
@@ -141,7 +162,7 @@ def detect_targets() -> list[str]:
         "claude": [cwd / ".claude", Path(os.path.expanduser("~/.claude"))],
         "opencode": [cwd / ".opencode", Path(os.path.expanduser("~/.config/opencode"))],
         "vscode": [cwd / ".github", cwd / ".vscode", Path(os.path.expanduser("~/.copilot"))],
-        "codex": [Path(os.path.expanduser("~/.codex"))],
+        "codex": [cwd / ".agents", Path(os.path.expanduser("~/.agents")), Path(os.path.expanduser("~/.codex"))],
         "gemini": [cwd / ".gemini", Path(os.path.expanduser("~/.gemini"))],
         "kiro": [cwd / ".kiro", Path(os.path.expanduser("~/.kiro"))],
     }.items():
@@ -280,7 +301,11 @@ def install_claude_or_opencode(target: str, base: Path, layout: dict,
     # commands: .md files whose body is the prompt template
     for name, src in commands_src:
         if src.is_file():
-            link_or_copy(src, base / layout["commands"] / f"{name}.md", force)
+            _write_generated_file(
+                base / layout["commands"] / f"{name}.md",
+                _render_command_markdown(target, name, src),
+                force,
+            )
 
 
 def _strip_markdown_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -300,26 +325,77 @@ def _strip_markdown_frontmatter(text: str) -> tuple[dict[str, str], str]:
     return {}, text
 
 
-def install_codex(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
-    """Install markdown command files into `<base>/prompts/` for Codex CLI.
+def _command_body_for_target(target: str, text: str) -> tuple[dict[str, str], str]:
+    fm, body = _strip_markdown_frontmatter(text)
+    body = VS_CODE_TOOL_REQUIREMENT_RE.sub("\n\n", body, count=1).strip()
 
-    Codex discovers any `.md` in `~/.codex/prompts/` and registers
-    `/prompts:<filename>` (and often just `/<filename>`). The command body
-    minus YAML frontmatter becomes the prompt.
+    if target == "codex":
+        body = body.replace(
+            "The user invokes `/kb` from any harness. Route to the `kb-management` skill.",
+            "This skill is the Codex equivalent of `/kb` in harnesses that support custom slash commands. Route to the `kb-management` skill.",
+            1,
+        )
+    elif target == "kiro":
+        body = body.replace(
+            "The user invokes `/kb` from any harness. Route to the `kb-management` skill.",
+            "This skill is the Kiro entrypoint for `/kb`. Route to the `kb-management` skill.",
+            1,
+        )
+
+    return fm, body + "\n"
+
+
+def _write_generated_file(dst: Path, content: str, force: bool) -> None:
+    if dst.exists() or dst.is_symlink():
+        if not force:
+            print(f"  skip (exists): {dst} (run with --force to overwrite)")
+            return
+        if dst.is_dir() and not dst.is_symlink():
+            shutil.rmtree(dst)
+        else:
+            dst.unlink()
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(content, encoding="utf-8")
+    print(f"  wrote: {dst}")
+
+
+def _render_command_markdown(target: str, name: str, src: Path) -> str:
+    fm, body = _command_body_for_target(target, src.read_text(encoding="utf-8"))
+    description = fm.get("description", "KB operations")
+
+    if target in {"claude", "opencode"}:
+        return f"---\ndescription: {description}\n---\n\n{body}"
+
+    raise ValueError(f"unsupported command target: {target}")
+
+
+def _render_skill_markdown(target: str, name: str, src: Path) -> str:
+    fm, body = _command_body_for_target(target, src.read_text(encoding="utf-8"))
+    description = fm.get("description", "KB operations")
+    return (
+        f"---\nname: {name}\n"
+        f"description: {description}\n"
+        "---\n\n"
+        f"{body}"
+    )
+
+
+def install_codex(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
+    """Install repository or user skills for Codex under `.agents/skills/`.
+
+    Codex discovers reusable skills from `.agents/skills/<name>/SKILL.md`
+    in repositories and `~/.agents/skills/<name>/SKILL.md` for user-global
+    setup. This target emits a `kb` skill rather than a custom slash command.
     """
     print(f"\nInstalling into {base} (codex)")
-    out_dir = base / "prompts"
     for name, src in commands_src:
         if not src.is_file():
             continue
-        _, body = _strip_markdown_frontmatter(src.read_text(encoding="utf-8"))
-        dst = out_dir / f"{name}.md"
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        if dst.exists() and not force:
-            print(f"  skip (exists): {dst} (run with --force to overwrite)")
-            continue
-        dst.write_text(body, encoding="utf-8")
-        print(f"  wrote: {dst}")
+        _write_generated_file(
+            base / "skills" / name / "SKILL.md",
+            _render_skill_markdown("codex", name, src),
+            force,
+        )
 
 
 def install_gemini(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
@@ -335,7 +411,7 @@ def install_gemini(base: Path, commands_src: list[tuple[str, Path]], force: bool
     for name, src in commands_src:
         if not src.is_file():
             continue
-        fm, body = _strip_markdown_frontmatter(src.read_text(encoding="utf-8"))
+        fm, body = _command_body_for_target("gemini", src.read_text(encoding="utf-8"))
         desc = fm.get("description", "").replace("\n", " ")
         safe_desc = desc.replace('"', '\\"')
         safe_body = body.replace('"""', '\\"\\"\\"')
@@ -353,17 +429,21 @@ def install_gemini(base: Path, commands_src: list[tuple[str, Path]], force: bool
 
 
 def install_kiro(base: Path, commands_src: list[tuple[str, Path]], force: bool) -> None:
-    """Install markdown command files as Kiro custom agents.
+    """Install Kiro skills under `.kiro/skills/`.
 
-    Kiro's custom agents in `.kiro/agents/` (or `~/.kiro/agents/`) surface
-    as `/<name>` slash commands. Markdown body + YAML frontmatter pass
-    through unchanged; Kiro ignores frontmatter keys it doesn't know.
+    Kiro's documented portable package format is `.kiro/skills/<name>/SKILL.md`.
+    Skills show up in slash-command menus and can be auto-activated by their
+    descriptions.
     """
     print(f"\nInstalling into {base} (kiro)")
-    out_dir = base / "agents"
     for name, src in commands_src:
-        if src.is_file():
-            link_or_copy(src, out_dir / f"{name}.md", force)
+        if not src.is_file():
+            continue
+        _write_generated_file(
+            base / "skills" / name / "SKILL.md",
+            _render_skill_markdown("kiro", name, src),
+            force,
+        )
 
 
 def install_vscode(base: Path, skills: list[str], agents: list[str],
@@ -458,8 +538,7 @@ def main() -> int:
         if t == "vscode":
             install_vscode(base, skills, agents, skill_paths, agent_paths, prompts, instructions, args.force)
         elif t == "codex":
-            # Codex discovers prompts only in ~/.codex/prompts — no local.
-            install_codex(cfg[t]["base_global"], prompts, args.force)
+            install_codex(base, prompts, args.force)
         elif t == "gemini":
             install_gemini(base, prompts, args.force)
         elif t == "kiro":

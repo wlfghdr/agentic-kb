@@ -5,6 +5,11 @@ Reads `.kb-config/layers.yaml` roadmap: block, enumerates items from configured
 trackers, performs tier-1 correlation (ticket-key match), and emits the
 triple artifact (MD + HTML + JSON) into <output-dir>/<scope>/roadmap-<DATE>.{md,html,json}.
 
+Recommended lean baseline: start with exported tracker markdown via
+`ticket-export-markdown` for both Jira- and GitHub-originated data, prove the
+correlation and artifact flow locally, then opt into live tracker adapters and
+write-back once the exported path is trusted.
+
 This is a pilot skeleton. It implements:
 - config loading + validation (scope + tracker discovery)
 - `ticket-export-markdown` adapter (reads a tree of md files, extracts key + status)
@@ -581,7 +586,7 @@ _Pilot: tier-2-through-4 mismatch classification not yet implemented._
 
 _Author-added section. Use `/kb roadmap refine {scope}` to append._
 
-## G. Decisions
+## G. Decisions needed
 
 _Author-added section. Link `_kb-decisions/D-*.md` as they arise._
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -100,7 +101,7 @@ def main() -> int:
         (tempdir / '.kb-config' / 'artifacts.yaml').write_text(ARTIFACTS_YAML, encoding='utf-8')
 
         subprocess.run(
-            ['python3', str(SCRIPT), str(tempdir), '--title', 'Simulated KB'],
+            [sys.executable, str(SCRIPT), str(tempdir), '--title', 'Simulated KB'],
             check=True,
             cwd=REPO,
         )

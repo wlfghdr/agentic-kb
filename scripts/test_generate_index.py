@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -143,7 +144,7 @@ def main() -> int:
         )
 
         subprocess.run(
-            ['python3', str(SCRIPT), str(tempdir), '--title', 'Simulated KB', '--description', 'Regression test'],
+            [sys.executable, str(SCRIPT), str(tempdir), '--title', 'Simulated KB', '--description', 'Regression test'],
             check=True,
             cwd=REPO,
         )

@@ -91,6 +91,18 @@
     <a class="cta" href="#install">Install in 60 seconds</a>
   </section>
 
+  <section>
+    <h2>Proof strip</h2>
+    <p>The quickest credible adoption story is not a bigger architecture pitch. It is one short path a team can run and inspect.</p>
+    <div class="grid">
+      <div class="card"><h3>1. Install</h3><p>Wire one harness into its documented native command or skill surface.</p></div>
+      <div class="card"><h3>2. Scaffold</h3><p>Create personal, team, and org repos with the same file contract.</p></div>
+      <div class="card"><h3>3. Capture</h3><p>Turn one source into a finding/topic update that another human can review.</p></div>
+      <div class="card"><h3>4. Promote + digest</h3><p>Exercise the shared loop once so the governance story is visible, not implied.</p></div>
+      <div class="card"><h3>5. Verify</h3><p>Regenerate reports and run the repo-owned fixtures that prove the same path in CI.</p></div>
+    </div>
+  </section>
+
   <!-- THE REAL PROBLEM -->
   <section>
     <h2>The real problem</h2>
@@ -106,7 +118,7 @@
     <div class="grid">
       <div class="card"><h3>🗂 No database</h3><p>Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If a folder can read it, this works.</p></div>
       <div class="card"><h3>☁️ No cloud backend</h3><p>No SaaS. No auth. No infra. Your knowledge stays on your disk. If the vendor disappears tomorrow, your KB is still there.</p></div>
-      <div class="card"><h3>🔓 No vendor lock-in</h3><p>Claude Code, VS Code Copilot, OpenCode — same skill, same contract, one install. No "Claude memory" trap. No "upgrade to Pro to access your own notes."</p></div>
+      <div class="card"><h3>🔓 No vendor lock-in</h3><p>Claude Code and VS Code have marketplace/native plugin paths. OpenCode, Gemini, and Kiro get installer-backed native entrypoints. Codex uses the same repo contract via <code>AGENTS.md</code> plus a reusable <code>kb</code> skill.</p></div>
       <div class="card"><h3>🪶 Lean by construction</h3><p>One spec. Two reference skills. One reference agent. One installer. Install in 60s. Rip it out in 5 if it's not for you.</p></div>
     </div>
   </section>
@@ -198,11 +210,25 @@
   <!-- MULTI-HARNESS -->
   <section>
     <h2>Cross-agent portable</h2>
-    <p>One source of skills and agents feeds three harnesses. Write once, use everywhere.</p>
+    <p>One source of skills and commands feeds every documented harness tier. The workflow stays the same even when the invocation surface changes.</p>
     <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
       <div class="card" style="text-align:center"><h3>Claude Code</h3><p>.claude/skills/</p></div>
       <div class="card" style="text-align:center"><h3>VS Code Copilot</h3><p>.github/skills/</p></div>
       <div class="card" style="text-align:center"><h3>OpenCode</h3><p>.opencode/skills/</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 1rem;">
+      <div class="card" style="text-align:center"><h3>Gemini CLI</h3><p>.gemini/commands/</p></div>
+      <div class="card" style="text-align:center"><h3>Kiro IDE</h3><p>.kiro/skills/</p></div>
+      <div class="card" style="text-align:center"><h3>Codex CLI</h3><p>.agents/skills/ + AGENTS.md</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Support tiers</h2>
+    <div class="grid">
+      <div class="card"><h3>Marketplace/native plugin</h3><p>Claude Code and VS Code Copilot Chat expose a native <code>/kb</code> install path today.</p></div>
+      <div class="card"><h3>Installer-backed native surface</h3><p>OpenCode, Gemini CLI, and Kiro IDE get their documented command or skill entrypoint from <code>scripts/install</code>.</p></div>
+      <div class="card"><h3>Compatible skill workflow</h3><p>Codex CLI uses the same workspace contract through <code>AGENTS.md</code> plus the installed <code>kb</code> skill.</p></div>
     </div>
   </section>
 

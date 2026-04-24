@@ -7,6 +7,7 @@ What's next, what's deferred, what's out of scope.
 - [x] Walk-through tests against a simulated workspace
 - [x] HTML artifact CI validation (self-contained, dual theme, watermark)
 - [x] Auto-regeneration of overview dashboards after every `/kb` mutation
+- [x] Export-backed roadmap proof fixture and regression test
 - [ ] Example marketplace repo that consumers can clone and extend
 
 ## Later
@@ -29,4 +30,5 @@ What's next, what's deferred, what's out of scope.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-24 | Marked the export-backed roadmap proof fixture as delivered via the new roadmap regression test | Roadmap proof hardening |
 | 2026-04-20 | Marked simulated-workspace tests, HTML artifact CI validation, and automatic overview regeneration as delivered | v3.2.0 roadmap sync |

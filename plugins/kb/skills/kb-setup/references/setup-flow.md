@@ -141,7 +141,7 @@ Per selected IDE:
 - **VS Code**: merge into `.vscode/settings.json` → `chat.plugins.marketplaces`.
 - **Claude Code**: preferred path — inside Claude Code run `/plugin marketplace add <repo-url>` + `/plugin install kb@agentic-kb`. Alternative: `<marketplace>/scripts/install --target claude`.
 - **OpenCode**: no official marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global` (user). OpenCode also reads `.claude/skills/` for cross-agent compatibility.
-- **Codex CLI**: treat as a compatible CLI workflow. There is no native installer target yet, so bootstrap via a first-class supported harness or a repo clone, then operate against the initialized workspace files (`AGENTS.md`, `CLAUDE.md`, prompt/instruction files, `.kb-config/`).
+- **Codex CLI**: run `<marketplace>/scripts/install --target codex` (workspace) or `--global`. Codex reads `AGENTS.md` plus `.agents/skills/kb/SKILL.md`; invoke the workflow through the skill picker or `$kb`, not a custom `/kb` slash command.
 
 ## Initial commits
 

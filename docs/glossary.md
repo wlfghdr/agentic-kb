@@ -18,7 +18,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Focus** | The max-6 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
 | **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources. |
 | **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer evaluation gate scoring and task prioritization. Also called **MCG** (Mission-Critical Goal). |
-| **Harness** | The IDE or CLI environment where the skills run. First-class supported harnesses today are VS Code Copilot, Claude Code, and OpenCode. Compatible CLI workflows, such as Codex CLI, use the same repo-local KB contract without a native marketplace/install target yet. |
+| **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/` even when there is no custom `/kb` slash command. |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **Journey** | A hierarchical user, customer, or product flow (`journey → phase → sub-journey → step`) with readiness per visible step. Managed by the optional draft `kb-journeys` skill. |
 | **L1 / L2 / L3 / L4 / L5** | Personal / Team / Org-Unit / Marketplace / Company-wide layers. |
@@ -56,6 +56,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-24 | Updated the harness definition to distinguish marketplace/native plugin paths, installer-supported native command or skill paths, and Codex's compatible skill workflow | Harness docs correction |
 | 2026-04-22 | Added Codex CLI to the harness definition as a compatible CLI workflow and clarified first-class vs repo-local support language | Compatibility expansion |
 | 2026-04-22 | Added draft roadmap/journey terminology, updated in-repo skill/agent paths, and clarified the non-generic use of "sync" | Doc drift review |
 | 2026-04-18 | Initial version | New |

@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v3.4.3-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v3.4.4-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -39,9 +39,24 @@ One command — **`/kb`** — across any agentic IDE. A layered knowledge system
 
 You capture. The agent files, cross-links, promotes, and keeps humans and agents on the same page. Literally.
 
+## Proof, not promises
+
+The core adoption question is simple: can a skeptical team prove the shared loop end to end without inventing process around the tool?
+
+The narrow proof path is now:
+
+1. install into one documented harness surface
+2. scaffold a personal, team, and org workspace
+3. capture one source and inspect the resulting files in git
+4. promote once, digest once, and inspect the shared state
+5. regenerate index, dashboard, and report artifacts
+6. run the repo-owned regression fixtures that prove the same path in CI
+
+That is the claim surface. Architecture matters, but adoption only gets real once the proof strip is short enough to run.
+
 ## Why it's built this way
 
-**Vendor-neutral by design.** Works with Claude Code, VS Code Copilot, OpenCode, Codex CLI, Gemini CLI, and Kiro IDE out of the box — one `scripts/install` call per harness, the same `/kb` surface everywhere. Switch IDE tomorrow, your KB comes with you. No Claude-memory lock-in. No ChatGPT memory lock-in. No "upgrade to the Pro tier to access your own notes" trap.
+**Vendor-neutral by design.** Claude Code and VS Code Copilot Chat have marketplace/native plugin installs. OpenCode, Gemini CLI, and Kiro IDE have installer-backed native command or skill entrypoints. Codex CLI uses the same repo contract via `AGENTS.md` plus a reusable `kb` skill in `.agents/skills/`. Switch IDE tomorrow, your KB comes with you. No harness-owned memory trap. No cloud tier required to keep your own context.
 
 **No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
 
@@ -89,6 +104,8 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb journeys               → author and render journey specs + mocks
 ```
 
+For roadmap adoption, keep the first proof path lean: start with exported GitHub or Jira markdown bound through `ticket-export-markdown`, prove the artifact flow locally, then add live tracker adapters and write-back only after the export-backed path is trusted.
+
 ### The evaluation gate
 
 | Matches | Outcome |
@@ -133,8 +150,9 @@ Install from the Extensions view (reads [`plugin.json`](plugin.json)), then run 
 
 | Tier | Meaning | Current examples |
 |------|---------|------------------|
-| First-class supported harness | Native install path and documented day-to-day workflow with a working `/kb` slash command | Claude Code, VS Code Copilot Chat, OpenCode |
-| Installer-supported harness | No native plugin marketplace yet, but `scripts/install --target <harness>` writes the right files so `/kb` resolves natively | Codex CLI, Gemini CLI, Kiro IDE |
+| Marketplace/native plugin path | Native install path and documented day-to-day workflow with a working `/kb` slash command | Claude Code, VS Code Copilot Chat |
+| Installer-supported native command/skill path | No marketplace yet, but `scripts/install --target <harness>` writes the harness's documented native surface | OpenCode, Gemini CLI, Kiro IDE |
+| Compatible skill workflow | Same repo contract, but no custom `/kb` slash command; use `AGENTS.md` plus the harness skill picker or native skill invocation | Codex CLI |
 | Rules-only harness | No slash-command slot for third-party commands — adopters use the scaffolded KB files as context but wire invocation manually | Cursor, Windsurf |
 | Not feasible | The harness has no user-custom command hook, or is not a developer harness at all | Aider (no plugin system yet), raw Claude / Inflection Pi (no slash-command concept) |
 
@@ -152,13 +170,14 @@ OpenCode natively reads `.claude/skills/` — a Claude Code install in the same 
 
 ### Codex CLI
 
-Codex's own plugin surface is MCP-servers; custom slash commands come from markdown files in `~/.codex/prompts/`. The installer writes them for you:
+Codex reads `AGENTS.md` for project instructions and `.agents/skills/<name>/SKILL.md` for reusable workflows. The installer writes a repo-local or user-global `kb` skill for you:
 
 ```bash
+scripts/install --target codex
 scripts/install --target codex --global
 ```
 
-`/kb` (or `/prompts:kb`) is now available in any Codex CLI session. Update with `--force` whenever the repo ships a new `kb.md`.
+Use the Codex skill picker or `$kb`; the workspace contract stays the same even though the invocation surface is a skill rather than a custom slash command.
 
 ### Gemini CLI
 
@@ -173,13 +192,13 @@ scripts/install --target gemini --global  # global
 
 ### Kiro IDE
 
-Kiro's "custom agents" double as slash commands. The installer copies `kb.md` into `.kiro/agents/` (or `~/.kiro/agents/` with `--global`):
+Kiro's documented reusable package format is `.kiro/skills/<name>/SKILL.md`, and those skills show up in the slash menu. The installer writes that skill for you:
 
 ```bash
 scripts/install --target kiro
 ```
 
-Type `/kb` in Kiro Chat and it routes through the agent definition.
+Type `/kb` in Kiro Chat and it routes through the installed `kb` skill.
 
 ### Cross-harness install (optional)
 
@@ -188,9 +207,9 @@ If you already have the skills in one harness and want to add them to another, t
 ```bash
 scripts/install --target vscode --global     # add to VS Code
 scripts/install --target opencode --global   # add to OpenCode
-scripts/install --target codex --global      # add to Codex CLI (~/.codex/prompts/)
+scripts/install --target codex --global      # add the Codex kb skill (~/.agents/skills/kb/SKILL.md)
 scripts/install --target gemini --global     # add to Gemini CLI (generates TOML)
-scripts/install --target kiro --global       # add to Kiro IDE
+scripts/install --target kiro --global       # add the Kiro kb skill (~/.kiro/skills/kb/SKILL.md)
 scripts/install --target all --global        # all supported harnesses
 ```
 
@@ -247,7 +266,7 @@ agentic-kb/
 | Framework spec | Stable (v3.4.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
-| Multi-harness installer | Working (Claude Code / VS Code / OpenCode) |
+| Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
 
 ## Contributing

@@ -10,7 +10,7 @@ This walkthrough covers the minimum path from *nothing installed* to the first u
 |------|-------|-----------|
 | `git` | `git --version` | macOS: `xcode-select --install` · Debian/Ubuntu: `sudo apt install git` · Windows: [git-scm.com/download/win](https://git-scm.com/download/win) |
 | At least one first-class harness: Claude Code, VS Code (Copilot Chat), or OpenCode | launch the harness | install it first — this walkthrough assumes Claude Code |
-| Optional compatible CLI workflow: Codex CLI | `codex --help` | optional for this walkthrough — use it after the workspace is initialized |
+| Optional compatible CLI workflow: Codex CLI | `codex --help` | optional for this walkthrough — installer-backed via `.agents/skills/` when selected |
 | `gh` | `gh --version` | recommended, not required — [cli.github.com](https://cli.github.com/) |
 
 Stop here if `git` or the harness is missing. The setup skill's Step 1 will abort anyway.
@@ -34,7 +34,7 @@ VS Code equivalent: add the repo to `chat.plugins.marketplaces` in `settings.jso
 
 OpenCode: no marketplace; use Option B.
 
-Codex CLI: compatible after the workspace is initialized, but not yet a native marketplace/install target. Treat it as a repo-local workflow that consumes the scaffolded files created by `/kb setup`.
+Codex CLI: no marketplace path yet, but `scripts/install --target codex` writes the documented repo-local or user-global `kb` skill. Treat it as the same workspace contract with a skill-based invocation surface.
 
 ### Option B — Dev install from a clone
 
@@ -136,7 +136,7 @@ Overviews (`dashboard.html`, `index.html`) stay current automatically after ever
 
 ### Codex CLI after setup
 
-After Stage 2, you can work from the same initialized workspace in Codex CLI. Today that means using the generated repo-local instructions and KB files, not a Codex-specific marketplace install. If you need native `/kb setup` command discovery, do the bootstrap in a first-class supported harness first, then continue daily work in Codex CLI.
+After Stage 2, you can work from the same initialized workspace in Codex CLI. Install the `kb` skill with `scripts/install --target codex` if you want a repo-local Codex entrypoint; the runtime contract remains the generated workspace files and `AGENTS.md`.
 
 ## Related
 
@@ -150,6 +150,7 @@ After Stage 2, you can work from the same initialized workspace in Codex CLI. To
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-24 | Updated the Codex walkthrough to the installed `.agents/skills/` flow instead of the older bootstrap-only wording | Harness docs correction |
 | 2026-04-22 | Corrected the setup walkthrough to match the current `kb-setup` interview order: 13 core question blocks, VMG at Q3, and downstream questions renumbered accordingly | Fixes #27 |
 | 2026-04-22 | Exempted the presentation template placeholder scan from the first-run success criteria because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
 | 2026-04-22 | Added Codex CLI guidance as a compatible repo-local workflow after supported-harness bootstrap | Compatibility expansion |

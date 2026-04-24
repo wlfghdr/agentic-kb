@@ -103,18 +103,50 @@ Install phase is accepted when:
 - the skills are discoverable by OpenCode,
 - `/kb setup` is available in the target workspace.
 
+### Gemini CLI
+
+Install path:
+
+```bash
+git clone https://github.com/wlfghdr/agentic-kb
+cd agentic-kb
+scripts/install --target gemini --global
+```
+
+Install phase is accepted when:
+
+- `.gemini/commands/kb.toml` or `~/.gemini/commands/kb.toml` exists,
+- `/kb setup` is available in Gemini CLI,
+- the generated command body does not contain VS Code-only setup guidance.
+
+### Kiro IDE
+
+Install path:
+
+```bash
+git clone https://github.com/wlfghdr/agentic-kb
+cd agentic-kb
+scripts/install --target kiro --global
+```
+
+Install phase is accepted when:
+
+- `.kiro/skills/kb/SKILL.md` or `~/.kiro/skills/kb/SKILL.md` exists,
+- `/kb setup` is available from the Kiro slash menu,
+- the installed skill matches the documented skill format (`name` + `description` frontmatter).
+
 ### Codex CLI
 
 Install path:
 
-- bootstrap the workspace through one first-class supported harness, **or** clone this repo and follow the repo-local prompt/instruction flow manually
-- in Codex CLI, operate from the initialized workspace so `AGENTS.md`, `CLAUDE.md`, and any generated prompt files are in scope
+- clone this repo and run `scripts/install --target codex` (repo-local) or `--global`
+- in Codex CLI, operate from the initialized workspace so `AGENTS.md` and `.agents/skills/kb/SKILL.md` are in scope
 
 Install phase is accepted when:
 
-- the workspace has already been initialized by `/kb setup` or an equivalent supported-harness bootstrap,
+- `.agents/skills/kb/SKILL.md` or `~/.agents/skills/kb/SKILL.md` exists,
 - Codex can operate against the same repo-local KB files without path/layout drift,
-- any missing native command wiring is called out explicitly as a manual step, not implied to be automatic.
+- the docs call out that Codex uses `AGENTS.md` plus the skill picker or `$kb`, not a custom `/kb` slash command.
 
 ## Canonical first-run scenario
 
@@ -309,6 +341,23 @@ Minimum expected artifact outcomes:
 - one new `.kb-log/<date>.log` entry,
 - archived or marked-digested input if applicable.
 
+## Optional Step 9 — Lean roadmap proof
+
+If the adopter also wants to prove the roadmap surface, use the narrowest path first:
+
+1. export a small Jira or GitHub issue set to markdown,
+2. bind those export directories through `roadmap.issue-trackers[]` with `adapter: ticket-export-markdown`,
+3. run the roadmap pilot against the KB root,
+4. verify that `_kb-roadmaps/<scope>/roadmap-<date>.md|.html|.json` is written,
+5. confirm at least one correlated item appears in the JSON sidecar before enabling live tracker adapters.
+
+Acceptance checks:
+
+- no tracker tokens or auth are required for the first proof run,
+- the JSON sidecar shows the expected `correlated` vs `single_tracker` counts,
+- the HTML artifact is self-contained,
+- the user can inspect the source exports and the generated roadmap side by side.
+
 ## Team lead verification checklist
 
 A team lead can treat onboarding as accepted only if all of these are true:
@@ -347,6 +396,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-24 | Added Gemini CLI and Kiro IDE install-phase acceptance checks, updated Codex CLI to the `.agents/skills/` workflow, and added an export-backed roadmap proof step | Harness and roadmap proof correction |
 | 2026-04-22 | Exempted the presentation template placeholder scan from scaffold acceptance because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
 | 2026-04-22 | Added Codex CLI acceptance guidance and clarified the difference between first-class supported harnesses and compatible CLI workflows | Compatibility expansion |
 | 2026-04-20 | Initial deterministic first-run acceptance path for onboarding verification | Issue #6 |
