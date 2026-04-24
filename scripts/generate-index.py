@@ -544,10 +544,26 @@ def drop_referenced_subpages(artifacts: list[Artifact],
          pages OUTSIDE the referring hub's scope.
     """
     paths = {a.path for a in artifacts}
+
+    # Treat standalone mock trees as subordinate navigation before clique
+    # detection so journey overview pages and their sibling journey pages can
+    # still collapse to a single canonical entry point.
+    mock_drops: set[str] = set()
+    for p in paths:
+        rel = Path(p)
+        if 'mocks' not in rel.parts:
+            continue
+        mock_index = rel.parts.index('mocks')
+        if mock_index == 0:
+            continue
+        parent_overview = Path(*rel.parts[:mock_index], 'index.html').as_posix()
+        if parent_overview in paths:
+            mock_drops.add(p)
+
     out_refs: dict[str, set[str]] = {}
     for a in artifacts:
         fp = repo_root / a.path
-        refs = _referenced_paths_from(fp, repo_root) & paths
+        refs = (_referenced_paths_from(fp, repo_root) & paths) - mock_drops
         refs.discard(a.path)
         out_refs[a.path] = refs
 
@@ -571,20 +587,6 @@ def drop_referenced_subpages(artifacts: list[Artifact],
                 clique_drops.add(m)
 
     remaining_paths = paths - clique_drops
-
-    # Drop mock indexes and standalone mock pages when a parent overview
-    # page already serves as the canonical entry point for that artifact set.
-    mock_drops: set[str] = set()
-    for p in remaining_paths:
-        rel = Path(p)
-        if 'mocks' not in rel.parts:
-            continue
-        mock_index = rel.parts.index('mocks')
-        if mock_index == 0:
-            continue
-        parent_overview = Path(*rel.parts[:mock_index], 'index.html').as_posix()
-        if parent_overview in remaining_paths:
-            mock_drops.add(p)
 
     remaining_paths -= mock_drops
 

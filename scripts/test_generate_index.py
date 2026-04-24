@@ -102,13 +102,13 @@ def main() -> int:
             tempdir / '_kb-references' / 'journeys' / 'launch-journey.html',
             'Launch Journey',
             'Peer journey page that should stay behind the overview.',
-            '<a href="index.html">Overview</a><a href="team-journey.html">Team</a>',
+            '<a href="index.html">Overview</a><a href="team-journey.html">Team</a><a href="mocks/index.html">Mocks</a>',
         )
         write_html(
             tempdir / '_kb-references' / 'journeys' / 'team-journey.html',
             'Team Journey',
             'Second journey leaf that should stay behind the overview.',
-            '<a href="index.html">Overview</a><a href="launch-journey.html">Launch</a>',
+            '<a href="index.html">Overview</a><a href="launch-journey.html">Launch</a><a href="mocks/index.html">Mocks</a>',
         )
         write_html(
             tempdir / '_kb-references' / 'journeys' / 'mocks' / 'index.html',
