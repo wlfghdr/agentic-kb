@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 4.0.0
+> **Version:** 4.1.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -473,7 +473,10 @@ marketplace-repo/
 │       │   ├── SKILL.md      # frontmatter + instructions
 │       │   ├── templates/    # optional
 │       │   └── references/   # optional
+│       ├── utils/            # optional reusable helpers for skills in this plugin
 │       └── agents/<name>.md
+├── tests/
+│   └── fixtures/             # optional regression fixtures for safety/routing checks
 ├── scripts/
 │   ├── install.py
 │   ├── check_consistency.py
@@ -481,6 +484,13 @@ marketplace-repo/
 ```
 
 Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`, `license` in YAML frontmatter.
+
+Optional frontmatter fields with generic cross-harness value:
+
+- `utils` — plugin-local reusable helpers the skill depends on (wrapper scripts, validators, exporters, sanitizers).
+- `incompatible_with` — other skills or plugins that must not be installed together because their trigger phrases or command surfaces overlap.
+
+For skills that encode safety rules, policy checks, scoring, or routing logic, the marketplace repo should also ship deterministic regression fixtures under `tests/fixtures/` so prompt or model changes can be checked against known clean, violating, and ambiguous cases.
 
 ---
 
@@ -504,6 +514,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-25 | Added generic marketplace guidance for plugin-local utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills; version bumped to 4.1.0 |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release |
 | 2026-04-25 | Added explicit preflight-fetch and post-generation QA rules to the HTML artifact contract so external-source reads and artifact completion gates are part of the normative spec |
 | 2026-04-24 | Corrected Codex and Kiro support details to the documented skill-based locations (`.agents/skills/`, `.kiro/skills/`), expanded the harness matrix to include Gemini/Kiro installer-backed paths, and added the export-backed roadmap proof recommendation |

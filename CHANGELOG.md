@@ -19,6 +19,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+## [4.1.0] — 2026-04-25
+
+> **Why MINOR:** this release adds non-breaking marketplace-contract guidance for reusable plugin utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills. Existing implementations remain valid; new metadata and test guidance are optional but now part of the reference spec.
+
+### Added
+
+- **Generic marketplace extension contract** — `docs/REFERENCE.md`, `README.md`, and `CONTRIBUTING.md` now describe three portable patterns adopted from broader skill ecosystems without any vendor lock-in: optional plugin-local `utils/` helpers declared via `utils:` frontmatter, explicit `incompatible_with` metadata for overlapping trigger surfaces, and fixture-backed regression checks under `tests/fixtures/` for safety-, routing-, and scoring-heavy skills.
+
 ## [4.0.0] — 2026-04-25
 
 > **Why MAJOR:** two breaking semantic changes for downstream implementations: (1) `/kb promote` for local team KBs is now a composite operation that runs the destination-layer review and archives the staged input rather than stopping at the team inbox, and (2) every artifact flow that performs external reads MUST emit a structured preflight summary before fetching, and HTML artifacts only complete after a defined post-generation QA sweep. Implementations that rely on the older `promote` semantics or that treat artifact write as completion will fail the new contracts.

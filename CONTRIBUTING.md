@@ -26,6 +26,15 @@ Read:
 4. **Pass CI** — markdown lint, dead-link check, consistency check. A red PR is not ready for review (see [AGENTS.md](AGENTS.md) rule 6).
 5. **No domain lock-in** — this spec is intentionally IDE-agnostic, harness-agnostic, and vendor-neutral. Examples are welcome, but the rules must not hardcode any specific product, company, or tool.
 
+### Marketplace additions should stay generic
+
+When extending the marketplace/package contract for skills or agents:
+
+1. **Bundle reusable helpers as utilities, not hidden assumptions.** If multiple skills need the same wrapper, validator, exporter, or sanitizer, place it in plugin-local `utils/` and declare it via `utils:` in the consuming skill's frontmatter.
+2. **Declare trigger conflicts explicitly.** If two skills overlap on command surface or trigger phrases, declare `incompatible_with` in frontmatter and document the safe precedence instead of relying on README prose alone.
+3. **Use regression fixtures for policy-heavy logic.** Skills that encode safety checks, routing, scoring, or other judgment-sensitive rules should add deterministic cases under `tests/fixtures/` covering at least: known-clean, known-violating, and ambiguous/near-duplicate inputs.
+4. **Keep the contract vendor-neutral.** Utility names, fixture labels, and incompatibility examples must stay generic; never bake in internal portals, product names, codenames, or company-specific workflows.
+
 ### PR checklist
 
 - [ ] Spec doc changelog updated (if a spec doc changed)
