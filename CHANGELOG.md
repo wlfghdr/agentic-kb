@@ -22,6 +22,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 ### Changed
 
 - **`/kb promote` for local team KBs** — promotion is now a composite operation: stage the intake in the target contributor `_kb-inputs/`, run the L2 review immediately in team context, archive the staged input under `_kb-inputs/digested/YYYY-MM/`, and leave the reviewed result in `_kb-references/`. Updated `kb-management`, its command/output docs, the team-scaffold template, and collaboration guidance so promote no longer teaches a mandatory second manual `/kb review` after every L1 promotion.
+- **Artifact-generation control points are now explicit spec rules** — any `/kb` flow that needs external reads to produce a capture or artifact must show a structured preflight summary before fetching, and HTML artifact completion now includes a mandatory QA sweep (theme toggle, placeholders/assets, readability/contrast, keyboard affordances, offline/self-contained behavior). Updated `docs/REFERENCE.md`, `kb-management`, `kb-operator`, and `html-artifacts.md` so the reusable pattern from live roadmap/presentation work is part of the core concept rather than tribal knowledge.
 
 ### Fixed
 

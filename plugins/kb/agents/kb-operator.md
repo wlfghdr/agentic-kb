@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 3.4.4
+version: 3.5.0
 uses:
   - kb-management
   - kb-setup
@@ -105,6 +105,8 @@ If `end-day` is skipped for a given date, the next `start-day` generates the mis
 
 All artifacts follow the light/dark + watermark + changelog-appendix contract. See `kb-management/references/html-artifacts.md`.
 
+When an artifact run needs external reads, preview the fetch plan first (sources, scope, execution mode, outputs) unless the user already invoked the explicit execution step or automation config authorizes the run. After generation, complete the artifact QA sweep before offering commit/push.
+
 ### 7. Commit / push / PR
 
 After substantive changes:
@@ -176,6 +178,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Version aligned to 3.5.0 and clarified that artifact runs use explicit fetch preflights plus a post-generation QA sweep before the operator treats them as complete | Artifact-generation contract tightening |
 | 2026-04-24 | Version aligned to 3.4.4 after the harness install-surface corrections and roadmap proof-fixture additions | Version alignment |
 | 2026-04-22 | Added topics to the dashboard overview contract and bumped the declared agent version to 3.4.3 so the operator describes the shipped live state correctly | Fixes #22 |
 | 2026-04-22 | Bumped declared agent version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |

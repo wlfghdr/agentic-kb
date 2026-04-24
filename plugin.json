@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/agent-plugin.json",
   "name": "agentic-kb",
-  "version": "3.4.4",
+  "version": "3.5.0",
   "description": "AI-native, layered knowledge operations — core kb-management/kb-setup flows, the kb-operator agent, and opt-in draft roadmap/journey skills. Drop-in for VS Code Copilot Chat, Claude Code, and OpenCode.",
   "author": "agentic-kb contributors",
   "license": "Apache-2.0",

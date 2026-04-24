@@ -72,6 +72,19 @@ The skill offers HTML artifact generation when:
 | Topic accumulated ≥5 new findings since last artifact | *"Regenerate the artifact for <topic>?"* |
 | Org-level digest produced | *"Publish this as an HTML digest?"* |
 
+## External-read preflight
+
+If generating or regenerating an artifact requires external reads beyond the KB files already on disk, the agent must present a structured preflight summary before it fetches anything.
+
+Minimum contents:
+
+1. Declared source(s) that will be read.
+2. Scope: filters, time window, or selection criteria.
+3. Execution mode: read-only render, dry-run, or apply-capable follow-up.
+4. Concrete output path(s) that will be written.
+
+Examples include website-derived styling (`styling.source: website`), live tracker reads in optional draft skills, or any artifact flow that expands beyond the local repo. Fetch only after user confirmation unless the user already invoked the explicit execution step or automation level 2/3 authorizes the run.
+
 ## Commands
 
 | Command | Output |
@@ -91,6 +104,7 @@ Every generated artifact:
 5. **Accessible** — semantic HTML, WCAG AA contrast, keyboard nav, alt text on images.
 6. **Versioned, dated filenames** — default pattern `YYYY-MM-DD-<slug>-v<major>.<minor>.html` for any topic-bound artifact (presentations, reports, pitches). Regeneration writes a new file; does NOT overwrite old. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for personal, team, and org-unit KBs.
 7. **Layer-agnostic styling** — the configured reference template in `.kb-config/artifacts.yaml` (`styling.reference-file`) is THE template for every Family-2 artifact in that layer. Never hand-roll a fresh palette or layout per run. If the user works in a workspace with multiple KB layers, each layer reuses its own configured template — but within one layer, every artifact looks like it comes from one brand.
+8. **QA sweep before completion** — do not report the artifact done until the generated file itself passes a review sweep: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work.
 
 ## Styling sources
 
@@ -248,6 +262,7 @@ Every `/kb present` MUST use this file (as customized by Q13) rather than regene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added an explicit external-read preflight contract plus a mandatory post-generation QA sweep so artifact generation has reviewable fetch boundaries and a defined completion gate | Generic learnings extracted from roadmap/presentation feature work |
 | 2026-04-23 | Family-2 filename default is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every KB layer; styling contract is explicitly layer-agnostic (configured reference template is THE template per layer); root-`index.html` regeneration is now an explicit offer-then-confirm step after every Family-2 create/update (automation levels 2/3 still run silently) | ISO 42001 presentation generation friction |
 | 2026-04-22 | Root `index.html` source-of-truth row now lists findings/topics/ideas/decisions markdown alongside HTML artifacts, matching the shipped generator behavior | Fixes #21 |
 | 2026-04-22 | Added topics to the dashboard Family-1 contract and source-of-truth table so living positions are visible alongside findings, ideas, and decisions | Fixes #22 |

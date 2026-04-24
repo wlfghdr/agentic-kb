@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.4.4
+> **Version:** 3.5.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -398,6 +398,8 @@ freshness, and — opt-in — external work-items from GitHub (`gh` CLI) and Jir
 3. Light + dark theme with in-page toggle
 4. Self-contained (all CSS/JS/images inline)
 5. Accessible (semantic HTML, WCAG AA, keyboard nav)
+6. If generation needs external reads, show a preflight summary first: declared sources, scope/time window or filters, read-only vs apply intent, and output paths; do not fetch until confirmed unless the command was explicitly invoked to execute or automation already authorizes it.
+7. Do not declare the artifact done until a QA sweep passes in the generated output: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work.
 
 ### Report slide composition
 
@@ -502,6 +504,7 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-25 | Added explicit preflight-fetch and post-generation QA rules to the HTML artifact contract so external-source reads and artifact completion gates are part of the normative spec |
 | 2026-04-24 | Corrected Codex and Kiro support details to the documented skill-based locations (`.agents/skills/`, `.kiro/skills/`), expanded the harness matrix to include Gemini/Kiro installer-backed paths, and added the export-backed roadmap proof recommendation |
 | 2026-04-22 | Dashboard command-center contract now explicitly includes topics as a first-class live panel so accreting knowledge is visible alongside decisions, ideas, and findings |
 | 2026-04-22 | Added `_kb-references/strategy-digests/` to the §3 workspace layout so the digest watermark and per-layer digest findings have a declared home |

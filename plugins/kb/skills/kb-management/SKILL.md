@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 3.4.4
+version: 3.5.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -208,7 +208,8 @@ Keep output terse. The user reads it in a terminal/editor pane, not a full docum
 - **Never publish with PII** to the marketplace. Check before packaging.
 - **Never auto-push to a protected branch.** Open a PR.
 - **Never force-push or rebase** without explicit confirmation.
-- **Always inform before fetching external URLs.**
+- **Always inform before fetching external URLs.** When a capture, report, presentation, or other artifact build needs external reads, show a preflight block first: declared source(s), scope or filters/time horizon, whether the run is read-only or apply-capable, and the exact output path(s). Fetch only after confirmation unless the user explicitly invoked the execution step or automation level 2/3 already authorizes it.
+- **Close HTML artifact work with a QA sweep, not just a file write.** Before reporting `/kb present`, `/kb report`, `/kb end-day`, or `/kb end-week` as complete, verify the generated artifact in its own output surface: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work. If any check fails, fix it or surface the run as incomplete.
 
 ## Promote semantics
 
@@ -259,6 +260,7 @@ These files are loaded **only when the specific behavior is invoked**. The skill
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added explicit preflight-fetch summaries for artifact-driving external reads and a mandatory post-generation HTML QA sweep; bumped declared skill version to 3.5.0 | Generic learnings extracted from live roadmap and presentation feature work |
 | 2026-04-23 | HTML artifact contract sharpened: (a) default filename pattern for Family-2 artifacts is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every layer; (b) styling is explicitly layer-agnostic \u2014 the configured `styling.reference-file` is THE template for all Family-2 artifacts in that layer; (c) after any Family-2 create/update the skill MUST offer root-`index.html` regeneration and proceed only on confirmation (automation levels 2/3 run silently) | Real-world friction during ISO 42001 presentation generation |
 | 2026-04-22 | Added topics to the dashboard command-center contract and bumped the declared skill version to 3.4.3 so first-class accreting knowledge is visible in live overviews | Fixes #22 |
 | 2026-04-22 | Added `_kb-references/strategy-digests/` to the personal-KB directory contract + REFERENCE.md workspace layout + `kb-setup` Step 3 scaffold — it was already used in practice (digest findings + `.last-digest` watermark read by the upstream-drift triage signal) but wasn't declared | Fixes #19 |
