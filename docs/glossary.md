@@ -11,6 +11,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Capture** | The flow that turns raw input into a finding, note, or skipped material. Command: `/kb [text/URL/path]`. |
 | **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and other living shared docs. |
 | **Connection** | A per-layer declaration of linked product repos, trackers, reference mode, and write-back policy under `.kb-config/layers.yaml`. |
+| **Contributor-scoped** | An artifact visibility mode used at multi-user contributor layers: the file belongs to one contributor rather than the whole layer. This is not the same thing as contributor-capable, which describes whether the layer role may author shared state. |
 | **Decision** | A first-class artifact representing an open or resolved choice. One file per decision. Lifecycle: `gathering-evidence → under-discussion → proposed → decided`, optionally `revisiting`. |
 | **Digest** | The flow that pulls changes from a parent layer or from declared `connections` into the current layer as findings, note proposals, or report inputs. Command: `/kb digest <layer>` or `/kb digest connections`. |
 | **Draft** | A pre-v1 skill or primitive whose contract is documented but still expected to change. Draft features are opt-in and not scaffolded by default. |
@@ -32,7 +33,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Promote** | The flow that pushes a mature artifact from one contributor-capable layer to another contributor-capable layer higher in the parent chain. Command: `/kb promote [file] [layer]`. |
 | **Publish** | The flow that packages KB content as a skill and publishes it to the marketplace attached to a target layer. Command: `/kb publish [file] [layer]`. |
 | **RACI** | Responsible / Accountable / Consulted / Informed. Required on shared-layer decisions and tasks. |
-| **Role** | The user's mutation permission on a layer. `contributor` may promote/publish there; `consumer` may only digest and read. |
+| **Role** | The layer's mutation permission boundary. `contributor` layers may originate shared changes there; `consumer` layers may receive digest output and be read, but must refuse `promote` and `publish` as a target. |
 | **Roadmap** | A plan-vs-delivery reconciliation artifact emitted as Markdown, HTML, and JSON by the optional draft `kb-roadmap` skill. |
 | **Ritual** | A composed command that strings primitives into a user-facing flow: `start-day`, `end-day`, `start-week`, `end-week`. |
 | **Scope** | A descriptive layer type such as `personal`, `team`, `org-unit`, or `company`. It is a routing hint, not a fixed enum or ladder position. |
@@ -50,6 +51,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Avoid | Use instead |
 |-------|------------|
+| contributor-capable artifact | contributor-scoped artifact |
 | L1 / L2 / L3 / L4 / L5 | layer / scope / parent layer |
 | Database, record, entry | file, topic, finding, decision, or note |
 | Library, module | skill |
@@ -65,6 +67,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added the missing `contributor-scoped` term and tightened the `Role` definition so artifact visibility and layer mutation rights are no longer easy to confuse | Deep spec-audit follow-up |
 | 2026-04-25 | Concept-audit follow-up: extended the Harness definition with the rules-only and not-feasible buckets that the README documents, so the glossary stays the single source of truth for harness vocabulary | Concept-audit drift correction |
 | 2026-04-25 | Replaced the fixed L1–L5 vocabulary with the 5.0 flexible layer graph terms (layer, scope, role, parent layer, anchor layer), added notes/connections/tracker terminology, and clarified marketplace as a per-layer capability | v5.0.0 flexible layer model |
 | 2026-04-24 | Updated the harness definition to distinguish marketplace/native plugin paths, installer-supported native command or skill paths, and Codex's compatible skill workflow | Harness docs correction |

@@ -72,8 +72,8 @@ Full command reference: `references/command-reference.md`.
 
 1. **Run the evaluation gate before persistence.** Score material against the five gate questions. The score is the count of yes answers. Q4 + Q2 form the lighter note gate.
 2. **Set and preserve maturity.** New findings and topics must carry `**Maturity**:`. `raw` means weak or single-signal, `emerging` means accepted and worth revisiting, `durable` means ready to promote or cite broadly.
-3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only.
-4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, and meeting notes are shared unless the layer config says otherwise.
+3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only: it may receive digests, but it is never a `promote` or `publish` target.
+4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, and meeting notes are shared unless the layer config says otherwise. This visibility rule is separate from the layer `role`.
 5. **Log every operation.** Write to `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` in the canonical `HH:MM:SSZ | operation | scope | target | details` format.
 6. **Regenerate live overviews after mutation.** `dashboard.html` and the root `index.html` are part of the same mutation as capture, review, promote, publish, digest, decide, note-end, present, report, and ritual flows.
 7. **Never mutate silently.** The response must make the action mode obvious: read-only analysis, proposed mutation, or applied mutation.
@@ -133,7 +133,7 @@ Additional requirements:
 
 ## Promote semantics
 
-`/kb promote` is a composite applied mutation, not a mailbox drop.
+`/kb promote` is a composite applied mutation, not a mailbox drop. For multi-user contributor layers it stages the intake in the destination contributor scope before immediate review; single-user targets skip staging and write the reviewed result directly. Full contract: `references/promote-contract.md`.
 
 When promoting to a locally available contributor-capable layer, the agent must:
 
@@ -160,6 +160,7 @@ The templates this skill instantiates live in `templates/`:
 
 - `references/spec-summary.md` — condensed architecture and workspace layout.
 - `references/command-reference.md` — full subcommand details.
+- `references/promote-contract.md` — staged-review semantics for `/kb promote`.
 - `references/rituals.md` — the four rituals in detail.
 - `references/html-artifacts.md` — presentation/report generation contract.
 - `references/evaluation-gate.md` — the five-question filter, in depth.
@@ -169,6 +170,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Clarified that consumer layers may receive digests but are never promote/publish targets, and added an explicit promote-contract reference for staged review semantics | Deep spec-audit follow-up |
 | 2026-04-25 | Added the explicit 5.1 migration-helper surface (`/kb migrate archives`, `/kb migrate layer-model`) and aligned the declared skill version with the closeout release | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the behavioral spec for 5.0.0: `/kb` now operates on a flexible layer graph, notes became first-class, digests can read declared connections, and publish targets per-layer marketplaces instead of a fixed L4 | v5.0.0 flexible layer model |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release (composite `/kb promote` semantics + mandatory artifact preflight/QA contract) | v4.0.0 release alignment |

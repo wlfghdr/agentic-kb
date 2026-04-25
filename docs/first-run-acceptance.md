@@ -217,7 +217,7 @@ Use these answers:
 | IDE targets | current harness only |
 | Connections | skip |
 | Draft features | skip |
-| Automation | `1` |
+| Automation | `1` (manual only) |
 | HTML styling | `builtin` |
 
 Expected result:
@@ -448,6 +448,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Clarified the baseline automation answer so level 1 is explicitly the manual-only setup path | Deep spec-audit follow-up |
 | 2026-04-25 | Concept-audit follow-up: aligned the doc version with the 5.1.x framework and added an optional migration-proof step covering `/kb migrate layer-model` and `/kb migrate archives` for legacy adopters | Concept-audit drift correction |
 | 2026-04-25 | Reworked the deterministic onboarding proof for 5.0.0: baseline now proves a two-layer graph, verifies year-based archives and notes, and requires one cross-layer promote or digest path before acceptance | v5.0.0 flexible layer model |
 | 2026-04-24 | Added Gemini CLI and Kiro IDE install-phase acceptance checks, updated Codex CLI to the `.agents/skills/` workflow, and added an export-backed roadmap proof step | Harness and roadmap proof correction |

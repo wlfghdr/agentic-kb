@@ -15,11 +15,11 @@ This walkthrough covers the minimum path from nothing installed to the first use
 
 Stop here if `git` or the harness is missing. `/kb setup` will stop anyway.
 
-## Stage 1 — Install the skill surface (5 min)
+## Phase 1 — Install the skill surface (5 min)
 
 Marketplace install or `scripts/install` makes `/kb setup` callable. The install phase is successful when the harness can invoke `/kb setup` in the target workspace and the surface survives a restart.
 
-## Stage 2 — Initialize the workspace (20 min)
+## Phase 2 — Initialize the workspace (20 min)
 
 Run:
 
@@ -35,14 +35,14 @@ Use this first-run answer set:
 | Role and themes | `engineer on distributed systems — caching, reliability, observability` |
 | Workspace root | current directory |
 | Discovery pass | accept the empty baseline |
-| Layer 1 | `alice-personal`, `scope: personal`, `role: contributor`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports` |
-| Layer 2 | `team-observability`, `scope: team`, `role: contributor`, features `findings, topics, decisions, tasks, notes, foundation, reports` |
+| Layer 1 | `alice-personal`, `scope: personal`, `role: contributor`, `parent: team-observability`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports` |
+| Layer 2 | `team-observability`, `scope: team`, `role: contributor`, `parent: null`, features `findings, topics, decisions, tasks, notes, foundation, reports`, contributor-mode `notes: shared` |
 | Anchor layer | `alice-personal` |
 | Workstreams | `platform-signals` |
 | IDE targets | current harness only |
 | Connections | skip |
 | Draft features | skip |
-| Automation | `1` |
+| Automation | `1` (manual only) |
 | HTML styling | `builtin` |
 
 Check for success:
@@ -53,7 +53,7 @@ Check for success:
 - `index.html` and `dashboard.html` exist in both layers,
 - no unresolved placeholders remain outside deliberate presentation templates.
 
-## Stage 3 — First four commands (20 min)
+## Phase 3 — First four commands (20 min)
 
 ### `/kb status`
 
@@ -106,6 +106,7 @@ If the command targets a `role: consumer` layer, it must refuse clearly.
 ## Related
 
 - [REFERENCE.md](../REFERENCE.md)
+- [first-run-acceptance.md](../first-run-acceptance.md)
 - [day-in-the-life.md](day-in-the-life.md)
 - [kb-setup SKILL.md](../../plugins/kb/skills/kb-setup/SKILL.md)
 
@@ -115,6 +116,7 @@ If the command targets a `role: consumer` layer, it must refuse clearly.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Aligned the walkthrough with the acceptance baseline: Stage wording became Phase wording, the sample layer answers now include the parent graph fields, and automation level 1 is called out as manual-only | Deep spec-audit follow-up |
 | 2026-04-25 | Reworked the walkthrough for 5.0.0: setup now proves a two-layer graph, year-based archives, notes, and the first cross-layer promote path | v5.0.0 flexible layer model |
 | 2026-04-24 | Updated the Codex walkthrough to the installed `.agents/skills/` flow instead of the older bootstrap-only wording | Harness docs correction |
 | 2026-04-22 | Exempted the presentation template placeholder scan from the first-run success criteria because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
