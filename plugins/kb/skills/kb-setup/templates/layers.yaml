@@ -1,34 +1,44 @@
-# Layer configuration for the personal KB.
+# Flexible layer graph for the anchor layer.
 # All config lives in .kb-config/ — this file is .kb-config/layers.yaml.
 # See https://github.com/wlfghdr/agentic-kb/blob/main/docs/REFERENCE.md §5
 
 workspace:
   root: {{WORKSPACE_ROOT}}
   user: {{USER_NAME}}
+  anchor-layer: {{KB_NAME}}
   aliases: {}
 
 layers:
-  personal:
+  - name: {{KB_NAME}}
+    scope: personal
+    role: contributor
+    parent: null
     path: .
+    features: [inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports]
     workstreams:
       - name: {{WORKSTREAM_1_NAME}}
         themes: {{WORKSTREAM_1_THEMES}}
-      # add more workstreams as needed
+    marketplace:
+      enabled: false
+      repo: null
+      install-mode: none
+    connections:
+      product-repos: []
+      trackers: []
+      reference-mode: link
+      writeback:
+        enabled: false
+        capabilities: []
 
-  teams:
-    # - name: team-x
-    #   path: ../team-x-kb
-    #   contributor-dir: {{USER_NAME}}
-
-  org-unit:
-    # name: my-org-unit
-    # path: ../my-org-unit-kb
-
-  marketplace:
-    enabled: false
-    # repo: <org>/<marketplace-repo>
-    # path: ../marketplace
-
-  company:
-    enabled: false
-    sources: []
+  # Add more layers as needed.
+  # Example:
+  # - name: team-observability
+  #   scope: team
+  #   role: contributor
+  #   parent: company-guidance
+  #   path: ../team-observability-kb
+  #   features: [findings, topics, decisions, tasks, notes, foundation, reports, marketplace]
+  #   contributor-mode:
+  #     findings: contributor-scoped
+  #     topics: contributor-scoped
+  #     notes: shared

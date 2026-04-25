@@ -19,6 +19,23 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+- Post-5.0.0 follow-ups only. The flexible layer-graph rewrite, setup/adoption refresh, and release metadata alignment shipped in `5.0.0`.
+
+## [5.0.0] — 2026-04-25
+
+> **Why MAJOR:** the core model is now a flexible layer graph instead of a fixed L1-L5 ladder. This is a breaking semantic change for adopters and tool builders: `.kb-config/layers.yaml` moved to a list-based graph model with `anchor-layer`, `role`, `parent`, per-layer `features`, `marketplace`, and `connections`; note files are now first-class primitives; archive paths are year-based; and setup plus acceptance now prove named-layer promotion/digest flows instead of the old fixed stack.
+
+### Changed
+
+- **Flexible layer graph became the canonical architecture** — `docs/REFERENCE.md`, `docs/glossary.md`, `README.md`, `docs/collaboration.md`, `docs/first-run-acceptance.md`, and the core `kb-management` / `kb-setup` skill specs now describe named layers with `scope`, `role`, `parent`, `features`, `marketplace`, and `connections` instead of numbered L1-L5 slots.
+- **Setup and adoption flows now scaffold the 5.0 workspace contract** — `plugins/kb/skills/kb-setup/SKILL.md`, its templates, and the first-run walkthroughs now generate anchor-layer configs, year-based archive paths, note directories, and a deterministic two-layer proof path with explicit cross-layer promote/digest behavior.
+- **Cross-layer operations and reports are role-aware** — `/kb promote [file] [layer]`, `/kb digest [layer]`, `/kb digest connections`, `/kb note`, and `/kb report progress [scope]` are now part of the documented stable command surface, with consumer-only layers refusing promote/publish mutations.
+
+### Fixed
+
+- **Acceptance-fixture and index-generator drift against the 5.0 model** — `scripts/scaffold_acceptance_fixture.py`, `scripts/test_acceptance_fixture.py`, `scripts/generate-index.py`, and `scripts/test_generate_index.py` now cover recursive year-based findings, notes, progress reports, and the multi-layer fixture shape used by the new adoption proof.
+- **Behavioral and template drift after the major rewrite** — command prompts, instructions, rituals, output examples, roadmap/journey references, and generated scaffold templates were updated so newly installed workspaces match the 5.0 reference docs instead of teaching the retired fixed-ladder model.
+
 ## [4.1.0] — 2026-04-25
 
 > **Why MINOR:** this release adds non-breaking marketplace-contract guidance for reusable plugin utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills. Existing implementations remain valid; new metadata and test guidance are optional but now part of the reference spec.

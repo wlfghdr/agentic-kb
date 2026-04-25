@@ -6,6 +6,7 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 
 ```
 .
+├── _kb-notes/
 ├── _kb-decisions/
 │   ├── D-YYYY-MM-DD-slug.md  open decisions with RACIs
 │   └── archive/
@@ -25,9 +26,9 @@ Shared knowledge base for the {{TEAM_NAME}} team, built on the `agentic-kb` spec
 
 1. Add material directly in the team repo by dropping it into your own `<contributor>/_kb-inputs/`.
 2. Run `/kb review` in the team KB context only for material that originated inside the team repo.
-3. When a finding or topic comes from your personal KB, use `/kb promote <file>` from L1. For local team KBs, that command stages the intake, performs the team-layer review immediately, archives the staged copy under `digested/YYYY-MM/`, and leaves the reviewed result in `_kb-references/`.
-4. Cross-reference other contributors via `/kb sync team`.
-5. Promote mature topics / findings up to org-unit via `/kb promote org`.
+3. When a finding or topic comes from another contributor-capable layer, use `/kb promote <file> {{TEAM_NAME}}`. That command stages the intake, performs the team-layer review immediately, archives the staged copy under `digested/YYYY/MM/`, and leaves the reviewed result in `_kb-references/`.
+4. Cross-reference other contributors via `/kb sync {{TEAM_NAME}}`.
+5. Promote mature topics or findings upward with `/kb promote <file> <parent-layer>` when the layer graph defines one.
 
 ## Decisions & Tasks
 

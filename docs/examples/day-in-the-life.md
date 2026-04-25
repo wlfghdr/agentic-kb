@@ -1,182 +1,87 @@
 # Example: Day in the Life
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 5.0.0 | **Last updated:** 2026-04-25
 
-An illustrative walkthrough of a single day for a user named Alex, a principal engineer working on an observability platform. Alex has a personal KB, two team KBs, and consumes company strategy materials as they're published. The examples below are **not normative** — they show what the system feels like in practice.
-
-## 07:55 — Workspace open
-
-Alex opens the workspace folder in their editor. The `/kb` slash command is registered by the installed skill.
+An illustrative walkthrough of a single day for a user named Alex, a principal engineer working on an observability platform. Alex has one anchor layer, two shared team layers, and consumes company guidance from a consumer layer. The examples below are not normative; they show what the system feels like in practice.
 
 ## 08:00 — Morning briefing
 
-```
+```text
 Alex: /kb start-day
 
 Agent:
-What I did: Checked Alex's workspace and prepared a read-only morning briefing.
-Where it went: read _kb-tasks/focus.md, _kb-decisions/, team KB pointers, and today's .kb-log.
+What I did: Checked Alex's anchor layer and prepared a read-only morning briefing.
+Where it went: read _kb-tasks/focus.md, _kb-decisions/, declared layer pointers, and today's .kb-log.
 Gate notes: n/a — briefing, not capture.
 Suggested next steps:
-  1. Digest @alice's v9 update — may have evidence for D-2026-04-18 (/kb digest team)
+  1. Digest team-observability — may have evidence for D-2026-04-18 (/kb digest team-observability)
   2. Process leadership feedback (/kb review)
   3. Message @bob about the progressive-delivery analysis
-
-Good morning. Here's your briefing:
-
-📋 Focus (from _kb-tasks/focus.md):
-  1. Finalize deployment-strategy position paper → promote to team
-  2. Schedule architecture review with @alice
-  3. Review platform backlog for sprint alignment
-
-⚖️ Open Decisions (_kb-decisions/):
-  • D-2026-04-15: Progressive-delivery model (due Apr 30, status: under-discussion)
-  • D-2026-04-18: Coordination model (due Apr 25, status: gathering-evidence)
-
-🆕 New signals since yesterday:
-  • Team KB (platform): @alice added architecture-v9-skeleton.md (3 new files)
-  • Input pending: _kb-inputs/2026-04-17-leadership-feedback.md (unprocessed)
-
-📊 Workstreams:
-  • reliability:   coordination paper needs evidence (D-2026-04-18)
-  • platform:      progressive-delivery stalled — waiting on @bob's analysis
-  • product-strategy: quiet — no new signals
-
-💡 Suggested next steps:
-  1. Digest @alice's v9 update — may have evidence for D-2026-04-18 (/kb digest team)
-  2. Process leadership feedback (/kb review)
-  3. Message @bob about the progressive-delivery analysis — decision due in 12 days
-
-Shall I start with the team digest?
 ```
 
-## 09:30 — A new input
+## 09:30 — A new signal
 
-Alex reads an interesting paper on coordination protocols, pastes the URL:
+```text
+Alex: /kb https://example.org/papers/coordination-patterns
 
-```
-Alex: /kb https://example.org/papers/coordination-patterns — interesting paper on agent coordination
-
-Agent: [fetches the paper, applies the evaluation gate]
-
-What I did: Captured the paper as a finding after fetching the external URL.
-Where it went: wrote _kb-references/findings/2026-04-18-coordination-patterns.md, updated the reliability topic, and added one backlog item.
-Gate notes: 4/5 — externally fetched, strengthens deployment-strategy, informs D-2026-04-18, actionable, durable signal.
+Agent:
+What I did: Captured the paper as an anchor-layer finding after fetching the external URL.
+Where it went: wrote _kb-references/findings/2026/2026-04-18-coordination-patterns.md, updated the reliability topic, and refreshed index.html + dashboard.html.
+Gate notes: 4/5 — externally fetched, informs D-2026-04-18, actionable, durable signal.
 Suggested next steps:
-  1. Update the deployment-strategy topic with this evidence (/kb update-topic deployment-strategy)
-  2. Advance decision D-2026-04-18 to "proposed" with this evidence
-  3. Message @alice — this is relevant to their architecture work
-  4. 🎤 Your backlog has "Present governance framework" — want me to draft a presentation?
-
-TL;DR: Paper proposes a 3-phase coordination protocol for multi-agent systems...
-
-💡 Next steps I can help with:
-  1. Update the deployment-strategy topic with this evidence (/kb update-topic deployment-strategy)
-  2. Advance decision D-2026-04-18 to "proposed" with this evidence
-  3. Message @alice — this is relevant to their architecture work
-  4. 🎤 Your backlog has "Present governance framework" — want me to draft a presentation?
+  1. Promote this finding to team-observability
+  2. Advance D-2026-04-18 with this evidence
+  3. Start a meeting note before the architecture review
 ```
 
-## 11:15 — Process leadership feedback
+## 11:15 — Review local input
 
-```
+```text
 Alex: /kb review
 
-Agent: Found 1 unprocessed input: _kb-inputs/2026-04-17-leadership-feedback.md
-
-[applies the gate per item]
-
-• 2026-04-17-leadership-feedback.md
-  What I did: Captured and distilled one local input, applied mutation.
-  Where it went: wrote _kb-references/findings/2026-04-17-leadership-feedback-distilled.md and updated product-strategy.md.
-  Gate notes: 3/5 — local-only source, informs product-strategy, actionable.
-  TODOs added:
-    - Respond to leadership with a one-pager by Thursday
-    - Update Q3 product-strategy doc
-
-💡 Next steps:
-  1. Generate a one-pager? (/kb report product-strategy --for leadership --kind one-pager)
-  2. Promote the product-strategy topic to the product-strategy team KB?
+Agent:
+What I did: Captured and distilled one local input, applied mutation.
+Where it went: wrote _kb-references/findings/2026/2026-04-17-leadership-feedback-distilled.md, updated product-strategy.md, refreshed index.html + dashboard.html.
+Gate notes: 3/5 — local-only source, actionable, informs a workstream topic.
+Suggested next steps:
+  1. Generate a one-pager with /kb report progress product-strategy
+  2. Promote the topic to the product-strategy layer if the team needs it
 ```
 
-## 14:00 — Generate a presentation
+## 14:00 — Team promotion
 
-Alex has the "Present governance framework" task on the backlog:
+```text
+Alex: /kb promote _kb-references/findings/2026/2026-04-18-coordination-patterns.md team-observability
 
-```
-Alex: /kb present governance-framework
-
-Agent: Generating presentation from _kb-references/topics/governance-framework.md...
-
-Created: _kb-references/reports/governance-framework-v1.0.html
-  - 7 slides: Problem → Pattern → Mechanism → Evidence → Proposal → Next Steps → Appendix
-  - Intro slide: "Governance Framework — v1.0 · 2026-04-18" (subtle watermark)
-  - Appendix: Changelog (v1.0: initial generation from topic file)
-  - Sources: 3 findings, 1 decision outcome
-  - Themes: light + dark embedded; toggle in top-right
-  - CI-validated HTML: self-contained, accessibility AA passes.
-
-💡 Next steps:
-  1. Review and adjust the narrative — I can iterate if you paste notes back.
-  2. Share with @alice before the architecture review.
-  3. GitHub Pages is enabled — want me to publish it and update the index?
+Agent:
+What I did: Promoted one anchor-layer finding to team-observability and completed the destination review.
+Where it went: staged team-observability/alex/_kb-inputs/2026-04-18-coordination-patterns.md, wrote team-observability/alex/_kb-references/findings/2026-04-18-coordination-patterns.md, archived team-observability/alex/_kb-inputs/digested/2026/04/2026-04-18-coordination-patterns.md, refreshed team-observability/index.html + dashboard.html.
+Gate notes: source gate 4/5, destination review confirmed team relevance and no secret or PII indicators.
+Suggested next steps:
+  1. Open a shared decision if the architecture review needs alignment
+  2. Digest product-strategy if this affects roadmap framing
 ```
 
 ## 18:00 — Evening wrap
 
-```
+```text
 Alex: /kb end-day
 
-Agent: Day summary:
-  ✅ Captured 2 findings (coordination-patterns, leadership-feedback-distilled)
-  ✅ Digested team KB (@alice v9, @bob pricing)
-  ✅ Updated todo (2 done, 2 new in backlog)
-  ✅ Generated governance-framework-v1.0.html presentation
-  📝 Uncommitted changes: 7 files in personal KB
+Agent:
+Day summary:
+  ✅ Captured 2 findings
+  ✅ Promoted 1 finding to team-observability
+  ✅ Updated 1 topic and 1 decision
+  ✅ Refreshed dashboard.html and index.html in affected layers
 
-Committing: "2026-04-18: 2 findings, team digest, presentation v1.0, todo update"
-
-Branch protection detected on main. Opening a PR instead:
-  PR #42: https://github.com/<user>/<repo>/pull/42
-  CI: pending — will ping when green.
-
-💡 Next steps:
-  1. Follow up with @alice once the PR is green (their turn on D-2026-04-18).
-  2. Tomorrow's focus will start with: "Finalize deployment-strategy position paper."
-```
-
-## Friday 15:00 — Weekly summary
-
-```
-Agent (scheduled): /kb end-week
-
-Weekly summary (2026-04-14 → 2026-04-18):
-
-📊 Per-workstream progress:
-  • reliability: 3 findings captured, D-2026-04-18 advanced to "proposed"
-  • platform: 1 digest from team, progressive-delivery still blocked
-  • product-strategy: 1 finding, topic refreshed
-
-✅ Completed: 7 TODOs
-📋 Open decisions: 2 active, 0 resolved this week
-🎤 Presentations: 1 generated (governance-framework v1.0)
-
-Promotion candidates:
-  • findings/2026-04-18-coordination-patterns.md → team KB (high cross-reference potential)
-  • topics/governance-framework.md → marketplace as kb-governance-framework skill (mature + generalizable)
-
-Generated:
-  • _kb-references/findings/2026-04-18-weekly-summary.md
-  • _kb-references/reports/weekly-2026-W16.html (published to gh-pages)
-
-💡 Next steps:
-  1. Promote coordination-patterns to team? (/kb promote)
-  2. Publish governance-framework as a marketplace skill? (/kb publish)
+Suggested next steps:
+  1. Review the promoted finding with @alice tomorrow
+  2. Use /kb report progress team-observability before the weekly sync
 ```
 
 ## The Point
 
-Alex never opened a wiki, never drew a mind map, never categorized anything manually. The agent did the bookkeeping; Alex did the thinking. The KB stayed **small, current, decision-ready**.
+Alex never had to manually maintain a wiki hierarchy. The agent handled the bookkeeping while the human kept control over meaning, audience, and promotion.
 
 ---
 
@@ -184,4 +89,5 @@ Alex never opened a wiki, never drew a mind map, never categorized anything manu
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Reworked the example for 5.0.0: anchor layer, named team layers, year-based finding paths, and explicit cross-layer promotion replaced the old fixed-ladder example | v5.0.0 flexible layer model |
 | 2026-04-18 | Initial version | Extracted from source spec §13 |

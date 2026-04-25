@@ -6,7 +6,7 @@ For users who already have a knowledge base in another layout.
 
 `/kb setup` detects migration candidates:
 
-- Existing git repo in the declared personal KB path.
+- Existing git repo in any declared layer path.
 - Presence of `topics/`, `findings/`, `decisions/`, `tasks/`, or similar subdirs.
 - No `.kb-config/layers.yaml` at the root.
 
@@ -51,7 +51,7 @@ After: _kb-decisions/D-YYYY-MM-DD-<slug>.md  (one per decision)
 
 ```
 Before: _kb-inputs/digested/*.md
-After: _kb-inputs/digested/YYYY-MM/*.md (grouped by processed month)
+After: _kb-inputs/digested/YYYY/MM/*.md (grouped by processed year and month)
 ```
 
 ### Missing `_kb-workstreams/`

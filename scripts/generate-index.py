@@ -422,11 +422,15 @@ _MD_TITLE_STRIP_RE = re.compile(
 _MD_DATE_FIELD_RE = re.compile(
     r'^\*\*(?:Date|Created)\*\*\s*:\s*(\d{4}-\d{2}-\d{2})', re.MULTILINE
 )
+_MD_YAML_DATE_FIELD_RE = re.compile(
+    r'^(?:date|created)\s*:\s*(\d{4}-\d{2}-\d{2})', re.MULTILINE | re.IGNORECASE
+)
 
 # (dir, category, optional-exclude-subdir)
 _MD_SOURCES: list[tuple[str, str, str | None]] = [
     ('_kb-references/findings', 'Findings', None),
     ('_kb-references/topics', 'Topics', None),
+    ('_kb-notes', 'Notes', None),
     ('_kb-ideas', 'Ideas', 'archive'),
     ('_kb-decisions', 'Decisions', 'archive'),
 ]
@@ -448,6 +452,33 @@ def _extract_md_date(text: str, filename: str) -> str:
     m = _MD_DATE_FIELD_RE.search(text)
     if m:
         return m.group(1)
+    m = _MD_YAML_DATE_FIELD_RE.search(text)
+    if m:
+        return m.group(1)
+    return ''
+
+
+def _extract_md_summary(text: str) -> str:
+    lines = text.splitlines()
+    in_frontmatter = False
+    frontmatter_seen = False
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not frontmatter_seen and line == '---':
+            in_frontmatter = True
+            frontmatter_seen = True
+            continue
+        if in_frontmatter:
+            if line == '---':
+                in_frontmatter = False
+            continue
+        if not line or line.startswith('#'):
+            continue
+        if line.startswith('**') or line.startswith('- **'):
+            continue
+        if line.startswith('## '):
+            continue
+        return _shorten(line)
     return ''
 
 
@@ -457,8 +488,10 @@ def discover_markdown_sources(repo_root: Path) -> list[Artifact]:
         src_dir = repo_root / rel_dir
         if not src_dir.is_dir():
             continue
-        for fp in sorted(src_dir.glob('*.md')):
-            if exclude_sub and exclude_sub in fp.parts:
+        exclude_token = f'/{exclude_sub}/' if exclude_sub else None
+        for fp in sorted(src_dir.rglob('*.md')):
+            rel = str(fp.relative_to(repo_root))
+            if exclude_token and exclude_token in f'/{rel.replace(os.sep, "/")}/':
                 continue
             try:
                 text = fp.read_text(encoding='utf-8', errors='ignore')[:4096]
@@ -466,10 +499,9 @@ def discover_markdown_sources(repo_root: Path) -> list[Artifact]:
                 continue
             title = _extract_md_title(text, fp.stem)
             date = _extract_md_date(text, fp.name)
-            rel = str(fp.relative_to(repo_root))
             items.append(Artifact(path=rel, title=title, date=date,
                                   category=category, contributor='',
-                                  family=f'md::{rel}', summary=''))
+                                  family=f'md::{rel}', summary=_extract_md_summary(text)))
     items.sort(key=lambda a: (a.date or '0000-00-00'), reverse=True)
     return items
 

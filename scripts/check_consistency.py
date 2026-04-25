@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+IGNORED_PATH_PARTS = {".git", "node_modules", ".venv", "venv", "__pycache__"}
 
 LONG_LIVED_DIRS: list[Path] = []
 OPTIONAL_LONG_LIVED = [REPO / "docs" / "REFERENCE.md", REPO / "docs" / "glossary.md"]
@@ -70,7 +71,7 @@ def iter_long_lived_docs():
 
 def iter_all_docs():
     for p in REPO.rglob("*.md"):
-        if any(part in {".git", "node_modules"} for part in p.parts):
+        if any(part in IGNORED_PATH_PARTS for part in p.parts):
             continue
         yield p
 
@@ -133,7 +134,7 @@ def check_forbidden_terms() -> list[str]:
     for p in REPO.rglob("*"):
         if not p.is_file() or p.suffix.lower() not in exts:
             continue
-        if any(part in {".git", "node_modules"} for part in p.parts):
+        if any(part in IGNORED_PATH_PARTS for part in p.parts):
             continue
         rel = p.relative_to(REPO)
         # Skip the blocklist file itself and CI config.

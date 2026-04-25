@@ -1,34 +1,62 @@
 # Reference
 
-> **Version:** 4.1.0
+> **Version:** 5.0.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
 ---
 
-## 1. Architecture — Five Layers
+## 1. Architecture — Flexible Layer Graph
 
-```
-┌──────────────┐   ┌──────────────┐   ┌───────────────┐   ┌──────────────┐   ┌─────────────┐
-│  L1 Personal │──►│   L2 Team    │──►│  L3 Org-Unit  │──►│L4 Marketplace│◄──│ L5 Company  │
-│  (required)  │   │  (optional)  │   │   (optional)  │   │  (optional)  │   │ (top-down)  │
-│              │   │  (multiple)  │   │               │   │              │   │             │
-│ _kb-inputs/  │   │<you>/_kb-inp │   │<team>/_kb-inp │   │ plugins/<nm> │   │ OKRs, MCG   │
-│ _kb-referenc/│   │<you>/_kb-ref │   │<team>/_kb-ref │   │              │   │ strategy    │
-│ _kb-ideas/   │   │ _kb-decision/│   │ _kb-decision/ │   │ plugins/<nm> │   │ directives  │
-│ _kb-decision/│   │ _kb-tasks/   │   │ _kb-workstrm/ │   │              │   │             │
-│ _kb-tasks/   │   │ .kb-log/     │   │ _kb-tasks/    │   │              │   │             │
-│ _kb-workstrm/│   │              │   │ .kb-log/      │   │              │   │             │
-│ .kb-log/     │   │              │   │               │   │              │   │             │
-└──────────────┘   └──────────────┘   └───────────────┘   └──────────────┘   └─────────────┘
+`agentic-kb` no longer assumes a fixed L1→L5 ladder. A workspace declares a **layer graph** in `.kb-config/layers.yaml`: each layer has a name, scope, role, parent edge, enabled features, and optional marketplace or external connections.
+
+```text
+┌────────────────────┐      promote / digest       ┌────────────────────┐
+│ alice-personal     │ ─────────────────────────▶  │ team-observability │
+│ scope: personal    │                            │ scope: team        │
+│ role: contributor  │ ◀───────────────────────── │ role: contributor  │
+└────────────────────┘                             └────────────────────┘
+          │                                                   │
+          │ promote / digest                                  │ promote / digest
+          ▼                                                   ▼
+┌────────────────────┐                             ┌────────────────────┐
+│ engineering-org    │ ─────────────────────────▶  │ company-guidance   │
+│ scope: org-unit    │                            │ scope: company     │
+│ role: contributor  │ ◀───────────────────────── │ role: consumer     │
+└────────────────────┘                             └────────────────────┘
+
+Each layer may also attach its own marketplace and external connections.
 ```
 
-- Only **L1** is required. Higher layers are optional, declared in `.kb-config/layers.yaml`.
-- Content flows **up** via `promote` / `publish`; **down** via `digest`.
-- VMG (vision/mission/goals) bleeds **top-down** during digest: L3 org VMG → L2 team VMG → L1 personal VMG. Each layer's `_kb-references/foundation/vmg.md` is optional; the personal KB's is the merged view.
-- L5 is top-down only — no promotions accepted.
-- Every upward flow passes the evaluation gate.
-- Optional draft primitives extend L1 with `_kb-roadmaps/` and `_kb-journeys/` when adopters opt in. They remain outside the default scaffold until configured.
+Core rules:
+
+- A workspace must declare **at least one contributor-capable layer**. A personal layer is recommended, but not required.
+- One layer is designated the **anchor layer**. Its `.kb-config/` directory is the source of truth for the user's layer graph, automation, and artifact settings.
+- `parent` defines the upward routing edge. `promote` walks up the parent chain; `digest` walks down it.
+- `role: contributor | consumer` governs mutation rights. Promotion or publish to a consumer-only layer must refuse with a clear message.
+- `features:` opt a layer into primitives: `inputs`, `findings`, `topics`, `ideas`, `decisions`, `tasks`, `notes`, `workstreams`, `foundation`, `reports`, `marketplace`, `roadmaps`, `journeys`.
+- `marketplace` is **cross-cutting**, not a numbered layer. Any layer may publish to or consume from its own marketplace repo.
+- Draft features (`roadmaps`, `journeys`) are enabled per layer, not globally.
+
+### Contributor-scoped vs shared primitives
+
+At multi-user layers, the primitive decides whether content stays contributor-scoped or becomes shared state.
+
+| Primitive | Default mode at multi-user layers | Why |
+|-----------|-----------------------------------|-----|
+| `inputs` | contributor-scoped | Pre-gate raw material is not shared truth |
+| `findings` | contributor-scoped | Immutable evidence keeps provenance |
+| `ideas` | contributor-scoped | Ownership-bearing incubation object |
+| `strategy-digests` | contributor-scoped | Each contributor tracks their own watermark |
+| `topics` | configurable; default contributor-scoped | A living position may be personal or shared |
+| `notes` | shared for meetings; configurable for general notes | Shared meetings need one canonical record |
+| `decisions` | shared | A layer should have one decision artifact |
+| `tasks` | shared | The backlog belongs to the layer |
+| `workstreams` | shared | Workstream state is layer-level |
+| `foundation` | shared | Naming, sources, stakeholders, VMG are canonical |
+| `reports` | shared | Reports describe the layer, not one contributor |
+
+Single-user layers flatten contributor-scoped primitives to the layer root.
 
 ---
 
@@ -42,7 +70,7 @@ Before persisting anything, the agent scores against five questions:
 4. Is this actionable?
 5. Is this materially new compared to existing topics?
 
-The gate score is the count of "yes" answers across those five questions. VMG alignment is a separate prioritization signal, not a numeric bonus.
+The gate score is the count of `yes` answers across those five questions. VMG alignment is a separate prioritization signal, not a numeric bonus.
 
 | Score | Outcome |
 |-------|---------|
@@ -56,128 +84,113 @@ The gate score is the count of "yes" answers across those five questions. VMG al
 
 ### Workspace root
 
-```
+```text
 my-workspace/
-├── AGENTS.md                       # master index (all repos, keyword lookup)
-├── CLAUDE.md → AGENTS.md           # symlink
-├── .github/                        # VS Code Copilot workspace hooks (optional)
-│   ├── prompts/kb.prompt.md
-│   └── instructions/kb.instructions.md
-├── .claude/                        # Claude Code harness (if installed)
-├── .opencode/                      # OpenCode harness (if installed)
-├── my-kb/                          # L1 Personal KB
-├── team-kb/                        # L2 Team KB (optional)
-├── org-unit-kb/                    # L3 Org-Unit KB (optional)
-└── marketplace/                    # L4 Marketplace (optional)
+├── AGENTS.md
+├── CLAUDE.md → AGENTS.md
+├── .github/                        # VS Code Copilot hooks, if installed
+├── .claude/                        # Claude Code hooks, if installed
+├── .opencode/                      # OpenCode hooks, if installed
+├── anchor-kb/                      # the configured anchor layer
+├── team-kb/                        # optional additional layer repos
+├── org-kb/
+└── company-kb/
 ```
 
-Note: all configuration YAMLs live inside the personal KB under `.kb-config/` — not at workspace root.
+The workspace root never implies a fixed layer count. It is just the container for one or more KB repos plus harness hooks.
 
-### Personal KB (L1)
+### Layer repo layout
 
-```
-my-kb/
+Every layer repo uses the same feature-oriented directory contract. Directories exist only when that feature is enabled for the layer.
+
+```text
+layer-kb/
 ├── AGENTS.md
 ├── README.md
-├── .kb-config/
-│   ├── layers.yaml                 # layer index, workspace aliases, VMG
-│   ├── automation.yaml             # automation level + schedules
-│   └── artifacts.yaml              # HTML artifact styling
-├── _kb-inputs/                        # THE INBOX — drop anything here
-│   └── digested/YYYY-MM/
+├── .kb-config/                     # anchor layer only
+│   ├── layers.yaml
+│   ├── automation.yaml
+│   └── artifacts.yaml
+├── _kb-inputs/
+│   └── digested/YYYY/MM/
 ├── _kb-references/
-│   ├── topics/                     # living positions (updated in place)
-│   ├── findings/                   # dated snapshots (immutable)
+│   ├── topics/
+│   ├── findings/YYYY/
 │   ├── foundation/
-│   │   ├── me.md
-│   │   ├── context.md
-│   │   ├── vmg.md                  # vision, mission & goals
-│   │   ├── sources.md
-│   │   ├── stakeholders.md
-│   │   └── naming.md
-│   ├── strategy-digests/           # per-layer digest findings + `.last-digest` watermark
-│   ├── legacy/                     # archived material
-│   └── reports/                    # generated HTML artifacts
+│   ├── strategy-digests/YYYY/
+│   ├── legacy/
+│   └── reports/
+├── _kb-notes/YYYY/
 ├── _kb-ideas/
 │   ├── I-YYYY-MM-DD-slug.md
-│   └── archive/
+│   └── archive/YYYY/
 ├── _kb-decisions/
-│   ├── D-YYYY-MM-DD-slug.md       # active decisions live at root
-│   └── archive/
+│   ├── D-YYYY-MM-DD-slug.md
+│   └── archive/YYYY/
 ├── _kb-tasks/
-│   ├── focus.md                    # max 6 items
+│   ├── focus.md
 │   ├── backlog.md
-│   └── archive/YYYY-MM.md
-├── .kb-log/YYYY-MM-DD.log
-├── .kb-scripts/                    # optional utility scripts
-├── _kb-workstreams/<name>.md
-├── _kb-roadmaps/                   # optional; `kb-roadmap` output root
-└── _kb-journeys/                   # optional; `kb-journeys` source + HTML root
+│   └── archive/YYYY/MM.md
+├── .kb-log/YYYY-MM-DD.log          # MAY be nested as .kb-log/YYYY/YYYY-MM-DD.log
+├── .kb-scripts/
+├── _kb-workstreams/
+├── _kb-roadmaps/
+├── _kb-journeys/
+├── index.html
+├── dashboard.html
+└── .nojekyll
 ```
 
-### Team KB (L2)
+### Multi-user layer pattern
 
-```
+Multi-user layers keep shared primitives at the repo root and contributor-scoped primitives under per-contributor or per-team directories.
+
+```text
 team-kb/
-├── AGENTS.md, README.md
-├── _kb-references/foundation/vmg.md   # team-level vision/mission/goals
-├── _kb-decisions/{archive}/
-├── _kb-tasks/{focus.md,backlog.md}
-├── .kb-log/
+├── _kb-decisions/
+├── _kb-tasks/
+├── _kb-notes/                      # shared meeting notes by default
+├── _kb-references/foundation/
 ├── alice/
-│   ├── _kb-inputs/ (+ digested/)
-│   └── _kb-references/{topics/,findings/}
-└── bob/ ...
+│   ├── _kb-inputs/
+│   ├── _kb-references/{findings/,topics/}
+│   └── _kb-ideas/
+└── bob/
 ```
 
-### Org-Unit KB (L3)
+### Required files by role
 
-Same as L2 but contributor units are teams, not people:
-
-```
-org-unit-kb/
-├── _kb-references/foundation/vmg.md   # org-level vision/mission/goals
-├── _kb-decisions/, _kb-tasks/, _kb-workstreams/, .kb-log/
-├── team-alpha/{_kb-inputs/,_kb-references/}
-└── team-beta/{_kb-inputs/,_kb-references/}
-```
-
-### Required files per layer
-
-| Layer | Must exist |
-|-------|-----------|
-| L1 | `AGENTS.md`, `.kb-config/layers.yaml`, `_kb-inputs/`, `_kb-references/{topics,findings,foundation}/`, `_kb-ideas/`, `_kb-decisions/`, `_kb-tasks/focus.md`, `.kb-log/` |
-| L2 | `AGENTS.md`, `_kb-decisions/`, `_kb-tasks/focus.md`, `.kb-log/`, per-contributor dirs |
-| L3 | `AGENTS.md`, `_kb-decisions/`, `_kb-tasks/focus.md`, `_kb-workstreams/`, `.kb-log/`, per-team dirs |
-| Root | `AGENTS.md`, `CLAUDE.md → AGENTS.md`; add harness-specific prompt/instruction files only when that harness uses them |
-
-Note: `.kb-config/automation.yaml` and `.kb-config/artifacts.yaml` are optional — defaults apply when absent.
+| Repo kind | Must exist |
+|-----------|------------|
+| Anchor layer | `AGENTS.md`, `.kb-config/layers.yaml`, one contributor-capable feature set, `.kb-log/`, `index.html` |
+| Any shared layer | `AGENTS.md`, `README.md`, `.kb-log/`, all directories for its enabled shared features |
+| Any multi-user layer with contributor-scoped features | per-contributor or per-team directories for those enabled features |
+| Any layer publishing HTML | `.nojekyll`, `index.html`, `dashboard.html` |
 
 Harness-specific `/kb` command or skill contract (written by `/plugin install` or `scripts/install --target <harness>`):
 
 - Claude Code: `plugins/kb/commands/kb.md` (from marketplace) or `.claude/commands/kb.md` (from `scripts/install`)
 - VS Code Copilot: `.github/prompts/kb.prompt.md` + `.github/instructions/kb.instructions.md`
-- OpenCode: `.opencode/commands/kb.md` (installer) or picked up via `.claude/commands/` if Claude Code is co-installed
-- Codex CLI: `.agents/skills/kb/SKILL.md` (workspace) or `~/.agents/skills/kb/SKILL.md` (global). Codex reads `AGENTS.md` plus installed skills; invoke `kb` through the skill picker or `$kb`, not a custom `/kb` slash command.
-- Gemini CLI: `.gemini/commands/kb.toml` (workspace) or `~/.gemini/commands/kb.toml` (global). Generated by the installer from `plugins/kb/commands/kb.md`; Gemini's custom-command format requires TOML
-- Kiro IDE: `.kiro/skills/kb/SKILL.md` (workspace) or `~/.kiro/skills/kb/SKILL.md` (global). Kiro exposes skills in the slash menu, so `kb` remains a native entrypoint there.
-- Rules-only harnesses (Cursor, Windsurf): no direct slash-command slot; adopters reference the scaffolded KB files via rules/rulebooks and invoke manually
-
-Optional draft directories: `_kb-roadmaps/` is created only when `kb-roadmap` is configured; `_kb-journeys/` is created only when `kb-journeys` is configured.
+- OpenCode: `.opencode/commands/kb.md` or shared `.claude/commands/` if Claude Code is co-installed
+- Codex CLI: `.agents/skills/kb/SKILL.md` (workspace) or `~/.agents/skills/kb/SKILL.md` (global); invoke via the skill picker or `$kb`
+- Gemini CLI: `.gemini/commands/kb.toml` (workspace) or `~/.gemini/commands/kb.toml` (global)
+- Kiro IDE: `.kiro/skills/kb/SKILL.md` (workspace) or `~/.kiro/skills/kb/SKILL.md` (global)
+- Rules-only harnesses: adopters reuse the repo contract but wire invocation manually
 
 ---
 
 ## 4. File Formats
 
-### Finding (`_kb-references/findings/YYYY-MM-DD-slug.md`)
+### Finding (`_kb-references/findings/YYYY/YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Finding: <title>
 
 **Date**: YYYY-MM-DD
 **Workstream**: <name>
-**Source**: <URL or meeting reference>
+**Source**: <URL or note reference>
 **Gate**: X/5 (reasons)
+**Maturity**: raw | emerging | durable
 
 ## TL;DR
 ## Details
@@ -192,6 +205,7 @@ Immutable after creation. Corrections create a new finding.
 ```markdown
 # Topic: <name>
 
+**Maturity**: raw | emerging | durable
 **External anchors**: [links]
 
 [... living prose, updated in place ...]
@@ -201,8 +215,6 @@ Immutable after creation. Corrections create a new finding.
 | Date | What changed | Source |
 ```
 
-One file per topic. Inline changelog required.
-
 ### Decision (`_kb-decisions/D-YYYY-MM-DD-slug.md`)
 
 ```markdown
@@ -211,19 +223,21 @@ One file per topic. Inline changelog required.
 - **Context**: why this choice is open
 - **Options**: (a) …, (b) …
 - **Stakeholders**: @names
-- **RACI** (team/org only): R/A/C/I assignments
+- **RACI** (shared layers): R/A/C/I assignments
 - **Blocking**: what this blocks
 - **Due**: YYYY-MM-DD
-- **Status**: gathering-evidence | under-discussion | proposed | decided
+- **Status**: gathering-evidence | under-discussion | proposed | decided | revisiting
 
 ## Evidence Trail
-- date: event — link to finding
+- date: event — link to finding or note
 
 ## Resolution (on archive only)
 - **Outcome**: selected option
 - **Rationale**: why
 - **Date**: resolved date
 ```
+
+Archived decisions live under `_kb-decisions/archive/YYYY/`.
 
 ### Idea (`_kb-ideas/I-YYYY-MM-DD-slug.md`)
 
@@ -242,8 +256,33 @@ One file per topic. Inline changelog required.
 | Date | What | Trigger |
 
 ## Connections
-- Relates to: topics, decisions, findings
+- Relates to: topics, decisions, findings, notes
 ```
+
+Archived ideas live under `_kb-ideas/archive/YYYY/`.
+
+### Note (`_kb-notes/YYYY/MM-DD-slug.md`)
+
+```markdown
+---
+type: meeting | note
+date: YYYY-MM-DD
+attendees: [@alice, @bob]
+workstream: <name>
+source: <optional link>
+authors: [@alice]
+---
+
+# Note: <title>
+
+## TL;DR
+## Discussion / Notes
+## Decisions made
+## Action items
+## Open questions
+```
+
+Meeting notes should be shared at multi-user layers unless the adopter intentionally configures otherwise.
 
 ### Workstream (`_kb-workstreams/<name>.md`)
 
@@ -263,35 +302,35 @@ One file per topic. Inline changelog required.
 
 ```markdown
 # Focus
-- [ ] Task 1
-- [ ] Task 2
-- [ ] Task 3
+- [ ] Task 1 <!-- source: finding-or-note · created: YYYY-MM-DD -->
 
 ## Waiting
 - [ ] @person: what they owe you
 ```
 
-### Log (`.kb-log/YYYY-MM-DD.log`)
+Archived tasks live under `_kb-tasks/archive/YYYY/MM.md`.
 
-```
+### Log (`.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log`)
+
+```text
 HH:MM:SSZ | operation | scope | target | details
 ```
 
-Operations: `capture`, `digest`, `publish`, `promote`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `idea-create`, `idea-develop`, `idea-ship`, `stakeholder-update`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-start-day`, `ritual-end-day`, `ritual-start-week`, `ritual-end-week`, `automation-failure`.
+Writers MAY keep flat daily logs or nest them by year. Readers must accept both.
 
-Scopes: `personal`, `team-kb`, `org-unit`, `marketplace`, `personal→team`, `team→personal`, `personal→marketplace`, `team-kb/<contributor>`, `workspace`.
+Operations include: `capture`, `review`, `digest`, `digest-connections`, `promote`, `publish`, `note`, `note-end`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `idea-create`, `idea-develop`, `idea-ship`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-start-day`, `ritual-end-day`, `ritual-start-week`, `ritual-end-week`, `automation-failure`.
 
 ---
 
 ## 5. Configuration Files
 
-All configuration lives in a `.kb-config/` directory inside the personal KB (L1). Higher-layer KBs (L2/L3) do **not** need configuration — they are plain repos with the required directory structure. The personal KB's `layers.yaml` is the single source of truth for layer topology; all commands (`/kb promote`, `/kb digest`, `/kb sync`) originate from L1.
+All configuration lives in a `.kb-config/` directory inside the **anchor layer**. The anchor layer can be personal, team, org, or any other contributor-capable layer the user chooses as home base.
 
-```
+```text
 .kb-config/
-├── layers.yaml        # layer index, workspace aliases, VMG  (required)
-├── automation.yaml    # automation level + schedules          (optional)
-└── artifacts.yaml     # HTML artifact styling                 (optional)
+├── layers.yaml        # layer graph, roles, connections, marketplace refs  (required)
+├── automation.yaml    # automation level + schedules                       (optional)
+└── artifacts.yaml     # HTML artifact styling                              (optional)
 ```
 
 ### `.kb-config/layers.yaml`
@@ -300,43 +339,102 @@ All configuration lives in a `.kb-config/` directory inside the personal KB (L1)
 workspace:
   root: /path/to/workspace
   user: alice
+  anchor-layer: alice-personal
   aliases:
-    kb: my-kb
-    tk: team-kb
+    personal: alice-personal
+    team: team-observability
 
 layers:
-  personal:
+  - name: alice-personal
+    scope: personal
+    role: contributor
+    parent: team-observability
     path: .
+    features: [inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports]
     workstreams:
-      - name: reliability
-        themes: [slo, incident, postmortem]
-  team:
-    - name: my-team
-      path: ../team-kb
-      contributor: alice
-  org-unit:
-    name: platform
-    path: ../org-kb
-    team: team-alpha
-  marketplace:
-    source: https://github.com/org/marketplace
-    install-mode: marketplace   # marketplace | clone
+      - name: platform-signals
+        themes: [observability, reliability]
+    marketplace:
+      repo: ../team-skills
+      install-mode: marketplace
+    connections:
+      product-repos:
+        - name: agentic-kb
+          path: ../agentic-kb
+          remote: wlfghdr/agentic-kb
+          watch:
+            - CHANGELOG.md
+            - docs/REFERENCE.md
+          ticket-pattern: '#\d+'
+      trackers:
+        - kind: github-issues
+          repo: wlfghdr/agentic-kb
+          scope: is:issue is:open
+      reference-mode: link
+      writeback:
+        enabled: false
+        capabilities: []
+
+  - name: team-observability
+    scope: team
+    role: contributor
+    parent: engineering-org
+    path: ../team-observability-kb
+    features: [findings, topics, ideas, decisions, tasks, notes, foundation, reports, marketplace]
+    contributor-mode:
+      findings: contributor-scoped
+      topics: contributor-scoped
+      notes: shared
+
+  - name: engineering-org
+    scope: org-unit
+    role: contributor
+    parent: company-guidance
+    path: ../engineering-org-kb
+    features: [decisions, tasks, foundation, reports, marketplace, roadmaps, journeys]
+    roadmap:
+      issue-trackers: []
+    journeys:
+      source-dir: _kb-journeys
+      output-dir: _kb-journeys
+      html-subdir: html
+
+  - name: company-guidance
+    scope: company
+    role: consumer
+    parent: null
+    path: ../company-guidance-kb
+    features: [foundation, decisions, reports]
 ```
+
+Field contract:
+
+- `name`: canonical layer identifier used in commands.
+- `scope`: descriptive routing hint (`personal`, `team`, `org-unit`, `company`, or a custom scope).
+- `role`: `contributor` or `consumer`.
+- `parent`: the next upward layer in the graph, or `null`.
+- `path`: repo-relative path to the layer repo.
+- `features`: enabled primitives for that layer.
+- `contributor-mode`: optional overrides for primitives that can be shared or contributor-scoped.
+- `marketplace`: marketplace repo and install mode for that layer's published skills.
+- `connections`: product repos, trackers, reference mode, and write-back policy for that layer.
+- `roadmap` / `journeys`: draft-skill configuration blocks nested under the layer that enabled those features.
 
 ### `.kb-config/automation.yaml`
 
 ```yaml
-level: 2                            # 1=manual, 2=semi-auto, 3=full-auto
+level: 2
 
 schedules:
   start-day: daily 08:00
-  team-digest: daily 08:00
+  digest-parent: daily 08:00
+  digest-connections: daily 08:15
   task-review: daily 08:30
   end-week: friday 15:00
 
 auto-promote:
-  enabled: false                    # level 3 only
-  confidence-threshold: 4           # gate score ≥ 4 for auto-promote
+  enabled: false
+  confidence-threshold: 4
   excluded-workstreams: []
 ```
 
@@ -344,27 +442,36 @@ auto-promote:
 
 ```yaml
 styling:
-  source: website                   # builtin | website | template
+  source: template                   # builtin | website | template
   reference-url: https://example.org/brand
-  reference-file: null              # path if source=template
+  reference-file: _kb-references/templates/presentation-template.html
   themes: [light, dark]
-  default-theme: auto               # auto | light | dark
+  default-theme: auto
   watermark:
     enabled: true
     position: intro-slide
     format: "v{version} · {date}"
+
+dashboard:
+  panels:
+    - focus-tasks
+    - pending-inputs
+    - active-ideas
+    - open-decisions
+    - topics
+    - recent-findings
+    - recent-reports
+
+html-template:
+  base: kb-roadmap/templates/roadmap.html.hbs
+  tokens: _kb-references/templates/brand/tokens.css
+
+journeys-template:
+  base: kb-journeys/templates/journey.html.hbs
+  tokens: _kb-references/templates/brand/tokens.css
 ```
 
-### Optional draft-skill config blocks
-
-The same config files also host optional draft primitives:
-
-- `.kb-config/layers.yaml` may add top-level `roadmap:` and `journeys:` blocks.
-- `.kb-config/artifacts.yaml` may add `html-template:` and `journeys-template:` blocks for roadmap and journey rendering.
-
-These blocks are ignored unless the corresponding skills are installed and configured.
-
-Recommended lean roadmap baseline: start with exported tracker markdown bound through `ticket-export-markdown` for GitHub- and Jira-originated work, prove the artifact flow locally, then opt into live tracker adapters and write-back later.
+Recommended lean roadmap baseline: start with exported tracker markdown bound through `connections.trackers[]`, prove the artifact flow locally, then opt into live tracker adapters and write-back later.
 
 ---
 
@@ -379,17 +486,11 @@ Two families:
 
 ### Dashboard (command center)
 
-`dashboard.html` is the owner-facing counterpart to `index.html`. Where
-the index lists generated artifacts, the dashboard surfaces **live KB
-state**: focus tasks, backlog, pending inputs, active ideas, open
-decisions, topics, recent findings / digests / reports, workstream
-freshness, and — opt-in — external work-items from GitHub (`gh` CLI) and Jira
-(jira-sync-style markdown export).
+`dashboard.html` is the owner-facing counterpart to `index.html`. Where the index lists generated artifacts, the dashboard surfaces **live KB state**: focus tasks, backlog, pending inputs, active ideas, open decisions, topics, recent findings / digests / reports, workstream freshness, and opt-in external work-items from declared `connections`.
 
-- Script: `scripts/generate-dashboard.py` (copy into `.kb-scripts/` like `generate-index.py`).
-- Config: `.kb-config/artifacts.yaml` → `dashboard:` section. Panels list is ordered; unknown or empty panels are skipped.
-- External panels are OFF by default. Adopters opt in per tool and configure the data source. No vendor lock-in: Jira is read from a configurable directory of frontmatter-bearing markdown files, not a vendor API.
-- Regenerated as part of the same mutation flow as overviews and `index.html` (see `kb-management` rule 9–10).
+- Script: `scripts/generate-dashboard.py`.
+- Config: `.kb-config/artifacts.yaml` → `dashboard:` section.
+- Regenerated as part of the same mutation flow as `index.html`.
 
 ### Shared contract
 
@@ -403,15 +504,16 @@ freshness, and — opt-in — external work-items from GitHub (`gh` CLI) and Jir
 
 ### Report slide composition
 
-The `report.html` template has 12 slide types. Agents pick per purpose:
-
 | Report | Slides |
 |--------|--------|
 | Weekly Status (boss) | Cover → Metrics → Progress → Decisions → Blocked → Ideas → Roadmap → Stakeholder Map → Closing |
 | Daily Digest (standup) | Cover → Daily Digest |
 | Pitch | Cover → Pitch → Comparison → Closing |
 | Roadmap Status | Cover → Metrics → Kanban → Stakeholder Map → Closing |
+| Progress | Cover → Headline → Shipped → In-flight → Slipped → Open Decisions → Action Items → Stakeholder Map → Closing |
 | Topic Presentation | Cover → Content slides → Comparison → Closing |
+
+`/kb report progress [scope]` consumes KB state plus any configured `connections:` for that scope. Progress reports must add a Sources appendix naming every repo, tracker, or export consulted and the watermark used for the delta.
 
 ### Ritual triggers
 
@@ -424,18 +526,18 @@ The `report.html` template has 12 slide types. Agents pick per purpose:
 
 ## 7. Security & Privacy
 
-| Layer | Default | Rule |
-|-------|---------|------|
-| L1 Personal | Private | Never reference in public repos/artifacts |
-| L2 Team | Team-private | Visible within team only |
-| L3 Org-Unit | Org-private | Visible within org unit |
-| L4 Marketplace | Shared | No PII, no credentials, no hidden URLs, only marketplace-available tools |
-| L5 Company | Top-down | Consumed into L1 |
+| Surface | Default | Rule |
+|---------|---------|------|
+| Contributor-only layer | Private | Never reference in public repos/artifacts |
+| Shared team/org/company layer | Audience-scoped | Visible only to the owning audience |
+| Layer marketplace | Shared | No PII, no credentials, no hidden URLs, only marketplace-available tools |
+| Consumer-only layer | Read-down only | Digest is allowed; promote and publish must refuse |
 
 ### Promotion safety checks
 
-- **L1 → L2**: warn on secrets, tokens, private URLs.
-- **→ L4 (publish)**: hard block on PII, credentials, hardcoded external URLs, non-marketplace tools.
+- Promote between contributor-capable layers: warn on secrets, tokens, private URLs, and audience-fit mismatches.
+- Promote or publish to a `role: consumer` layer: refuse with a clear message naming the next valid contributor layer.
+- Publish to any layer marketplace: hard block on PII, credentials, hardcoded external URLs, or non-marketplace tools.
 
 ### Never capture
 
@@ -445,7 +547,7 @@ The `report.html` template has 12 slide types. Agents pick per purpose:
 
 ### Data residency
 
-Everything is Git + Markdown + local agent. No external service required. Offline mode: local git remote, disable marketplace auto-install, disable L5 propagation.
+Everything is Git + Markdown + local agent. No external service required. Offline mode: local git remote, disable external `connections` reads, and treat every marketplace as manually synchronized.
 
 ---
 
@@ -459,9 +561,9 @@ Everything is Git + Markdown + local agent. No external service required. Offlin
 
 ---
 
-## 9. Marketplace Package Layout
+## 9. Plugin / Marketplace Package Layout
 
-```
+```text
 marketplace-repo/
 ├── plugin.json               # root marketplace manifest
 ├── .claude-plugin/
@@ -470,18 +572,20 @@ marketplace-repo/
 │   └── <plugin>/
 │       ├── plugin.json       # per-plugin manifest
 │       ├── skills/<name>/
-│       │   ├── SKILL.md      # frontmatter + instructions
-│       │   ├── templates/    # optional
-│       │   └── references/   # optional
-│       ├── utils/            # optional reusable helpers for skills in this plugin
+│       │   ├── SKILL.md
+│       │   ├── templates/
+│       │   └── references/
+│       ├── utils/
 │       └── agents/<name>.md
 ├── tests/
-│   └── fixtures/             # optional regression fixtures for safety/routing checks
+│   └── fixtures/
 ├── scripts/
 │   ├── install.py
 │   ├── check_consistency.py
 │   └── generate_plugins.py
 ```
+
+Every layer may point at a different marketplace repo via its `marketplace:` block. The package layout is the same regardless of whether that marketplace is team-scoped, org-scoped, or company-scoped.
 
 Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`, `license` in YAML frontmatter.
 
@@ -514,6 +618,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-25 | Reworked the core model for 5.0.0: replaced the fixed L1–L5 ladder with a flexible layer graph, moved marketplace to a per-layer cross-cutting block, added role-based promote/publish governance, year-based archive paths, the notes primitive, per-layer external connections, and the progress-report contract |
 | 2026-04-25 | Added generic marketplace guidance for plugin-local utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills; version bumped to 4.1.0 |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release |
 | 2026-04-25 | Added explicit preflight-fetch and post-generation QA rules to the HTML artifact contract so external-source reads and artifact completion gates are part of the normative spec |

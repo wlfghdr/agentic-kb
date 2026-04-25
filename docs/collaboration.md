@@ -1,8 +1,8 @@
 # Collaboration Guide
 
-> **Version:** 0.1 | **Last updated:** 2026-04-20
+> **Version:** 5.0.0 | **Last updated:** 2026-04-25
 
-This guide defines the **human collaboration contract** for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
+This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
 ## Why this guide exists
 
@@ -17,26 +17,26 @@ Without that, the file structure may be clean while the collaboration model is n
 
 ## Core principle
 
-**Personal speed, shared caution.**
+**Contributor speed, shared caution.**
 
-At L1, the agent should help the user move fast. At L2 and L3, the agent should optimize for clarity, traceability, and low surprise for other humans.
+In a contributor-owned anchor layer, the agent should help the user move fast. In shared team, org, or company-facing layers, the agent should optimize for clarity, traceability, and low surprise for other humans.
 
 ## Layer responsibilities
 
-### L1 Personal
+### Contributor-owned layer
 
-Purpose: individual sense-making and preparation.
+Purpose: individual sense-making, preparation, and early shaping.
 
 Agent may:
 
 - capture findings,
-- update personal topics,
-- open personal decisions,
+- update topics,
+- open decisions,
 - suggest tasks,
 - generate reports and presentations,
 - prepare promotion candidates.
 
-Agent must not assume L1 truth is shared truth.
+Agent must not assume contributor-owned truth is already shared truth.
 
 Human responsibility:
 
@@ -44,14 +44,14 @@ Human responsibility:
 - remove or redact sensitive material before promotion,
 - review promoted material for clarity outside personal context.
 
-### L2 Team
+### Shared team layer
 
-Purpose: shared team memory and team coordination.
+Purpose: shared team memory and coordination.
 
 Agent may:
 
-- place promoted material into the correct contributor area,
-- digest team changes into personal KBs,
+- place promoted material into the correct contributor or shared area,
+- digest team changes into contributor-owned layers,
 - open or update team decisions when explicitly requested or clearly implied by agreed process,
 - suggest conflicts, duplicates, and missing evidence.
 
@@ -62,25 +62,42 @@ Human responsibility:
 - confirm team-relevant promotions,
 - review shared decisions and RACI,
 - resolve conflicts between contributor interpretations,
-- keep team VMG current enough that agents can align against it.
+- keep shared foundation material current enough that agents can align against it.
 
-### L3 Org-Unit
+### Shared org or company-facing layer
 
-Purpose: cross-team synthesis and steering.
+Purpose: cross-team synthesis, steering, or top-down guidance.
 
 Agent may:
 
-- digest org-level changes downward,
-- package mature team outputs upward,
-- highlight cross-team contradictions and dependency signals.
+- digest higher-layer changes downward,
+- package mature shared outputs upward,
+- highlight contradictions and dependency signals across teams.
 
-Agent must be more conservative here than at L2. Cross-team meaning is easier to distort than personal meaning.
+Agent must be more conservative here than in a contributor-owned layer. Cross-team meaning is easier to distort than local context.
 
 Human responsibility:
 
 - validate framing before broad publication,
 - assign decision authority explicitly,
-- treat L3 as synthesis, not raw dumping.
+- treat synthesis layers as curated outputs, not raw dumping grounds.
+
+### Consumer-only layer
+
+Purpose: read-down guidance, not local authoring.
+
+Agent may:
+
+- read and digest,
+- compare local state to published guidance,
+- flag mismatches.
+
+Agent must not promote or publish into a `role: consumer` layer.
+
+Human responsibility:
+
+- keep the consuming boundary clear,
+- name the correct upstream contributor layer when contribution is actually needed.
 
 ## Shared-workspace rules
 
@@ -103,7 +120,8 @@ Before promotion, the human or agent should confirm:
 - context is understandable outside the source layer,
 - the artifact does not depend on hidden chat history,
 - sensitive material is removed,
-- the target layer is the right audience.
+- the target layer is the right audience,
+- the target layer is contributor-capable.
 
 ### 3. Digests are summaries, not overrides
 
@@ -118,7 +136,7 @@ If upstream material conflicts with the current local view, the agent should:
 
 ### 4. Shared decisions need explicit humans
 
-In team and org layers, decisions must name the humans around the decision clearly enough that others can act on them.
+In team, org, and company-facing contributor layers, decisions must name the humans around the decision clearly enough that others can act on them.
 
 Minimum expectation:
 
@@ -137,32 +155,32 @@ If there is a tradeoff between automation elegance and human confidence, prefer 
 
 A team using `agentic-kb` seriously should agree on at least these norms:
 
-1. **One canonical personal KB per person.**
-2. **One shared team KB per actual working team.**
-3. **Promotions include a destination-layer review before being treated as team truth.**
-4. **Team decisions are not left without owners or dates.**
-5. **Conflicts are captured explicitly, not flattened away.**
-6. **Agents log what they changed.**
-7. **Humans remain accountable for shared meaning.**
+1. One canonical contributor-owned layer per person or clearly bounded working context.
+2. One shared team layer per real working team.
+3. Promotions include a destination-layer review before being treated as shared truth.
+4. Shared decisions are not left without owners or dates.
+5. Conflicts are captured explicitly, not flattened away.
+6. Agents log what they changed.
+7. Humans remain accountable for shared meaning.
 
 ## Recommended review points
 
-### Before promoting L1 → L2
+### Before promoting into a shared team layer
 
-- Is the artifact understandable without personal background?
+- Is the artifact understandable without source-layer background?
 - Did the gate score reflect real team relevance?
 - Are next steps clear for another human?
 
-### Before promoting L2 → L3
+### Before promoting into an org or company-facing contributor layer
 
-- Is this a team position or only one contributor's view?
+- Is this a shared team position or only one contributor's view?
 - Are dependencies and implications stated?
 - Is there a named human owner for follow-up?
 
-### Before publishing to L4
+### Before publishing to a layer marketplace
 
 - Is the pattern truly reusable beyond the originating context?
-- Has personal/company-specific material been removed?
+- Has local or company-specific material been removed?
 - Would another team understand the skill without private history?
 
 ## Failure modes and recovery
@@ -213,10 +231,10 @@ Recovery:
 
 For real teams, start with this posture:
 
-- L1: fast and flexible
-- L2: reviewable and explicit
-- L3: conservative and synthesis-oriented
-- L4: manual and high bar
+- contributor-owned layers: fast and flexible
+- shared team layers: reviewable and explicit
+- shared org/company-facing contributor layers: conservative and synthesis-oriented
+- consumer-only layers: read-only and high signal
 
 That is the safest path to getting value without trust erosion.
 
@@ -226,4 +244,5 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Reworked the collaboration contract for 5.0.0: replaced L1-L4 language with contributor/shared/consumer roles, clarified consumer-only behavior, and updated promotion/publish review points for named layers and per-layer marketplaces | v5.0.0 flexible layer model |
 | 2026-04-20 | Initial collaboration guide defining shared-workspace operating norms, review points, and failure recovery | Issue #7 |

@@ -41,6 +41,7 @@ def write_workspace_index(workspace: Path) -> None:
         - `alice-kb` → personal KB fixture
         - `team-observability-kb` → team KB fixture
         - `engineering-org-kb` → org KB fixture
+        - `company-enablement-kb` → company guidance fixture
         - `agentic-kb` → upstream spec and installer under test
         """,
     )
@@ -96,19 +97,63 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         kb / ".kb-config" / "layers.yaml",
         """
         layers:
-          personal:
-            path: .
-            workstreams:
-              - name: platform-signals
-                themes: [observability, reliability]
-          teams:
-            - path: ../team-observability-kb
-          org-unit:
-            path: ../engineering-org-kb
+                    - name: alice-personal
+                        scope: personal
+                        role: contributor
+                        parent: team-observability
+                        path: .
+                        features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes]
+                        workstreams:
+                            - name: platform-signals
+                                themes: [observability, reliability]
+                        marketplace:
+                            repo: ../team-observability-kb
+                            install-mode: repository
+                        connections:
+                            product-repos:
+                                - name: agentic-kb
+                                    path: ../agentic-kb
+                                    remote: wlfghdr/agentic-kb
+                                    watch:
+                                        - CHANGELOG.md
+                                        - docs/REFERENCE.md
+                                        - plugins/kb/skills/
+                                    ticket-pattern: '#\\d+'
+                            trackers:
+                                - kind: github-issues
+                                    repo: wlfghdr/agentic-kb
+                                    scope: is:issue is:open
+                            reference-mode: link
+                            writeback:
+                                enabled: false
+                                capabilities: []
+                    - name: team-observability
+                        scope: team
+                        role: contributor
+                        parent: engineering-org
+                        path: ../team-observability-kb
+                        features: [findings, topics, decisions, tasks, notes, foundation, reports, marketplace]
+                        contributor-mode:
+                            findings: contributor-scoped
+                            topics: contributor-scoped
+                            notes: shared
+                    - name: engineering-org
+                        scope: org-unit
+                        role: contributor
+                        parent: company-enablement
+                        path: ../engineering-org-kb
+                        features: [findings, topics, decisions, tasks, foundation, reports, marketplace]
+                    - name: company-enablement
+                        scope: company
+                        role: consumer
+                        parent: null
+                        path: ../company-enablement-kb
+                        features: [foundation, decisions, reports, marketplace]
         workspace:
           aliases:
             tkb: ../team-observability-kb
             okb: ../engineering-org-kb
+                        ckb: ../company-enablement-kb
         """,
     )
     write(kb / ".kb-config" / "automation.yaml", "level: 1\n")
@@ -126,6 +171,10 @@ def scaffold_personal_kb(workspace: Path) -> Path:
     )
     write(kb / ".nojekyll", "")
     write(
+        kb / "_kb-inputs" / "digested" / "2026" / "04" / ".gitkeep",
+        "",
+    )
+    write(
         kb / "_kb-tasks" / "focus.md",
         """
         # Focus
@@ -134,6 +183,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         """,
     )
     write(kb / "_kb-tasks" / "backlog.md", "# Backlog\n\n- [ ] Capture rollout lessons\n")
+    write(kb / "_kb-tasks" / "archive" / "2026" / "04.md", "# Archive\n\n- [x] Earlier setup validation\n")
     write(
         kb / "_kb-ideas" / "I-2026-04-24-shared-adoption.md",
         """
@@ -145,6 +195,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         **Sparring rounds**: 1
         """,
     )
+    write(kb / "_kb-ideas" / "archive" / "2026" / ".gitkeep", "")
     write(
         kb / "_kb-decisions" / "D-2026-04-24-harness-tiers.md",
         """
@@ -155,6 +206,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         - **Stakeholders**: @alice
         """,
     )
+    write(kb / "_kb-decisions" / "archive" / "2026" / ".gitkeep", "")
     write(
         kb / "_kb-references" / "topics" / "shared-kb-adoption.md",
         """
@@ -174,7 +226,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         """,
     )
     write(
-        kb / "_kb-references" / "findings" / "2026-04-24-proof-strip.md",
+        kb / "_kb-references" / "findings" / "2026" / "2026-04-24-proof-strip.md",
         """
         # Finding: Proof strip matters
 
@@ -186,8 +238,48 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         Show install, scaffold, promote, digest, and report in one visible proof path.
         """,
     )
+    write(
+        kb / "_kb-references" / "strategy-digests" / "2026" / ".last-progress-platform-signals",
+        "2026-04-24T08:00:00Z\n",
+    )
     write(kb / "_kb-references" / "foundation" / "vmg.md", "# Vision, Mission, Goals\n")
+    write(
+        kb / "_kb-notes" / "2026" / "04-24-adoption-sync.md",
+        """
+        ---
+        type: meeting
+        date: 2026-04-24
+        attendees: [@alice, @team]
+        workstream: platform-signals
+        source: acceptance fixture
+        authors: [@alice]
+        ---
+
+        # Note: Adoption sync
+
+        ## TL;DR
+
+        The shared adoption proof needs one visible path from capture to report.
+
+        ## Discussion / Notes
+
+        Walk through install, setup, promote, digest, and reporting without hidden steps.
+
+        ## Decisions made
+
+        - Link to D-2026-04-24-harness-tiers
+
+        ## Action items
+
+        - Validate the flexible layer model in the acceptance fixture.
+
+        ## Open questions
+
+        - Which features should default on for team-only adoption?
+        """,
+    )
     write(kb / "_kb-references" / "reports" / f"{DATE}-personal-brief-v1-0.html", html_report("Personal Acceptance Brief", "Fixture artifact for personal-layer verification."))
+    write(kb / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals-v1-0.html", html_report("Progress Report", "Fixture artifact for progress-report verification."))
     write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T09:00:00Z | start-day | personal | briefing created |\n")
     return kb
 
@@ -198,12 +290,30 @@ def scaffold_team_kb(workspace: Path) -> Path:
     write(kb / "README.md", "# team-observability-kb\n")
     write(kb / "_kb-tasks" / "focus.md", "# Focus\n\n- [ ] Review promoted material\n")
     write(kb / "_kb-tasks" / "backlog.md", "# Backlog\n")
-    write(kb / "_kb-decisions" / "archive" / ".gitkeep", "")
+    write(kb / "_kb-tasks" / "archive" / "2026" / "04.md", "# Archive\n")
+    write(kb / "_kb-decisions" / "archive" / "2026" / ".gitkeep", "")
+    write(kb / "_kb-ideas" / "archive" / "2026" / ".gitkeep", "")
     write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T10:00:00Z | review | team | reviewed promoted item |\n")
     for contributor in ("alice", "alex-chen", "nina-ross"):
-        write(kb / contributor / "_kb-inputs" / ".gitkeep", "")
-        write(kb / contributor / "_kb-references" / "findings" / f"{DATE}-{contributor}-note.md", f"# Finding: {contributor} note\n")
+        write(kb / contributor / "_kb-inputs" / "digested" / "2026" / "04" / ".gitkeep", "")
+        write(kb / contributor / "_kb-references" / "findings" / "2026" / f"{DATE}-{contributor}-note.md", f"# Finding: {contributor} note\n")
         write(kb / contributor / "_kb-references" / "topics" / "team-alignment.md", "# Topic: Team alignment\n")
+    write(
+        kb / "_kb-notes" / "2026" / "04-24-review.md",
+        """
+        ---
+        type: note
+        date: 2026-04-24
+        authors: [@alice]
+        ---
+
+        # Note: Promotion review
+
+        ## TL;DR
+
+        Team review stays shared even when findings remain contributor-scoped.
+        """,
+    )
     write(kb / "reports" / f"{DATE}-team-review-v1-0.html", html_report("Team Promotion Review", "Fixture artifact for team-layer verification."))
     return kb
 
@@ -214,13 +324,25 @@ def scaffold_org_kb(workspace: Path) -> Path:
     write(kb / "README.md", "# engineering-org-kb\n")
     write(kb / "_kb-tasks" / "focus.md", "# Focus\n\n- [ ] Review cross-team synthesis\n")
     write(kb / "_kb-tasks" / "backlog.md", "# Backlog\n")
-    write(kb / "_kb-decisions" / "archive" / ".gitkeep", "")
+    write(kb / "_kb-tasks" / "archive" / "2026" / "04.md", "# Archive\n")
+    write(kb / "_kb-decisions" / "archive" / "2026" / ".gitkeep", "")
     write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T11:00:00Z | digest | org | synthesized team updates |\n")
     for team in ("platform-observability", "agent-enablement"):
-        write(kb / team / "_kb-inputs" / ".gitkeep", "")
-        write(kb / team / "_kb-references" / "findings" / f"{DATE}-{team}.md", f"# Finding: {team}\n")
+        write(kb / team / "_kb-inputs" / "digested" / "2026" / "04" / ".gitkeep", "")
+        write(kb / team / "_kb-references" / "findings" / "2026" / f"{DATE}-{team}.md", f"# Finding: {team}\n")
         write(kb / team / "_kb-references" / "topics" / "org-synthesis.md", "# Topic: Org synthesis\n")
     write(kb / "reports" / f"{DATE}-org-brief-v1-0.html", html_report("Org Adoption Brief", "Fixture artifact for org-layer verification."))
+    return kb
+
+
+def scaffold_company_kb(workspace: Path) -> Path:
+    kb = workspace / "company-enablement-kb"
+    write(kb / "AGENTS.md", "# Company KB\n")
+    write(kb / "README.md", "# company-enablement-kb\n")
+    write(kb / "_kb-decisions" / "archive" / "2026" / ".gitkeep", "")
+    write(kb / "_kb-references" / "foundation" / "vmg.md", "# Company guidance\n")
+    write(kb / "reports" / f"{DATE}-company-brief-v1-0.html", html_report("Company Guidance Brief", "Fixture artifact for company-layer verification."))
+    write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T12:00:00Z | digest | company | published updated guidance |\n")
     return kb
 
 
@@ -257,17 +379,19 @@ def main() -> int:
     personal = scaffold_personal_kb(workspace)
     team = scaffold_team_kb(workspace)
     org = scaffold_org_kb(workspace)
+    company = scaffold_company_kb(workspace)
 
     for kb, title in (
         (personal, "Personal KB"),
         (team, "Team KB"),
         (org, "Org KB"),
+        (company, "Company KB"),
     ):
         generate_overviews(kb, title)
 
     remotes_dir = workspace / "git-remotes"
     remotes_dir.mkdir(parents=True, exist_ok=True)
-    for repo in (personal, team, org):
+    for repo in (personal, team, org, company):
         init_git_repo(repo, remotes_dir)
 
     print(f"Acceptance fixture ready at {workspace}")

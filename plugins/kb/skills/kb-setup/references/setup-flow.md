@@ -13,32 +13,33 @@ For the deterministic acceptance baseline used to verify real onboarding and tea
 
 ## Interview
 
-Run the 12-question interview (see SKILL.md). Validate each answer before proceeding to the next block.
+Run the 12-block interview (see SKILL.md). Validate each answer before proceeding to the next block.
 
 ## Repo creation / onboarding
 
-For each repo (personal / team / org-unit / marketplace), offer:
+For each declared layer or marketplace repo, offer:
 
 - `create` — `mkdir` + `git init` + remote setup + initial commit.
 - `onboard` — ask for path; verify it's a git repo.
-- `skip` (except personal, which is required).
+- `skip` (except that at least one contributor-capable layer is required).
 
-## Scaffold — personal KB
+## Scaffold — anchor contributor layer
 
 Create these directories (idempotent):
 
 ```
 _kb-inputs/
-_kb-inputs/digested/
+_kb-inputs/digested/YYYY/MM/
 _kb-references/topics/
-_kb-references/findings/
+_kb-references/findings/YYYY/
 _kb-references/foundation/
 _kb-references/reports/
 _kb-references/legacy/
+_kb-notes/YYYY/
 _kb-decisions/
-_kb-decisions/archive/
+_kb-decisions/archive/YYYY/
 _kb-tasks/
-_kb-tasks/archive/
+_kb-tasks/archive/YYYY/
 .kb-log/
 _kb-workstreams/
 ```
@@ -60,10 +61,12 @@ Instantiate these files from `templates/`:
 - `_kb-tasks/backlog.md` ← `backlog.md`
 - Per workstream: `_kb-workstreams/<name>.md` ← `workstream.md`
 - Per theme: `_kb-references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
+- `index.html`, `dashboard.html`, `.nojekyll`
 
-## Scaffold — team KB (if creating new)
+## Scaffold — additional shared contributor layer
 
 ```
+_kb-notes/
 _kb-decisions/
 _kb-decisions/archive/
 _kb-tasks/archive/
@@ -76,8 +79,9 @@ _kb-tasks/archive/
 - `AGENTS.md` ← `team-kb-AGENTS.md`
 - `README.md` ← `team-kb-README.md`
 - `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`
+- `index.html`, `dashboard.html`, `.nojekyll`
 
-## Scaffold — org-unit KB
+## Scaffold — synthesis or consumer layer
 
 ```
 _kb-decisions/
@@ -90,6 +94,7 @@ _kb-workstreams/
 - `AGENTS.md` ← `org-kb-AGENTS.md`
 - `README.md` ← `org-kb-README.md`
 - `_kb-tasks/focus.md`, `_kb-tasks/backlog.md`
+- `index.html`, `dashboard.html`, `.nojekyll`
 
 ## Scaffold — workspace root
 

@@ -25,9 +25,9 @@ Matches are the count of ✅ "yes" answers across Q1-Q5.
 | Stage | Focus |
 |-------|-------|
 | Capture (`/kb [input]`) | Relevance to declared themes |
-| Digest (`/kb digest team`) | What changed the user's position? |
+| Digest (`/kb digest [layer]`) | What changed the receiving layer's position? |
 | Promote (`/kb promote`) | Team-relevant? Evidence-backed? Decision-ready? |
-| Review in team context | Strategic value, wrong-direction risk, cross-reference |
+| Review in destination contributor context | Strategic value, wrong-direction risk, cross-reference |
 | Publish (`/kb publish`) | Generalizable? Safe? Reusable? Marketplace-tools only? |
 
 ## Transparency rules

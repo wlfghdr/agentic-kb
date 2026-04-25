@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v4.1.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.0.0-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -32,7 +32,7 @@ If any of that sounds familiar — this is the piece of the fix we've been build
 
 One command — **`/kb`** — across any agentic IDE. A layered knowledge system where:
 
-- **Knowledge flows up.** Promote from personal → team → org → marketplace.
+- **Knowledge flows up.** Promote from the anchor layer into named contributor layers.
 - **Context flows down.** Vision, mission, goals, and decisions digest back into your daily work automatically.
 - **An evaluation gate at every boundary.** Five questions. Nothing silently filed. Nothing silently dropped. Every decision traced and logged.
 - **Decisions, ideas, and tasks are first-class objects** with lifecycles — not comments lost in a chat.
@@ -46,7 +46,7 @@ The core adoption question is simple: can a skeptical team prove the shared loop
 The narrow proof path is now:
 
 1. install into one documented harness surface
-2. scaffold a personal, team, and org workspace
+2. scaffold one anchor layer plus one adjacent shared layer
 3. capture one source and inspect the resulting files in git
 4. promote once, digest once, and inspect the shared state
 5. regenerate index, dashboard, and report artifacts
@@ -68,18 +68,19 @@ That is the claim surface. Architecture matters, but adoption only gets real onc
 
 `agentic-kb` gives you a layered knowledge system that agents maintain. Every piece of material passes a **five-question evaluation gate** before it persists. You capture — the agent triages, files, cross-links, and keeps everything current.
 
-### Five layers, one command
+### Flexible layers, one command
 
 ```
-L1 Personal  ──promote──▶  L2 Team  ──promote──▶  L3 Org-Unit  ──publish──▶  L4 Marketplace
-(required)    ◀──digest──           ◀──digest──              ◀──install──
-                                                                                 ▲
-                                                                                 │
-                                                                          L5 Company
-                                                                          (top-down)
+anchor layer  ──promote──▶  team layer  ──promote──▶  org layer  ──promote──▶  company layer
+ (any scope)   ◀──digest──               ◀──digest──             ◀──digest──
+
+layer marketplace(s) attach where needed:
+
+team layer ──publish──▶ team marketplace
+org layer  ──publish──▶ org marketplace
 ```
 
-Only **L1** is required. Higher layers are optional and declared in the user's config.
+At least one **contributor-capable layer** is required. A personal layer is recommended, but not mandatory. The user's anchor layer holds `.kb-config/layers.yaml`, and every other layer is declared there with `scope`, `role`, `parent`, `features`, `marketplace`, and `connections`.
 
 There is exactly one user-facing command: **`/kb`**. The core plugin ships stable knowledge-ops flows, and optional draft skills extend the same command with roadmap and journey subcommands when adopters opt in via config.
 
@@ -88,8 +89,11 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb                        → status
 /kb [text/URL/path]        → capture + evaluate
 /kb review                 → process inputs/
-/kb promote [file]         → promote to team KB and complete local team review
-/kb digest team            → pull team changes
+/kb promote [file] [layer] → promote to the next or named contributor layer
+/kb digest [layer]         → pull parent-layer changes
+/kb digest connections     → pull linked repo / tracker deltas
+/kb note [text]            → create a working note
+/kb note meeting [topic]   → start a meeting note
 /kb idea [text]            → create an idea (seed)
 /kb develop [idea]         → sparring session on an idea
 /kb decide [description]   → open a decision
@@ -97,6 +101,7 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb start-day              → morning briefing
 /kb end-week               → Friday 15:00 summary
 /kb present [topic]        → versioned HTML presentation (light + dark)
+/kb report progress [scope]→ cross-source progress report
 /kb setup                  → interactive onboarding
 
 # Optional draft flows (installed with the plugin, not scaffolded by default)
@@ -266,7 +271,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v4.1.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.0.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |

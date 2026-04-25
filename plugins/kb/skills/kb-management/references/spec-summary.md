@@ -1,134 +1,97 @@
 # Spec Summary — for the kb-management skill
 
-Condensed reference for the skill's runtime. For the full spec, see the `agentic-kb` repo's `docs/`.
+Condensed runtime reference for the skill. For the full spec, see `docs/REFERENCE.md`.
 
-## Layers
+## Layer graph
 
-| L | Name | Required | Repo scope |
-|---|------|----------|-----------|
-| 1 | Personal | ✅ | one per user |
-| 2 | Team | ❌ | shared team repo, contributor dirs |
-| 3 | Org-Unit | ❌ | shared org-unit repo |
-| 4 | Marketplace | ❌ | skills/agents/plugins repo |
-| 5 | Company | ❌ | consumed top-down |
+- A workspace declares a named `layers:` list in `.kb-config/layers.yaml`.
+- One layer is the `workspace.anchor-layer`.
+- Each layer declares `scope`, `role`, `parent`, `path`, `features`, and optional `marketplace` or `connections`.
+- `promote` walks upward through `parent`.
+- `digest` walks downward from parent layers or reads declared `connections`.
+- `role: consumer` means read-down only; promote or publish must refuse.
 
-## Personal KB layout
+## Anchor layer layout
 
-```
-my-kb/
+```text
+anchor-layer/
 ├── .kb-config/
 │   ├── layers.yaml
 │   ├── automation.yaml
 │   └── artifacts.yaml
 ├── _kb-inputs/
-│   └── digested/YYYY-MM/
+│   └── digested/YYYY/MM/
 ├── _kb-references/
-│   ├── topics/              living, inline changelog
-│   ├── findings/            YYYY-MM-DD-slug.md, immutable
-│   ├── foundation/          me, context, vmg, sources, stakeholders, naming
+│   ├── topics/
+│   ├── findings/YYYY/
+│   ├── foundation/
+│   ├── strategy-digests/YYYY/
 │   ├── legacy/
-│   └── reports/             generated HTML
+│   └── reports/
+├── _kb-notes/YYYY/
 ├── _kb-ideas/
-│   ├── I-YYYY-MM-DD-slug.md
-│   └── archive/
+│   └── archive/YYYY/
 ├── _kb-decisions/
-│   ├── D-YYYY-MM-DD-slug.md   active decisions at root
-│   └── archive/
+│   └── archive/YYYY/
 ├── _kb-tasks/
-│   ├── focus.md             max 6 items
+│   ├── focus.md
 │   ├── backlog.md
-│   └── archive/YYYY-MM.md
+│   └── archive/YYYY/
 ├── .kb-log/YYYY-MM-DD.log
-├── .kb-scripts/                 optional utility scripts
-├── _kb-workstreams/<name>.md
-├── index.html                   auto-generated artifact index
-└── dashboard.html               auto-generated command center
+├── .kb-scripts/
+├── _kb-workstreams/
+├── index.html
+└── dashboard.html
 ```
 
-## Team KB layout
+## Shared contributor layer layout
 
-```
-team-kb/
-├── _kb-decisions/{archive}/          RACIs required
-├── _kb-tasks/{focus,backlog}.md        RACIs required
-├── .kb-log/
-├── <contributor>/
-│   ├── _kb-inputs/digested/YYYY-MM/
+```text
+shared-layer/
+├── _kb-decisions/
+├── _kb-tasks/
+├── _kb-notes/
+├── _kb-references/foundation/
+├── alice/
+│   ├── _kb-inputs/digested/YYYY/MM/
 │   └── _kb-references/{topics,findings}/
+└── bob/
 ```
 
-## Org-Unit KB layout
-
-Same as team minus per-contributor dirs. Adds `_kb-workstreams/`.
-
-## Marketplace layout
-
-See `agentic-kb` spec `docs/REFERENCE.md` §9 Marketplace.
-
-## Config file keys
-
-### `.kb-config/layers.yaml`
+## Key config shape
 
 ```yaml
 workspace:
   root: /path/to/workspace
   user: alice
-  aliases: { kb: my-kb, tk: team-kb }
+  anchor-layer: alice-personal
+  aliases: { personal: alice-personal, team: team-observability }
 
 layers:
-  personal:
+  - name: alice-personal
+    scope: personal
+    role: contributor
+    parent: team-observability
     path: .
+    features: [inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports]
     workstreams:
-      - { name: <string>, themes: [<keyword>...] }
-  teams: [{ name, path, contributor-dir }]
-  org-unit: { name, path }
-  marketplace: { enabled, repo, path }
-  company: { enabled, sources: [] }
-```
-
-### `.kb-config/automation.yaml`
-
-```yaml
-level: 1 | 2 | 3
-schedules: { <ritual>: <cron-ish string> }
-auto-promote: { enabled, confidence-threshold, require-evidence, exclude-topics }
-commit-push: { auto-commit, auto-push, respect-branch-protection }
-notifications: { channel: terminal|slack|email|none }
-```
-
-### `.kb-config/artifacts.yaml`
-
-```yaml
-styling:
-  source: builtin | website | template
-  reference-url: <string>
-  reference-file: <path>
-  themes: [light, dark]
-  default-theme: auto | light | dark
-watermark:
-  enabled: true
-  position: intro-slide | every-slide
-  format: "v{version} · {date}"
-  style: subtle | normal
-appendix:
-  changelog: true
-  sources: true
-  hidden-by-default: false
-output:
-  directory: _kb-references/reports
-  filename-template: "{slug}-v{version}.html"
-github-pages:
-  enabled: false
-  branch: gh-pages
-  index-file: index.html
+      - { name: platform-signals, themes: [caching, reliability, observability] }
+  - name: team-observability
+    scope: team
+    role: contributor
+    parent: null
+    path: ../team-observability
+    features: [findings, topics, decisions, tasks, notes, foundation, reports]
+    contributor-mode:
+      notes: shared
 ```
 
 ## Log line format
 
-```
+```text
 HH:MM:SSZ | <op> | <scope> | <target> | <details>
 ```
 
-Ops: `capture`, `digest`, `publish`, `promote`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-*`, `automation-failure`, `correction`.
+Ops include: `capture`, `digest`, `digest-connections`, `promote`, `publish`, `note`, `note-end`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-*`, `automation-failure`, `correction`.
 
-Scopes: `personal`, `team-kb`, `team-kb/<contrib>`, `org-unit`, `marketplace`, `personal→team`, `team→personal`, `personal→marketplace`, `workspace`.
+Scopes are descriptive, not numbered: `personal`, `team`, `org-unit`, `company`, `workspace`, `personal→team`, `team→personal`, `team→company`, `marketplace`, `connections`.

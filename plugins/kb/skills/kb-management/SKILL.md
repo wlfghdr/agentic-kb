@@ -1,12 +1,10 @@
 ---
 name: kb-management
-description: Lean, layered knowledge management driven by the `/kb` command. Captures material into a personal KB, routes to workstreams, applies a five-question evaluation gate, tracks decisions and ideas as first-class objects, manages tasks, generates versioned HTML artifacts, and promotes content across layers (personal, team, org-unit, marketplace). Triggered by `/kb` and knowledge-related phrases.
-version: 4.0.0
+description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, and tasks as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
+version: 5.0.0
 triggers:
   - "/kb"
   - "knowledge base"
-  - "personal kb"
-  - "team kb"
   - "capture"
   - "digest"
   - "promote"
@@ -20,8 +18,7 @@ triggers:
   - "decide"
   - "idea"
   - "develop"
-  - "goal"
-  - "knowledge management"
+  - "note"
   - "present"
   - "report"
 tools:
@@ -46,14 +43,15 @@ license: Apache-2.0
 
 # Skill: KB Management
 
-This skill implements the `agentic-kb` specification. It operates on the user's workspace — a directory containing one required **personal KB** and any number of optional **team**, **org-unit**, **marketplace**, and **company** layers. See `references/spec-summary.md` for the condensed architecture.
+This skill implements the `agentic-kb` specification. It operates on the user's workspace as a **layer graph**: one anchor layer with `.kb-config/`, plus any number of additional contributor or consumer layers connected by `parent` edges.
 
 ## When to invoke
 
 Invoke this skill whenever the user:
 
-- Types `/kb` followed by text, a URL, a file path, or a subcommand (`review`, `promote`, `publish`, `digest team`, `task`, `todo`, `idea`, `develop`, `decide`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`).
-- Describes work that implies capture (*"I just read this paper…"*), decision (*"we need to decide…"*), idea development (*"I've been thinking about…"*), or promotion (*"this should go to the team"*) — offer to run the corresponding `/kb` action first.
+- Types `/kb` followed by text, a URL, a file path, or a subcommand.
+- Describes work that implies capture, digestion, promotion, publication, decision-making, note-taking, or artifact generation.
+- Needs a read-only triage summary across the current layer graph.
 
 ## The single command model
 
@@ -61,188 +59,100 @@ There is **one** user-facing command: `/kb`. Infer layer and action from context
 
 | Input | Action |
 |---|---|
-| URL / pasted text | Capture to L1 |
-| Path inside `my-kb/` | L1 operation |
-| Path inside a team repo | Team operation |
-| Explicit keyword (`team`, `org`, `publish`) | Disambiguates |
-| `.kb-config/layers.yaml` | Declares which dirs are which layer |
+| URL or pasted text | Capture into the current layer via the evaluation gate |
+| File path inside a known layer | Operate in that layer context |
+| Explicit layer name | Route to the named target layer |
+| Explicit subcommand (`review`, `promote`, `digest`, `task`, `note`, `report`, ...) | Run that flow |
+| Bare `/kb` | Read-only triage scan |
+| `.kb-config/layers.yaml` | Declares the layer graph, roles, parent edges, marketplaces, and connections |
 
 Full command reference: `references/command-reference.md`.
 
-## Core rules (always apply)
+## Core rules
 
-1. **Run the evaluation gate** before persisting anything. Five questions:
-   1. Does this strengthen a position?
-   2. Does this inform a decision?
-   3. Would the user reference this again?
-   4. Is this actionable?
-   5. Is this materially new compared to existing topics?
-   Score = count of "yes" answers across Q1-Q5. Score 0 → discard + log `skipped` with rationale. Score 1–2 → finding only (offer idea creation if novelty detected). Score 3+ → finding + topic update + possibly new decision or idea.
+1. **Run the evaluation gate before persistence.** Score material against the five gate questions. The score is the count of yes answers. Q4 + Q2 form the lighter note gate.
+2. **Set and preserve maturity.** New findings and topics must carry `**Maturity**:`. `raw` means weak or single-signal, `emerging` means accepted and worth revisiting, `durable` means ready to promote or cite broadly.
+3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only.
+4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, and meeting notes are shared unless the layer config says otherwise.
+5. **Log every operation.** Write to `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` in the canonical `HH:MM:SSZ | operation | scope | target | details` format.
+6. **Regenerate live overviews after mutation.** `dashboard.html` and the root `index.html` are part of the same mutation as capture, review, promote, publish, digest, decide, note-end, present, report, and ritual flows.
+7. **Never mutate silently.** The response must make the action mode obvious: read-only analysis, proposed mutation, or applied mutation.
+8. **Task creation and closure are explicit.** Propose task lines when material is actionable; do not add or archive them silently. External completion signals can reconcile tasks, but archival still needs confirmation.
+9. **Next steps are mandatory.** End every response with 1–3 concrete follow-ups.
+10. **Offer commit/push/PR after substantive change.** Respect branch protection and never force-push silently.
 
-   **Set `**Maturity**:` from the gate outcome** when writing the finding/topic: score 1–2 → `raw`; score 3+ → `emerging`. Only promote to `durable` on explicit user confirmation ("this is ready to share") or when a second corroborating capture lands. The `Promotions due` triage signal and audit rule K1 read this field — never leave it blank.
-
-   Strategic alignment: when VMG is declared in `_kb-references/foundation/vmg.md`, check accepted material against it. VMG alignment does not change the numeric gate score; use it to prioritize accepted material. Material contradicting a goal is captured + flagged for decision review.
-
-2. **Always suggest next steps.** Every operation output ends with 1–3 concrete follow-ups (promote, notify, update topic, generate presentation).
-
-3. **Route to workstreams.** Analyze content against the workstream themes in `.kb-config/layers.yaml`. If cross-workstream, flag the connection.
-
-4. **Log every operation** to `.kb-log/YYYY-MM-DD.log` in the format `HH:MM:SSZ | op | scope | target | details`.
-
-5. **Append inline changelog** entries on topic and foundation file updates (newest first, under a `---` separator).
-
-6. **Never silent failures.** If an operation fails, surface it — never mask.
-
-7. **Offer commit/push/PR** after substantive changes. Respect branch protection (open a PR instead of pushing to a protected branch). Never force-push silently. Keep CI green.
-
-8. **Presentation-worthy detection.** When a TODO contains *present, pitch, demo, share, slide, meeting prep*, add 🎤 and offer `/kb present`.
-
-9. **Auto-regenerate live overviews after every mutation.** After any state-mutating operation (`capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, `present`, `report`, `end-day`, `end-week`, and automation-loop writes), regenerate `dashboard.html` and the root artifact `index.html` before the response/commit completes. Treat these two files as part of the same mutation, not as a later optional step.
-
-10. **Regenerate root `index.html` and `dashboard.html`** whenever a mutation creates or modifies KB state, including the live overview refresh above. Run `python3 scripts/generate-index.py REPO_ROOT --title "..." --description "..."` and `python3 scripts/generate-dashboard.py REPO_ROOT --title "..." --description "..."` (or the `.kb-scripts/` copies). `/kb status --refresh-overviews` remains available as a manual repair/rebuild trigger, but freshness no longer depends on it. `index.html` serves as the GitHub Pages landing page (artifact inventory); `dashboard.html` is the owner-facing command center (focus, ideas, decisions, topics, inputs, recent findings/digests/reports, workstreams, opt-in GitHub/Jira).
-
-11. **Task handling discipline — apply on every `/kb` invocation, not only `/kb task`.** Tasks are first-class and the user's most fragile surface. Rules:
-
-    a. **Surface the top task.** Every response that isn't a pure status/read query ends its next-step suggestions with the current top item from `_kb-tasks/focus.md` if one exists. Format: `Next up: <focus item>` (single line, no commentary).
-
-    b. **Never create a task silently.** When the evaluation gate marks captured material as actionable (Q4 = yes), do **not** auto-append to `focus.md` or `backlog.md`. Propose the exact task line (title, workstream, optional RACI) and ask for confirmation. On confirm, add to `backlog.md` by default — only add to `focus.md` if the user says "focus" or explicitly picks it.
-
-    c. **Detect external completion.** Before `start-day`, `end-day`, `start-week`, `end-week`, `status`, or any triage scan, run this reconciliation pass:
-        - For every open task in `focus.md` / `backlog.md`, look for completion signals since the task's last mtime:
-          - closed Jira ticket referenced in the task body (via `jira-sync` if wired up)
-          - merged PR referenced in the task body (via `gh` if wired up)
-          - commits in any declared layer whose message or trailer references the task's slug / ID
-          - a shared team/org task file with the same slug now in `_kb-tasks/archive/`
-        - If found, mark the task `status: done` with a `completed-by: <source>` trailer and a `completed-at: <ISO>` timestamp, but **do not archive silently** — list the reconciled items and ask "Archive these N completed tasks?". On confirm, move to `_kb-tasks/archive/YYYY-MM.md` in one batch commit.
-
-    d. **Never delete a task.** Only move to `_kb-tasks/archive/YYYY-MM.md` with a `status:` trailer (`done`, `dropped`, `superseded-by: <id>`). Deletion requires `/kb task purge <id>` and confirmation.
-
-    e. **Shared-task safety.** Tasks in team/org KBs with a RACI **may only be closed by R or A**, or with confirmation from someone named in the RACI, or when an explicit external signal (merged PR, closed ticket) is found. In all other cases, propose the close and wait for user confirmation — never auto-close a shared task.
-
-    f. **No destructive reorder without diff.** When `end-day` / `end-week` reshuffles `focus.md` / `backlog.md`, show the diff and ask before writing.
-
-    g. **Stale signal, not stale deletion.** Backlog items untouched > 14 days get a `stale: true` annotation on the ritual pass. Annotation only — no removal.
-
-    h. **Preserve provenance.** Every task gets created with `source:` (the finding / decision / input that spawned it) and `created: <ISO>`. Retain across moves (backlog → focus → archive).
-
-## Directory contract (personal KB)
-
-```
-my-kb/
-├── .kb-config/               # all KB config lives here
-│   ├── layers.yaml           # layer declaration, workspace aliases, VMG
-│   ├── automation.yaml       # automation level + schedules
-│   └── artifacts.yaml        # HTML artifact styling
-├── _kb-inputs/                  # the inbox; digested/YYYY-MM/ archive
-├── _kb-references/
-│   ├── topics/              # living; inline changelog required
-│   ├── findings/            # YYYY-MM-DD-slug.md; immutable
-│   ├── foundation/          # me, context, vmg, stakeholders, sources, naming
-│   ├── strategy-digests/    # per-layer digest findings + `.last-digest` watermark; created on first `/kb digest team`
-│   ├── legacy/              # archived topics after audit
-│   └── reports/             # generated HTML artifacts
-├── _kb-ideas/
-│   ├── I-YYYY-MM-DD-slug.md # active ideas (seed/growing/ready)
-│   └── archive/             # shipped + archived
-├── _kb-decisions/
-│   ├── D-YYYY-MM-DD-slug.md # active decisions at root
-│   └── archive/
-├── _kb-tasks/
-│   ├── focus.md             # max 6 items
-│   ├── backlog.md
-│   └── archive/YYYY-MM.md
-├── .kb-log/YYYY-MM-DD.log
-├── .kb-scripts/                    # optional utility scripts
-├── _kb-workstreams/<name>.md
-└── index.html                      # auto-generated artifact index (GitHub Pages root)
-```
-
-See `references/spec-summary.md` §Workspace for team and org-unit KB shape.
-
-## Flow primitives
+## Layer-aware flow primitives
 
 | Flow | Command | What it does |
 |------|---------|--------------|
-| Capture | `/kb [input]` | Assess via gate; write finding; update topic/decision; archive input; route to workstream; offer idea if novelty detected |
+| Capture | `/kb [input]` | Assess via gate; write finding or note; update topic/decision; route to workstream |
 | Review | `/kb review` | Process all pending items in `_kb-inputs/` |
-| Promote | `/kb promote [file]` | L1 → L2 intake + immediate L2 review for local team KBs: stage in the contributor `_kb-inputs/`, process in team context, archive under `_kb-inputs/digested/YYYY-MM/`, and leave the reviewed result in `_kb-references/` |
-| Promote org | `/kb promote org [file]` | L2 → L3 |
-| Publish | `/kb publish [file]` | L1/L2/L3 → L4 marketplace; packages as SKILL.md; opens PR |
-| Digest team | `/kb digest team` | Pull team changes since watermark; distill new findings; incorporate team VMG updates into personal `vmg.md` |
-| Digest org | `/kb digest org` | L3 → L1 equivalent; incorporate org VMG updates into personal `vmg.md` |
-| Sync team | `/kb sync team` | Cross-reference contributor topics; flag conflicts |
-| Diff team | `/kb diff team` | Show new items per contributor |
-| Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog (aliases: todo, tasks) |
-| Idea | `/kb idea [text]` | Create a new idea (`**Stage**: seed`) |
-| Develop | `/kb develop [idea]` | Sparring: assumptions, contradictions, gaps, convergence |
-| Decide | `/kb decide [desc]` / `/kb decide resolve [D-id]` | Open/resolve a decision; update affected topics |
-| Start-day / End-day / Start-week / End-week | rituals | See `references/rituals.md` |
-| Present | `/kb present [topic/file]` | HTML presentation — see `references/html-artifacts.md` |
-| Report | `/kb report [scope]` | HTML report (personal / team / org) |
-| Browse / Install | `/kb browse` / `/kb install [skill]` | Marketplace queries |
-| Audit | `/kb audit` | Contradictions, gaps, staleness. Runs KB-wide checks and delegates scope-specific audits to `kb-roadmap` (mappings · timeline · scope · structural) and `kb-journeys` (structure · citations · coverage) when those skills are installed. See `references/audit.md`. |
-| Status | `/kb status` | Pending inputs, recent activity, task counts, goal status |
+| Promote | `/kb promote [file] [layer]` | Promote to a named contributor-capable layer, or the next contributor-capable parent layer |
+| Publish | `/kb publish [file] [layer]` | Package reusable knowledge as a skill and publish it to the target layer marketplace |
+| Digest layer | `/kb digest [layer]` | Pull changes from a parent or adjacent layer |
+| Digest connections | `/kb digest connections` | Pull deltas from configured product repos and trackers |
+| Sync | `/kb sync [layer]` | Cross-reference contributor-scoped topics or findings |
+| Diff | `/kb diff [layer]` | Show new material per contributor or connection |
+| Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog |
+| Note | `/kb note [text]` / `/kb note meeting [topic]` / `/kb note end` | Capture general or meeting notes and surface follow-on changes |
+| Idea | `/kb idea [text]` | Create a seed idea |
+| Develop | `/kb develop [idea]` | Spar on assumptions, contradictions, and convergence |
+| Decide | `/kb decide [desc]` / `/kb decide resolve [D-id]` | Open or resolve a decision |
+| Present | `/kb present [topic/file]` | Generate a versioned HTML presentation |
+| Report | `/kb report [scope]` | Generate a layer or topic report |
+| Progress report | `/kb report progress [scope]` | Generate the multi-source progress narrative |
+| Rituals | `/kb start-day`, `/kb end-day`, `/kb start-week`, `/kb end-week` | Run composed briefings and summaries |
+| Audit | `/kb audit` | Check contradictions, staleness, gaps, and layer-shape drift |
+| Status | `/kb status` | Report pending work, connection drift, tasks, and recent activity |
 
 ## Output contract
 
 Every response follows the same shape:
 
 1. **What I did** — one short statement.
-2. **Where it went** — relative file paths.
-3. **Gate notes** — which of the five questions matched (if relevant).
+2. **Where it went** — relative paths inspected or written.
+3. **Gate notes** — which gate signals matched, or n/a.
 4. **Suggested next steps** — 1–3 concrete follow-ups.
 
-Additional collaboration-safe requirements:
+Additional requirements:
 
-- Make the action mode obvious: **read-only analysis**, **proposed mutation**, or **applied mutation**.
+- Make read-only vs proposed vs applied obvious.
 - If external material was fetched, say so explicitly.
-- If the action crossed layers (`promote`, `digest`, `publish`), show source and destination clearly.
-- Make uncertainty visible when the gate result is borderline, low-confidence, or partially duplicative.
-- Never blur an already-applied mutation into a mere suggestion, or a suggestion into an applied change.
-
-Keep output terse. The user reads it in a terminal/editor pane, not a full document.
+- If the action crossed layers, name source and destination.
+- Surface uncertainty when the gate result is borderline or duplicative.
 
 ## Safety rules
 
-- **Never promote content containing secrets** (API keys, tokens, credentials). Refuse with an explanation.
-- **Never publish with PII** to the marketplace. Check before packaging.
-- **Never auto-push to a protected branch.** Open a PR.
-- **Never force-push or rebase** without explicit confirmation.
-- **Always inform before fetching external URLs.** When a capture, report, presentation, or other artifact build needs external reads, show a preflight block first: declared source(s), scope or filters/time horizon, whether the run is read-only or apply-capable, and the exact output path(s). Fetch only after confirmation unless the user explicitly invoked the execution step or automation level 2/3 already authorizes it.
-- **Close HTML artifact work with a QA sweep, not just a file write.** Before reporting `/kb present`, `/kb report`, `/kb end-day`, or `/kb end-week` as complete, verify the generated artifact in its own output surface: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work. If any check fails, fix it or surface the run as incomplete.
+- Never promote or publish content containing secrets.
+- Never publish with PII to any layer marketplace.
+- Never publish or promote to a `role: consumer` layer.
+- Never auto-push to a protected branch.
+- When a capture, report, presentation, or progress run needs external reads, show a preflight block first: declared source(s), filters/time window, read-only vs apply intent, and output path(s).
+- Do not declare HTML artifact work complete until the generated artifact passes its QA sweep: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability is acceptable in both themes, and keyboard affordances still work.
 
 ## Promote semantics
 
 `/kb promote` is a composite applied mutation, not a mailbox drop.
 
-When promoting from L1 to a team KB that exists in the current workspace, the
-agent must:
+When promoting to a locally available contributor-capable layer, the agent must:
 
-1. run the promotion safety check (team relevance, secrets/PII, audience fit),
-2. copy the source artifact into the target contributor `_kb-inputs/`,
-3. immediately switch to the destination team context and apply the L2 review
-  gate there,
-4. write the reviewed result to the contributor `_kb-references/` area,
-5. archive the staged intake under `_kb-inputs/digested/YYYY-MM/`, and
-6. log both the cross-layer intake and the review result in the team KB's
-  `.kb-log/`.
+1. run the promotion safety check,
+2. stage the artifact into the target contributor scope when the target layer uses contributor-scoped inputs,
+3. complete the destination-layer review immediately,
+4. write the durable result into the destination references or shared primitive,
+5. archive the staged intake under the year-based digested path, and
+6. log both the intake and the reviewed result in the destination layer.
 
-Only stop after step 2 when the destination layer is unavailable locally,
-explicitly remote-only, or blocked by a concrete error. In those cases, say that
-the promote completed as an intake-only fallback and name the missing review
-step.
+When the selected target is `role: consumer`, refuse and point to the next valid contributor layer.
 
 ## Templates
 
 The templates this skill instantiates live in `templates/`:
 
-- `finding.md`, `topic.md`, `decision.md`, `idea.md`, `workstream.md`
+- `finding.md`, `topic.md`, `decision.md`, `idea.md`, `note.md`, `workstream.md`
 - `focus.md`, `backlog.md`
-- `index.html` — KB root landing page linking to dashboards, reports, topics, findings
-- `artifact-base.html`
-- `personal-kb-AGENTS.md`, `personal-kb-README.md`
-- `team-kb-AGENTS.md`, `team-kb-README.md`, `org-kb-AGENTS.md`, `org-kb-README.md`
-- `workspace-AGENTS.md`, `kb.prompt.md`, `kb.instructions.md`
+- `index.html`, `artifact-base.html`, `report.html`
+- workspace and KB scaffolding templates supplied by `kb-setup`
 - `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml`
 
 ## References (load on demand)
@@ -252,28 +162,12 @@ The templates this skill instantiates live in `templates/`:
 - `references/rituals.md` — the four rituals in detail.
 - `references/html-artifacts.md` — presentation/report generation contract.
 - `references/evaluation-gate.md` — the five-question filter, in depth.
-- `references/output-contract.md` — collaboration-safe wording and examples for read-only, proposed, and applied operations.
-
-These files are loaded **only when the specific behavior is invoked**. The skill's top-level instructions are sufficient for most operations.
+- `references/output-contract.md` — collaboration-safe wording and examples.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Reworked the behavioral spec for 5.0.0: `/kb` now operates on a flexible layer graph, notes became first-class, digests can read declared connections, and publish targets per-layer marketplaces instead of a fixed L4 | v5.0.0 flexible layer model |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release (composite `/kb promote` semantics + mandatory artifact preflight/QA contract) | v4.0.0 release alignment |
 | 2026-04-25 | Added explicit preflight-fetch summaries for artifact-driving external reads and a mandatory post-generation HTML QA sweep; bumped declared skill version to 3.5.0 | Generic learnings extracted from live roadmap and presentation feature work |
-| 2026-04-23 | HTML artifact contract sharpened: (a) default filename pattern for Family-2 artifacts is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every layer; (b) styling is explicitly layer-agnostic \u2014 the configured `styling.reference-file` is THE template for all Family-2 artifacts in that layer; (c) after any Family-2 create/update the skill MUST offer root-`index.html` regeneration and proceed only on confirmation (automation levels 2/3 run silently) | Real-world friction during ISO 42001 presentation generation |
-| 2026-04-22 | Added topics to the dashboard command-center contract and bumped the declared skill version to 3.4.3 so first-class accreting knowledge is visible in live overviews | Fixes #22 |
-| 2026-04-22 | Added `_kb-references/strategy-digests/` to the personal-KB directory contract + REFERENCE.md workspace layout + `kb-setup` Step 3 scaffold — it was already used in practice (digest findings + `.last-digest` watermark read by the upstream-drift triage signal) but wasn't declared | Fixes #19 |
-| 2026-04-22 | Bumped declared skill version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
-| 2026-04-22 | Simplified rule 9 to regenerate only `dashboard.html` and the root `index.html` after every mutation — dropped the three phantom overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals live in dashboard panels | Fixes #18 |
-| 2026-04-22 | Canonicalized the idea lifecycle field as `**Stage**:` across audit K5 and the command-reference blurb so dashboard and audit agree with the REFERENCE and template | Fixes #35 |
-| 2026-04-22 | `command-reference.md` now declares `/kb task` canonical (with `todo` / `tasks` aliases), documents `/kb idea` + `/kb develop` in a new Ideas section, and splits the stale-task triage rule into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching the bullet-in-file data model | Fixes #24 + #25 + #26 |
-| 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty (`materially new compared to existing topics`) and removed the obsolete VMG `+1` bonus from the core rule so the score is always the count of yes answers | Fixes #30 |
-| 2026-04-22 | Wired `**Maturity**:` into the capture flow so bare `/kb` triage and audit K1 can read the field they were designed for | Fixes #14 + #31 |
-| 2026-04-22 | Aligned open-decisions triage + audit K4 to read the template's `**Status**:` bold-bullet form so `/kb` triage finally counts open decisions | Fixes #15 |
-| 2026-04-22 | Restored the missing `idea.md` scaffold template so `/kb idea` has a canonical file source again | System test follow-up |
-| 2026-04-22 | Version aligned to 3.4.0 after documenting Codex CLI compatibility in the public setup/onboarding contract | Compatibility expansion |
-| 2026-04-22 | `/kb promote` now performs destination-layer review for local team KBs instead of stopping at the team inbox; version bumped to 3.3.0 | Team promote flow fix |
-| 2026-04-22 | Version aligned to 3.2.0 | Spec review |
-| 2026-04-20 | Made overview regeneration part of every state-mutating `/kb` operation and retained `/kb status --refresh-overviews` as a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

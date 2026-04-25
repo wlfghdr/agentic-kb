@@ -1,4 +1,4 @@
-# Automation configuration for the personal KB.
+# Automation configuration for the anchor layer.
 # Levels: 1 (manual), 2 (semi-auto), 3 (full-auto).
 
 level: 1

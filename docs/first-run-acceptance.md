@@ -1,10 +1,10 @@
 # First-Run Acceptance Path
 
-> **Version:** 0.1 | **Last updated:** 2026-04-20
+> **Version:** 5.0.0 | **Last updated:** 2026-04-25
 
-This document defines the canonical **first-run acceptance path** for `agentic-kb`.
+This document defines the canonical first-run acceptance path for `agentic-kb`.
 
-Its purpose is not to explain every option. Its purpose is to answer one practical question:
+Its purpose is narrow and practical:
 
 **Can a human or team lead verify, step by step, that a fresh user reached the same working contract as everyone else?**
 
@@ -12,18 +12,19 @@ If the answer is not clearly yes, onboarding is not good enough yet.
 
 ## What this acceptance path covers
 
-This path starts at **nothing installed** and ends at the first useful `/kb` outputs in a newly initialized workspace.
+This path starts at nothing installed and ends at the first useful `/kb` outputs in a newly initialized workspace.
 
 It is intentionally narrow:
 
 - one user,
-- one personal KB,
-- no team or org KB yet,
+- one anchor contributor layer,
+- one adjacent team layer to prove promotion and digestion,
 - one documented harness path at a time,
 - manual automation level,
-- builtin HTML styling.
+- builtin HTML styling,
+- no live tracker write-back.
 
-That narrowness is a feature. A team rollout needs one deterministic baseline before it can safely branch into variants.
+That narrowness is deliberate. A team rollout needs one deterministic baseline before it branches into single-layer, team-only, or multi-org variants.
 
 ## Contract: install vs. init
 
@@ -33,13 +34,13 @@ The first-run contract has exactly two phases.
 
 Goal: make `/kb setup` callable.
 
-This phase ends when the harness exposes the `kb` plugin or the equivalent installed skills.
+This phase ends when the harness exposes the `kb` plugin, command, or equivalent installed skill surface.
 
 ### Phase B — Initialize the workspace
 
 Goal: create a valid KB workspace and prove it produces the expected first outputs.
 
-This phase ends when `/kb status` and `/kb start-day` succeed in the new workspace.
+This phase ends when `/kb status`, `/kb start-day`, and one cross-layer promote or digest path succeed in the new workspace.
 
 ## Acceptance baseline
 
@@ -49,12 +50,14 @@ Use this baseline unless a test explicitly covers another variant.
 |------|----------|
 | User name | `alice` |
 | Workspace root | `<workspace>/demo-agentic-kb` |
-| Personal KB name | `alice-kb` |
+| Anchor layer | `alice-personal` |
+| Team layer | `team-observability` |
+| Team layer role | `contributor` |
 | Themes | `caching`, `reliability`, `observability` |
 | Workstream count | 1 |
-| Team KB | skipped |
-| Org KB | skipped |
-| Marketplace clone for authoring | skipped |
+| Extra org/company layers | skipped |
+| Marketplace repo | skipped |
+| Connections | skipped |
 | Automation | level 1 |
 | HTML styling | builtin |
 
@@ -133,20 +136,20 @@ Install phase is accepted when:
 
 - `.kiro/skills/kb/SKILL.md` or `~/.kiro/skills/kb/SKILL.md` exists,
 - `/kb setup` is available from the Kiro slash menu,
-- the installed skill matches the documented skill format (`name` + `description` frontmatter).
+- the installed skill matches the documented skill format.
 
 ### Codex CLI
 
 Install path:
 
-- clone this repo and run `scripts/install --target codex` (repo-local) or `--global`
-- in Codex CLI, operate from the initialized workspace so `AGENTS.md` and `.agents/skills/kb/SKILL.md` are in scope
+- clone this repo and run `scripts/install --target codex` or `scripts/install --target codex --global`,
+- in Codex CLI, operate from the initialized workspace so `AGENTS.md` and `.agents/skills/kb/SKILL.md` are in scope.
 
 Install phase is accepted when:
 
 - `.agents/skills/kb/SKILL.md` or `~/.agents/skills/kb/SKILL.md` exists,
-- Codex can operate against the same repo-local KB files without path/layout drift,
-- the docs call out that Codex uses `AGENTS.md` plus the skill picker or `$kb`, not a custom `/kb` slash command.
+- Codex can operate against the same repo-local KB files without path or layout drift,
+- the docs call out that Codex uses `AGENTS.md` plus the skill picker or `$kb`, not a custom slash command.
 
 ## Canonical first-run scenario
 
@@ -155,7 +158,7 @@ Install phase is accepted when:
 Required before starting:
 
 - `git` installed,
-- one first-class supported harness installed, or a Codex CLI workflow attached to an already initialized workspace,
+- one supported harness installed, or a Codex-compatible workflow attached to an initialized workspace,
 - write access to the target workspace path.
 
 Recommended:
@@ -201,19 +204,19 @@ Expected result:
 
 Use these answers:
 
-| Question | Baseline answer |
-|----------|-----------------|
+| Question block | Baseline answer |
+|----------------|-----------------|
 | Your name | `alice` |
 | Role and themes | `engineer on distributed systems — caching, reliability, observability` |
-| Vision, mission, goals | short text or skip |
 | Workspace root | current directory / `<workspace>/demo-agentic-kb` |
-| Personal KB | create new, `alice-kb`, no remote |
-| Team KB | skip |
-| Org KB | skip |
-| Marketplace | skip |
+| Discovery pass | accept the reported empty baseline |
+| Layer 1 | create `alice-personal`, `scope: personal`, `role: contributor`, `parent: team-observability`, `path: ./alice-personal`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports` |
+| Layer 2 | create `team-observability`, `scope: team`, `role: contributor`, `parent: null`, `path: ./team-observability`, features `findings, topics, decisions, tasks, notes, foundation, reports`, contributor-mode `notes: shared` |
+| Anchor layer | `alice-personal` |
 | Workstreams | `platform-signals` |
 | IDE targets | current harness only |
-| Integrations | skip |
+| Connections | skip |
+| Draft features | skip |
 | Automation | `1` |
 | HTML styling | `builtin` |
 
@@ -231,42 +234,61 @@ After setup finishes, the workspace should contain at least:
 demo-agentic-kb/
 ├── AGENTS.md
 ├── CLAUDE.md
-└── alice-kb/
+├── alice-personal/
+│   ├── AGENTS.md
+│   ├── README.md
+│   ├── .kb-config/
+│   │   ├── layers.yaml
+│   │   ├── automation.yaml
+│   │   └── artifacts.yaml
+│   ├── _kb-inputs/
+│   │   └── digested/YYYY/MM/
+│   ├── _kb-references/
+│   │   ├── foundation/
+│   │   ├── findings/YYYY/
+│   │   ├── topics/
+│   │   └── reports/
+│   ├── _kb-notes/YYYY/
+│   ├── _kb-ideas/
+│   │   └── archive/YYYY/
+│   ├── _kb-decisions/
+│   │   └── archive/YYYY/
+│   ├── _kb-tasks/
+│   │   ├── focus.md
+│   │   ├── backlog.md
+│   │   └── archive/YYYY/
+│   ├── _kb-workstreams/
+│   ├── .kb-log/
+│   ├── .nojekyll
+│   ├── index.html
+│   └── dashboard.html
+└── team-observability/
     ├── AGENTS.md
     ├── README.md
-    ├── .kb-config/
-    │   ├── layers.yaml
-    │   ├── automation.yaml
-    │   └── artifacts.yaml
-    ├── _kb-inputs/
     ├── _kb-references/
-    │   ├── foundation/
-    │   ├── findings/
-    │   ├── topics/
-    │   └── reports/
-    ├── _kb-ideas/
+    ├── _kb-notes/
     ├── _kb-decisions/
     ├── _kb-tasks/
-    ├── _kb-workstreams/
     ├── .kb-log/
-    ├── .nojekyll
-    └── index.html
+    ├── index.html
+    └── dashboard.html
 ```
 
 Acceptance checks:
 
-- no literal `{{PLACEHOLDER}}` tokens remain (except inside `_kb-references/templates/presentation-template.html` or its branded sibling — those placeholders are filled per-artifact by `/kb present`, see `kb-setup/SKILL.md` §Post-write check),
-- `.kb-config/layers.yaml` exists,
+- no literal `{{PLACEHOLDER}}` tokens remain, except inside deliberate presentation or brand templates that are filled later by artifact commands,
+- `.kb-config/layers.yaml` exists in the anchor layer and names both layers,
+- `workspace.anchor-layer` points to `alice-personal`,
 - `_kb-tasks/focus.md` exists,
 - at least one workstream file exists,
 - at least one topic stub exists,
-- `index.html` exists.
+- `index.html` and `dashboard.html` exist in both layers.
 
 Failure if any of these are missing without explicit explanation.
 
 ## Step 6 — First status call
 
-Run:
+Run inside the anchor layer context:
 
 ```text
 /kb status
@@ -276,18 +298,19 @@ Expected output characteristics:
 
 - clearly read-only,
 - reports clean initial state,
-- points to the correct personal KB,
+- points to the correct anchor layer,
 - suggests the next useful actions.
 
 A good minimal result looks like:
 
 ```text
 What I did: checked your KB status.
-Where it went: read alice-kb/.kb-config/layers.yaml, alice-kb/_kb-tasks/focus.md, alice-kb/.kb-log/...
+Where it went: read alice-personal/.kb-config/layers.yaml, alice-personal/_kb-tasks/focus.md, alice-personal/.kb-log/...
 Gate notes: n/a.
 Suggested next steps:
 - Run /kb start-day
 - Capture a first source with /kb <URL-or-text>
+- Try /kb note meeting <topic> before the next sync
 ```
 
 ## Step 7 — First briefing
@@ -303,19 +326,8 @@ Expected output characteristics:
 - clearly read-only,
 - no invented work,
 - no false claims about pending items,
-- references the empty initial focus/decision state,
+- references the empty initial focus and decision state,
 - suggests a concrete first capture or task.
-
-A good minimal result looks like:
-
-```text
-What I did: briefed you for the day.
-Where it went: read alice-kb/_kb-tasks/focus.md, alice-kb/_kb-decisions/, alice-kb/.kb-log/<today>.log.
-Gate notes: n/a.
-Suggested next steps:
-- Capture something with /kb <URL-or-text>
-- Add your first focus item with /kb todo "..."
-```
 
 ## Step 8 — First capture
 
@@ -328,7 +340,7 @@ Run:
 Expected result:
 
 - the agent states whether it fetched external content,
-- it applies the gate,
+- it applies the evaluation gate,
 - it writes a finding,
 - it may update a topic,
 - it logs the operation,
@@ -336,36 +348,59 @@ Expected result:
 
 Minimum expected artifact outcomes:
 
-- one new file in `_kb-references/findings/`,
-- possible update to one topic in `_kb-references/topics/`,
-- one new `.kb-log/<date>.log` entry,
+- one new file in `alice-personal/_kb-references/findings/YYYY/`,
+- possible update to one topic in `alice-personal/_kb-references/topics/`,
+- one new `alice-personal/.kb-log/<date>.log` entry,
 - archived or marked-digested input if applicable.
 
-## Optional Step 9 — Lean roadmap proof
+## Step 9 — Cross-layer proof
 
-If the adopter also wants to prove the roadmap surface, use the narrowest path first:
+Run one of these:
 
-1. export a small Jira or GitHub issue set to markdown,
-2. bind those export directories through `roadmap.issue-trackers[]` with `adapter: ticket-export-markdown`,
-3. run the roadmap pilot against the KB root,
-4. verify that `_kb-roadmaps/<scope>/roadmap-<date>.md|.html|.json` is written,
-5. confirm at least one correlated item appears in the JSON sidecar before enabling live tracker adapters.
+```text
+/kb promote [new-finding] team-observability
+```
+
+or
+
+```text
+/kb digest team-observability
+```
+
+Expected result:
+
+- the source and destination layers are named explicitly,
+- the operation refuses if the target role is `consumer`,
+- the target layer logs the intake and reviewed result,
+- the target layer's `index.html` and `dashboard.html` regenerate.
+
+This step is what proves the setup is actually a layer graph, not just a single local folder.
+
+## Optional Step 10 — Progress report proof
+
+If the adopter wants to prove the report surface, use the narrowest path first:
+
+1. create one finding and one note in the anchor layer,
+2. promote one finding to the team layer,
+3. run `/kb report progress team-observability`,
+4. verify that the generated report names its sources and includes a watermark.
 
 Acceptance checks:
 
-- no tracker tokens or auth are required for the first proof run,
-- the JSON sidecar shows the expected `correlated` vs `single_tracker` counts,
+- the report clearly names what sources were consulted,
 - the HTML artifact is self-contained,
-- the user can inspect the source exports and the generated roadmap side by side.
+- no live tracker auth is required for the first proof run,
+- the team lead can trace the narrative back to the generated artifacts.
 
 ## Team lead verification checklist
 
 A team lead can treat onboarding as accepted only if all of these are true:
 
 - every user can reach `/kb setup` without ad hoc rescue steps,
-- every user ends up with the same baseline folder contract,
+- every user ends up with the same baseline layer-graph contract,
 - every user gets the same first useful `/kb status` and `/kb start-day` behavior,
-- no user needed hidden knowledge about install vs. init,
+- the first cross-layer promote or digest path works and is understandable,
+- no user needed hidden knowledge about install vs init,
 - the first capture path makes external fetch behavior explicit,
 - the resulting workspace is understandable by another human reviewer.
 
@@ -377,7 +412,7 @@ Create or reopen an issue if any of these occur:
 
 - `/kb setup` exists, but the install path is still ambiguous,
 - the scaffold differs by harness in undocumented ways,
-- setup succeeds, but `/kb status` or `/kb start-day` is structurally wrong,
+- setup succeeds, but `/kb status`, `/kb start-day`, or the first cross-layer flow is structurally wrong,
 - placeholder tokens survive setup,
 - the first capture path hides whether external material was fetched,
 - a second human cannot quickly verify the same contract from the produced workspace.
@@ -396,6 +431,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Reworked the deterministic onboarding proof for 5.0.0: baseline now proves a two-layer graph, verifies year-based archives and notes, and requires one cross-layer promote or digest path before acceptance | v5.0.0 flexible layer model |
 | 2026-04-24 | Added Gemini CLI and Kiro IDE install-phase acceptance checks, updated Codex CLI to the `.agents/skills/` workflow, and added an export-backed roadmap proof step | Harness and roadmap proof correction |
 | 2026-04-22 | Exempted the presentation template placeholder scan from scaffold acceptance because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
 | 2026-04-22 | Added Codex CLI acceptance guidance and clarified the difference between first-class supported harnesses and compatible CLI workflows | Compatibility expansion |

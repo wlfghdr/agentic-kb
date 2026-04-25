@@ -1,40 +1,48 @@
 # Glossary
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.2 | **Last updated:** 2026-04-25
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
 | Term | Definition |
 |------|-----------|
 | **Agent** | A persona that composes one or more skills for autonomous or semi-autonomous operation. Path in this repo: `plugins/<plugin>/agents/<name>.md`. |
-| **Draft** | A pre-v1 skill or primitive whose contract is documented but still expected to change. Draft features are opt-in and not scaffolded by default. |
-| **Capture** | The flow that turns raw input into a finding (or skipped material). Command: `/kb [text/URL/path]`. |
-| **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and team output topics. |
+| **Anchor layer** | The contributor-capable layer whose `.kb-config/` directory is the source of truth for the workspace graph, automation, and artifact settings. |
+| **Capture** | The flow that turns raw input into a finding, note, or skipped material. Command: `/kb [text/URL/path]`. |
+| **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and other living shared docs. |
+| **Connection** | A per-layer declaration of linked product repos, trackers, reference mode, and write-back policy under `.kb-config/layers.yaml`. |
 | **Decision** | A first-class artifact representing an open or resolved choice. One file per decision. Lifecycle: `gathering-evidence → under-discussion → proposed → decided`, optionally `revisiting`. |
-| **Digest** | The flow that pulls changes from a higher layer (team/org) down into the personal KB as a finding. Command: `/kb digest team\|org`. |
+| **Digest** | The flow that pulls changes from a parent layer or from declared `connections` into the current layer as findings, note proposals, or report inputs. Command: `/kb digest <layer>` or `/kb digest connections`. |
+| **Draft** | A pre-v1 skill or primitive whose contract is documented but still expected to change. Draft features are opt-in and not scaffolded by default. |
 | **Evaluation gate** | The five-question relevance filter applied at every persistence boundary. |
-| **External anchor** | A link from the KB to an authoritative external source (dashboard, runbook, CMDB). Registered in `sources.md` via an alias. |
-| **Finding** | A dated, immutable snapshot capturing what was learned on a specific date. Path: `_kb-references/findings/YYYY-MM-DD-slug.md`. |
+| **External anchor** | A link from the KB to an authoritative external source (dashboard, runbook, tracker export, repo doc). Registered in `sources.md` via an alias. |
+| **Finding** | A dated, immutable snapshot capturing what was learned on a specific date. Path: `_kb-references/findings/YYYY/YYYY-MM-DD-slug.md`. |
 | **Focus** | The max-6 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
-| **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources. |
-| **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer evaluation gate scoring and task prioritization. Also called **MCG** (Mission-Critical Goal). |
-| **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/` even when there is no custom `/kb` slash command. |
+| **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources, and VMG. |
+| **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer prioritization after the evaluation gate. Also called **MCG** (Mission-Critical Goal). |
+| **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/`. |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **Journey** | A hierarchical user, customer, or product flow (`journey → phase → sub-journey → step`) with readiness per visible step. Managed by the optional draft `kb-journeys` skill. |
-| **L1 / L2 / L3 / L4 / L5** | Personal / Team / Org-Unit / Marketplace / Company-wide layers. |
-| **Marketplace** | A repo that indexes and hosts plugins for consumption across harnesses. Layer 4. |
+| **Layer** | A KB repo participating in the workspace graph. Layers are named and typed by `scope`, not by fixed ladder position. |
+| **Marketplace** | A repo that indexes and hosts plugins for one layer's audience. It is cross-cutting and may attach to any layer via `marketplace:` in `.kb-config/layers.yaml`. |
+| **Meeting note** | A shared note record under `_kb-notes/YYYY/` with required attendees and authors. Ends in proposed decisions and tasks rather than silently mutating them. |
+| **Note** | A lightweight first-class record for meetings or working notes. Path: `_kb-notes/YYYY/MM-DD-slug.md`. |
+| **Parent layer** | The next upward layer in the graph. `promote` walks toward it; `digest` walks back down from it. |
 | **Plugin** | A bundled skill set suitable for harness installation. Assembled by the plugin generator. |
-| **Promote** | The flow that pushes a mature artifact from a lower layer to a higher one. Command: `/kb promote [file]`. |
-| **Publish** | The flow that packages KB content as a marketplace skill and opens a PR. Command: `/kb publish [file]`. |
-| **RACI** | Responsible / Accountable / Consulted / Informed. Required on team and org-unit decisions and tasks. |
+| **Promote** | The flow that pushes a mature artifact from one contributor-capable layer to another contributor-capable layer higher in the parent chain. Command: `/kb promote [file] [layer]`. |
+| **Publish** | The flow that packages KB content as a skill and publishes it to the marketplace attached to a target layer. Command: `/kb publish [file] [layer]`. |
+| **RACI** | Responsible / Accountable / Consulted / Informed. Required on shared-layer decisions and tasks. |
+| **Role** | The user's mutation permission on a layer. `contributor` may promote/publish there; `consumer` may only digest and read. |
 | **Roadmap** | A plan-vs-delivery reconciliation artifact emitted as Markdown, HTML, and JSON by the optional draft `kb-roadmap` skill. |
 | **Ritual** | A composed command that strings primitives into a user-facing flow: `start-day`, `end-day`, `start-week`, `end-week`. |
+| **Scope** | A descriptive layer type such as `personal`, `team`, `org-unit`, or `company`. It is a routing hint, not a fixed enum or ladder position. |
 | **Skill** | A reusable instruction unit in a directory with `SKILL.md` at its root. Path in this repo: `plugins/<plugin>/skills/<name>/SKILL.md`. Portable across first-class supported harnesses and reusable from compatible CLI workflows that honor the same repo-local contract. |
-| **Task** | An actionable work item tracked in `_kb-tasks/focus.md` or `_kb-tasks/backlog.md`. The canonical term; "todo" and "TODO" are recognized synonyms. |
+| **Task** | An actionable work item tracked in `_kb-tasks/focus.md` or `_kb-tasks/backlog.md`. The canonical term; `todo` and `TODO` are recognized synonyms. |
 | **Topic** | A living document representing the current position on a theme. Updated in place. Path: `_kb-references/topics/<slug>.md`. |
-| **Watermark** | The subtle `v{version} · {date}` marker added to generated HTML artifacts' intro slides. |
+| **Tracker** | An external issue or planning system declared in a layer `connections:` block, such as GitHub issues, Jira exports, or Linear exports. |
+| **Watermark** | The subtle `v{version} · {date}` marker added to generated HTML artifacts or the timestamp file that marks the last processed external digest window. |
 | **VMG** | Vision, Mission & Goals — the strategic steering model. Lives in `_kb-references/foundation/vmg.md`. Vision (years), Mission (quarters), Goals (weeks–quarters). Goals are synonymous with MCGs (Mission-Critical Goals). |
-| **Workstream** | A parallel track inside a personal KB with its own themes, active decisions, and status. Path: `_kb-workstreams/<name>.md`. |
+| **Workstream** | A parallel track inside a layer with its own themes, active decisions, and status. Path: `_kb-workstreams/<name>.md`. |
 
 ## Non-Terms
 
@@ -42,13 +50,14 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Avoid | Use instead |
 |-------|------------|
-| Database, record, entry | file, topic, finding, decision (depending on what you mean) |
+| L1 / L2 / L3 / L4 / L5 | layer / scope / parent layer |
+| Database, record, entry | file, topic, finding, decision, or note |
 | Library, module | skill |
-| TODO, todo (in spec text) | task (but "todo" is accepted as a command synonym) |
-| OKR | goal / MCG (the spec uses "goal" — OKRs, KPIs, and similar frameworks map onto this) |
-| User profile, account | foundation, `me.md` |
-| Repository (as abstract concept) | KB (layer) / repo (concrete Git repo) |
-| Sync | Use the specific flow you mean: `digest`, `promote`, `publish`, or `/kb sync team` for contributor-topic cross-reference. Avoid using bare "sync" as a generic term. |
+| TODO, todo (in spec text) | task (but `todo` remains an accepted command alias) |
+| OKR | goal / MCG |
+| User profile, account | foundation / `me.md` |
+| Repository (as abstract concept) | KB layer / repo (concrete Git repo) |
+| Sync | Use the specific flow you mean: `digest`, `promote`, `publish`, `diff`, or `sync` for contributor-scoped reconciliation |
 
 ---
 
@@ -56,8 +65,9 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Replaced the fixed L1–L5 vocabulary with the 5.0 flexible layer graph terms (layer, scope, role, parent layer, anchor layer), added notes/connections/tracker terminology, and clarified marketplace as a per-layer capability | v5.0.0 flexible layer model |
 | 2026-04-24 | Updated the harness definition to distinguish marketplace/native plugin paths, installer-supported native command or skill paths, and Codex's compatible skill workflow | Harness docs correction |
 | 2026-04-22 | Added Codex CLI to the harness definition as a compatible CLI workflow and clarified first-class vs repo-local support language | Compatibility expansion |
-| 2026-04-22 | Added draft roadmap/journey terminology, updated in-repo skill/agent paths, and clarified the non-generic use of "sync" | Doc drift review |
+| 2026-04-22 | Added draft roadmap/journey terminology, updated in-repo skill/agent paths, and clarified the non-generic use of `sync` | Doc drift review |
 | 2026-04-18 | Initial version | New |
 | 2026-04-18 | Escaped literal `\|` inside the Digest row so markdownlint MD056 passes (no semantic change) | CI fix |

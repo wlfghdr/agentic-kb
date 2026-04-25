@@ -121,7 +121,7 @@ def main() -> int:
 
         # Bug 3: placeholder `- (empty)` under Backlog must not render or count.
         assert_not_contains(output, '>(empty)<')
-        assert_contains(output, '0 items total')
+        assert_contains(output, 'Backlog clean.')
 
         # #35: idea with `**Stage**: growing` renders with the correct badge.
         assert_contains(output, 'Swarm-as-code')

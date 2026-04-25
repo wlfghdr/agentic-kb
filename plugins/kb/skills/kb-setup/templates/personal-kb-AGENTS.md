@@ -21,7 +21,7 @@ This is {{USER_NAME}}'s private knowledge base. The agent is a collaborator, not
 
 ## Layer configuration
 
-See `.kb-config/layers.yaml` for declared layers, team KBs, org-unit KB, and marketplace.
+See `.kb-config/layers.yaml` for the declared layer graph, parent edges, marketplaces, and external connections.
 
 ## Workstreams
 

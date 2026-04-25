@@ -123,7 +123,7 @@ def main() -> int:
         )
 
         # #21: markdown sources must also surface on the public index.
-        finding = tempdir / '_kb-references' / 'findings' / '2026-04-22-cache-hit-rate.md'
+        finding = tempdir / '_kb-references' / 'findings' / '2026' / '2026-04-22-cache-hit-rate.md'
         finding.parent.mkdir(parents=True, exist_ok=True)
         finding.write_text(
             '# Finding: Cache hit rate drops on deploy\n\n'
@@ -154,6 +154,19 @@ def main() -> int:
         decision.write_text(
             '# D-2026-04-22-cache-tier: Cache tiering shape\n\n'
             '- **Status**: gathering-evidence\n', encoding='utf-8'
+        )
+        note = tempdir / '_kb-notes' / '2026' / '04-22-review-sync.md'
+        note.parent.mkdir(parents=True, exist_ok=True)
+        note.write_text(
+            '---\n'
+            'type: meeting\n'
+            'date: 2026-04-22\n'
+            'authors: [@alice]\n'
+            '---\n\n'
+            '# Note: Review sync\n\n'
+            '## TL;DR\n\n'
+            'One visible promote and digest loop matters.\n',
+            encoding='utf-8',
         )
 
         subprocess.run(
@@ -189,6 +202,8 @@ def main() -> int:
         assert_contains(output, 'I-2026-04-22-swarm-as-code.md')
         assert_contains(output, 'Cache tiering shape')
         assert_contains(output, 'D-2026-04-22-cache-tier.md')
+        assert_contains(output, 'Review sync')
+        assert_contains(output, '04-22-review-sync.md')
 
         # #21: archived ideas must not leak into the public index.
         assert_not_contains(output, 'Old and archived')
@@ -196,6 +211,7 @@ def main() -> int:
 
         # #21: category headings for markdown kinds exist.
         assert_contains(output, '<h2>Topics')
+        assert_contains(output, '<h2>Notes')
         assert_contains(output, '<h2>Ideas')
         assert_contains(output, '<h2>Decisions')
 

@@ -13,8 +13,8 @@ What's next, what's deferred, what's out of scope.
 ## Later
 
 - **Issue-tracker backbone** — _kb-tasks/_decisions backed by GitHub Issues + Projects. Deferred until file-backed workflow is proven.
-- **Cross-org coordination** — digest mechanism across multiple L3 org-units. Deferred until real deployments exist.
-- **L5 automation** — polling company channels for OKRs/strategy. Blocked on machine-readable company comms.
+- **Cross-org coordination** — digest mechanism across multiple peer org-unit layers. Deferred until real deployments exist.
+- **Company-source automation** — polling company channels for OKRs/strategy. Blocked on machine-readable company comms.
 - **Knowledge graph visualization** — interactive rendering of the finding→topic→decision graph.
 - **Contradiction detection** — automated surfacing of conflicting positions across team contributors.
 - **Embedding-assisted routing** — semantic clustering instead of keyword-based workstream routing.

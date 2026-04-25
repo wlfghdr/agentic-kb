@@ -102,7 +102,7 @@ Every generated artifact:
 3. **Version watermark** on the intro slide / top of report — subtle, format: `v{version} · {date}`.
 4. **Changelog appendix** — the final slide (presentation) or section (report) lists versions.
 5. **Accessible** — semantic HTML, WCAG AA contrast, keyboard nav, alt text on images.
-6. **Versioned, dated filenames** — default pattern `YYYY-MM-DD-<slug>-v<major>.<minor>.html` for any topic-bound artifact (presentations, reports, pitches). Regeneration writes a new file; does NOT overwrite old. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for personal, team, and org-unit KBs.
+6. **Versioned, dated filenames** — default pattern `YYYY-MM-DD-<slug>-v<major>.<minor>.html` for any topic-bound artifact (presentations, reports, pitches). Regeneration writes a new file; does NOT overwrite old. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for contributor, shared, and synthesis layers.
 7. **Layer-agnostic styling** — the configured reference template in `.kb-config/artifacts.yaml` (`styling.reference-file`) is THE template for every Family-2 artifact in that layer. Never hand-roll a fresh palette or layout per run. If the user works in a workspace with multiple KB layers, each layer reuses its own configured template — but within one layer, every artifact looks like it comes from one brand.
 8. **QA sweep before completion** — do not report the artifact done until the generated file itself passes a review sweep: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work.
 
@@ -130,11 +130,12 @@ Concrete rules every generator implements:
 
 ## Output location
 
-| Layer | Directory |
-|-------|-----------|
-| Personal KB | `_kb-references/reports/` |
-| Team KB | `<contributor>/_kb-references/reports/` |
-| Org-Unit KB | `reports/` |
+| Layer kind | Directory |
+|------------|-----------|
+| Anchor or contributor-owned layer | `_kb-references/reports/` |
+| Shared contributor layer with contributor-scoped reports | `<contributor>/_kb-references/reports/` |
+| Shared contributor layer with shared reports | `_kb-references/reports/` |
+| Consumer or synthesis layer | `_kb-references/reports/` |
 
 Filename: `<slug>-v<version>.html` (per `.kb-config/artifacts.yaml → output.filename-template`).
 
@@ -190,14 +191,14 @@ index:
   category-order: recency          # recency | fixed
 ```
 
-**Auto-regeneration with confirmation**: After every operation that creates or modifies an HTML artifact, the skill MUST **offer** to regenerate the affected layer's root `index.html` — and proceed only on user confirmation (unless automation level is `2` or `3` per `.kb-config/automation.yaml`, in which case it runs silently). Regeneration targets the repo that received the new artifact, not every layer in the workspace.
+**Auto-regeneration contract**: After every operation that creates or modifies KB state, the skill MUST regenerate the affected layer's root `index.html` and `dashboard.html` as part of the same mutation. Regeneration targets the repo that received the change, not every layer in the workspace. The operation summary should mention the refreshed paths, but freshness must not depend on a follow-up confirmation.
 
-Triggers that prompt the offer:
+Triggers that must refresh automatically:
 
 - `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`
 - Any Family 1 overview regeneration
-- Any `/kb promote` that copies HTML files across layers (offer for both source and destination layer)
-- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path; runs without prompting since it was explicitly invoked)
+- Any `/kb promote` that copies HTML files across layers (refresh both source and destination layer when applicable)
+- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path)
 
 **Regeneration command**:
 
@@ -218,7 +219,7 @@ When an HTML artifact is **copied** from another repo for reference (e.g. pullin
 
 This makes it obvious to any reader that the file is a point-in-time copy, not the canonical source. The snapshot banner is separate from the stale-date heuristic in the index — they complement each other.
 
-**For team/org-unit KBs**, the index scans all contributor directories and tags each artifact with a contributor badge.
+**For shared multi-user layers**, the index scans all contributor directories and tags each artifact with a contributor badge.
 
 ## GitHub Pages publishing
 
