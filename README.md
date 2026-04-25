@@ -58,7 +58,7 @@ That is the claim surface. Architecture matters, but adoption only gets real onc
 
 **No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
 
-**Lean by construction.** One spec. Two reference skills. One reference agent. One cross-harness installer. No SaaS. No auth. No infra. Install in about a minute. Rip it out in five if it's not for you.
+**Lean by construction.** One spec. Two reference skills. One reference agent. One cross-harness installer. No SaaS. No auth. No infra. Plugin install in about a minute. Full workspace setup and first scaffold in about 15–20. Rip it out in five if it's not for you.
 
 **Human + agent at the same speed.** This is the real claim: the system is designed so that a single human — an IC, a lead, or an exec — can stay in the loop with a swarm of agents *and* a team of other humans each running their own swarms, without becoming the bottleneck themselves.
 
@@ -266,10 +266,11 @@ agentic-kb/
 
 1. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
 2. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
-3. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
-4. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
-5. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
-6. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+3. [`docs/examples/first-hour.md`](docs/examples/first-hour.md) — the fastest end-to-end walkthrough from install to the first useful cross-layer proof.
+4. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
+5. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
+6. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
+7. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 
@@ -293,6 +294,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Clarified the setup proof strip by separating the quick plugin install from the longer guided workspace scaffold and added the `first-hour` walkthrough to "Where to start" | Deep spec-audit follow-up |
 | 2026-04-25 | Removed the "One-page visual overview → index.html" pointer from the header and the `index.html` entry from "Where to start" so the README is the canonical narrative entry point and the visual landing page stands on its own | Index marketing trim |
 | 2026-04-25 | Concept-audit follow-up: relabeled the compatibility model so the "three setup tiers" wording matches the table (rules-only and not-feasible moved into a separate "not yet covered" block) | Concept-audit drift correction |
 | 2026-04-25 | Updated the public command summary and release status for 5.1.0, including the new migration helper flows that close the remaining 5.0 follow-up gaps | v5.1.0 follow-up closeout |

@@ -2,7 +2,7 @@
 
 > **Version:** 5.1.1
 
-Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
+Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
 ---
 
@@ -33,14 +33,14 @@ Core rules:
 - A workspace must declare **at least one contributor-capable layer**. A personal layer is recommended, but not required.
 - One layer is designated the **anchor layer**. Its `.kb-config/` directory is the source of truth for the user's layer graph, automation, and artifact settings.
 - `parent` defines the upward routing edge. `promote` walks up the parent chain; `digest` walks down it.
-- `role: contributor | consumer` governs mutation rights. Promotion or publish to a consumer-only layer must refuse with a clear message.
+- `role: contributor | consumer` governs shared mutation rights. Consumer layers may receive digests and expose read-down guidance, but promotion or publish targeting a consumer-only layer must refuse with a clear message.
 - `features:` opt a layer into primitives: `inputs`, `findings`, `topics`, `ideas`, `decisions`, `tasks`, `notes`, `workstreams`, `foundation`, `reports`, `marketplace`, `roadmaps`, `journeys`.
 - `marketplace` is **cross-cutting**, not a numbered layer. Any layer may publish to or consume from its own marketplace repo.
 - Draft features (`roadmaps`, `journeys`) are enabled per layer, not globally.
 
 ### Contributor-scoped vs shared primitives
 
-At multi-user layers, the primitive decides whether content stays contributor-scoped or becomes shared state.
+At multi-user layers, keep two separate ideas straight: layer role (`contributor` vs `consumer`) and artifact visibility (`contributor-scoped` vs shared). The primitive decides whether content stays contributor-scoped or becomes shared state.
 
 | Primitive | Default mode at multi-user layers | Why |
 |-----------|-----------------------------------|-----|
@@ -411,7 +411,7 @@ Field contract:
 
 - `name`: canonical layer identifier used in commands.
 - `scope`: descriptive routing hint (`personal`, `team`, `org-unit`, `company`, or a custom scope).
-- `role`: `contributor` or `consumer`.
+- `role`: `contributor` or `consumer`; consumer layers are read-down destinations, not promote/publish targets.
 - `parent`: the next upward layer in the graph, or `null`.
 - `path`: repo-relative path to the layer repo.
 - `features`: enabled primitives for that layer.
@@ -437,6 +437,14 @@ auto-promote:
   confidence-threshold: 4
   excluded-workstreams: []
 ```
+
+Automation level contract:
+
+- `level: 1` — manual only. No scheduled automation runs; rituals and digests happen only when the user invokes them.
+- `level: 2` — scheduled read/review flows. Schedules may run rituals and digests, but `auto-promote.enabled` stays `false`.
+- `level: 3` — scheduled flows plus guarded auto-promote. Auto-promote may run only when enabled, above the configured confidence threshold, and outside excluded workstreams.
+
+Setup interview guidance for these three levels lives in [`plugins/kb/skills/kb-setup/references/automation-levels.md`](../plugins/kb/skills/kb-setup/references/automation-levels.md).
 
 ### `.kb-config/artifacts.yaml`
 
@@ -629,6 +637,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-25 | Clarified the onboarding entry points, separated layer role from contributor-scoped visibility, and documented the automation-level contract directly beside `.kb-config/automation.yaml` |
 | 2026-04-25 | Concept-audit follow-up: the §10 harness matrix now records the "rules-only" and "not feasible" buckets the README lists, so the reference and glossary stay aligned |
 | 2026-04-25 | Added explicit migration-helper coverage for the 5.1.0 closeout: the reference now names `/kb migrate layer-model` and `/kb migrate archives` as the sanctioned way to carry older KBs into the 5.x graph and year-based archive layout |
 | 2026-04-25 | Reworked the core model for 5.0.0: replaced the fixed L1–L5 ladder with a flexible layer graph, moved marketplace to a per-layer cross-cutting block, added role-based promote/publish governance, year-based archive paths, the notes primitive, per-layer external connections, and the progress-report contract |

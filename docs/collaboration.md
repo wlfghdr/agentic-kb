@@ -93,6 +93,7 @@ Agent may:
 - flag mismatches.
 
 Agent must not promote or publish into a `role: consumer` layer.
+Consumer layers may still receive downward digest updates and expose shared guidance locally, but they are not where new shared truth originates.
 
 Human responsibility:
 
@@ -244,5 +245,6 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Clarified that consumer layers can receive digest updates and host read-down guidance locally, while still refusing promote/publish as a source of new shared truth | Deep spec-audit follow-up |
 | 2026-04-25 | Reworked the collaboration contract for 5.0.0: replaced L1-L4 language with contributor/shared/consumer roles, clarified consumer-only behavior, and updated promotion/publish review points for named layers and per-layer marketplaces | v5.0.0 flexible layer model |
 | 2026-04-20 | Initial collaboration guide defining shared-workspace operating norms, review points, and failure recovery | Issue #7 |
