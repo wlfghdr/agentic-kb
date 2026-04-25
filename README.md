@@ -7,8 +7,6 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Spec version](https://img.shields.io/badge/spec-v5.1.1-green.svg)](CHANGELOG.md)
 
-**One-page visual overview** → [`index.html`](index.html)
-
 ---
 
 ## The real problem
@@ -266,13 +264,12 @@ agentic-kb/
 
 ## Where to start
 
-1. [`index.html`](index.html) — open in a browser for a 2-minute visual overview.
-2. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
-3. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
-4. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
-5. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
-6. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
-7. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+1. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
+2. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
+3. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
+4. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
+5. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
+6. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 
@@ -296,5 +293,6 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Removed the "One-page visual overview → index.html" pointer from the header and the `index.html` entry from "Where to start" so the README is the canonical narrative entry point and the visual landing page stands on its own | Index marketing trim |
 | 2026-04-25 | Concept-audit follow-up: relabeled the compatibility model so the "three setup tiers" wording matches the table (rules-only and not-feasible moved into a separate "not yet covered" block) | Concept-audit drift correction |
 | 2026-04-25 | Updated the public command summary and release status for 5.1.0, including the new migration helper flows that close the remaining 5.0 follow-up gaps | v5.1.0 follow-up closeout |
