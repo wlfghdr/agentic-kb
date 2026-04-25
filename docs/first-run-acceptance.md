@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 5.0.0 | **Last updated:** 2026-04-25
+> **Version:** 5.1.1 | **Last updated:** 2026-04-25
 
 This document defines the canonical first-run acceptance path for `agentic-kb`.
 
@@ -376,7 +376,24 @@ Expected result:
 
 This step is what proves the setup is actually a layer graph, not just a single local folder.
 
-## Optional Step 10 — Progress report proof
+## Optional Step 10 — Migration proof (legacy adopters only)
+
+If the adopter is carrying a workspace from a pre-5.0 fixed-ladder layout into the 5.x layer graph, exercise the migration helpers end-to-end before declaring acceptance:
+
+1. run `/kb migrate layer-model --dry-run` and confirm the proposed `.kb-config/layers.yaml` matches the named-layer graph,
+2. apply the migration after review,
+3. run `/kb migrate archives --dry-run` to preview the year-based archive moves,
+4. apply the archive migration after review.
+
+Acceptance checks:
+
+- both helpers default to dry-run and only mutate after explicit confirmation,
+- the migrated workspace passes the same scaffold checks as Step 5,
+- the legacy ladder vocabulary is gone from the migrated config.
+
+Greenfield adopters can skip this step.
+
+## Optional Step 11 — Progress report proof
 
 If the adopter wants to prove the report surface, use the narrowest path first:
 
@@ -431,6 +448,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Concept-audit follow-up: aligned the doc version with the 5.1.x framework and added an optional migration-proof step covering `/kb migrate layer-model` and `/kb migrate archives` for legacy adopters | Concept-audit drift correction |
 | 2026-04-25 | Reworked the deterministic onboarding proof for 5.0.0: baseline now proves a two-layer graph, verifies year-based archives and notes, and requires one cross-layer promote or digest path before acceptance | v5.0.0 flexible layer model |
 | 2026-04-24 | Added Gemini CLI and Kiro IDE install-phase acceptance checks, updated Codex CLI to the `.agents/skills/` workflow, and added an export-backed roadmap proof step | Harness and roadmap proof correction |
 | 2026-04-22 | Exempted the presentation template placeholder scan from scaffold acceptance because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |

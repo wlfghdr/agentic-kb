@@ -10,6 +10,12 @@ spec inconsistency the agent hit on the way was filed as a GitHub issue (#14–#
 > **Snapshot:** the findings below reflect the state of `main` at `21fe0e8`
 > (v3.3.0). Issue #16 (`idea.md` template) was fixed on main in #40; other
 > issues remain open as of publication.
+>
+> **Vocabulary note (added retroactively):** this report was written against the
+> retired fixed L1–L5 ladder. The 5.0.0 release replaced it with a flexible layer
+> graph (see `docs/glossary.md` non-terms). References to "L1 personal" and
+> "L2 team" below are kept verbatim as historical record; current docs and tools
+> use named layers, scopes, and parent edges instead.
 
 ---
 

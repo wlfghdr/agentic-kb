@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 5.1.0
+> **Version:** 5.1.1
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -617,6 +617,8 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 | Installer-supported native command path | Gemini CLI | n/a | n/a | `.gemini/commands/<name>.toml` for `/kb` |
 | Installer-supported native skill path | Kiro IDE | `.kiro/skills/<name>/SKILL.md` | n/a | skills appear in the slash menu |
 | Compatible skill workflow | Codex CLI | `.agents/skills/<name>/SKILL.md` | n/a | `AGENTS.md` + skill picker / `$kb`; no custom `/kb` slash command |
+| Rules-only harness (not yet supported) | Cursor, Windsurf | adopter-defined | adopter-defined | No slot for a custom `/kb` slash command — adopters reuse the scaffolded KB files as context but wire invocation manually. |
+| Not feasible (not a supported tier) | Aider, raw Claude / Inflection Pi | n/a | n/a | No user-custom command hook, or not a developer harness. Listed for completeness. |
 | Partial/manual path | Other CLIs / IDEs | adopter-defined | adopter-defined | Can use the KB file model, but command wiring and automation may need manual setup. |
 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for marketplace-backed and installer-supported harnesses. Compatible Codex workflows reuse the same workspace contract through `AGENTS.md` plus repo/user skill directories.
@@ -627,6 +629,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-25 | Concept-audit follow-up: the §10 harness matrix now records the "rules-only" and "not feasible" buckets the README lists, so the reference and glossary stay aligned |
 | 2026-04-25 | Added explicit migration-helper coverage for the 5.1.0 closeout: the reference now names `/kb migrate layer-model` and `/kb migrate archives` as the sanctioned way to carry older KBs into the 5.x graph and year-based archive layout |
 | 2026-04-25 | Reworked the core model for 5.0.0: replaced the fixed L1–L5 ladder with a flexible layer graph, moved marketplace to a per-layer cross-cutting block, added role-based promote/publish governance, year-based archive paths, the notes primitive, per-layer external connections, and the progress-report contract |
 | 2026-04-25 | Added generic marketplace guidance for plugin-local utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills; version bumped to 4.1.0 |

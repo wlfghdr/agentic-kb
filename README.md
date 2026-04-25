@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.1.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.1.1-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -153,14 +153,19 @@ Install from the Extensions view (reads [`plugin.json`](plugin.json)), then run 
 
 ### Compatibility model
 
-`agentic-kb` now distinguishes three setup tiers so additional harnesses can be documented consistently:
+`agentic-kb` distinguishes three supported setup tiers — plus two "not yet" buckets that document why some harnesses sit outside the supported matrix today:
 
 | Tier | Meaning | Current examples |
 |------|---------|------------------|
 | Marketplace/native plugin path | Native install path and documented day-to-day workflow with a working `/kb` slash command | Claude Code, VS Code Copilot Chat |
 | Installer-supported native command/skill path | No marketplace yet, but `scripts/install --target <harness>` writes the harness's documented native surface | OpenCode, Gemini CLI, Kiro IDE |
 | Compatible skill workflow | Same repo contract, but no custom `/kb` slash command; use `AGENTS.md` plus the harness skill picker or native skill invocation | Codex CLI |
-| Rules-only harness | No slash-command slot for third-party commands — adopters use the scaffolded KB files as context but wire invocation manually | Cursor, Windsurf |
+
+Not (yet) covered as a supported tier:
+
+| Bucket | Why | Current examples |
+|--------|-----|------------------|
+| Rules-only harness | No slash-command slot for third-party commands — adopters can reuse the scaffolded KB files as context, but invocation is wired manually | Cursor, Windsurf |
 | Not feasible | The harness has no user-custom command hook, or is not a developer harness at all | Aider (no plugin system yet), raw Claude / Inflection Pi (no slash-command concept) |
 
 ### OpenCode
@@ -273,7 +278,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.1.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.1.1), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -291,4 +296,5 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Concept-audit follow-up: relabeled the compatibility model so the "three setup tiers" wording matches the table (rules-only and not-feasible moved into a separate "not yet covered" block) | Concept-audit drift correction |
 | 2026-04-25 | Updated the public command summary and release status for 5.1.0, including the new migration helper flows that close the remaining 5.0 follow-up gaps | v5.1.0 follow-up closeout |
