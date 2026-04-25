@@ -19,7 +19,24 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.0.0 follow-ups only. The flexible layer-graph rewrite, setup/adoption refresh, and release metadata alignment shipped in `5.0.0`.
+- Post-5.1.0 follow-ups only. The migration-helper closeout, roadmap config normalization, and issue-resolution sweep shipped in `5.1.0`.
+
+## [5.1.0] — 2026-04-25
+
+> **Why MINOR:** this release closes the remaining 5.0.0 follow-up gaps without changing the 5.0 layer-graph semantics. It adds explicit migration helpers for legacy adopters, wires the roadmap pilot to the active layer's 5.x config model plus `connections:` tracker declarations, and brings the public command/docs surface into sync so the outstanding follow-up issues can close.
+
+### Added
+
+- **Explicit migration helpers for legacy adopters** — `plugins/kb/skills/kb-management/scripts/migrate_archives.py` previews or applies the year-based archive moves, and `plugins/kb/skills/kb-management/scripts/migrate_layer_model.py` converts fixed-ladder `.kb-config/layers.yaml` files into the named-layer graph while preserving workstreams and legacy roadmap blocks under the anchor layer.
+
+### Changed
+
+- **Roadmap pilot now understands the active layer's 5.x config contract** — `plugins/kb/skills/kb-roadmap/scripts/kb_roadmap.py` now resolves `roadmap:` from the active layer entry and normalizes trackers declared under `connections.trackers[]`, while preserving legacy `roadmap.issue-trackers[]` fallback for older adopters.
+- **Public command and migration docs now describe the shipped closeout path** — `README.md`, `docs/REFERENCE.md`, `kb-management`, `kb-setup`, and the roadmap references now document `/kb migrate archives`, `/kb migrate layer-model`, and the connections-backed roadmap behavior instead of leaving the 5.0 follow-up issues as implicit tribal knowledge.
+
+### Fixed
+
+- **Regression coverage for the closeout helpers** — added `scripts/test_kb_migrations.py`, extended `scripts/test_kb_roadmap.py` with a connections-backed fixture, and wired the new migration test into `.github/workflows/validate.yml` so CI exercises the repaired 5.1 surfaces directly.
 
 ## [5.0.0] — 2026-04-25
 

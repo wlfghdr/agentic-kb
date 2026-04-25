@@ -159,6 +159,102 @@ class RoadmapFixtureTests(unittest.TestCase):
         finally:
             shutil.rmtree(tmpdir)
 
+    def test_connections_backed_roadmap_fixture_uses_active_layer_config(self) -> None:
+        tmpdir = Path(tempfile.mkdtemp(prefix="agentic-kb-roadmap-connections-"))
+        kb_root = tmpdir / "alice-kb"
+        try:
+            write(
+                kb_root / ".kb-config" / "layers.yaml",
+                """
+                workspace:
+                  anchor-layer: alice-personal
+
+                layers:
+                  - name: alice-personal
+                    scope: personal
+                    role: contributor
+                    path: .
+                    features: [findings, topics, decisions, tasks, notes, foundation, reports, roadmaps]
+                    connections:
+                      trackers:
+                        - name: jira-export
+                          kind: jira
+                          export-dir: exports/jira
+                        - name: github-export
+                          kind: github-issues
+                          export-dir: exports/github
+                    roadmap:
+                      default-scope: platform-signals
+                      output-dir: _kb-roadmaps
+                      scopes:
+                        platform-signals:
+                          kind: detail
+                      phases:
+                        idea: [Backlog]
+                        defined: [Defined]
+                        committed: [Committed]
+                        in-delivery: [In Progress]
+                        shipped: [Done, Closed]
+                """,
+            )
+            write(
+                kb_root / "exports" / "jira" / "PROD-200.md",
+                """
+                ---
+                key: PROD-200
+                summary: Connections-backed roadmap initiative
+                status: Committed
+                issueType: Initiative
+                ---
+                # PROD-200: Connections-backed roadmap initiative
+                """,
+            )
+            write(
+                kb_root / "exports" / "jira" / "PROD-201.md",
+                """
+                ---
+                key: PROD-201
+                summary: Connections-backed tracker wiring
+                status: In Progress
+                issueType: Story
+                ---
+                # PROD-201: Connections-backed tracker wiring
+
+                ## Parent
+                - **PROD-200**
+                """,
+            )
+            write(
+                kb_root / "exports" / "github" / "PROD-201.md",
+                """
+                ---
+                key: PROD-201
+                summary: GitHub export mirror of the connections-backed story
+                status: In Progress
+                issueType: Issue
+                ---
+                # GitHub export mirror of the connections-backed story
+                """,
+            )
+
+            subprocess.run(
+                [sys.executable, str(SCRIPT), str(kb_root), "--date", DATE],
+                cwd=REPO,
+                check=True,
+            )
+
+            output_dir = kb_root / "_kb-roadmaps" / "platform-signals"
+            payload = json.loads((output_dir / f"roadmap-{DATE}.json").read_text(encoding="utf-8"))
+
+            self.assertEqual(payload["scope"], "platform-signals")
+            self.assertEqual(payload["summary"]["total"], 3)
+            self.assertEqual(payload["summary"]["correlated"], 1)
+
+            correlation = next(item for item in payload["correlations"] if item["id"] == "PROD-201")
+            self.assertEqual(correlation["trackers"], ["github-export", "jira-export"])
+        finally:
+            shutil.rmtree(tmpdir)
+
 
 if __name__ == "__main__":
     unittest.main()

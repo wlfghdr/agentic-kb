@@ -24,6 +24,8 @@ Organizations always have **at least two sources of planning truth** — tickets
 
 This skill is **vendor-neutral**. All vocabulary specific to a particular tracker, repository host, or organization lives in the adopter's `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, never in this skill.
 
+At 5.1, the skill resolves its `roadmap:` block from the **active layer** entry in `.kb-config/layers.yaml` and can normalize read-only tracker inputs from that layer's `connections.trackers[]` declarations when legacy `roadmap.issue-trackers[]` entries are absent.
+
 ## When to invoke
 
 Invoke whenever the user:
@@ -82,7 +84,7 @@ The skill writes into a **dedicated** `_kb-roadmaps/` folder at the adopter's KB
 ```
 my-kb/
 ├── .kb-config/
-│   ├── layers.yaml              # declares roadmap.* block
+│   ├── layers.yaml              # active layer declares roadmap: and optional connections:
 │   └── artifacts.yaml           # declares html-template + brand assets
 ├── _kb-roadmaps/                # dedicated root (configurable via roadmap.output-dir)
 │   ├── <workstream>/           # per-workstream detail view
@@ -102,39 +104,39 @@ my-kb/
 
 **Roll-up view** (exec / C-level): sections X1–X7 — portfolio state, momentum, risks, shifts, scope changes, decisions needed, next-period focus. No commit-level detail. Audience: leadership.
 
-Declare scopes in `.kb-config/layers.yaml` under `roadmap.scopes`. Default: every workstream gets a detail scope; adopters add one `kind: roll-up` scope per leadership rhythm.
+Declare scopes in the active layer's `.kb-config/layers.yaml` entry under `roadmap.scopes`. Default: every workstream gets a detail scope; adopters add one `kind: roll-up` scope per leadership rhythm.
 
 See `references/folder-layout.md` for the full contract.
 
 ## Configuration contract
 
-See `references/config-schema.md`. Minimum adopter config in `.kb-config/layers.yaml`:
+See `references/config-schema.md`. Minimum adopter config in the active layer entry of `.kb-config/layers.yaml`:
 
 ```yaml
-roadmap:
-  default-scope: <workstream-name>
-  default-timeframe: week          # week | month | quarter | since:DATE | range:A..B
-  output-dir: _kb-roadmaps
-  plan-sources:
-    - name: tickets
-      adapter: ticket-export-markdown
-      path: ../<ticket-export-dir>
-      filter: {}
-      hierarchy: [Program, Package, Item]
-  delivery-sources:
-    - name: repo
-      adapter: git-repo
-      path: ../<product-repo>
-      signals: [commits, prs, tags, adrs]
-  correlation:
-    ticket-key-pattern: "[A-Z]+-\\d+"
-    branch-prefixes: [feature/, fix/, chore/]
-    trailer-keys: [Ticket, Issue, Jira]
-    deep-investigation: true
-  mismatch-findings:
-    route-to: _kb-references/findings
-    min-loc-threshold: 20
-    stalled-after-days: 14
+layers:
+  - name: alice-personal
+    path: .
+    connections:
+      trackers:
+        - name: jira-export
+          kind: jira
+          export-dir: ../exports/jira
+    roadmap:
+      default-scope: <workstream-name>
+      default-timeframe: week          # week | month | quarter | since:DATE | range:A..B
+      output-dir: _kb-roadmaps
+      scopes:
+        <workstream-name>:
+          kind: detail
+      correlation:
+        ticket-key-pattern: "[A-Z]+-\\d+"
+        branch-prefixes: [feature/, fix/, chore/]
+        trailer-keys: [Ticket, Issue, Jira]
+        deep-investigation: true
+      mismatch-findings:
+        route-to: _kb-references/findings
+        min-loc-threshold: 20
+        stalled-after-days: 14
 ```
 
 Brand + styling live in `.kb-config/artifacts.yaml`:
@@ -220,4 +222,10 @@ See `references/adapters.md`.
 
 ## Status
 
-This skill is **draft (v0.1.0)**. It is not scaffolded by `kb-setup`; adopters opt in by declaring the `roadmap:` block in `.kb-config/layers.yaml`. Breaking changes are expected before v1.0.
+This skill is **draft (v0.1.0)**. It is not scaffolded by `kb-setup`; adopters opt in by declaring a `roadmap:` block on the active layer in `.kb-config/layers.yaml`. Breaking changes are expected before v1.0.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-25 | Aligned the draft roadmap contract with the shipped 5.1 behavior: the active layer owns the `roadmap:` block, `connections.trackers[]` can seed read-only tracker inputs, and the examples no longer imply the retired top-level shape | v5.1.0 closeout release |

@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 5.0.0
+version: 5.1.0
 uses:
   - kb-management
   - kb-setup
@@ -178,6 +178,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Version aligned to 5.1.0 after the migration-helper and roadmap-config closeout release so the operator's documented command surface matches the shipped framework metadata | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the operator contract for 5.0.0 so it composes the flexible layer graph, notes, per-layer marketplaces, and connection digests under the new major-release model | v5.0.0 flexible layer model |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release | v4.0.0 release alignment |
 | 2026-04-25 | Version aligned to 3.5.0 and clarified that artifact runs use explicit fetch preflights plus a post-generation QA sweep before the operator treats them as complete | Artifact-generation contract tightening |

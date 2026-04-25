@@ -97,3 +97,5 @@ jobs:
         run: python3 scripts/test_acceptance_fixture.py
       - name: Regression test export-backed roadmap fixture
         run: python3 scripts/test_kb_roadmap.py
+      - name: Regression test migration helpers
+        run: python3 scripts/test_kb_migrations.py

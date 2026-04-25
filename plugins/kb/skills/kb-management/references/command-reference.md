@@ -48,6 +48,15 @@ Notes use a lighter gate than findings. They are cheap capture surfaces that fee
 
 If the target layer is `role: consumer`, `promote` and `publish` must refuse and point to the next valid contributor layer.
 
+## Migration
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb migrate archives` | Preview or apply the year-based archive moves for digests, tasks, findings, decisions, ideas, notes, strategy digests, and optional daily logs |
+| `/kb migrate layer-model` | Preview or apply the conversion from the retired fixed-layer schema to the list-based layer graph |
+
+Both helpers are dry-run first. The shipped helper scripts live under `plugins/kb/skills/kb-management/scripts/` and apply only after explicit confirmation.
+
 ## Rituals
 
 | Subcommand | Action |
@@ -144,6 +153,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added the explicit migration helper commands so the command surface now includes the 5.1 closeout path for old archive layouts and fixed-layer configs | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the command surface for the 5.0 layer graph: promote/publish now target named layers, notes became a first-class primitive, `digest connections` and `report progress` were added, and triage now checks anchor-layer setup plus connection drift | v5.0.0 flexible layer model |
 | 2026-04-22 | Clarified that `--refresh-overviews` is the manual repair path for rebuilding `dashboard.html` and the root artifact `index.html`, replacing the prior always-current/phantom-overview wording | PR #53 fix |
 | 2026-04-22 | Added the missing `Top task` and `External completions` triage signals so the bare-`/kb` status table fully matches `kb.prompt.md` and the task-handling rules | PR #49 follow-up |

@@ -1,6 +1,8 @@
-# Reference: `.kb-config/layers.yaml` `roadmap:` block
+# Reference: active-layer `roadmap:` block in `.kb-config/layers.yaml`
 
 Full schema with defaults.
+
+The active layer may also declare trackers under `connections.trackers[]`. At 5.1, the roadmap pilot normalizes those connection-backed trackers into read-only `issue-trackers[]` entries when the legacy per-skill block is absent.
 
 ```yaml
 roadmap:
@@ -83,7 +85,9 @@ roadmap:
       delivery-sources: []
       correlation: {}
 
-  # Issue trackers (bidirectional, adapter-driven). See references/issue-trackers.md.
+  # Legacy per-skill tracker declarations. Prefer active-layer connections.trackers[]
+  # for read-only tracker inputs; keep issue-trackers[] for adapter-specific writeback
+  # metadata or explicit per-roadmap overrides. See references/issue-trackers.md.
   issue-trackers:
     - name: <string>                       # unique per tracker instance
       adapter: <string>                    # github-issues | jira-rest | linear-graphql | ticket-export-markdown | custom
@@ -127,10 +131,16 @@ roadmap:
 
 ## Validation rules
 
-- At least one of `plan-sources`, `issue-trackers`, or scope-level `trackers` must be declared.
+- At least one of `plan-sources`, `issue-trackers`, active-layer `connections.trackers`, or scope-level `trackers` must be declared.
 - At least one `delivery-sources` entry must be declared.
 - Every `issue-trackers[]` entry with any `write-*` capability must declare `auth-env`.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
 - `mismatch-findings.route-to` empty string disables routing; any other value must be a relative path under the KB root.
 - `phases` keys must match the default pipeline names (`idea`, `defined`, `committed`, `in-delivery`, `shipped`, `archived`) — adopters rename display labels in `.kb-config/artifacts.yaml`, not the canonical keys.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-25 | Clarified the 5.1 config contract: the active layer owns the roadmap block, `connections.trackers[]` can seed read-only tracker inputs, and `issue-trackers[]` is now documented as a legacy or override surface | v5.1.0 closeout release |

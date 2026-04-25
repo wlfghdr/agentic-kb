@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
-version: 5.0.0
+version: 5.1.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -177,9 +177,9 @@ Minimum verification sequence:
 If the user points setup at an older fixed-ladder KB:
 
 1. analyze the current layout,
-2. propose the new layer graph,
+2. run `/kb migrate layer-model` in dry-run mode to preview the new layer graph,
 3. map old L1/L2/L3/L4/L5 references to named `layers:` entries,
-4. move archives into year-based directories with `git mv`,
+4. run `/kb migrate archives` in dry-run mode to preview the year-based archive moves,
 5. apply only after explicit confirmation.
 
 ## Idempotency
@@ -234,6 +234,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added the explicit 5.1 migration-helper handoff so setup now points legacy adopters at `/kb migrate layer-model` and `/kb migrate archives` instead of leaving those follow-ups implicit | v5.1.0 closeout release |
 | 2026-04-25 | Reworked setup for 5.0.0: onboarding now discovers and scaffolds a flexible layer graph, supports team-only or multi-org adoption, writes per-layer marketplaces and connections, and scaffolds year-based archives plus notes | v5.0.0 flexible layer model |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release | v4.0.0 release alignment |
 | 2026-04-22 | Added Codex CLI acceptance guidance and clarified the difference between first-class supported harnesses and compatible CLI workflows | Compatibility expansion |

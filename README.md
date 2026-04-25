@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.0.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.1.0-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -92,6 +92,8 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb promote [file] [layer] → promote to the next or named contributor layer
 /kb digest [layer]         → pull parent-layer changes
 /kb digest connections     → pull linked repo / tracker deltas
+/kb migrate archives       → preview or apply year-based archive moves
+/kb migrate layer-model    → preview or apply fixed-ladder to layer-graph migration
 /kb note [text]            → create a working note
 /kb note meeting [topic]   → start a meeting note
 /kb idea [text]            → create an idea (seed)
@@ -271,7 +273,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.0.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.1.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -284,3 +286,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Every doc change updates the per-file ch
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-25 | Updated the public command summary and release status for 5.1.0, including the new migration helper flows that close the remaining 5.0 follow-up gaps | v5.1.0 follow-up closeout |

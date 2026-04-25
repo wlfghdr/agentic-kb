@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 5.0.0
+> **Version:** 5.1.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -473,6 +473,15 @@ journeys-template:
 
 Recommended lean roadmap baseline: start with exported tracker markdown bound through `connections.trackers[]`, prove the artifact flow locally, then opt into live tracker adapters and write-back later.
 
+### Migration helpers
+
+Two explicit migration helpers close the remaining 5.0 follow-up path for older adopters:
+
+- `/kb migrate layer-model` previews or applies the conversion from the retired fixed L1-L5 ladder to the list-based layer graph in `.kb-config/layers.yaml`.
+- `/kb migrate archives` previews or applies the year-based archive moves for digests, tasks, decisions, ideas, findings, strategy digests, and optional daily logs.
+
+Both helpers are dry-run first and only apply after confirmation.
+
 ---
 
 ## 6. HTML Artifacts
@@ -618,6 +627,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-25 | Added explicit migration-helper coverage for the 5.1.0 closeout: the reference now names `/kb migrate layer-model` and `/kb migrate archives` as the sanctioned way to carry older KBs into the 5.x graph and year-based archive layout |
 | 2026-04-25 | Reworked the core model for 5.0.0: replaced the fixed L1–L5 ladder with a flexible layer graph, moved marketplace to a per-layer cross-cutting block, added role-based promote/publish governance, year-based archive paths, the notes primitive, per-layer external connections, and the progress-report contract |
 | 2026-04-25 | Added generic marketplace guidance for plugin-local utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills; version bumped to 4.1.0 |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release |

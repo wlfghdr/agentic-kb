@@ -10,6 +10,11 @@ For users who already have a knowledge base in another layout.
 - Presence of `topics/`, `findings/`, `decisions/`, `tasks/`, or similar subdirs.
 - No `.kb-config/layers.yaml` at the root.
 
+Two dedicated helpers cover the mechanical parts of the migration:
+
+- `/kb migrate layer-model` — preview or apply the `.kb-config/layers.yaml` conversion from the retired fixed ladder to the list-based graph.
+- `/kb migrate archives` — preview or apply the year-based archive moves.
+
 ## Plan
 
 Produce a **diff** before applying:
@@ -54,6 +59,13 @@ Before: _kb-inputs/digested/*.md
 After: _kb-inputs/digested/YYYY/MM/*.md (grouped by processed year and month)
 ```
 
+### Fixed ladder → layer graph
+
+```
+Before: layers.personal / layers.teams / layers.org-unit / layers.marketplace / layers.company
+After:  workspace.anchor-layer + layers[] list with scope, role, parent, path, and per-layer features
+```
+
 ### Missing `_kb-workstreams/`
 
 Prompt the user for 1–5 parallel tracks. Create files.
@@ -67,3 +79,9 @@ Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and
 - Commit with message `chore(kb-setup): migrate to agentic-kb v<version> layout`.
 - Run `/kb audit` to flag stale or ambiguous content.
 - Run `/kb start-day` to verify the briefing is non-empty.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-25 | Added the explicit `/kb migrate layer-model` and `/kb migrate archives` helper guidance for the 5.1 closeout so legacy adopters have a deterministic migration path | v5.1.0 closeout release |

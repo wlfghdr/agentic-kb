@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, and tasks as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.0.0
+version: 5.1.0
 triggers:
   - "/kb"
   - "knowledge base"
@@ -93,6 +93,7 @@ Full command reference: `references/command-reference.md`.
 | Digest connections | `/kb digest connections` | Pull deltas from configured product repos and trackers |
 | Sync | `/kb sync [layer]` | Cross-reference contributor-scoped topics or findings |
 | Diff | `/kb diff [layer]` | Show new material per contributor or connection |
+| Migrate | `/kb migrate archives` / `/kb migrate layer-model` | Preview or apply legacy archive and layer-model migrations |
 | Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog |
 | Note | `/kb note [text]` / `/kb note meeting [topic]` / `/kb note end` | Capture general or meeting notes and surface follow-on changes |
 | Idea | `/kb idea [text]` | Create a seed idea |
@@ -168,6 +169,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added the explicit 5.1 migration-helper surface (`/kb migrate archives`, `/kb migrate layer-model`) and aligned the declared skill version with the closeout release | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the behavioral spec for 5.0.0: `/kb` now operates on a flexible layer graph, notes became first-class, digests can read declared connections, and publish targets per-layer marketplaces instead of a fixed L4 | v5.0.0 flexible layer model |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release (composite `/kb promote` semantics + mandatory artifact preflight/QA contract) | v4.0.0 release alignment |
 | 2026-04-25 | Added explicit preflight-fetch summaries for artifact-driving external reads and a mandatory post-generation HTML QA sweep; bumped declared skill version to 3.5.0 | Generic learnings extracted from live roadmap and presentation feature work |
