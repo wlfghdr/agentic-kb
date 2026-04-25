@@ -19,6 +19,12 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Added
+
+- **Connections lifecycle reference** — new `plugins/kb/skills/kb-management/references/connections-lifecycle.md` documents connection kinds (`product-repos`, `trackers`), the full config shape with tracker kinds and field contracts, the setup flow during interview block 9, the digest lifecycle (initial watermark, ongoing delta, no-delta log), watermark file formats (single-file and per-source), connection drift in triage, write-back capabilities, and disconnect/cleanup. The command reference now links to it.
+- **Publish contract reference** — new `plugins/kb/skills/kb-management/references/publish-contract.md` documents `/kb publish` at the same depth as `promote-contract.md`: the canonical flow (extract pattern → strip local context → draft SKILL.md → safety validation → scaffold → PR), a generalizability gate (three questions on top of the evaluation gate), per-check safety validation detail (PII, credentials, hardcoded URLs, destructive commands), SKILL.md frontmatter contract, staging behavior per target layer shape, and response examples for applied and blocked outcomes. The SKILL.md load-on-demand list and command reference now link to it.
+- **VMG sourcing and update guidance in setup docs** — `plugins/kb/skills/kb-setup/references/setup-flow.md` now includes a "VMG sourcing and updates" section covering the three initial-population methods (URL fetch, file read, direct text), what to do when no VMG content is available at setup time, how parent-layer digests trigger VMG updates, how manual updates are made, and how conflicts are escalated to a decision.
+
 ### Changed
 
 - **Setup and cross-layer guidance are easier to follow** — README now separates quick plugin install from the longer guided workspace scaffold and points new adopters at `docs/examples/first-hour.md`; the first-hour walkthrough now matches the acceptance baseline more closely (phase terminology, parent fields, manual-only automation level); `docs/REFERENCE.md` and `kb-setup` now document what automation levels 1/2/3 mean instead of leaving adopters to infer them from `.kb-config/automation.yaml`.

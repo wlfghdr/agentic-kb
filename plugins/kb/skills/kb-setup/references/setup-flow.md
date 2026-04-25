@@ -53,7 +53,7 @@ Instantiate these files from `templates/`:
 - `.kb-config/artifacts.yaml` ← `artifacts.yaml`
 - `_kb-references/foundation/me.md` ← `foundation-me.md`
 - `_kb-references/foundation/context.md` ← `foundation-context.md`
-- `_kb-references/foundation/vmg.md` ← `foundation-vmg.md` (pre-filled from Q3: URL fetch, file read, or direct text)
+- `_kb-references/foundation/vmg.md` ← `foundation-vmg.md` (pre-filled from Q3 — see [VMG sourcing](#vmg-sourcing-and-updates) below)
 - `_kb-references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
 - `_kb-references/foundation/sources.md` ← `foundation-sources.md`
 - `_kb-references/foundation/naming.md` ← `foundation-naming.md`
@@ -160,6 +160,56 @@ git push <remote> <branch>   # if remote configured and user confirms
 
 Respect branch protection — open a PR if the default branch is protected.
 
+## VMG sourcing and updates
+
+`_kb-references/foundation/vmg.md` is the strategic steering model for the KB layer. Every capture, digest, and ritual checks it.
+
+### Initial population during setup
+
+During setup (interview block 2 collects role/themes; the VMG content is sourced in the scaffold step). The skill offers three methods:
+
+| Method | When to use | How |
+|--------|-------------|-----|
+| **URL fetch** | Company or team OKR page, strategy doc, or public roadmap page is accessible | Agent fetches the URL, extracts the vision, mission, and goal statements, and drafts them into `vmg.md` for user review and edit |
+| **File read** | The user has an existing strategy doc on disk | Agent reads the file, extracts the relevant sections, and drafts them into `vmg.md` |
+| **Direct text** | No existing document; user dictates the VMG inline | Agent fills the template with the user's input verbatim and confirms |
+
+After population by any method, always:
+
+1. show the draft `vmg.md` to the user for review,
+2. ask for any edits before writing,
+3. note any missing fields (e.g., goals table not yet filled) as open tasks in `_kb-tasks/backlog.md`.
+
+If no VMG content is available at setup time, write the template with all placeholders intact and add a `backlog.md` item: `Fill in vmg.md vision, mission, and goals`.
+
+### Updates after setup
+
+VMG updates happen in two ways:
+
+**1. Triggered by a parent-layer digest (`/kb digest <layer>`).**
+
+When a digest pulls changes from a parent layer that includes a `foundation/vmg.md`, the skill:
+
+1. compares the upstream VMG with the current layer's `vmg.md`,
+2. surfaces a diff of changed or new goal lines,
+3. proposes appending new goals, updating existing ones with changed priority, and marking retired goals `dropped`,
+4. waits for explicit confirmation before writing any change,
+5. logs `update-topic | personal | vmg.md | VMG updated from <parent-layer> digest`.
+
+The current layer's VMG is always the merged view. New or updated goals from upstream are appended, not silently overwritten.
+
+**2. Manual update by the user.**
+
+The user edits `vmg.md` directly or says "update my VMG". The skill:
+
+1. proposes the change inline,
+2. appends a changelog row to the file's `## Changelog` section (the template ships with one),
+3. offers to commit.
+
+### Conflict handling
+
+If an upstream goal contradicts the current layer's goal (e.g., different priority horizon, conflicting direction), the skill flags the conflict as a candidate for a new decision (`_kb-decisions/D-YYYY-MM-DD-vmg-conflict.md`) rather than silently choosing one version. The user resolves the conflict via `/kb decide resolve` before the VMG update is finalized.
+
 ## Verification
 
 Run:
@@ -179,3 +229,9 @@ You're set up. Try:
 ```
 
 After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-25 | Added VMG sourcing section covering the three initial-population methods (URL fetch, file read, direct text), post-setup update triggers (parent-layer digest and manual), and conflict handling | Deep spec-audit follow-up |

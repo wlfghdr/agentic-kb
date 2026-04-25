@@ -48,6 +48,8 @@ Notes use a lighter gate than findings. They are cheap capture surfaces that fee
 
 If the target layer is `role: consumer`, `promote` and `publish` must refuse and point to the next valid contributor layer.
 For the staged-review contract behind `/kb promote`, see [`promote-contract.md`](./promote-contract.md).
+For the publish contract (generalizability gate, safety validation, SKILL.md frontmatter), see [`publish-contract.md`](./publish-contract.md).
+For connection setup, digest lifecycle, watermark format, and write-back, see [`connections-lifecycle.md`](./connections-lifecycle.md).
 
 ## Migration
 
@@ -80,6 +82,10 @@ Both helpers are dry-run first. The shipped helper scripts live under `plugins/k
 | `/kb setup` | Hand off to `kb-setup` skill |
 
 ## Publish flow (detail)
+
+For the full publish contract — generalizability gate, safety validation, SKILL.md frontmatter, staging behavior, and response expectations — see [`publish-contract.md`](./publish-contract.md).
+
+Summary steps:
 
 1. Take source file (finding, topic, note, or shared layer output).
 2. Extract the generalizable pattern and strip local-only context.
@@ -154,6 +160,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added pointers to publish-contract.md and connections-lifecycle.md so adopters can follow the full depth of /kb publish and /kb digest connections from the command surface | Deep spec-audit follow-up |
 | 2026-04-25 | Added an explicit pointer from the command reference to the staged-review promote contract so adopters can see when staging happens and when it does not | Deep spec-audit follow-up |
 | 2026-04-25 | Added the explicit migration helper commands so the command surface now includes the 5.1 closeout path for old archive layouts and fixed-layer configs | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the command surface for the 5.0 layer graph: promote/publish now target named layers, notes became a first-class primitive, `digest connections` and `report progress` were added, and triage now checks anchor-layer setup plus connection drift | v5.0.0 flexible layer model |

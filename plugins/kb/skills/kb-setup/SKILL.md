@@ -225,7 +225,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 ## References
 
-- `references/setup-flow.md` — full step-by-step walkthrough with example output.
+- `references/setup-flow.md` — full step-by-step walkthrough with example output and VMG sourcing guidance.
 - `references/automation-levels.md` — meaning of setup levels 1/2/3 and how they map into `automation.yaml`.
 - `references/migration-guide.md` — how to migrate an existing KB.
 - `references/troubleshooting.md` — common setup issues.
@@ -235,6 +235,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Updated setup-flow.md reference description to note it includes VMG sourcing guidance | Deep spec-audit follow-up |
 | 2026-04-25 | Documented what automation levels 1/2/3 mean during setup and linked the interview step to a dedicated reference so adopters do not have to infer the contract from `automation.yaml` alone | Deep spec-audit follow-up |
 | 2026-04-25 | Added the explicit 5.1 migration-helper handoff so setup now points legacy adopters at `/kb migrate layer-model` and `/kb migrate archives` instead of leaving those follow-ups implicit | v5.1.0 closeout release |
 | 2026-04-25 | Reworked setup for 5.0.0: onboarding now discovers and scaffolds a flexible layer graph, supports team-only or multi-org adoption, writes per-layer marketplaces and connections, and scaffolds year-based archives plus notes | v5.0.0 flexible layer model |

@@ -161,6 +161,8 @@ The templates this skill instantiates live in `templates/`:
 - `references/spec-summary.md` — condensed architecture and workspace layout.
 - `references/command-reference.md` — full subcommand details.
 - `references/promote-contract.md` — staged-review semantics for `/kb promote`.
+- `references/publish-contract.md` — generalizability gate, safety validation, and response contract for `/kb publish`.
+- `references/connections-lifecycle.md` — connection kinds, config, digest lifecycle, watermarks, and write-back.
 - `references/rituals.md` — the four rituals in detail.
 - `references/html-artifacts.md` — presentation/report generation contract.
 - `references/evaluation-gate.md` — the five-question filter, in depth.
@@ -170,6 +172,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Added publish-contract.md and connections-lifecycle.md to the load-on-demand references so adopters can reach the full depth of /kb publish and /kb digest connections from the skill entry point | Deep spec-audit follow-up |
 | 2026-04-25 | Clarified that consumer layers may receive digests but are never promote/publish targets, and added an explicit promote-contract reference for staged review semantics | Deep spec-audit follow-up |
 | 2026-04-25 | Added the explicit 5.1 migration-helper surface (`/kb migrate archives`, `/kb migrate layer-model`) and aligned the declared skill version with the closeout release | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the behavioral spec for 5.0.0: `/kb` now operates on a flexible layer graph, notes became first-class, digests can read declared connections, and publish targets per-layer marketplaces instead of a fixed L4 | v5.0.0 flexible layer model |
