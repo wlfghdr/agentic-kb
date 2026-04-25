@@ -58,6 +58,22 @@
     .flow-box span { font-size: .72rem; color: var(--fg3); }
     .flow-arrow { color: var(--accent); font-size: 1.2rem; font-weight: 700; }
     .flow-arrow-back { color: var(--good); font-size: 1rem; }
+    .layer-chain { display: flex; align-items: stretch; justify-content: center; gap: .25rem; flex-wrap: wrap; margin: 2rem 0 1rem; }
+    .layer { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: .85rem 1.1rem; text-align: center; min-width: 120px; display: flex; flex-direction: column; justify-content: center; }
+    .layer strong { display: block; font-size: .95rem; }
+    .layer span { font-size: .72rem; color: var(--fg3); margin-top: .15rem; }
+    .layer.consumer { border-style: dashed; }
+    .layer-hop { display: flex; flex-direction: column; gap: .2rem; align-items: center; justify-content: center; padding: 0 .25rem; min-width: 80px; }
+    .hop-up { color: var(--accent); font-size: .78rem; font-weight: 600; }
+    .hop-down { color: var(--good); font-size: .78rem; font-weight: 600; }
+    .layer-rule { text-align: center; font-size: .9rem; color: var(--fg2); max-width: 620px; margin: 0 auto 2rem; }
+    .marketplace-row { display: flex; align-items: center; justify-content: center; gap: .75rem; flex-wrap: wrap; margin: 1.5rem 0 .5rem; }
+    .marketplace-row .layer.marketplace { background: var(--accent-soft); border-color: var(--accent); }
+    .hop-side { color: var(--accent); font-size: .78rem; font-weight: 600; }
+    @media (max-width: 700px) {
+      .layer-chain { flex-direction: column; align-items: stretch; }
+      .layer-hop { flex-direction: row; padding: .25rem 0; min-width: 0; }
+    }
     .gate { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
     .gate ol { padding-left: 1.25rem; margin: .75rem 0 0; }
     .gate li { margin: .3rem 0; font-size: .92rem; color: var(--fg); }
@@ -126,16 +142,53 @@
   <!-- LAYERS -->
   <section>
     <h2>Flexible layers, one command</h2>
-    <p>A workspace is a <strong>layer graph</strong>, not a fixed ladder. Each layer has a name, a scope (<code>personal</code>, <code>team</code>, <code>org-unit</code>, <code>company</code>, or your own), a role (<code>contributor</code> or <code>consumer</code>), and a parent edge. At least one contributor-capable layer is required — a personal layer is recommended, but not mandatory.</p>
-    <div class="flow">
-      <div class="flow-box"><strong>anchor layer</strong><span>scope: any · role: contributor</span></div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-box"><strong>parent layer</strong><span>e.g. team</span></div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-box"><strong>parent's parent</strong><span>e.g. org · company</span></div>
+    <p>A workspace is a <strong>layer graph</strong>, not a fixed ladder. Each layer has a name, a scope, a role, and a parent edge. <strong>Knowledge flows up</strong> via <code>promote</code>; <strong>context flows down</strong> via <code>digest</code>. Here is the most common shape — your graph can have fewer or more layers, and your anchor (the layer that holds <code>.kb-config/</code>) does not have to be personal.</p>
+    <div class="layer-chain">
+      <div class="layer">
+        <strong>anchor</strong>
+        <span>e.g. <code>alice-personal</code></span>
+        <span>contributor</span>
+      </div>
+      <div class="layer-hop">
+        <span class="hop-up">↑ promote</span>
+        <span class="hop-down">↓ digest</span>
+      </div>
+      <div class="layer">
+        <strong>team</strong>
+        <span>e.g. <code>team-observability</code></span>
+        <span>contributor</span>
+      </div>
+      <div class="layer-hop">
+        <span class="hop-up">↑ promote</span>
+        <span class="hop-down">↓ digest</span>
+      </div>
+      <div class="layer">
+        <strong>org</strong>
+        <span>e.g. <code>engineering-org</code></span>
+        <span>contributor</span>
+      </div>
+      <div class="layer-hop">
+        <span class="hop-down">↓ digest</span>
+      </div>
+      <div class="layer consumer">
+        <strong>company</strong>
+        <span>e.g. <code>company-guidance</code></span>
+        <span>consumer · read-down only</span>
+      </div>
     </div>
-    <p style="text-align:center;font-size:.85rem;color:var(--fg3)">promote walks up the parent chain &nbsp;·&nbsp; digest walks back down</p>
-    <p style="text-align:center;font-size:.85rem;color:var(--fg3)">Any layer may attach its own marketplace and external connections — marketplace is cross-cutting, not a layer slot.</p>
+    <p class="layer-rule">At least one <strong>contributor-capable</strong> layer is required. A personal anchor is recommended but not mandatory. <code>promote</code> and <code>publish</code> into a <code>consumer</code> layer are refused with a clear message.</p>
+    <div class="marketplace-row">
+      <div class="layer">
+        <strong>any contributor layer</strong>
+        <span>team, org, …</span>
+      </div>
+      <span class="hop-side">─ publish ▶</span>
+      <div class="layer marketplace">
+        <strong>that layer's marketplace</strong>
+        <span>reusable skills + agents</span>
+      </div>
+    </div>
+    <p class="layer-rule">Marketplaces are <strong>cross-cutting</strong>, not a slot in the chain. Any layer can attach its own marketplace repo for skills it wants to share with that audience.</p>
   </section>
 
   <!-- GATE -->
