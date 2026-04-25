@@ -88,7 +88,7 @@
       <li>"My agents are aligned with me. Yours are with you. We're not aligned with each other."</li>
       <li>"By the time leadership catches up, another three things got built."</li>
     </ul>
-    <a class="cta" href="#install">Install in 60 seconds</a>
+    <a class="cta" href="#install">Install in about a minute</a>
   </section>
 
   <section>
@@ -96,7 +96,7 @@
     <p>The quickest credible adoption story is not a bigger architecture pitch. It is one short path a team can run and inspect.</p>
     <div class="grid">
       <div class="card"><h3>1. Install</h3><p>Wire one harness into its documented native command or skill surface.</p></div>
-      <div class="card"><h3>2. Scaffold</h3><p>Create personal, team, and org repos with the same file contract.</p></div>
+      <div class="card"><h3>2. Scaffold</h3><p>Create one anchor layer plus one adjacent shared layer with the same file contract.</p></div>
       <div class="card"><h3>3. Capture</h3><p>Turn one source into a finding/topic update that another human can review.</p></div>
       <div class="card"><h3>4. Promote + digest</h3><p>Exercise the shared loop once so the governance story is visible, not implied.</p></div>
       <div class="card"><h3>5. Verify</h3><p>Regenerate reports and run the repo-owned fixtures that prove the same path in CI.</p></div>
@@ -119,25 +119,23 @@
       <div class="card"><h3>🗂 No database</h3><p>Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If a folder can read it, this works.</p></div>
       <div class="card"><h3>☁️ No cloud backend</h3><p>No SaaS. No auth. No infra. Your knowledge stays on your disk. If the vendor disappears tomorrow, your KB is still there.</p></div>
       <div class="card"><h3>🔓 No vendor lock-in</h3><p>Claude Code and VS Code have marketplace/native plugin paths. OpenCode, Gemini, and Kiro get installer-backed native entrypoints. Codex uses the same repo contract via <code>AGENTS.md</code> plus a reusable <code>kb</code> skill.</p></div>
-      <div class="card"><h3>🪶 Lean by construction</h3><p>One spec. Two reference skills. One reference agent. One installer. Install in 60s. Rip it out in 5 if it's not for you.</p></div>
+      <div class="card"><h3>🪶 Lean by construction</h3><p>One spec. Two reference skills. One reference agent. One installer. Install in about a minute. Rip it out in five if it's not for you.</p></div>
     </div>
   </section>
 
   <!-- LAYERS -->
   <section>
-    <h2>Five layers, one command</h2>
-    <p>Only the personal layer is required. Higher layers are opt-in. Content flows up via <strong>promote</strong>, down via <strong>digest</strong>. Every boundary passes a five-question evaluation gate.</p>
+    <h2>Flexible layers, one command</h2>
+    <p>A workspace is a <strong>layer graph</strong>, not a fixed ladder. Each layer has a name, a scope (<code>personal</code>, <code>team</code>, <code>org-unit</code>, <code>company</code>, or your own), a role (<code>contributor</code> or <code>consumer</code>), and a parent edge. At least one contributor-capable layer is required — a personal layer is recommended, but not mandatory.</p>
     <div class="flow">
-      <div class="flow-box"><strong>L1 Personal</strong><span>required</span></div>
+      <div class="flow-box"><strong>anchor layer</strong><span>scope: any · role: contributor</span></div>
       <span class="flow-arrow">→</span>
-      <div class="flow-box"><strong>L2 Team</strong><span>optional</span></div>
+      <div class="flow-box"><strong>parent layer</strong><span>e.g. team</span></div>
       <span class="flow-arrow">→</span>
-      <div class="flow-box"><strong>L3 Org-Unit</strong><span>optional</span></div>
-      <span class="flow-arrow">→</span>
-      <div class="flow-box"><strong>L4 Marketplace</strong><span>skills + agents</span></div>
-      <span class="flow-arrow-back">← L5 Company (top-down)</span>
+      <div class="flow-box"><strong>parent's parent</strong><span>e.g. org · company</span></div>
     </div>
-    <p style="text-align:center;font-size:.85rem;color:var(--fg3)">promote →&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← digest</p>
+    <p style="text-align:center;font-size:.85rem;color:var(--fg3)">promote walks up the parent chain &nbsp;·&nbsp; digest walks back down</p>
+    <p style="text-align:center;font-size:.85rem;color:var(--fg3)">Any layer may attach its own marketplace and external connections — marketplace is cross-cutting, not a layer slot.</p>
   </section>
 
   <!-- GATE -->
@@ -162,12 +160,17 @@
 
   <!-- MEMORY -->
   <section>
-    <h2>Four kinds of memory</h2>
+    <h2>First-class building blocks</h2>
+    <p>Every primitive is a file with a contract. Layers opt in to the ones they need.</p>
     <div class="grid">
       <div class="card"><h3>findings/</h3><p>Dated, immutable snapshots. The evidence base.</p></div>
       <div class="card"><h3>topics/</h3><p>Living positions. Updated in place with changelog.</p></div>
+      <div class="card"><h3>decisions/</h3><p>Open or resolved choices with evidence trail and stakeholders.</p></div>
       <div class="card"><h3>ideas/</h3><p>Incubation objects. Seed → growing → ready → shipped.</p></div>
+      <div class="card"><h3>notes/</h3><p>Meeting and working notes — first-class, not chat noise.</p></div>
+      <div class="card"><h3>tasks/</h3><p>Focus and backlog with explicit creation and closure.</p></div>
       <div class="card"><h3>foundation/</h3><p>Identity: who you are, your context, sources, stakeholders.</p></div>
+      <div class="card"><h3>workstreams/</h3><p>Parallel tracks with their own themes and active decisions.</p></div>
     </div>
   </section>
 
@@ -178,14 +181,19 @@
     <div class="cmd-list">
       <p><code>/kb [text]</code> — capture + evaluate</p>
       <p><code>/kb review</code> — process inbox</p>
-      <p><code>/kb promote</code> — push to team</p>
-      <p><code>/kb digest team</code> — pull team changes</p>
+      <p><code>/kb promote [file] [layer]</code> — promote upward</p>
+      <p><code>/kb digest [layer]</code> — pull parent-layer changes</p>
+      <p><code>/kb digest connections</code> — pull repo / tracker deltas</p>
+      <p><code>/kb note meeting [topic]</code> — start a meeting note</p>
       <p><code>/kb idea [text]</code> — create idea</p>
       <p><code>/kb develop [idea]</code> — sparring session</p>
       <p><code>/kb decide [desc]</code> — open decision</p>
+      <p><code>/kb task</code> — show focus items</p>
       <p><code>/kb start-day</code> — morning briefing</p>
       <p><code>/kb end-week</code> — weekly summary</p>
       <p><code>/kb present [topic]</code> — HTML slides</p>
+      <p><code>/kb report progress [scope]</code> — cross-source report</p>
+      <p><code>/kb migrate layer-model</code> — legacy ladder → graph</p>
       <p><code>/kb setup</code> — onboarding wizard</p>
     </div>
   </section>
@@ -238,22 +246,28 @@
     <div class="install-grid">
       <div class="card">
         <h3>Claude Code</h3>
-        <pre><code>/install-marketplace https://github.com/wlfghdr/agentic-kb
+        <pre><code>/plugin marketplace add https://github.com/wlfghdr/agentic-kb
+/plugin install kb@agentic-kb
 /kb setup</code></pre>
       </div>
       <div class="card">
-        <h3>VS Code</h3>
-        <pre><code>// settings.json → chat.plugins.marketplaces
-["wlfghdr/agentic-kb"]
-// then: /kb setup</code></pre>
+        <h3>VS Code Copilot Chat</h3>
+        <pre><code>// settings.json
+"chat.plugins.marketplaces": [
+  "wlfghdr/agentic-kb"
+]
+// install from Extensions view, then:
+/kb setup</code></pre>
       </div>
       <div class="card">
-        <h3>OpenCode</h3>
-        <pre><code>scripts/install --target opencode --global
+        <h3>OpenCode / Gemini / Kiro / Codex</h3>
+        <pre><code>git clone https://github.com/wlfghdr/agentic-kb
+cd agentic-kb
+scripts/install --target &lt;harness&gt; --global
 # then: /kb setup</code></pre>
       </div>
     </div>
-    <p style="margin-top:1.5rem">That's it. <code>/kb setup</code> walks you through everything — name, role, workstreams, branding, integrations.</p>
+    <p style="margin-top:1.5rem"><code>/kb setup</code> walks you through name, role, workstreams, layer graph, branding, and optional integrations. See the <a href="README.md">README</a> for the full per-harness install matrix.</p>
   </section>
 
   <!-- FOOTER -->

@@ -1,6 +1,6 @@
 # Glossary
 
-> **Version:** 0.2 | **Last updated:** 2026-04-25
+> **Version:** 0.3 | **Last updated:** 2026-04-25
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
@@ -20,7 +20,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Focus** | The max-6 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
 | **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources, and VMG. |
 | **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer prioritization after the evaluation gate. Also called **MCG** (Mission-Critical Goal). |
-| **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/`. |
+| **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/`. Beyond the supported tiers, two "not yet" buckets are documented in the README: **rules-only harnesses** (e.g. Cursor, Windsurf) reuse the scaffolded files as context but have no slot for a custom `/kb` command, and **not-feasible** environments (e.g. Aider, raw Claude / Inflection Pi) lack any user-custom command hook today. |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **Journey** | A hierarchical user, customer, or product flow (`journey → phase → sub-journey → step`) with readiness per visible step. Managed by the optional draft `kb-journeys` skill. |
 | **Layer** | A KB repo participating in the workspace graph. Layers are named and typed by `scope`, not by fixed ladder position. |
@@ -65,6 +65,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | Concept-audit follow-up: extended the Harness definition with the rules-only and not-feasible buckets that the README documents, so the glossary stays the single source of truth for harness vocabulary | Concept-audit drift correction |
 | 2026-04-25 | Replaced the fixed L1–L5 vocabulary with the 5.0 flexible layer graph terms (layer, scope, role, parent layer, anchor layer), added notes/connections/tracker terminology, and clarified marketplace as a per-layer capability | v5.0.0 flexible layer model |
 | 2026-04-24 | Updated the harness definition to distinguish marketplace/native plugin paths, installer-supported native command or skill paths, and Codex's compatible skill workflow | Harness docs correction |
 | 2026-04-22 | Added Codex CLI to the harness definition as a compatible CLI workflow and clarified first-class vs repo-local support language | Compatibility expansion |

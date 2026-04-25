@@ -19,7 +19,24 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.1.0 follow-ups only. The migration-helper closeout, roadmap config normalization, and issue-resolution sweep shipped in `5.1.0`.
+- Post-5.1.1 follow-ups only.
+
+## [5.1.1] — 2026-04-25
+
+> **Why PATCH:** documentation-only consistency sweep after a concept audit. No runtime semantics, no command-surface changes, no file-format changes. Every fix corrects drift between the Markdown spec, the website, and the per-file headers; or makes already-shipped behavior visible in the docs that adopters read first.
+
+### Fixed
+
+- **Website (`index.html`) no longer teaches a retired model and no longer ships a non-existent install command** — replaced the "Five layers, one command" / `L1`–`L5` flow boxes with the 5.0 flexible layer graph (anchor → parent chain, marketplace as cross-cutting), removed the false "L1 Personal — required" claim, dropped the bogus `/install-marketplace …` slash command in favor of the documented `/plugin marketplace add` + `/plugin install kb@agentic-kb`, called out the missing `git clone` step for installer-backed harnesses, replaced the marketing claim "Install in 60 seconds" with the README's "about a minute", expanded the proof-strip wording to match the 2-layer acceptance baseline, expanded "Four kinds of memory" into the full first-class building-block set (decisions, notes, tasks, workstreams included), and refreshed the command preview list with `digest connections`, migration helpers, and `report progress`.
+- **`AGENTS.md` changelog and version field caught up with the framework** — bumped from `0.3` to `0.4`, added the missing changelog rows for the 4.1.0, 5.0.0, 5.1.0, and 5.1.1 release alignments so a new reader doesn't see "v4.0.0 release alignment" as the most recent state.
+- **README compatibility model wording matches its own table** — the prose said "three setup tiers" while the table listed five rows; rules-only and not-feasible buckets now sit in a separate "not yet covered" sub-table so the supported-tier count and the row count agree.
+- **Glossary and `REFERENCE.md §10` now document the same harness universe** — the Harness term and the harness-support matrix both call out the rules-only (Cursor, Windsurf) and not-feasible (Aider, raw Claude / Inflection Pi) buckets the README references, so the spec is the single source of truth instead of the README inventing terms on its own.
+- **First-run acceptance path is back in version sync** — bumped `docs/first-run-acceptance.md` from `5.0.0` to `5.1.1` and added an optional Step 10 covering `/kb migrate layer-model` and `/kb migrate archives` for legacy adopters, so the canonical onboarding proof now exercises the migration helpers that already shipped in 5.1.0.
+- **Historical L1/L2 vocabulary in the 2026-04-21 walkthrough is now flagged** — added a retroactive vocabulary note to `docs/test-reports/2026-04-21-first-run-walkthrough.md` so the retired ladder language is preserved as historical record without contradicting the current glossary.
+
+### Changed
+
+- **Per-file version headers caught up with the framework** — `docs/REFERENCE.md` (5.1.0 → 5.1.1), `docs/glossary.md` (0.2 → 0.3), `docs/first-run-acceptance.md` (5.0.0 → 5.1.1), `AGENTS.md` (0.3 → 0.4). Manifest versions (`VERSION`, root `plugin.json`, `.claude-plugin/marketplace.json`, `plugins/kb/plugin.json`) all rolled to `5.1.1` for the audit closeout.
 
 ## [5.1.0] — 2026-04-25
 
