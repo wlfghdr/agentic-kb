@@ -66,6 +66,7 @@
     .layer-hop { display: flex; flex-direction: column; gap: .2rem; align-items: center; justify-content: center; padding: 0 .25rem; min-width: 80px; }
     .hop-up { color: var(--accent); font-size: .78rem; font-weight: 600; }
     .hop-down { color: var(--good); font-size: .78rem; font-weight: 600; }
+    .hop-up .axis-v, .hop-down .axis-v { display: none; }
     .layer-rule { text-align: center; font-size: .9rem; color: var(--fg2); max-width: 620px; margin: 0 auto 2rem; }
     .marketplace-row { display: flex; align-items: center; justify-content: center; gap: .75rem; flex-wrap: wrap; margin: 1.5rem 0 .5rem; }
     .marketplace-row .layer.marketplace { background: var(--accent-soft); border-color: var(--accent); }
@@ -73,6 +74,8 @@
     @media (max-width: 700px) {
       .layer-chain { flex-direction: column; align-items: stretch; }
       .layer-hop { flex-direction: row; padding: .25rem 0; min-width: 0; }
+      .hop-up .axis-h, .hop-down .axis-h { display: none; }
+      .hop-up .axis-v, .hop-down .axis-v { display: inline; }
     }
     .gate { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
     .gate ol { padding-left: 1.25rem; margin: .75rem 0 0; }
@@ -150,8 +153,8 @@
         <span>contributor</span>
       </div>
       <div class="layer-hop">
-        <span class="hop-up">↑ promote</span>
-        <span class="hop-down">↓ digest</span>
+        <span class="hop-up"><span class="axis-h">promote →</span><span class="axis-v">↓ promote</span></span>
+        <span class="hop-down"><span class="axis-h">← digest</span><span class="axis-v">↑ digest</span></span>
       </div>
       <div class="layer">
         <strong>team</strong>
@@ -159,8 +162,8 @@
         <span>contributor</span>
       </div>
       <div class="layer-hop">
-        <span class="hop-up">↑ promote</span>
-        <span class="hop-down">↓ digest</span>
+        <span class="hop-up"><span class="axis-h">promote →</span><span class="axis-v">↓ promote</span></span>
+        <span class="hop-down"><span class="axis-h">← digest</span><span class="axis-v">↑ digest</span></span>
       </div>
       <div class="layer">
         <strong>org</strong>
@@ -168,7 +171,7 @@
         <span>contributor</span>
       </div>
       <div class="layer-hop">
-        <span class="hop-down">↓ digest</span>
+        <span class="hop-down"><span class="axis-h">← digest</span><span class="axis-v">↑ digest</span></span>
       </div>
       <div class="layer consumer">
         <strong>company</strong>

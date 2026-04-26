@@ -1,7 +1,7 @@
 ---
 name: kb-setup
-description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
-version: 5.1.0
+description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
+version: 5.2.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -11,6 +11,9 @@ triggers:
   - "bootstrap workspace"
   - "create kb"
   - "scaffold knowledge base"
+  - "set up agentic-kb"
+  - "start agentic-kb"
+  - "first time using kb"
 tools:
   - run_in_terminal
   - read_file
@@ -54,30 +57,39 @@ Two concerns, two tools:
 
 ## Interactive question flow
 
-Ask each block in order. Stop and wait after each block for the user's answer before proceeding.
+The interview is **goal-oriented, not feature-list-driven**. Phase 1 asks the user about their world in their own language; phase 2 collects the minimum admin facts the wizard cannot infer; phase 3 shows a derived plan and lets the user adjust before anything is written.
 
-1. **Your name** — used for contributor directories and defaults.
-2. **Your role and themes** — one sentence plus 3–5 theme keywords.
-3. **Workspace root** — absolute path; default current directory.
-4. **Discovery pass** — scan the workspace for existing KB repos, harness hooks, and likely layer candidates. Present what was found before asking for mutations.
-5. **Layer declarations** — repeat this block for every layer the user wants:
-   - create new or onboard existing,
-   - layer name,
-   - scope,
-   - role (`contributor` or `consumer`),
-   - parent layer,
-   - path,
-   - enabled features,
-   - contributor-mode overrides for `topics` or `notes`,
-   - optional marketplace repo.
-   Default suggestion when nothing exists: one contributor anchor layer plus one team layer.
-6. **Anchor layer** — choose which contributor-capable layer holds `.kb-config/` and acts as the user's home base.
-7. **Workstreams** — 1–5 workstreams for the anchor layer.
-8. **IDE targets** — multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`.
-9. **Connections and integrations** — linked product repos, tracker exports or live trackers, reference mode, write-back policy.
-10. **Draft features** — if any layer enables `roadmaps` or `journeys`, collect the additional per-layer config needed for those features.
-11. **Automation level** — 1 = manual only, 2 = scheduled rituals/digests, 3 = scheduled flows plus guarded auto-promote (see `references/automation-levels.md`).
-12. **HTML artifact styling** — builtin, website-derived, or template-based corporate design.
+Ask each block in order. Stop and wait after each block for the user's answer before proceeding. Never ask the user to enumerate layers, features, contributor-mode flags, or scopes in phase 1 — those are derived in phase 3 and only adjusted there.
+
+### Phase 1 — Context and goals (open-ended)
+
+1. **Who you are** — name, role, and one sentence about the work you actually do day to day. Used for `foundation/me.md` and contributor directories.
+2. **What you're trying to track or decide** — open prose. The wizard extracts themes (3–5 keywords) and workstream candidates from this answer; do not ask for keywords or workstream names directly.
+3. **Why now** — what triggered this setup? "Too many directions to keep track of", "leadership keeps asking for status", "starting a new quarter", "team is drifting", etc. Used to bias which artifacts (briefings, weekly status, progress reports, roadmaps) the proposed plan emphasizes.
+4. **Who else needs to see what** — describe the audience in plain words: "just me", "me and one team", "two teams plus an org-unit lead", "a whole company". Used to derive layer count, scopes, and role boundaries (which higher layers should be `consumer` rather than `contributor`).
+5. **Where information feeds in** — describe the sources the user already reads from: product repos, issue trackers, dashboards, recurring meetings, stakeholder reports, exports. Used to derive `connections:` per layer and to decide whether the lean export-backed roadmap path applies.
+6. **What you want out** — describe the artifacts that would actually save time: morning briefing, weekly status to share with a boss, presentations, progress reports, roadmap reconciliation, journey specs. Used to derive enabled features (`reports`, `roadmaps`, `journeys`) and dashboard panels.
+7. **How autonomous** — describe how hands-on or hands-off the user wants the agent: "I want to confirm everything", "process the obvious stuff and ask me on edge cases", "run on its own and tell me what changed". Mapped to automation levels 1 (manual only), 2 (scheduled rituals/digests), or 3 (scheduled flows plus guarded auto-promote); see `references/automation-levels.md` for the full contract.
+
+### Phase 2 — Workspace and harness facts (short admin)
+
+8. **Workspace root** — absolute path; default current directory.
+9. **IDE targets** — multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`.
+10. **Discovery pass** — scan the workspace for existing KB repos, harness hooks, and likely layer candidates. Present what was found before phase 3 so the proposal can reuse existing repos instead of inventing new ones.
+
+### Phase 3 — Proposed plan (system shows, user adjusts)
+
+The wizard presents a single concrete proposal derived from phase 1 + 2. The user reviews, adjusts inline if needed, and confirms. Do not ask the user to author the plan from scratch.
+
+11. **Proposed layer graph** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor. Default for a new solo user: one contributor anchor layer (scope `personal`) plus one shared layer matching the audience from Q4. Default for a team-only adopter: one shared contributor layer with the user as a per-contributor directory. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent).
+12. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q5), the dashboard panels and report types that match Q6 outputs, the automation level from Q7 (1 / 2 / 3 per `references/automation-levels.md`), and any draft-feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. Same single yes-or-adjust prompt.
+13. **HTML artifact styling** — builtin, website-derived, or template-based corporate design. Default to `builtin` when Q3 does not mention external branding constraints.
+
+### Phase 4 — Confirm and scaffold
+
+14. **Final confirmation** — restate the chosen plan in one short summary: number of layers, anchor, audiences, automation level, IDE targets, where files will land. Proceed to "What setup does after confirmation" only after explicit yes.
+
+If the user wants to skip phase 1 entirely and author the plan directly, accept that and route to a compact expert path: ask the layer list with name/scope/role/parent/features/marketplace per layer, anchor, workstreams, automation, styling, IDE targets. Document this as the legacy entry point; the goal-oriented flow is the default.
 
 ## What setup does after confirmation
 
@@ -205,10 +217,10 @@ The layer-graph scaffold uses these placeholders directly:
 | Placeholder | Source |
 |-------------|--------|
 | `{{USER_NAME}}` | Q1 |
-| `{{ROLE}}` | Q2 |
-| `{{KB_NAME}}` | anchor-layer name |
-| `{{WORKSPACE_ROOT}}` | Q3 |
-| `{{WORKSTREAM_1_NAME}}`, `{{WORKSTREAM_1_THEMES}}` | Q7 |
+| `{{ROLE}}` | Q1 (role sentence extracted from the same answer) |
+| `{{KB_NAME}}` | anchor-layer name (derived in Q11) |
+| `{{WORKSPACE_ROOT}}` | Q8 |
+| `{{WORKSTREAM_1_NAME}}`, `{{WORKSTREAM_1_THEMES}}` | extracted from Q2 (themes) and confirmed in Q11 |
 | `{{DATE}}` | today |
 | `{{VERSION}}` | `1.0` on first scaffold |
 
@@ -235,6 +247,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | v5.2.0: replaced the feature-list-driven 12-block interview with a four-phase, goal-oriented flow. Phase 1 asks the user about their identity, what they track, why now, audience, sources, desired outputs, and autonomy preference in their own language; phase 2 collects only the workspace and harness facts that cannot be inferred; phase 3 presents one derived plan (layer graph, connections, artifacts, automation, styling) for inline adjust-or-confirm; phase 4 takes a single yes. The legacy "author the plan directly" path stays available as a compact expert mode. Q7 wording carries the automation-level contract added in #76 forward into the new flow | Goal-oriented onboarding |
 | 2026-04-25 | Documented what automation levels 1/2/3 mean during setup and linked the interview step to a dedicated reference so adopters do not have to infer the contract from `automation.yaml` alone | Deep spec-audit follow-up |
 | 2026-04-25 | Added the explicit 5.1 migration-helper handoff so setup now points legacy adopters at `/kb migrate layer-model` and `/kb migrate archives` instead of leaving those follow-ups implicit | v5.1.0 closeout release |
 | 2026-04-25 | Reworked setup for 5.0.0: onboarding now discovers and scaffolds a flexible layer graph, supports team-only or multi-org adoption, writes per-layer marketplaces and connections, and scaffolds year-based archives plus notes | v5.0.0 flexible layer model |
