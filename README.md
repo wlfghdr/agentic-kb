@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.1.1-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.2.0-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -276,7 +276,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.1.1), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.2.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -294,6 +294,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | v5.2.0 release alignment — bumped the spec badge and Status row to match the new framework version that ships the kb-management trigger expansion and the kb-setup goal-oriented question flow | v5.2.0 trigger + setup rework |
 | 2026-04-25 | Clarified the setup proof strip by separating the quick plugin install from the longer guided workspace scaffold and added the `first-hour` walkthrough to "Where to start" | Deep spec-audit follow-up |
 | 2026-04-25 | Removed the "One-page visual overview → index.html" pointer from the header and the `index.html` entry from "Where to start" so the README is the canonical narrative entry point and the visual landing page stands on its own | Index marketing trim |
 | 2026-04-25 | Concept-audit follow-up: relabeled the compatibility model so the "three setup tiers" wording matches the table (rules-only and not-feasible moved into a separate "not yet covered" block) | Concept-audit drift correction |

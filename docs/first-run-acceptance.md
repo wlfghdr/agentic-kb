@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 5.1.1 | **Last updated:** 2026-04-25
+> **Version:** 5.2.0 | **Last updated:** 2026-04-25
 
 This document defines the canonical first-run acceptance path for `agentic-kb`.
 
@@ -202,27 +202,50 @@ Expected result:
 
 ## Step 4 — Answer the baseline questions
 
-Use these answers:
+The setup wizard runs the four-phase, goal-oriented interview defined in `plugins/kb/skills/kb-setup/SKILL.md`. Use these answers; the wizard derives the proposed layer graph and feature set from them and presents it back in phase 3 for confirmation.
 
-| Question block | Baseline answer |
-|----------------|-----------------|
-| Your name | `alice` |
-| Role and themes | `engineer on distributed systems — caching, reliability, observability` |
-| Workspace root | current directory / `<workspace>/demo-agentic-kb` |
-| Discovery pass | accept the reported empty baseline |
-| Layer 1 | create `alice-personal`, `scope: personal`, `role: contributor`, `parent: team-observability`, `path: ./alice-personal`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports` |
-| Layer 2 | create `team-observability`, `scope: team`, `role: contributor`, `parent: null`, `path: ./team-observability`, features `findings, topics, decisions, tasks, notes, foundation, reports`, contributor-mode `notes: shared` |
-| Anchor layer | `alice-personal` |
-| Workstreams | `platform-signals` |
-| IDE targets | current harness only |
-| Connections | skip |
-| Draft features | skip |
-| Automation | `1` (manual only) |
-| HTML styling | `builtin` |
+### Phase 1 — Context and goals (open-ended)
+
+| Question | Baseline answer |
+|----------|-----------------|
+| Q1 — Who you are | `alice — engineer on distributed systems; I spend most of my week on caching, reliability, and observability work` |
+| Q2 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues, plus the open architecture decisions for our caching layer` |
+| Q3 — Why now | `too many parallel investigations to keep in my head; my lead keeps asking for status` |
+| Q4 — Who else needs to see what | `me and one team — the observability folks` |
+| Q5 — Where information feeds in | `our product repo, GitHub issues, and the weekly observability sync` |
+| Q6 — What you want out | `a morning briefing and a Friday status I can share with my lead` |
+| Q7 — How autonomous | `I want to confirm everything before anything is written` |
+
+### Phase 2 — Workspace and harness facts
+
+| Question | Baseline answer |
+|----------|-----------------|
+| Q8 — Workspace root | current directory / `<workspace>/demo-agentic-kb` |
+| Q9 — IDE targets | current harness only |
+| Q10 — Discovery pass | accept the reported empty baseline |
+
+### Phase 3 — Proposed plan (the wizard shows, you confirm)
+
+The wizard must derive and propose:
+
+- two layers — `alice-personal` (scope `personal`, role `contributor`, parent `team-observability`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports`) and `team-observability` (scope `team`, role `contributor`, parent `null`, features `findings, topics, decisions, tasks, notes, foundation, reports`, contributor-mode `notes: shared`),
+- anchor layer `alice-personal`,
+- workstream `platform-signals` extracted from Q2,
+- connections containing the product repo and GitHub issues from Q5,
+- dashboard and report panels matching Q6 (morning briefing + weekly status),
+- automation level `1` (manual only) — mapped from Q7's "confirm everything" answer; Q6's regular outputs are run by the user, not on a schedule, at this baseline,
+- HTML styling `builtin`.
+
+Acceptance for phase 3: the user accepts the proposal as-is.
+
+### Phase 4 — Final confirmation
+
+Confirm with a single yes.
 
 Expected result:
 
-- every answer maps to a concrete artifact or config effect,
+- the user never had to enumerate features, scopes, or contributor-mode flags themselves,
+- every phase 1 answer maps to at least one concrete artifact or config effect in the proposal,
 - the skill does not ask hidden prerequisite questions later,
 - the user can complete setup without already knowing the internal file model.
 
@@ -448,6 +471,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-25 | v5.2.0: replaced the flat 13-question baseline with the four-phase, goal-oriented interview (Phase 1 context/goals, Phase 2 workspace facts, Phase 3 derived plan to confirm, Phase 4 single yes) so the canonical proof matches the new kb-setup behavior. Layer features and contributor-mode flags are now derived in Phase 3 from the user's own answers, not enumerated by the user. Q7 baseline answer pinned to "confirm everything" so the derived automation level stays at 1 (manual only) per the existing baseline | v5.2.0 setup rework |
 | 2026-04-25 | Clarified the baseline automation answer so level 1 is explicitly the manual-only setup path | Deep spec-audit follow-up |
 | 2026-04-25 | Concept-audit follow-up: aligned the doc version with the 5.1.x framework and added an optional migration-proof step covering `/kb migrate layer-model` and `/kb migrate archives` for legacy adopters | Concept-audit drift correction |
 | 2026-04-25 | Reworked the deterministic onboarding proof for 5.0.0: baseline now proves a two-layer graph, verifies year-based archives and notes, and requires one cross-layer promote or digest path before acceptance | v5.0.0 flexible layer model |

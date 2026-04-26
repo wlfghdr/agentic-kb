@@ -13,7 +13,14 @@ For the deterministic acceptance baseline used to verify real onboarding and tea
 
 ## Interview
 
-Run the 12-block interview (see SKILL.md). Validate each answer before proceeding to the next block.
+Run the four-phase, goal-oriented interview defined in `SKILL.md` ("Interactive question flow"):
+
+1. **Phase 1 — Context and goals** (Q1–Q7): identity, what the user tracks/decides, why now, audience, sources, desired outputs, autonomy preference. All open-ended; never asks the user to enumerate features, scopes, or layer counts.
+2. **Phase 2 — Workspace and harness facts** (Q8–Q10): workspace root, IDE targets, discovery pass against existing KB material.
+3. **Phase 3 — Proposed plan** (Q11–Q13): the wizard derives a layer graph, connections, artifacts, automation level, and HTML styling from phases 1 + 2 and presents them as one block. The user adjusts inline or confirms; deeper edits are routed through targeted follow-ups (rename, add/remove a layer, flip role, change parent).
+4. **Phase 4 — Final confirmation** (Q14): one summary, one yes.
+
+Validate each answer block before advancing. Never derive layer features from a feature list dictated to the user; always derive them from the user's own answers and let the user adjust the proposal in phase 3. A compact expert path (the legacy "author the plan directly" mode) is available on request for users who already know the framework.
 
 ## Repo creation / onboarding
 
