@@ -1,66 +1,30 @@
 ---
 name: kb-management
-description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, and tasks as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.2.0
+description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, and the delivery/operations handoff artifacts that keep software work legible across roles.
+version: 5.1.0
 triggers:
-  # Command surface
   - "/kb"
-  - "kb status"
   - "knowledge base"
-  - "kb-config"
-  - "layer graph"
-  - "anchor layer"
-  # Capture / triage flows
   - "capture"
-  - "review inputs"
-  - "process inputs"
-  - "inbox review"
-  - "evaluation gate"
-  # Cross-layer flows
   - "digest"
   - "promote"
-  - "promote to"
   - "publish"
-  - "publish to"
-  - "migrate kb"
-  - "kb migrate"
-  - "migrate layer-model"
-  - "migrate archives"
-  # First-class artifacts (multi-word to limit false positives)
-  - "finding"
-  - "findings"
-  - "decision"
-  - "decisions"
-  - "open decision"
-  - "workstream"
-  - "workstreams"
-  - "vmg"
-  - "vision mission goals"
-  - "stakeholder map"
-  - "foundation file"
-  # Note / idea / task verbs
-  - "note"
-  - "meeting note"
-  - "idea"
-  - "develop idea"
-  - "sparring session"
-  - "decide"
-  - "todo"
-  - "task"
-  # Rituals
+  - "brief"
+  - "spec"
+  - "release"
+  - "incident"
   - "start day"
   - "end day"
   - "start week"
   - "end week"
-  - "morning briefing"
-  - "daily digest"
-  - "daily summary"
-  - "weekly status"
-  - "weekly summary"
-  # Artifacts
+  - "todo"
+  - "task"
+  - "decide"
+  - "idea"
+  - "develop"
+  - "note"
   - "present"
   - "report"
-  - "progress report"
 tools:
   - run_in_terminal
   - read_file
@@ -90,11 +54,8 @@ This skill implements the `agentic-kb` specification. It operates on the user's 
 Invoke this skill whenever the user:
 
 - Types `/kb` followed by text, a URL, a file path, or a subcommand.
-- Mentions any feature keyword from the `triggers:` list above, even **without** the `/kb` prefix — e.g. "let me capture this", "promote that finding to the team layer", "start my day", "open a decision on caching", "weekly status please". The harness fires the skill on those phrases; the skill is responsible for routing them to the right `/kb` flow and confirming the proposed action before mutating state.
-- Describes work that implies capture, digestion, promotion, publication, decision-making, note-taking, or artifact generation, even when no listed keyword appears verbatim.
+- Describes work that implies capture, digestion, promotion, publication, decision-making, note-taking, or artifact generation.
 - Needs a read-only triage summary across the current layer graph.
-
-When the user invokes the skill via a feature keyword rather than `/kb`, the response MUST: name the inferred `/kb …` flow, restate the inferred target layer, and ask for confirmation before any mutation. Read-only flows (`status`, triage scans) may proceed immediately.
 
 ## The single command model
 
@@ -115,8 +76,8 @@ Full command reference: `references/command-reference.md`.
 
 1. **Run the evaluation gate before persistence.** Score material against the five gate questions. The score is the count of yes answers. Q4 + Q2 form the lighter note gate.
 2. **Set and preserve maturity.** New findings and topics must carry `**Maturity**:`. `raw` means weak or single-signal, `emerging` means accepted and worth revisiting, `durable` means ready to promote or cite broadly.
-3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only: it may receive digests, but it is never a `promote` or `publish` target.
-4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, and meeting notes are shared unless the layer config says otherwise. This visibility rule is separate from the layer `role`.
+3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only.
+4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, delivery artifacts, operations artifacts, and meeting notes are shared unless the layer config says otherwise.
 5. **Log every operation.** Write to `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` in the canonical `HH:MM:SSZ | operation | scope | target | details` format.
 6. **Regenerate live overviews after mutation.** `dashboard.html` and the root `index.html` are part of the same mutation as capture, review, promote, publish, digest, decide, note-end, present, report, and ritual flows.
 7. **Never mutate silently.** The response must make the action mode obvious: read-only analysis, proposed mutation, or applied mutation.
@@ -176,7 +137,7 @@ Additional requirements:
 
 ## Promote semantics
 
-`/kb promote` is a composite applied mutation, not a mailbox drop. For multi-user contributor layers it stages the intake in the destination contributor scope before immediate review; single-user targets skip staging and write the reviewed result directly. Full contract: `references/promote-contract.md`.
+`/kb promote` is a composite applied mutation, not a mailbox drop.
 
 When promoting to a locally available contributor-capable layer, the agent must:
 
@@ -194,6 +155,7 @@ When the selected target is `role: consumer`, refuse and point to the next valid
 The templates this skill instantiates live in `templates/`:
 
 - `finding.md`, `topic.md`, `decision.md`, `idea.md`, `note.md`, `workstream.md`
+- `brief.md`, `spec.md`, `release.md`, `incident.md`
 - `focus.md`, `backlog.md`
 - `index.html`, `artifact-base.html`, `report.html`
 - workspace and KB scaffolding templates supplied by `kb-setup`
@@ -203,7 +165,6 @@ The templates this skill instantiates live in `templates/`:
 
 - `references/spec-summary.md` — condensed architecture and workspace layout.
 - `references/command-reference.md` — full subcommand details.
-- `references/promote-contract.md` — staged-review semantics for `/kb promote`.
 - `references/rituals.md` — the four rituals in detail.
 - `references/html-artifacts.md` — presentation/report generation contract.
 - `references/evaluation-gate.md` — the five-question filter, in depth.
@@ -213,8 +174,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-04-25 | v5.2.0: expanded the `triggers:` list to cover every first-class feature keyword (findings, decisions, workstreams, vmg, meeting notes, sparring, briefings, daily/weekly summaries, progress reports, migrations) so harnesses fire the skill on natural-language feature mentions, not only on the literal `/kb` command. Added an explicit "When to invoke" rule that requires the response to name the inferred `/kb …` flow and ask for confirmation before any mutation when the user did not type `/kb` directly | Trigger surface expansion |
-| 2026-04-25 | Clarified that consumer layers may receive digests but are never promote/publish targets, and added an explicit promote-contract reference for staged review semantics | Deep spec-audit follow-up |
+| 2026-04-26 | Added delivery/operations artifact coverage to the behavioral surface: `brief`, `spec`, `release`, and `incident` now count as feature keywords, and the template list now includes their standard markdown shapes | Software-engineering operating-model gap closure |
 | 2026-04-25 | Added the explicit 5.1 migration-helper surface (`/kb migrate archives`, `/kb migrate layer-model`) and aligned the declared skill version with the closeout release | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the behavioral spec for 5.0.0: `/kb` now operates on a flexible layer graph, notes became first-class, digests can read declared connections, and publish targets per-layer marketplaces instead of a fixed L4 | v5.0.0 flexible layer model |
 | 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release (composite `/kb promote` semantics + mandatory artifact preflight/QA contract) | v4.0.0 release alignment |

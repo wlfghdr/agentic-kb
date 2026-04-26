@@ -1,8 +1,8 @@
 # Reference
 
-> **Version:** 5.2.0
+> **Version:** 5.1.0
 
-Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
+Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
 ---
 
@@ -33,14 +33,14 @@ Core rules:
 - A workspace must declare **at least one contributor-capable layer**. A personal layer is recommended, but not required.
 - One layer is designated the **anchor layer**. Its `.kb-config/` directory is the source of truth for the user's layer graph, automation, and artifact settings.
 - `parent` defines the upward routing edge. `promote` walks up the parent chain; `digest` walks down it.
-- `role: contributor | consumer` governs shared mutation rights. Consumer layers may receive digests and expose read-down guidance, but promotion or publish targeting a consumer-only layer must refuse with a clear message.
-- `features:` opt a layer into primitives: `inputs`, `findings`, `topics`, `ideas`, `decisions`, `tasks`, `notes`, `workstreams`, `foundation`, `reports`, `marketplace`, `roadmaps`, `journeys`.
+- `role: contributor | consumer` governs mutation rights. Promotion or publish to a consumer-only layer must refuse with a clear message.
+- `features:` opt a layer into primitives: `inputs`, `findings`, `topics`, `ideas`, `decisions`, `tasks`, `notes`, `workstreams`, `foundation`, `reports`, `delivery`, `operations`, `marketplace`, `roadmaps`, `journeys`.
 - `marketplace` is **cross-cutting**, not a numbered layer. Any layer may publish to or consume from its own marketplace repo.
 - Draft features (`roadmaps`, `journeys`) are enabled per layer, not globally.
 
 ### Contributor-scoped vs shared primitives
 
-At multi-user layers, keep two separate ideas straight: layer role (`contributor` vs `consumer`) and artifact visibility (`contributor-scoped` vs shared). The primitive decides whether content stays contributor-scoped or becomes shared state.
+At multi-user layers, the primitive decides whether content stays contributor-scoped or becomes shared state.
 
 | Primitive | Default mode at multi-user layers | Why |
 |-----------|-----------------------------------|-----|
@@ -55,6 +55,8 @@ At multi-user layers, keep two separate ideas straight: layer role (`contributor
 | `workstreams` | shared | Workstream state is layer-level |
 | `foundation` | shared | Naming, sources, stakeholders, VMG are canonical |
 | `reports` | shared | Reports describe the layer, not one contributor |
+| `delivery` | shared | Briefs and specs are cross-role handoff artifacts |
+| `operations` | shared | Releases and incidents describe shared runtime state |
 
 Single-user layers flatten contributor-scoped primitives to the layer root.
 
@@ -121,6 +123,12 @@ layer-kb/
 │   ├── legacy/
 │   └── reports/
 ├── _kb-notes/YYYY/
+├── _kb-delivery/
+│   ├── briefs/
+│   └── specs/
+├── _kb-operations/
+│   ├── incidents/YYYY/
+│   └── releases/YYYY/
 ├── _kb-ideas/
 │   ├── I-YYYY-MM-DD-slug.md
 │   └── archive/YYYY/
@@ -284,6 +292,102 @@ authors: [@alice]
 
 Meeting notes should be shared at multi-user layers unless the adopter intentionally configures otherwise.
 
+### Brief (`_kb-delivery/briefs/B-YYYY-MM-DD-slug.md`)
+
+```markdown
+# Brief: <title>
+
+**Status**: draft | aligned | committed | shipped | dropped
+**Owner**: @name
+**Stakeholders**: @names
+**Workstream**: <name>
+**Outcome window**: <date or milestone>
+
+## Problem
+## Why now
+## Scope
+## Non-goals
+## Success signals
+## Dependencies and handoffs
+
+---
+## Changelog
+| Date | What changed | Source |
+```
+
+Briefs are living delivery-intent artifacts. They bridge VMG or workstream direction into scoped product or engineering work.
+
+### Spec (`_kb-delivery/specs/S-YYYY-MM-DD-slug.md`)
+
+```markdown
+# Spec: <title>
+
+**Status**: draft | in-review | approved | implementing | superseded
+**Owner**: @name
+**Brief**: B-YYYY-MM-DD-slug
+**Linked decisions**: D-id list
+**Workstream**: <name>
+
+## Context
+## Requirements
+## Proposed shape
+## Risks and trade-offs
+## Rollout and migration
+## Verification
+## Open questions
+
+---
+## Changelog
+| Date | What changed | Source |
+```
+
+Specs are living design contracts. They hold the body around decisions: requirements, rollout shape, verification, and explicit open questions.
+
+### Release Record (`_kb-operations/releases/YYYY/R-YYYY-MM-DD-slug.md`)
+
+```markdown
+# Release: <title>
+
+**Date**: YYYY-MM-DD
+**Status**: planned | rolling-out | completed | halted | rolled-back
+**Owner**: @name
+**Audience**: internal | external | mixed
+**Linked spec**: S-YYYY-MM-DD-slug
+**Workstream**: <name>
+
+## Scope
+## Rollout plan
+## Verification
+## Rollback plan
+## Communications
+## Follow-up
+```
+
+Release records are dated execution artifacts. They capture what changed, how it rolled out, how it was verified, and how to back it out safely.
+
+### Incident Record (`_kb-operations/incidents/YYYY/INC-YYYY-MM-DD-slug.md`)
+
+```markdown
+# Incident: <title>
+
+**Opened**: YYYY-MM-DD HH:MMZ
+**Severity**: sev1 | sev2 | sev3 | sev4
+**Status**: investigating | mitigated | monitoring | resolved
+**Owners**: @names
+**Services**: service list
+**Workstream**: <name>
+
+## Impact
+## Detection
+## Timeline
+## Mitigations
+## Root cause hypotheses
+## Follow-up tasks
+## Linked artifacts
+```
+
+Incident records are operational interruption artifacts. They may be updated while active, but once resolved they should remain append-only apart from clearly marked corrections.
+
 ### Workstream (`_kb-workstreams/<name>.md`)
 
 ```markdown
@@ -350,7 +454,7 @@ layers:
     role: contributor
     parent: team-observability
     path: .
-    features: [inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports]
+    features: [inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports, delivery]
     workstreams:
       - name: platform-signals
         themes: [observability, reliability]
@@ -380,7 +484,7 @@ layers:
     role: contributor
     parent: engineering-org
     path: ../team-observability-kb
-    features: [findings, topics, ideas, decisions, tasks, notes, foundation, reports, marketplace]
+    features: [findings, topics, ideas, decisions, tasks, notes, foundation, reports, delivery, operations, marketplace]
     contributor-mode:
       findings: contributor-scoped
       topics: contributor-scoped
@@ -411,7 +515,7 @@ Field contract:
 
 - `name`: canonical layer identifier used in commands.
 - `scope`: descriptive routing hint (`personal`, `team`, `org-unit`, `company`, or a custom scope).
-- `role`: `contributor` or `consumer`; consumer layers are read-down destinations, not promote/publish targets.
+- `role`: `contributor` or `consumer`.
 - `parent`: the next upward layer in the graph, or `null`.
 - `path`: repo-relative path to the layer repo.
 - `features`: enabled primitives for that layer.
@@ -437,14 +541,6 @@ auto-promote:
   confidence-threshold: 4
   excluded-workstreams: []
 ```
-
-Automation level contract:
-
-- `level: 1` — manual only. No scheduled automation runs; rituals and digests happen only when the user invokes them.
-- `level: 2` — scheduled read/review flows. Schedules may run rituals and digests, but `auto-promote.enabled` stays `false`.
-- `level: 3` — scheduled flows plus guarded auto-promote. Auto-promote may run only when enabled, above the configured confidence threshold, and outside excluded workstreams.
-
-Setup interview guidance for these three levels lives in [`plugins/kb/skills/kb-setup/references/automation-levels.md`](../plugins/kb/skills/kb-setup/references/automation-levels.md).
 
 ### `.kb-config/artifacts.yaml`
 
@@ -625,8 +721,6 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 | Installer-supported native command path | Gemini CLI | n/a | n/a | `.gemini/commands/<name>.toml` for `/kb` |
 | Installer-supported native skill path | Kiro IDE | `.kiro/skills/<name>/SKILL.md` | n/a | skills appear in the slash menu |
 | Compatible skill workflow | Codex CLI | `.agents/skills/<name>/SKILL.md` | n/a | `AGENTS.md` + skill picker / `$kb`; no custom `/kb` slash command |
-| Rules-only harness (not yet supported) | Cursor, Windsurf | adopter-defined | adopter-defined | No slot for a custom `/kb` slash command — adopters reuse the scaffolded KB files as context but wire invocation manually. |
-| Not feasible (not a supported tier) | Aider, raw Claude / Inflection Pi | n/a | n/a | No user-custom command hook, or not a developer harness. Listed for completeness. |
 | Partial/manual path | Other CLIs / IDEs | adopter-defined | adopter-defined | Can use the KB file model, but command wiring and automation may need manual setup. |
 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for marketplace-backed and installer-supported harnesses. Compatible Codex workflows reuse the same workspace contract through `AGENTS.md` plus repo/user skill directories.
@@ -637,9 +731,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
-| 2026-04-25 | v5.2.0 release alignment — version bumped to track the kb-management trigger expansion and the kb-setup goal-oriented question-flow rework; structural contracts in this reference are unchanged |
-| 2026-04-25 | Clarified the onboarding entry points, separated layer role from contributor-scoped visibility, and documented the automation-level contract directly beside `.kb-config/automation.yaml` |
-| 2026-04-25 | Concept-audit follow-up: the §10 harness matrix now records the "rules-only" and "not feasible" buckets the README lists, so the reference and glossary stay aligned |
+| 2026-04-26 | Added the operating-model pointer and the optional `delivery` / `operations` feature families, including standard file formats for briefs, specs, release records, and incident records |
 | 2026-04-25 | Added explicit migration-helper coverage for the 5.1.0 closeout: the reference now names `/kb migrate layer-model` and `/kb migrate archives` as the sanctioned way to carry older KBs into the 5.x graph and year-based archive layout |
 | 2026-04-25 | Reworked the core model for 5.0.0: replaced the fixed L1–L5 ladder with a flexible layer graph, moved marketplace to a per-layer cross-cutting block, added role-based promote/publish governance, year-based archive paths, the notes primitive, per-layer external connections, and the progress-report contract |
 | 2026-04-25 | Added generic marketplace guidance for plugin-local utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills; version bumped to 4.1.0 |

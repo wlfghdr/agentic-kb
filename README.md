@@ -5,7 +5,9 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.2.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.1.0-green.svg)](CHANGELOG.md)
+
+**One-page visual overview** → [`index.html`](index.html)
 
 ---
 
@@ -34,6 +36,7 @@ One command — **`/kb`** — across any agentic IDE. A layered knowledge system
 - **Context flows down.** Vision, mission, goals, and decisions digest back into your daily work automatically.
 - **An evaluation gate at every boundary.** Five questions. Nothing silently filed. Nothing silently dropped. Every decision traced and logged.
 - **Decisions, ideas, and tasks are first-class objects** with lifecycles — not comments lost in a chat.
+- **Delivery and operations handoffs are explicit.** Briefs, specs, release records, and incident records keep cross-role work readable for product, engineering, QA, on-call, and leadership.
 
 You capture. The agent files, cross-links, promotes, and keeps humans and agents on the same page. Literally.
 
@@ -58,7 +61,7 @@ That is the claim surface. Architecture matters, but adoption only gets real onc
 
 **No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
 
-**Lean by construction.** One spec. Two reference skills. One reference agent. One cross-harness installer. No SaaS. No auth. No infra. Plugin install in about a minute. Full workspace setup and first scaffold in about 15–20. Rip it out in five if it's not for you.
+**Lean by construction.** One spec. Two reference skills. One reference agent. One cross-harness installer. No SaaS. No auth. No infra. Install in about a minute. Rip it out in five if it's not for you.
 
 **Human + agent at the same speed.** This is the real claim: the system is designed so that a single human — an IC, a lead, or an exec — can stay in the loop with a swarm of agents *and* a team of other humans each running their own swarms, without becoming the bottleneck themselves.
 
@@ -151,19 +154,14 @@ Install from the Extensions view (reads [`plugin.json`](plugin.json)), then run 
 
 ### Compatibility model
 
-`agentic-kb` distinguishes three supported setup tiers — plus two "not yet" buckets that document why some harnesses sit outside the supported matrix today:
+`agentic-kb` now distinguishes three setup tiers so additional harnesses can be documented consistently:
 
 | Tier | Meaning | Current examples |
 |------|---------|------------------|
 | Marketplace/native plugin path | Native install path and documented day-to-day workflow with a working `/kb` slash command | Claude Code, VS Code Copilot Chat |
 | Installer-supported native command/skill path | No marketplace yet, but `scripts/install --target <harness>` writes the harness's documented native surface | OpenCode, Gemini CLI, Kiro IDE |
 | Compatible skill workflow | Same repo contract, but no custom `/kb` slash command; use `AGENTS.md` plus the harness skill picker or native skill invocation | Codex CLI |
-
-Not (yet) covered as a supported tier:
-
-| Bucket | Why | Current examples |
-|--------|-----|------------------|
-| Rules-only harness | No slash-command slot for third-party commands — adopters can reuse the scaffolded KB files as context, but invocation is wired manually | Cursor, Windsurf |
+| Rules-only harness | No slash-command slot for third-party commands — adopters use the scaffolded KB files as context but wire invocation manually | Cursor, Windsurf |
 | Not feasible | The harness has no user-custom command hook, or is not a developer harness at all | Aider (no plugin system yet), raw Claude / Inflection Pi (no slash-command concept) |
 
 ### OpenCode
@@ -244,6 +242,7 @@ agentic-kb/
 │           └── kb-operator.md
 ├── docs/
 │   ├── REFERENCE.md          # implementation-critical structure and contracts
+│   ├── operating-model.md    # role loops, artifact chain, and coverage gaps
 │   ├── collaboration.md      # shared-workspace human collaboration contract
 │   ├── first-run-acceptance.md
 │   ├── examples/
@@ -264,19 +263,20 @@ agentic-kb/
 
 ## Where to start
 
-1. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
-2. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
-3. [`docs/examples/first-hour.md`](docs/examples/first-hour.md) — the fastest end-to-end walkthrough from install to the first useful cross-layer proof.
-4. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
-5. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
-6. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
-7. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+1. [`index.html`](index.html) — open in a browser for a 2-minute visual overview.
+2. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
+3. [`docs/operating-model.md`](docs/operating-model.md) — the software-engineering role model, artifact chain, and the delivery/operations gaps this workspace now names explicitly.
+4. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
+5. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
+6. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
+7. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
+8. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.2.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.1.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -294,8 +294,5 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-04-25 | v5.2.0 release alignment — bumped the spec badge and Status row to match the new framework version that ships the kb-management trigger expansion and the kb-setup goal-oriented question flow | v5.2.0 trigger + setup rework |
-| 2026-04-25 | Clarified the setup proof strip by separating the quick plugin install from the longer guided workspace scaffold and added the `first-hour` walkthrough to "Where to start" | Deep spec-audit follow-up |
-| 2026-04-25 | Removed the "One-page visual overview → index.html" pointer from the header and the `index.html` entry from "Where to start" so the README is the canonical narrative entry point and the visual landing page stands on its own | Index marketing trim |
-| 2026-04-25 | Concept-audit follow-up: relabeled the compatibility model so the "three setup tiers" wording matches the table (rules-only and not-feasible moved into a separate "not yet covered" block) | Concept-audit drift correction |
+| 2026-04-26 | Added the operating-model entry point and surfaced the new delivery/operations handoff artifacts in the main value proposition and navigation paths | Software-engineering operating-model gap closure |
 | 2026-04-25 | Updated the public command summary and release status for 5.1.0, including the new migration helper flows that close the remaining 5.0 follow-up gaps | v5.1.0 follow-up closeout |
