@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 5.3.0
+version: 5.4.0
 uses:
   - kb-management
   - kb-setup
@@ -120,7 +120,7 @@ After substantive changes:
 
 ## Autonomous loop (Level 3 only)
 
-Requires native background automation. Claude Code and OpenCode support this directly; VS Code Copilot does not — VS Code users must schedule via OS cron + CLI invocation of the harness. See `docs/REFERENCE.md` §10 Harness Support for the per-harness row.
+Requires native background automation. Claude Code and OpenCode support this directly; VS Code Copilot does not — VS Code users must schedule via OS cron + CLI invocation of the harness. See `docs/REFERENCE.md` §12 Harness Support for the per-harness row.
 
 When `.kb-config/automation.yaml → level: 3` and the user has opted in, run this loop on the configured schedule:
 
@@ -178,6 +178,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Version aligned to 5.4.0 for the soft-transition extension (kb-setup's adoption-stage Q8, REFERENCE §9 + §10, glossary stage vocabulary). REFERENCE §10 cross-reference in the autonomous-loop section updated to §12 to match the renumbering. No behavioral changes to the agent contract | Soft-transition extension |
 | 2026-04-26 | Version aligned to 5.3.0 after kb-management gained the new delivery/operations artifact surface (`brief`, `spec`, `release`, `incident`) so the composing operator matches the shipped framework metadata | Software-engineering operating-model gap closure |
 | 2026-04-25 | Version aligned to 5.2.0 after the kb-management trigger expansion and the kb-setup goal-oriented question-flow rework so the composing operator's declared version matches the shipped skills it composes | v5.2.0 trigger + setup rework |
 | 2026-04-25 | Version aligned to 5.1.0 after the migration-helper and roadmap-config closeout release so the operator's documented command surface matches the shipped framework metadata | v5.1.0 closeout release |

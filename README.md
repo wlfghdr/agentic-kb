@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.3.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.4.0-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -37,6 +37,20 @@ One command — **`/kb`** — across any agentic IDE. A layered knowledge system
 - **Delivery and operations handoffs are explicit.** Briefs, specs, release records, and incident records keep cross-role work readable for product, engineering, QA, on-call, and leadership.
 
 You capture. The agent files, cross-links, promotes, and keeps humans and agents on the same page. Literally.
+
+## Where this meets you on the agentic curve
+
+You don't have to be "fully agentic" for `agentic-kb` to pay off. The contract is the same at every adoption stage; the agent just does more of the filing work the higher you go.
+
+| Stage | Who decides | Who files | What runs `agentic-kb` looks like |
+|-------|-------------|-----------|------------------------------------|
+| **1 — Capture discipline** (human-only baseline) | humans, every step | humans, by hand | git + markdown + the `agentic-kb` directory contract; no agents required. You get audit trail, decision lifecycle, and cross-role handoffs (briefs, specs, releases, incidents) for free, just by writing into the right files. |
+| **2 — Agent-assisted triage** | humans, at every gate | agent proposes, human confirms | the `/kb` evaluation gate fires on capture; the agent suggests where things belong; humans approve before anything persists. Maps to **automation level 1**. |
+| **3 — Bounded autonomous knowledge ops** | humans, at exception gates | agent files, promotes, digests on a schedule | scheduled rituals (`start-day`, `digest`, `end-week`), guarded auto-promote on confidence threshold, exception escalation. Maps to **automation levels 2–3**. |
+
+`agentic-kb` is the **knowledge-ops layer** of an agentic enterprise: it owns Strategy, Design, and Learning artifacts (foundation, briefs, specs, decisions, findings, topics, reports) and pairs cleanly with any **repo-as-OS framework** that owns the work-flow side (signals, missions, PRs, releases). It works standalone too — capture-discipline-only is a valid stop, not a half-installed product.
+
+The right move for most teams is **start at Stage 1, graduate when the workflow is steady, never skip ahead.** `kb-setup` asks where you are today and biases the proposal to the lightest scaffold that still makes the next stage easy.
 
 ## Proof, not promises
 
@@ -279,7 +293,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.3.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.4.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -297,6 +311,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Added the "Where this meets you on the agentic curve" section with the three-stage adoption ladder (capture discipline → agent-assisted triage → bounded autonomous), positioned `agentic-kb` as the knowledge-ops layer that pairs with any repo-as-OS framework, and rolled the public framework status to 5.4.0 | Soft-transition extension |
 | 2026-04-26 | Added the operating-model entry point, surfaced the new delivery/operations handoff artifacts in the main value proposition, and rolled the public framework status to 5.3.0 | Software-engineering operating-model gap closure |
 | 2026-04-25 | v5.2.0 release alignment — bumped the spec badge and Status row to match the new framework version that ships the kb-management trigger expansion and the kb-setup goal-oriented question flow | v5.2.0 trigger + setup rework |
 | 2026-04-25 | Clarified the setup proof strip by separating the quick plugin install from the longer guided workspace scaffold and added the `first-hour` walkthrough to "Where to start" | Deep spec-audit follow-up |

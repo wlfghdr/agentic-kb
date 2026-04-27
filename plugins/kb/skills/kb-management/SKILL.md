@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.3.0
+version: 5.4.0
 triggers:
   # Command surface
   - "/kb"
@@ -218,6 +218,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Skill version aligned to 5.4.0 for the soft-transition extension. No behavioral changes here — adoption-stage logic lives in `kb-setup`; this skill just continues to honor the "When to invoke" + Stage-2 confirmation rule it already declares | Soft-transition extension |
 | 2026-04-26 | Added delivery/operations artifact coverage to the behavioral surface: `brief`, `spec`, `release`, and `incident` now count as feature keywords, and the template list now includes their standard markdown shapes | Software-engineering operating-model gap closure |
 | 2026-04-25 | v5.2.0: expanded the `triggers:` list to cover every first-class feature keyword (findings, decisions, workstreams, vmg, meeting notes, sparring, briefings, daily/weekly summaries, progress reports, migrations) so harnesses fire the skill on natural-language feature mentions, not only on the literal `/kb` command. Added an explicit "When to invoke" rule that requires the response to name the inferred `/kb …` flow and ask for confirmation before any mutation when the user did not type `/kb` directly | Trigger surface expansion |
 | 2026-04-25 | Clarified that consumer layers may receive digests but are never promote/publish targets, and added an explicit promote-contract reference for staged review semantics | Deep spec-audit follow-up |

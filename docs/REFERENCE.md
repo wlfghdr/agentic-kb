@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 5.3.0
+> **Version:** 5.4.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -666,7 +666,55 @@ Everything is Git + Markdown + local agent. No external service required. Offlin
 
 ---
 
-## 9. Plugin / Marketplace Package Layout
+## 9. Adoption Stages
+
+`agentic-kb` is designed to meet a team at one of three adoption stages and to make graduation between stages explicit instead of implicit. The stages are not marketing levels; they are the order in which the standard knowledge-ops failure modes (audit vacuum, knowledge drift, rubber-stamping, cascading agent errors) get addressed.
+
+| Stage | Posture | Typical scaffold | Typical automation level |
+|-------|---------|------------------|--------------------------|
+| **1 — Capture discipline** | Humans author every artifact by hand into the directory contract; no `/kb` invocation in the loop. | One contributor anchor layer; `findings`, `topics`, `decisions`, `notes`, `tasks`, `foundation`; no draft features; no `connections:` write-back. | 1 (manual only) |
+| **2 — Agent-assisted triage** | The `/kb` evaluation gate fires on capture; agent proposes routing; humans confirm before persistence. | Stage 1 baseline plus `/kb` slash command and feature-keyword triggers wired into the harness; optional read-only `connections:` for tracker exports. | 1 (manual only); the agent is in the loop, but every persistence still waits on a human. |
+| **3 — Bounded autonomous knowledge ops** | Scheduled rituals/digests; guarded auto-promote on confidence threshold; humans review only flagged exceptions. | Stage 2 baseline plus `auto-promote` config, declared exception channel, live-overview regeneration as part of every mutation. | 2 (scheduled rituals/digests) or 3 (scheduled flows plus guarded auto-promote). |
+
+Stage and automation level are related but not identical. Adoption stage is the team's posture toward the agent; automation level is the configuration knob that enacts it. A Stage 1 team must not be configured at automation level 2 or 3 (no `/kb` invocation pattern for a schedule to fire from). A Stage 3 team should not be configured at automation level 1 (autonomous-loop benefits never materialize). `kb-setup` phase 3 enforces this consistency in the proposal it shows the user.
+
+Graduation criteria between stages and the full operating contract live in [`plugins/kb/skills/kb-setup/references/adoption-stages.md`](../plugins/kb/skills/kb-setup/references/adoption-stages.md). They are normative for the wizard but informational for hand-edits — a team that wants to move stages without the wizard may, but the criteria name the failure modes that show up if the move is premature.
+
+---
+
+## 10. Relationship to Repo-as-OS Frameworks
+
+`agentic-kb` is the **knowledge-ops layer** of an agentic enterprise. It owns Strategy, Design, and Learning artifacts: `foundation`, `briefs`, `specs`, `decisions`, `findings`, `topics`, `reports`. It does not own the work-flow side of the operating model (signals, missions, pull requests, releases as governance objects, policies as enforceable gates) — those are the domain of separate, complementary **repo-as-OS frameworks** that run an entire enterprise out of a git repository.
+
+The two layers compose cleanly when both are present, and either side is usable without the other.
+
+### Mapping (abstract)
+
+| Knowledge-ops primitive (`agentic-kb`) | Work-flow primitive (typical repo-as-OS framework) | Relationship |
+|----------------------------------------|----------------------------------------------------|--------------|
+| `finding` | observation / signal | A finding is the durable evidence record; a signal is the work-flow trigger derived from it. The same content may appear as both. |
+| `brief` | mission scope / charter | A brief frames the problem and intended outcome durably; a mission is the executable instance of that brief. |
+| `spec` | implementation plan / RFC | A spec is the design contract; the framework typically references it from its mission or pull-request flow. |
+| `decision` | decision record / ADR | These are usually the same artifact, with the framework defining where review and approval happen. |
+| `release record` | release / ship event | A release record is the durable description; the framework typically owns the release execution and gate. |
+| `incident record` | postmortem / production event | An incident record is the durable timeline; the framework typically owns the on-call routing. |
+| `report progress` | status / readout | The progress report is composable across both surfaces. |
+
+This mapping is intentionally generic. `agentic-kb` does not depend on any specific repo-as-OS framework, is not packaged with one, and reviewers should reject any attempt to name a specific vendor framework as canonical. Adopters running such a framework get bridge defaults (`connections.work-repos[]` with watch globs and ticket patterns) when `kb-setup` phase 2 detects the structure; adopters who do not still get a fully usable knowledge-ops scaffold.
+
+### Out of scope for `agentic-kb`
+
+- enforcing approval policies on pull requests,
+- packaging or releasing software,
+- on-call routing,
+- compliance posture self-assessment,
+- multi-agent orchestration of work execution.
+
+These belong to the surrounding framework (or to the team's existing toolchain) and are intentionally not modeled here.
+
+---
+
+## 11. Plugin / Marketplace Package Layout
 
 ```text
 marketplace-repo/
@@ -703,7 +751,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 ---
 
-## 10. Harness Support
+## 12. Harness Support
 
 | Harness tier | Harness | Skill location | Agent location | Config / notes |
 |--------------|---------|----------------|----------------|----------------|
@@ -725,6 +773,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-27 | Added §9 "Adoption Stages" (capture discipline → agent-assisted triage → bounded autonomous, with mapping to automation levels) and §10 "Relationship to Repo-as-OS Frameworks" (abstract knowledge-ops ↔ work-flow primitive mapping; explicit out-of-scope list). Renumbered the previous §9 / §10 to §11 / §12 and updated the kb-operator cross-reference accordingly. Reference version aligned to 5.4.0 |
 | 2026-04-26 | Added the operating-model pointer and the optional `delivery` / `operations` feature families, including standard file formats for briefs, specs, release records, and incident records |
 | 2026-04-25 | v5.2.0 release alignment — version bumped to track the kb-management trigger expansion and the kb-setup goal-oriented question-flow rework; structural contracts in this reference are unchanged |
 | 2026-04-25 | Clarified the onboarding entry points, separated layer role from contributor-scoped visibility, and documented the automation-level contract directly beside `.kb-config/automation.yaml` |
