@@ -74,22 +74,22 @@ Ask each block in order. Stop and wait after each block for the user's answer be
 
 ### Phase 2 — Workspace and harness facts (short admin)
 
-9. **Workspace root** — absolute path; default current directory.
-10. **IDE targets** — multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`.
-11. **Discovery pass** — scan the workspace for existing KB repos, harness hooks, and likely layer candidates. Also probe for repo-as-OS structures (e.g. `work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` with policy directories). If a repo-as-OS structure is detected, surface it before phase 3 so the proposal can reuse existing repos and propose bridge defaults instead of inventing parallel structure.
+1. **Workspace root** — absolute path; default current directory.
+2. **IDE targets** — multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`.
+3. **Discovery pass** — scan the workspace for existing KB repos, harness hooks, and likely layer candidates. Also probe for repo-as-OS structures (e.g. `work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` with policy directories). If a repo-as-OS structure is detected, surface it before phase 3 so the proposal can reuse existing repos and propose bridge defaults instead of inventing parallel structure.
 
 ### Phase 3 — Proposed plan (system shows, user adjusts)
 
 The wizard presents a single concrete proposal derived from phase 1 + 2. The user reviews, adjusts inline if needed, and confirms. Do not ask the user to author the plan from scratch.
 
-12. **Proposed layer graph and adoption stage** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor and label the proposed **adoption stage** (1 / 2 / 3) derived from Q8 + Q7 so the user can see at a glance whether the wizard is suggesting a capture-only scaffold, an agent-assisted scaffold, or a bounded-autonomous scaffold. Default for a new solo user starting at Stage 1: one contributor anchor layer (scope `personal`), no draft features, automation level 1, no `connections:` write-back. Default for a team already on a repo-as-OS framework: one shared contributor layer plus a `connections.work-repos[]` entry pointing at the existing governance repo. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent, change stage).
-13. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q5, plus any repo-as-OS work-repo detected in Q11), the dashboard panels and report types that match Q6 outputs, the automation level from Q7 (1 / 2 / 3 per `references/automation-levels.md`), and any draft-feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. Same single yes-or-adjust prompt.
-14. **Proposed graduation criteria for the next stage** — name the 2–3 concrete things the user would need before safely advancing to the next adoption stage (e.g. "≥ 4 weeks of clean `.kb-log/` entries, one cross-layer promote completed, foundation/vmg.md confirmed by stakeholders" before turning on automation level 2). The user can accept, edit, or skip this block; it is informational and does not block scaffold.
-15. **HTML artifact styling** — builtin, website-derived, or template-based corporate design. Default to `builtin` when Q3 does not mention external branding constraints.
+1. **Proposed layer graph and adoption stage** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor and label the proposed **adoption stage** (1 / 2 / 3) derived from Q8 + Q7 so the user can see at a glance whether the wizard is suggesting a capture-only scaffold, an agent-assisted scaffold, or a bounded-autonomous scaffold. Default for a new solo user starting at Stage 1: one contributor anchor layer (scope `personal`), no draft features, automation level 1, no `connections:` write-back. Default for a team already on a repo-as-OS framework: one shared contributor layer plus a `connections.product-repos[]` entry pointing at the existing governance repo. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent, change stage).
+2. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q5, plus any repo-as-OS product-repo detected in Q11), the dashboard panels and report types that match Q6 outputs, the automation level from Q7 (1 / 2 / 3 per `references/automation-levels.md`), and any draft-feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. Same single yes-or-adjust prompt.
+3. **Proposed graduation criteria for the next stage** — name the 2–3 concrete things the user would need before safely advancing to the next adoption stage (e.g. "≥ 4 weeks of clean `.kb-log/` entries, one cross-layer promote completed, foundation/vmg.md confirmed by stakeholders" before turning on automation level 2). The user can accept, edit, or skip this block; it is informational and does not block scaffold.
+4. **HTML artifact styling** — builtin, website-derived, or template-based corporate design. Default to `builtin` when Q3 does not mention external branding constraints.
 
 ### Phase 4 — Confirm and scaffold
 
-16. **Final confirmation** — restate the chosen plan in one short summary: number of layers, anchor, audiences, adoption stage, automation level, IDE targets, where files will land. Proceed to "What setup does after confirmation" only after explicit yes.
+1. **Final confirmation** — restate the chosen plan in one short summary: number of layers, anchor, audiences, adoption stage, automation level, IDE targets, where files will land. Proceed to "What setup does after confirmation" only after explicit yes.
 
 If the user wants to skip phase 1 entirely and author the plan directly, accept that and route to a compact expert path: ask the layer list with name/scope/role/parent/features/marketplace per layer, anchor, workstreams, automation, styling, IDE targets. Document this as the legacy entry point; the goal-oriented flow is the default.
 
@@ -240,7 +240,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 ## References
 
-- `references/setup-flow.md` — full step-by-step walkthrough with example output.
+- `references/setup-flow.md` — full step-by-step walkthrough with example output, including VMG sourcing and update guidance.
 - `references/automation-levels.md` — meaning of setup levels 1/2/3 and how they map into `automation.yaml`.
 - `references/adoption-stages.md` — the human → agentic curve: Stage 1 (capture discipline) → Stage 2 (agent-assisted triage) → Stage 3 (bounded autonomous). Names what each stage scaffolds, the graduation criteria between stages, and how adoption stage and automation level relate.
 - `references/migration-guide.md` — how to migrate an existing KB.
@@ -251,6 +251,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Clarified the repo-as-OS bridge wording so the proposal names the current schema field `connections.product-repos[]`, and pointed the setup-flow reference description at the new VMG sourcing/update guidance | Documentation gap follow-up |
 | 2026-04-27 | v5.4.0: added Q8 ("operating context today, and target in 6 months") to phase 1 so the wizard can bias the proposal to the team's adoption stage (1, 2, or 3) instead of forcing a Stage-3 scaffold on a Stage-1 team or vice versa; phase 2 discovery pass now also probes for repo-as-OS structures so the proposal can offer bridge defaults; phase 3 question 12 now labels the proposed scaffold with its adoption stage; phase 3 question 14 surfaces graduation criteria for the next stage. Added `references/adoption-stages.md` as the normative contract; subsequent question numbers renumbered. Skill version aligned to 5.4.0 | Soft-transition extension |
 | 2026-04-25 | v5.2.0: replaced the feature-list-driven 12-block interview with a four-phase, goal-oriented flow. Phase 1 asks the user about their identity, what they track, why now, audience, sources, desired outputs, and autonomy preference in their own language; phase 2 collects only the workspace and harness facts that cannot be inferred; phase 3 presents one derived plan (layer graph, connections, artifacts, automation, styling) for inline adjust-or-confirm; phase 4 takes a single yes. The legacy "author the plan directly" path stays available as a compact expert mode. Q7 wording carries the automation-level contract added in #76 forward into the new flow | Goal-oriented onboarding |
 | 2026-04-25 | Documented what automation levels 1/2/3 mean during setup and linked the interview step to a dedicated reference so adopters do not have to infer the contract from `automation.yaml` alone | Deep spec-audit follow-up |

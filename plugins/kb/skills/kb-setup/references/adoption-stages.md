@@ -120,7 +120,7 @@ A Stage 1 team should never be configured at automation level 2 or 3, because th
 
 When a repo-as-OS structure is detected during phase 2 question 11 (typical signals: `work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` plus a policy directory), the wizard:
 
-- proposes a `connections.work-repos[]` entry rather than scaffolding a parallel structure,
+- proposes a `connections.product-repos[]` entry rather than scaffolding a parallel structure,
 - biases artifact suggestions toward the bridge: a finding becomes a candidate signal; an open decision references the originating mission; a release record cross-references the framework's release artifact rather than duplicating it,
 - still scaffolds the standalone capture-discipline baseline so the team can rip out either side without losing the other.
 

@@ -60,7 +60,7 @@ Instantiate these files from `templates/`:
 - `.kb-config/artifacts.yaml` ← `artifacts.yaml`
 - `_kb-references/foundation/me.md` ← `foundation-me.md`
 - `_kb-references/foundation/context.md` ← `foundation-context.md`
-- `_kb-references/foundation/vmg.md` ← `foundation-vmg.md` (pre-filled from Q3: URL fetch, file read, or direct text)
+- `_kb-references/foundation/vmg.md` ← `foundation-vmg.md` (pre-filled from the best available strategic source: URL fetch, file read, or direct text)
 - `_kb-references/foundation/stakeholders.md` ← `foundation-stakeholders.md`
 - `_kb-references/foundation/sources.md` ← `foundation-sources.md`
 - `_kb-references/foundation/naming.md` ← `foundation-naming.md`
@@ -139,12 +139,13 @@ The generated `AGENTS.md` includes:
 ```
 
 Alias generation rules:
+
 - Use initials of hyphenated segments (e.g., `product-strategy-brainstorming` → `psb`).
 - Single-word repos get first 2–3 letters (e.g., `backend-api` → `ba`, or `frontend` → `fe`).
 - On collision, append a digit or use a longer prefix.
 - The user can override aliases in `.kb-config/layers.yaml` under `workspace.aliases`.
 
-3. **Keyword lookup** — concept → file map, also resolving aliases.
+1. **Keyword lookup** — concept → file map, also resolving aliases.
 
 ## IDE configuration
 
@@ -167,6 +168,56 @@ git push <remote> <branch>   # if remote configured and user confirms
 
 Respect branch protection — open a PR if the default branch is protected.
 
+## VMG sourcing and updates
+
+`_kb-references/foundation/vmg.md` is the strategic steering model for the layer. Setup should make its initial source explicit instead of leaving the file as an unexplained template.
+
+### Initial population during setup
+
+The wizard does not assume a VMG document already exists. During scaffold, it offers three sourcing modes:
+
+| Method | When to use | How |
+|--------|-------------|-----|
+| **URL fetch** | A public or accessible strategy page, OKR page, roadmap page, or planning doc already exists | Fetch the URL, extract the vision, mission, and goal statements, then draft them into `vmg.md` for review |
+| **File read** | The user already has a strategy document on disk | Read the file, extract the relevant sections, then draft them into `vmg.md` |
+| **Direct text** | No existing source exists, or the user wants to dictate it inline | Fill the template from the user's wording and confirm before writing |
+
+After population by any method, always:
+
+1. show the draft `vmg.md` to the user for review,
+2. ask for edits before writing,
+3. note missing fields, placeholders, or unresolved goals as explicit follow-up tasks instead of pretending the steering model is complete.
+
+If no VMG content is available at setup time, write the template with placeholders intact and add a backlog item to complete it later.
+
+### Updates after setup
+
+VMG updates happen in two common ways.
+
+**1. Triggered by a parent-layer digest.**
+
+When `/kb digest <layer>` pulls changes from a parent layer that includes `foundation/vmg.md`, the skill should:
+
+1. compare the upstream VMG with the current layer's `vmg.md`,
+2. surface the changed or new goal lines,
+3. propose appending new goals, updating changed goals, or marking retired goals as `dropped`,
+4. wait for explicit confirmation before writing,
+5. log the update clearly as a VMG change.
+
+The current layer's VMG is the merged local view. Upstream updates should never overwrite local context silently.
+
+**2. Manual update by the user.**
+
+When the user edits `vmg.md` directly or asks to update their VMG, the skill should:
+
+1. propose the change inline,
+2. append a row to the file's `## Changelog` section,
+3. offer a commit if the change is substantive.
+
+### Conflict handling
+
+If an upstream goal contradicts the current layer's goal, flag the conflict as an explicit decision candidate rather than silently choosing one version. The durable fix is a decision record plus an intentional VMG update.
+
 ## Verification
 
 Run:
@@ -186,3 +237,9 @@ You're set up. Try:
 ```
 
 After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-27 | Added explicit VMG sourcing and update guidance for setup, including URL/file/direct-text population modes, parent-digest updates, manual edits, and conflict handling. Also removed the stale question-number reference from the `vmg.md` scaffold bullet | Documentation gap follow-up |

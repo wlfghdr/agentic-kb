@@ -48,6 +48,7 @@ Notes use a lighter gate than findings. They are cheap capture surfaces that fee
 
 If the target layer is `role: consumer`, `promote` and `publish` must refuse and point to the next valid contributor layer.
 For the staged-review contract behind `/kb promote`, see [`promote-contract.md`](./promote-contract.md).
+For connection declaration, watermarks, drift checks, and write-back, see [`connections-lifecycle.md`](./connections-lifecycle.md).
 
 ## Migration
 
@@ -90,8 +91,10 @@ Both helpers are dry-run first. The shipped helper scripts live under `plugins/k
    - No hardcoded external URLs (use `sources.md` aliases or `connections` config)
    - No destructive shell commands
 5. Only reference tools available via the target marketplace.
-6. Scaffold `skills/<name>/` with `SKILL.md`, `references/`, and `scripts/` as needed.
+6. Scaffold `plugins/<plugin>/skills/<name>/` with `SKILL.md`, `references/`, `templates/`, and `scripts/` as needed.
 7. Open a PR against the marketplace repo configured for the target layer.
+
+For the full publish contract, including the generalizability gate and response expectations, see [`publish-contract.md`](./publish-contract.md).
 
 ## Capture decision tree
 
@@ -154,6 +157,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Added explicit pointers to the dedicated connection lifecycle and publish contract references, and aligned the publish package path with the current marketplace layout under `plugins/<plugin>/skills/<name>/` | Documentation gap follow-up |
 | 2026-04-25 | Added an explicit pointer from the command reference to the staged-review promote contract so adopters can see when staging happens and when it does not | Deep spec-audit follow-up |
 | 2026-04-25 | Added the explicit migration helper commands so the command surface now includes the 5.1 closeout path for old archive layouts and fixed-layer configs | v5.1.0 closeout release |
 | 2026-04-25 | Reworked the command surface for the 5.0 layer graph: promote/publish now target named layers, notes became a first-class primitive, `digest connections` and `report progress` were added, and triage now checks anchor-layer setup plus connection drift | v5.0.0 flexible layer model |

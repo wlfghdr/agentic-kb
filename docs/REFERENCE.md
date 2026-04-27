@@ -700,7 +700,7 @@ The two layers compose cleanly when both are present, and either side is usable 
 | `incident record` | postmortem / production event | An incident record is the durable timeline; the framework typically owns the on-call routing. |
 | `report progress` | status / readout | The progress report is composable across both surfaces. |
 
-This mapping is intentionally generic. `agentic-kb` does not depend on any specific repo-as-OS framework, is not packaged with one, and reviewers should reject any attempt to name a specific vendor framework as canonical. Adopters running such a framework get bridge defaults (`connections.work-repos[]` with watch globs and ticket patterns) when `kb-setup` phase 2 detects the structure; adopters who do not still get a fully usable knowledge-ops scaffold.
+This mapping is intentionally generic. `agentic-kb` does not depend on any specific repo-as-OS framework, is not packaged with one, and reviewers should reject any attempt to name a specific vendor framework as canonical. Adopters running such a framework get bridge defaults (`connections.product-repos[]` with watch globs and ticket patterns) when `kb-setup` phase 2 detects the structure; adopters who do not still get a fully usable knowledge-ops scaffold.
 
 ### Out of scope for `agentic-kb`
 

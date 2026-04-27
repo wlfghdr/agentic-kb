@@ -208,7 +208,9 @@ The templates this skill instantiates live in `templates/`:
 
 - `references/spec-summary.md` — condensed architecture and workspace layout.
 - `references/command-reference.md` — full subcommand details.
+- `references/connections-lifecycle.md` — connection declaration, watermarks, drift checks, and write-back.
 - `references/promote-contract.md` — staged-review semantics for `/kb promote`.
+- `references/publish-contract.md` — marketplace packaging, safety validation, and publish response contract.
 - `references/rituals.md` — the four rituals in detail.
 - `references/html-artifacts.md` — presentation/report generation contract.
 - `references/evaluation-gate.md` — the five-question filter, in depth.
@@ -218,6 +220,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Added load-on-demand references for connection lifecycle and publish contract details so the behavioral spec can stay concise while the edge-case and packaging rules live in dedicated docs | Documentation gap follow-up |
 | 2026-04-27 | Skill version aligned to 5.4.0 for the soft-transition extension. No behavioral changes here — adoption-stage logic lives in `kb-setup`; this skill just continues to honor the "When to invoke" + Stage-2 confirmation rule it already declares | Soft-transition extension |
 | 2026-04-26 | Added delivery/operations artifact coverage to the behavioral surface: `brief`, `spec`, `release`, and `incident` now count as feature keywords, and the template list now includes their standard markdown shapes | Software-engineering operating-model gap closure |
 | 2026-04-25 | v5.2.0: expanded the `triggers:` list to cover every first-class feature keyword (findings, decisions, workstreams, vmg, meeting notes, sparring, briefings, daily/weekly summaries, progress reports, migrations) so harnesses fire the skill on natural-language feature mentions, not only on the literal `/kb` command. Added an explicit "When to invoke" rule that requires the response to name the inferred `/kb …` flow and ask for confirmation before any mutation when the user did not type `/kb` directly | Trigger surface expansion |
