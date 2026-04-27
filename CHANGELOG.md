@@ -20,6 +20,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 ## [Unreleased]
 
 - Post-5.3.0 follow-ups only.
+- CI fix: appended the missing trailing newline to `docs/operating-model.md` so `markdownlint` (MD047) passes again. No semantic change.
 
 ## [5.3.0] — 2026-04-26
 
