@@ -164,3 +164,4 @@ Those surfaces may still feed findings, briefs, specs, releases, or incidents th
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-04-26 | Initial operating-model analysis and artifact-gap definition for company-wide software engineering work; introduced the delivery/operations gap narrative for briefs, specs, releases, and incidents | Gap analysis for software-engineering daily work |
+| 2026-04-27 | Appended missing trailing newline to satisfy `markdownlint` MD047; no semantic change | CI fix |
