@@ -1,14 +1,16 @@
 # Glossary
 
-> **Version:** 0.4 | **Last updated:** 2026-04-26
+> **Version:** 0.5 | **Last updated:** 2026-04-27
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
 | Term | Definition |
 |------|-----------|
 | **Agent** | A persona that composes one or more skills for autonomous or semi-autonomous operation. Path in this repo: `plugins/<plugin>/agents/<name>.md`. |
+| **Adoption stage** | The team's posture toward the agent: **Stage 1** (capture discipline, no `/kb` invocation in the loop), **Stage 2** (agent-assisted triage, evaluation gate fires but humans confirm before persistence), **Stage 3** (bounded autonomous knowledge ops, scheduled rituals plus guarded auto-promote). Set by `kb-setup` phase 1 question 8 and surfaced in phase 3 question 12. Full contract: `plugins/kb/skills/kb-setup/references/adoption-stages.md`. |
 | **Anchor layer** | The contributor-capable layer whose `.kb-config/` directory is the source of truth for the workspace graph, automation, and artifact settings. |
 | **Capture** | The flow that turns raw input into a finding, note, or skipped material. Command: `/kb [text/URL/path]`. |
+| **Capture-only mode** | Synonym for **Adoption stage 1**. The team uses the `agentic-kb` directory contract, evaluation-gate scoring patterns, and audit trail by hand, without invoking the `/kb` agent in the loop. A valid stop, not a half-installed product. |
 | **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and other living shared docs. |
 | **Brief** | A living delivery-intent artifact under `_kb-delivery/briefs/`. It frames the problem, scope, non-goals, success signals, and handoffs before detailed design starts. |
 | **Connection** | A per-layer declaration of linked product repos, trackers, reference mode, and write-back policy under `.kb-config/layers.yaml`. |
@@ -39,6 +41,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **RACI** | Responsible / Accountable / Consulted / Informed. Required on shared-layer decisions and tasks. |
 | **Role** | The layer's mutation permission boundary. `contributor` layers may originate shared changes there; `consumer` layers may receive digest output and be read, but must refuse `promote` and `publish` as a target. |
 | **Release record** | A dated operations artifact under `_kb-operations/releases/YYYY/` that captures scope, rollout, verification, rollback, and communications for a ship event. |
+| **Repo-as-OS framework** | A separate, complementary framework that runs an entire enterprise out of a git repository — typically modeling signals, missions, pull requests, and releases as governance objects, with policies as enforceable gates. `agentic-kb` is the knowledge-ops layer that pairs with such frameworks; it does not bundle one and is not derived from any specific instance. See `docs/REFERENCE.md` §10 for the abstract mapping. |
 | **Roadmap** | A plan-vs-delivery reconciliation artifact emitted as Markdown, HTML, and JSON by the optional draft `kb-roadmap` skill. |
 | **Ritual** | A composed command that strings primitives into a user-facing flow: `start-day`, `end-day`, `start-week`, `end-week`. |
 | **Scope** | A descriptive layer type such as `personal`, `team`, `org-unit`, or `company`. It is a routing hint, not a fixed enum or ladder position. |
@@ -68,6 +71,9 @@ The following terms are **not** used in this spec; use the term on the right ins
 | RFC | spec |
 | PRD, project charter | brief |
 | postmortem | incident record |
+| maturity level (for adoption) | adoption stage |
+| AI maturity model, agentic curve | adoption stage |
+| pre-agent mode, manual mode | capture-only mode |
 | Sync | Use the specific flow you mean: `digest`, `promote`, `publish`, `diff`, or `sync` for contributor-scoped reconciliation |
 
 ---
@@ -76,6 +82,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Added soft-transition vocabulary: `adoption stage`, `capture-only mode`, `repo-as-OS framework`. Non-term mappings now steer `maturity level (for adoption)` and `AI maturity model / agentic curve` to `adoption stage`, and `pre-agent mode / manual mode` to `capture-only mode` | Soft-transition extension |
 | 2026-04-26 | Added the new delivery and operations vocabulary: `brief`, `spec`, `delivery`, `operations`, `release record`, and `incident record`, plus the canonical non-term mappings for `RFC`, `PRD`, and `postmortem` | Software-engineering operating-model gap closure |
 | 2026-04-25 | Added the missing `contributor-scoped` term and tightened the `Role` definition so artifact visibility and layer mutation rights are no longer easy to confuse | Deep spec-audit follow-up |
 | 2026-04-25 | Concept-audit follow-up: extended the Harness definition with the rules-only and not-feasible buckets that the README documents, so the glossary stays the single source of truth for harness vocabulary | Concept-audit drift correction |

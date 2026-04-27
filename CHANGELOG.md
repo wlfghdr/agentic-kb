@@ -19,9 +19,30 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.3.0 follow-ups only.
-- CI fix: appended the missing trailing newline to `docs/operating-model.md` so `markdownlint` (MD047) passes again. No semantic change.
-- CI fix: replaced the `CODE_OF_CONDUCT.md` attribution link to the Contributor Covenant site root with the stable versioned code-of-conduct URL after `lychee` hit an intermittent network reset on the root page during the `dead-links` job. No semantic change.
+- Post-5.4.0 follow-ups only.
+
+## [5.4.0] — 2026-04-27
+
+> **Why MINOR:** this release adds the soft-transition adoption-stage layer on top of the v5.3.0 operating-model coverage. The directory contract, command surface, file formats, automation levels, and knowledge artifacts stay unchanged. What changes is how `agentic-kb` positions itself in the human → agentic enterprise journey, and how `kb-setup` tailors the proposed scaffold to where the team actually is today instead of dropping the same Stage-3 scaffold on every adopter.
+
+### Added
+
+- **Adoption-stage layer** — a three-stage ladder (Stage 1 capture discipline → Stage 2 agent-assisted triage → Stage 3 bounded autonomous knowledge ops) is now the canonical way `agentic-kb` describes where a team meets it on the agentic curve. The ladder is named in the value prop (README + `index.html`), in `docs/REFERENCE.md` §9, in the glossary, and in a new normative reference at `plugins/kb/skills/kb-setup/references/adoption-stages.md`. Each stage names what it scaffolds, why it stops where it stops, and what the team must demonstrate before graduating to the next one.
+- **Relationship to repo-as-OS frameworks** — `docs/REFERENCE.md` §10 documents the abstract mapping between `agentic-kb` knowledge-ops primitives (foundation, briefs, specs, decisions, findings, topics, reports) and the work-flow primitives (signals, missions, pull requests, releases, policies) that surrounding **repo-as-OS frameworks** typically own. Out-of-scope items (PR approval enforcement, packaging/releasing, on-call routing, compliance posture, multi-agent orchestration of execution) are now named explicitly. Mapping is intentionally vendor-neutral.
+- **`kb-setup` operating-context question** — phase 1 question 8 asks the user where they are on the agentic curve today and (optionally) where they want to be in 6 months. Three buckets: human-only / capture discipline, repo-as-OS framework already in use, or already running AI agents in daily work. The answer biases the proposed scaffold so a Stage-1 team does not get a Stage-3 setup and a Stage-3 team does not get a Stage-1 setup. Subsequent question numbers renumbered (Q9–Q16).
+- **`kb-setup` repo-as-OS detection** — phase 2 discovery pass now also probes for repo-as-OS structures (`work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` plus a policy directory) and surfaces them before phase 3 so the proposal can offer bridge defaults (`connections.work-repos[]`) instead of inventing parallel structure.
+- **`kb-setup` graduation criteria** — phase 3 question 14 now surfaces the 2–3 concrete things a team needs before safely advancing to the next adoption stage. The list is informational and can be skipped; the criteria themselves are normative in `references/adoption-stages.md`.
+
+### Changed
+
+- **Glossary picks up adoption-stage vocabulary** — new canonical terms `adoption stage`, `capture-only mode`, and `repo-as-OS framework`. Non-term mappings now steer "maturity level (for adoption)" and "AI maturity model / agentic curve" to **adoption stage**, and "pre-agent mode / manual mode" to **capture-only mode**, so reviewers do not have to litigate vocabulary in PRs.
+- **`docs/REFERENCE.md` cross-references renumbered** — the previous §9 (Plugin / Marketplace Package Layout) and §10 (Harness Support) are now §11 and §12 to make room for the two new sections. The kb-operator autonomous-loop note now points at §12 instead of §10.
+- **Per-file versions and root manifests rolled to 5.4.0** — `VERSION`, `plugin.json`, `.claude-plugin/marketplace.json`, the regenerated `plugins/kb/plugin.json`, `docs/REFERENCE.md`, `docs/glossary.md`, `plugins/kb/skills/kb-setup/SKILL.md` (catching up from the unbumped 5.2.0 since this release changes the question flow), `plugins/kb/skills/kb-management/SKILL.md`, and `plugins/kb/agents/kb-operator.md`. README badge and Status row updated.
+
+### Fixed
+
+- **CI fix** — appended the missing trailing newline to `docs/operating-model.md` so `markdownlint` (MD047) passes again. Carried forward from the post-5.3.0 follow-up; no semantic change.
+- **CI fix** — replaced the `CODE_OF_CONDUCT.md` attribution link to the Contributor Covenant site root with the stable versioned code-of-conduct URL after `lychee` hit an intermittent network reset on the root page during the `dead-links` job. Carried forward from the post-5.3.0 follow-up; no semantic change.
 
 ## [5.3.0] — 2026-04-26
 
