@@ -19,7 +19,23 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.4.0 follow-ups only.
+- Post-5.4.1 follow-ups only.
+
+## [5.4.1] — 2026-04-27
+
+> **Why PATCH:** this release is a documentation and consistency fix after v5.4.0. No command surface, file format, or layer-graph behavior changes. It tightens the spec where current `main` had already gained valid clarifications, makes the repo-as-OS bridge wording match the actual `layers.yaml` schema, and publishes the deeper `/kb digest connections`, `/kb publish`, and VMG setup/update contracts that were still missing from the reference surface.
+
+### Added
+
+- **Dedicated connection lifecycle reference** — `plugins/kb/skills/kb-management/references/connections-lifecycle.md` now documents `connections:` config shape, watermark formats, digest lifecycle, triage drift checks, write-back, and disconnect behavior at the same depth as the existing promote contract.
+- **Dedicated publish contract reference** — `plugins/kb/skills/kb-management/references/publish-contract.md` now documents the `/kb publish` transformation boundary, generalizability gate, safety validation, package layout under `plugins/<plugin>/skills/<name>/`, and response expectations.
+- **Explicit VMG sourcing and update guidance** — `plugins/kb/skills/kb-setup/references/setup-flow.md` now explains how `foundation/vmg.md` is initially populated (URL fetch, file read, direct text), how parent-layer digest updates should be handled, and how VMG conflicts should surface as explicit decisions.
+
+### Changed
+
+- **Repo-as-OS bridge wording now matches the live schema** — references to the non-existent `connections.work-repos[]` bridge field were corrected to `connections.product-repos[]` in `docs/REFERENCE.md`, `plugins/kb/skills/kb-setup/SKILL.md`, and `plugins/kb/skills/kb-setup/references/adoption-stages.md` so the narrative matches the actual `layers.yaml` contract and templates.
+- **Command/reference cross-links are now complete** — `kb-management` and `command-reference.md` now point directly to the new connection lifecycle and publish contract references instead of keeping those rules implicit.
+- **Per-file versions and public manifests rolled to 5.4.1** — `VERSION`, `plugin.json`, `.claude-plugin/marketplace.json`, the regenerated `plugins/kb/plugin.json`, `README.md`, `docs/REFERENCE.md`, `plugins/kb/skills/kb-management/SKILL.md`, `plugins/kb/skills/kb-setup/SKILL.md`, and `plugins/kb/agents/kb-operator.md`.
 
 ## [5.4.0] — 2026-04-27
 

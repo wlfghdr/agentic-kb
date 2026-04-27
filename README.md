@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.4.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.4.1-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -293,7 +293,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.4.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.4.1), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -311,6 +311,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Rolled the public framework status to 5.4.1 after the documentation-gap follow-up: added dedicated connection lifecycle and publish contract references, clarified the repo-as-OS bridge field name to `connections.product-repos[]`, and documented VMG sourcing/update behavior in setup flow | 5.4.1 patch release |
 | 2026-04-27 | Added the "Where this meets you on the agentic curve" section with the three-stage adoption ladder (capture discipline → agent-assisted triage → bounded autonomous), positioned `agentic-kb` as the knowledge-ops layer that pairs with any repo-as-OS framework, and rolled the public framework status to 5.4.0 | Soft-transition extension |
 | 2026-04-26 | Added the operating-model entry point, surfaced the new delivery/operations handoff artifacts in the main value proposition, and rolled the public framework status to 5.3.0 | Software-engineering operating-model gap closure |
 | 2026-04-25 | v5.2.0 release alignment — bumped the spec badge and Status row to match the new framework version that ships the kb-management trigger expansion and the kb-setup goal-oriented question flow | v5.2.0 trigger + setup rework |

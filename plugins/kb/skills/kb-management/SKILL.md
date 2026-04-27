@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.4.0
+version: 5.4.1
 triggers:
   # Command surface
   - "/kb"
@@ -220,6 +220,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Behavioral surface unchanged; new connection lifecycle and publish contract details live in dedicated references | 5.4.1 patch release |
 | 2026-04-27 | Added load-on-demand references for connection lifecycle and publish contract details so the behavioral spec can stay concise while the edge-case and packaging rules live in dedicated docs | Documentation gap follow-up |
 | 2026-04-27 | Skill version aligned to 5.4.0 for the soft-transition extension. No behavioral changes here — adoption-stage logic lives in `kb-setup`; this skill just continues to honor the "When to invoke" + Stage-2 confirmation rule it already declares | Soft-transition extension |
 | 2026-04-26 | Added delivery/operations artifact coverage to the behavioral surface: `brief`, `spec`, `release`, and `incident` now count as feature keywords, and the template list now includes their standard markdown shapes | Software-engineering operating-model gap closure |
