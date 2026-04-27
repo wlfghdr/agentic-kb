@@ -21,6 +21,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 - Post-5.3.0 follow-ups only.
 - CI fix: appended the missing trailing newline to `docs/operating-model.md` so `markdownlint` (MD047) passes again. No semantic change.
+- CI fix: replaced the `CODE_OF_CONDUCT.md` attribution link to the Contributor Covenant site root with the stable versioned code-of-conduct URL after `lychee` hit an intermittent network reset on the root page during the `dead-links` job. No semantic change.
 
 ## [5.3.0] — 2026-04-26
 
