@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.4.1
+version: 5.4.2
 triggers:
   # Command surface
   - "/kb"
@@ -65,6 +65,11 @@ triggers:
   - "present"
   - "report"
   - "progress report"
+  # Draft-skill handoff (route to kb-roadmap / kb-journeys)
+  - "roadmap"
+  - "roadmaps"
+  - "journey"
+  - "journeys"
 tools:
   - run_in_terminal
   - read_file
@@ -152,6 +157,8 @@ Full command reference: `references/command-reference.md`.
 | Rituals | `/kb start-day`, `/kb end-day`, `/kb start-week`, `/kb end-week` | Run composed briefings and summaries |
 | Audit | `/kb audit` | Check contradictions, staleness, gaps, and layer-shape drift |
 | Status | `/kb status` | Report pending work, connection drift, tasks, and recent activity |
+| Roadmap (draft) | `/kb roadmap [...]` | Hand off to `kb-roadmap` for plan-vs-delivery reconciliation; refuse if the active layer has no `roadmap:` block |
+| Journeys (draft) | `/kb journeys [...]` (alias `/kb journey`) | Hand off to `kb-journeys` for journey authoring + render; refuse if the active layer has no `journeys:` block |
 
 ## Output contract
 
@@ -220,6 +227,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-29 | Closed the draft-skill discoverability gap: added `roadmap`/`roadmaps`/`journey`/`journeys` to the trigger surface and a flow-primitive row that names the `/kb roadmap` and `/kb journeys` handoffs to the kb-roadmap and kb-journeys draft skills. Skill version aligned to 5.4.2 | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Behavioral surface unchanged; new connection lifecycle and publish contract details live in dedicated references | 5.4.1 patch release |
 | 2026-04-27 | Added load-on-demand references for connection lifecycle and publish contract details so the behavioral spec can stay concise while the edge-case and packaging rules live in dedicated docs | Documentation gap follow-up |
 | 2026-04-27 | Skill version aligned to 5.4.0 for the soft-transition extension. No behavioral changes here — adoption-stage logic lives in `kb-setup`; this skill just continues to honor the "When to invoke" + Stage-2 confirmation rule it already declares | Soft-transition extension |

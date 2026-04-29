@@ -19,7 +19,22 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.4.1 follow-ups only.
+- Post-5.4.2 follow-ups only.
+
+## [5.4.2] — 2026-04-29
+
+> **Why PATCH:** documentation and routing fix. The opt-in draft skills (`kb-roadmap`, `kb-journeys`) had been shipping with the marketplace install since 5.x, were named in `README.md`, `docs/REFERENCE.md`, the glossary, and both `plugin.json` files, but were not reachable through the `/kb` dispatcher and never advertised on the visual landing page. Adopters who installed via the marketplace could not find them. This release closes that gap. No file format, layer-graph, or core command-surface change.
+
+### Added
+
+- **Dispatcher routes for the draft subcommands** — both `plugins/kb/commands/kb.md` and `plugins/kb/skills/kb-setup/templates/kb.prompt.md` now include an explicit "Draft-skill subcommand" routing rule that hands `/kb roadmap` (alias `roadmaps`) and `/kb journeys` (alias `journey`) off to the matching skill. If the active layer has no `roadmap:` / `journeys:` config block in `.kb-config/layers.yaml`, the dispatcher refuses with a message that names the missing block and points at the skill's `references/config-schema.md`.
+- **Trigger keywords on `kb-management`** — the `triggers:` list now includes `roadmap`, `roadmaps`, `journey`, and `journeys` so harnesses that fire skills on natural-language feature keywords (per the v5.2.0 expansion) also wake the right routing path for these flows. A new "Roadmap (draft)" / "Journeys (draft)" pair of rows in the flow-primitive table makes the handoff visible in the behavioral surface.
+- **Draft-skill subcommands section in the kb-management command reference** — `plugins/kb/skills/kb-management/references/command-reference.md` now names the two draft skills, the activating config block on each side, and the refusal contract when the block is missing.
+- **Optional draft skills section on the visual landing page** — `index.html` now carries a dedicated "Optional draft skills (opt-in)" section with one card per draft skill (status, what it does, the per-layer config block that wakes it up) so marketplace adopters can find them from the public landing page. The single-command list also picks up the two draft subcommands as a follow-on bullet pair.
+
+### Changed
+
+- **Per-file versions and public manifests rolled to 5.4.2** — `VERSION`, `plugin.json`, `.claude-plugin/marketplace.json`, the regenerated `plugins/kb/plugin.json`, `README.md`, `docs/REFERENCE.md`, `plugins/kb/skills/kb-management/SKILL.md`, `plugins/kb/skills/kb-setup/SKILL.md`, and `plugins/kb/agents/kb-operator.md`. `AGENTS.md` rolled to v0.6.
 
 ## [5.4.1] — 2026-04-27
 
