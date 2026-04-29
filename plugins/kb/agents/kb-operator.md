@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 5.4.1
+version: 5.4.2
 uses:
   - kb-management
   - kb-setup
@@ -178,6 +178,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix in kb-management + kb-setup's packaged `kb.prompt.md`. The composed operator now inherits the new `/kb roadmap` and `/kb journeys` handoffs without any change to its own contract | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Version aligned to 5.4.1 for the patch release. No behavioral changes to the agent contract | 5.4.1 patch release |
 | 2026-04-27 | Version aligned to 5.4.0 for the soft-transition extension (kb-setup's adoption-stage Q8, REFERENCE §9 + §10, glossary stage vocabulary). REFERENCE §10 cross-reference in the autonomous-loop section updated to §12 to match the renumbering. No behavioral changes to the agent contract | Soft-transition extension |
 | 2026-04-26 | Version aligned to 5.3.0 after kb-management gained the new delivery/operations artifact surface (`brief`, `spec`, `release`, `incident`) so the composing operator matches the shipped framework metadata | Software-engineering operating-model gap closure |

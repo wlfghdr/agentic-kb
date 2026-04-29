@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.5 | **Last updated:** 2026-04-25
+> **Version:** 0.6 | **Last updated:** 2026-04-29
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -89,6 +89,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-29 | v5.4.2 release alignment — bumped AGENTS version to 0.6 to track the draft-skill discoverability fix (the packaged `/kb` dispatcher now routes `/kb roadmap` and `/kb journeys`; kb-management's trigger surface picks up roadmap/journey keywords; the visual landing page advertises the two opt-in subcommands). AGENTS rules unchanged in semantics | v5.4.2 draft-skill discoverability fix |
 | 2026-04-25 | v5.2.0 release alignment — bumped AGENTS version to 0.5 to track the kb-management trigger expansion (skill now fires on natural-language feature keywords, not only on `/kb`) and the kb-setup goal-oriented question-flow rework. AGENTS rules unchanged in semantics | v5.2.0 trigger + setup rework |
 | 2026-04-25 | Concept audit follow-up: bumped AGENTS version to 0.4 and recorded the missing 4.1.0 / 5.0.0 / 5.1.0 / 5.1.1 alignment entries that had been skipped here, so the file reflects the framework's current 5.1.x state instead of stopping at 4.0.0 | Concept-audit drift correction |
 | 2026-04-25 | v5.1.0 release alignment — public command surface and migration-helper docs now match the 5.1.0 release; AGENTS file unchanged in semantics, only carrying the missing changelog row | v5.1.0 follow-up closeout |

@@ -277,6 +277,30 @@
       <p><code>/kb migrate layer-model</code> — legacy ladder → graph</p>
       <p><code>/kb setup</code> — onboarding wizard</p>
     </div>
+    <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Two opt-in draft subcommands ship with the same plugin and stay dormant until you opt in:</p>
+    <div class="cmd-list">
+      <p><code>/kb roadmap</code> — plan-truth ↔ delivery reality reconciliation (MD + HTML + JSON)</p>
+      <p><code>/kb journeys</code> — author + render user/customer journeys with extractable mocks</p>
+    </div>
+  </section>
+
+  <!-- DRAFT SKILLS -->
+  <section>
+    <h2>Optional draft skills (opt-in)</h2>
+    <p>The same marketplace install ships two draft skills next to the stable core. They are inert by default — drop a config block on the active layer and they wake up. Same `/kb` surface, no second install.</p>
+    <div class="grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="card">
+        <h3><code>/kb roadmap</code> · kb-roadmap</h3>
+        <p>Reconciles ≥1 plan source (ticket export, milestone markdown, OKRs) against ≥1 delivery source (git, ADRs, releases) via a five-tier correlation ladder. Emits a roadmap artifact in Markdown, HTML, and JSON. Surfaces `delivered-unplanned`, `planned-undelivered`, and `traceability-gap` findings as first-class.</p>
+        <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">status: draft <code>v0.1.0</code> · enable via <code>roadmap:</code> on the active layer in <code>.kb-config/layers.yaml</code></p>
+      </div>
+      <div class="card">
+        <h3><code>/kb journeys</code> · kb-journeys</h3>
+        <p>Authors hierarchical journeys (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and per-step readiness. Renders a browsable HTML set plus a standalone-mock index where every embedded UI mock becomes its own linkable page.</p>
+        <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">status: draft <code>v0.1.0</code> · enable via <code>journeys:</code> on the active layer + <code>journeys-template:</code> in <code>.kb-config/artifacts.yaml</code></p>
+      </div>
+    </div>
+    <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Both skills share an authoring arc — <code>ideate</code> · <code>discuss</code> · <code>review</code> · <code>refine</code> — and treat the journey as the third party in every roadmap critique when both are enabled. Breaking changes are expected before <code>v1.0</code>.</p>
   </section>
 
   <!-- DECISIONS + IDEAS -->

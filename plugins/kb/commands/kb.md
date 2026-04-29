@@ -29,9 +29,10 @@ Evaluate in order and stop at the first match:
 
 1. **No `.kb-config/layers.yaml` anywhere in the workspace** → hand off to the `kb-setup` skill (even if the user typed only `/kb` with no args). Announce: "No KB detected — running setup." Then run the onboarding interview.
 2. **Explicit subcommand** after `/kb` (`review`, `promote`, `publish`, `digest`, `todo`, `task`, `idea`, `develop`, `decide`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`, `setup`) → route to that action per `references/command-reference.md`.
-3. **URL or pasted text** → capture to L1. Apply the five-question evaluation gate.
-4. **File path inside a known KB layer** → layer-appropriate operation (review/update-topic/decide) on that file.
-5. **Bare `/kb` (no input)** → run the **triage scan** below and present the result.
+3. **Draft-skill subcommand** after `/kb` — `roadmap` (or `roadmaps`) hands off to the `kb-roadmap` skill; `journeys` (or `journey`) hands off to the `kb-journeys` skill. If the active layer has not declared the matching `roadmap:` / `journeys:` config block in `.kb-config/layers.yaml`, refuse with a clear message that names the missing block and points the user at the skill's `references/config-schema.md`.
+4. **URL or pasted text** → capture to L1. Apply the five-question evaluation gate.
+5. **File path inside a known KB layer** → layer-appropriate operation (review/update-topic/decide) on that file.
+6. **Bare `/kb` (no input)** → run the **triage scan** below and present the result.
 
 ## Triage scan (bare `/kb`)
 

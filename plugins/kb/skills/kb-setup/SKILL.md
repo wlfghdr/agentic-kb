@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
-version: 5.4.1
+version: 5.4.2
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -251,6 +251,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-29 | Skill version aligned to 5.4.2 after the draft-skill discoverability fix. The packaged `kb.prompt.md` template now routes `/kb roadmap` and `/kb journeys` to the matching draft skills with a config-block check; this skill's setup-flow contract is unchanged | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Clarified the repo-as-OS bridge field name to `connections.product-repos[]` and linked the setup-flow VMG sourcing/update guidance | 5.4.1 patch release |
 | 2026-04-27 | Clarified the repo-as-OS bridge wording so the proposal names the current schema field `connections.product-repos[]`, and pointed the setup-flow reference description at the new VMG sourcing/update guidance | Documentation gap follow-up |
 | 2026-04-27 | v5.4.0: added Q8 ("operating context today, and target in 6 months") to phase 1 so the wizard can bias the proposal to the team's adoption stage (1, 2, or 3) instead of forcing a Stage-3 scaffold on a Stage-1 team or vice versa; phase 2 discovery pass now also probes for repo-as-OS structures so the proposal can offer bridge defaults; phase 3 question 12 now labels the proposed scaffold with its adoption stage; phase 3 question 14 surfaces graduation criteria for the next stage. Added `references/adoption-stages.md` as the normative contract; subsequent question numbers renumbered. Skill version aligned to 5.4.0 | Soft-transition extension |
