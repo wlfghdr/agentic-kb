@@ -1,6 +1,6 @@
 # Glossary
 
-> **Version:** 0.5 | **Last updated:** 2026-04-27
+> **Version:** 0.6 | **Last updated:** 2026-04-30
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
@@ -18,7 +18,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Decision** | A first-class artifact representing an open or resolved choice. One file per decision. Lifecycle: `gathering-evidence → under-discussion → proposed → decided`, optionally `revisiting`. |
 | **Delivery** | An optional feature family that adds `_kb-delivery/briefs/` and `_kb-delivery/specs/` for cross-role handoff artifacts between direction and execution. |
 | **Digest** | The flow that pulls changes from a parent layer or from declared `connections` into the current layer as findings, note proposals, or report inputs. Command: `/kb digest <layer>` or `/kb digest connections`. |
-| **Draft** | A pre-v1 skill or primitive whose contract is documented but still expected to change. Draft features are opt-in and not scaffolded by default. |
+| **Draft** | A pre-v1 skill or primitive whose contract is documented but still expected to change. Draft features remain explicitly enabled per layer; setup may propose them when role, goals, sources, or desired outputs make the fit clear. |
 | **Evaluation gate** | The five-question relevance filter applied at every persistence boundary. |
 | **External anchor** | A link from the KB to an authoritative external source (dashboard, runbook, tracker export, repo doc). Registered in `sources.md` via an alias. |
 | **Finding** | A dated, immutable snapshot capturing what was learned on a specific date. Path: `_kb-references/findings/YYYY/YYYY-MM-DD-slug.md`. |
@@ -28,7 +28,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/`. Beyond the supported tiers, two "not yet" buckets are documented in the README: **rules-only harnesses** (e.g. Cursor, Windsurf) reuse the scaffolded files as context but have no slot for a custom `/kb` command, and **not-feasible** environments (e.g. Aider, raw Claude / Inflection Pi) lack any user-custom command hook today. |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **Incident record** | A dated operations artifact under `_kb-operations/incidents/YYYY/` that captures impact, timeline, mitigations, and follow-up work for a production interruption. |
-| **Journey** | A hierarchical user, customer, or product flow (`journey → phase → sub-journey → step`) with readiness per visible step. Managed by the optional draft `kb-journeys` skill. |
+| **Journey** | A hierarchical user, customer, operator, or product flow (`journey → phase → sub-journey → step`) with readiness per visible step. A product-management primitive managed by the setup-proposed draft `kb-journeys` skill. |
 | **Layer** | A KB repo participating in the workspace graph. Layers are named and typed by `scope`, not by fixed ladder position. |
 | **Marketplace** | A repo that indexes and hosts plugins for one layer's audience. It is cross-cutting and may attach to any layer via `marketplace:` in `.kb-config/layers.yaml`. |
 | **Meeting note** | A shared note record under `_kb-notes/YYYY/` with required attendees and authors. Ends in proposed decisions and tasks rather than silently mutating them. |
@@ -42,7 +42,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Role** | The layer's mutation permission boundary. `contributor` layers may originate shared changes there; `consumer` layers may receive digest output and be read, but must refuse `promote` and `publish` as a target. |
 | **Release record** | A dated operations artifact under `_kb-operations/releases/YYYY/` that captures scope, rollout, verification, rollback, and communications for a ship event. |
 | **Repo-as-OS framework** | A separate, complementary framework that runs an entire enterprise out of a git repository — typically modeling signals, missions, pull requests, and releases as governance objects, with policies as enforceable gates. `agentic-kb` is the knowledge-ops layer that pairs with such frameworks; it does not bundle one and is not derived from any specific instance. See `docs/REFERENCE.md` §10 for the abstract mapping. |
-| **Roadmap** | A plan-vs-delivery reconciliation artifact emitted as Markdown, HTML, and JSON by the optional draft `kb-roadmap` skill. |
+| **Roadmap** | A product-direction artifact that reconciles plan truth, delivery reality, journey readiness, and phase/lane sequencing. Emitted as Markdown, HTML, and JSON by the setup-proposed draft `kb-roadmap` skill. |
 | **Ritual** | A composed command that strings primitives into a user-facing flow: `start-day`, `end-day`, `start-week`, `end-week`. |
 | **Scope** | A descriptive layer type such as `personal`, `team`, `org-unit`, or `company`. It is a routing hint, not a fixed enum or ladder position. |
 | **Skill** | A reusable instruction unit in a directory with `SKILL.md` at its root. Path in this repo: `plugins/<plugin>/skills/<name>/SKILL.md`. Portable across first-class supported harnesses and reusable from compatible CLI workflows that honor the same repo-local contract. |
@@ -82,6 +82,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Reframed roadmap and journey terms as setup-proposed product-management primitives, widened Journey beyond product-only flows, and updated the Draft definition so setup-proposed draft features are allowed when confirmed per layer | Product-management surface integration |
 | 2026-04-27 | Added soft-transition vocabulary: `adoption stage`, `capture-only mode`, `repo-as-OS framework`. Non-term mappings now steer `maturity level (for adoption)` and `AI maturity model / agentic curve` to `adoption stage`, and `pre-agent mode / manual mode` to `capture-only mode` | Soft-transition extension |
 | 2026-04-26 | Added the new delivery and operations vocabulary: `brief`, `spec`, `delivery`, `operations`, `release record`, and `incident record`, plus the canonical non-term mappings for `RFC`, `PRD`, and `postmortem` | Software-engineering operating-model gap closure |
 | 2026-04-25 | Added the missing `contributor-scoped` term and tightened the `Role` definition so artifact visibility and layer mutation rights are no longer easy to confuse | Deep spec-audit follow-up |

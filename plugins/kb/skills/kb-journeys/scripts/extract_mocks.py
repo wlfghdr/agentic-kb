@@ -207,7 +207,7 @@ def main() -> int:
     ap.add_argument("--html-dir", required=True, type=Path)
     ap.add_argument("--mocks-dir", required=True, type=Path)
     ap.add_argument("--template", required=True, type=Path)
-    ap.add_argument("--skill-version", default="0.1.0")
+    ap.add_argument("--skill-version", default="0.2.0")
     args = ap.parse_args()
 
     html_dir: Path = args.html_dir

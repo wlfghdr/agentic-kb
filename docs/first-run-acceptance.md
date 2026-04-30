@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 5.2.0 | **Last updated:** 2026-04-25
+> **Version:** 5.5.0 | **Last updated:** 2026-04-30
 
 This document defines the canonical first-run acceptance path for `agentic-kb`.
 
@@ -23,6 +23,8 @@ It is intentionally narrow:
 - manual automation level,
 - builtin HTML styling,
 - no live tracker write-back.
+
+Product-management roadmap and journey artifacts are optional in the baseline. When the user's role/goals imply them, setup must propose the owning layer and source/output placement in the same confirmation pass as the core KB graph.
 
 That narrowness is deliberate. A team rollout needs one deterministic baseline before it branches into single-layer, team-only, or multi-org variants.
 
@@ -432,6 +434,25 @@ Acceptance checks:
 - no live tracker auth is required for the first proof run,
 - the team lead can trace the narrative back to the generated artifacts.
 
+## Optional Step 12 — Product-management proof
+
+If the Phase 1 answers mention customer journeys, launch planning, phase/lane roadmaps, product sequencing, or stakeholder roadmap presentations, setup must propose `journeys` and/or `roadmaps` on a concrete owning layer.
+
+Use a minimal variant of Q6 such as:
+
+```text
+a customer-value roadmap and journey map I can share with stakeholders
+```
+
+Acceptance checks:
+
+- the Phase 3 proposal names the owning layer for `roadmaps` and `journeys`, rather than silently choosing during the first command run,
+- setup explains why the artifacts are co-located or separated,
+- `.kb-config/layers.yaml` contains the matching `roadmap:` / `journeys:` blocks only after confirmation,
+- scaffolded `_kb-roadmaps/` and `_kb-journeys/` folders exist when those features are enabled,
+- `/kb roadmap --dry-run` and `/kb journeys --dry-run` produce read-only validation output and name missing sources without writing to external trackers,
+- the roadmap presentation rules are visible in generated guidance: value headlines, implementation/detail second lines, explicit draft/proposed/agreed/shipped status, and no checkmarks for proposed work.
+
 ## Team lead verification checklist
 
 A team lead can treat onboarding as accepted only if all of these are true:
@@ -471,6 +492,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | v5.5.0: added the optional product-management proof path so first-run acceptance covers setup-derived roadmap/journey ownership, source/output placement, and read-only dry-run validation when role/goals imply those artifacts | Product-management surface integration |
 | 2026-04-25 | v5.2.0: replaced the flat 13-question baseline with the four-phase, goal-oriented interview (Phase 1 context/goals, Phase 2 workspace facts, Phase 3 derived plan to confirm, Phase 4 single yes) so the canonical proof matches the new kb-setup behavior. Layer features and contributor-mode flags are now derived in Phase 3 from the user's own answers, not enumerated by the user. Q7 baseline answer pinned to "confirm everything" so the derived automation level stays at 1 (manual only) per the existing baseline | v5.2.0 setup rework |
 | 2026-04-25 | Clarified the baseline automation answer so level 1 is explicitly the manual-only setup path | Deep spec-audit follow-up |
 | 2026-04-25 | Concept-audit follow-up: aligned the doc version with the 5.1.x framework and added an optional migration-proof step covering `/kb migrate layer-model` and `/kb migrate archives` for legacy adopters | Concept-audit drift correction |

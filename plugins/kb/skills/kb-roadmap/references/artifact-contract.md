@@ -18,7 +18,7 @@ Top-level shape:
 
 ```json
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "generated_at": "2026-04-21T14:30:00Z",
   "scope": "product-a",
   "timeframe": { "kind": "since", "since": "2026-04-01" },
@@ -118,3 +118,9 @@ html-template:
 ## Versioning
 
 The `version` field in the JSON matches the skill's SKILL.md `version`. Schema changes bump this. Older JSON artifacts remain readable across minor versions within a major.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-30 | Updated the JSON sidecar version example to match kb-roadmap v0.2.0 | Product-management surface integration |

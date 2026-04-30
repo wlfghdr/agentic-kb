@@ -15,10 +15,10 @@ For the deterministic acceptance baseline used to verify real onboarding and tea
 
 Run the four-phase, goal-oriented interview defined in `SKILL.md` ("Interactive question flow"):
 
-1. **Phase 1 — Context and goals** (Q1–Q7): identity, what the user tracks/decides, why now, audience, sources, desired outputs, autonomy preference. All open-ended; never asks the user to enumerate features, scopes, or layer counts.
-2. **Phase 2 — Workspace and harness facts** (Q8–Q10): workspace root, IDE targets, discovery pass against existing KB material.
-3. **Phase 3 — Proposed plan** (Q11–Q13): the wizard derives a layer graph, connections, artifacts, automation level, and HTML styling from phases 1 + 2 and presents them as one block. The user adjusts inline or confirms; deeper edits are routed through targeted follow-ups (rename, add/remove a layer, flip role, change parent).
-4. **Phase 4 — Final confirmation** (Q14): one summary, one yes.
+1. **Phase 1 — Context and goals**: identity, what the user tracks/decides, why now, audience, sources, desired outputs, autonomy preference, and operating context. All open-ended; never asks the user to enumerate features, scopes, or layer counts.
+2. **Phase 2 — Workspace and harness facts**: workspace root, IDE targets, discovery pass against existing KB material.
+3. **Phase 3 — Proposed plan**: the wizard derives a layer graph, connections, artifacts, automation level, product-management roadmap/journey placement, and HTML styling from phases 1 + 2 and presents them as one block. The user adjusts inline or confirms; deeper edits are routed through targeted follow-ups (rename, add/remove a layer, flip role, change parent, move roadmap/journey ownership).
+4. **Phase 4 — Final confirmation**: one summary, one yes.
 
 Validate each answer block before advancing. Never derive layer features from a feature list dictated to the user; always derive them from the user's own answers and let the user adjust the proposal in phase 3. A compact expert path (the legacy "author the plan directly" mode) is available on request for users who already know the framework.
 
@@ -51,6 +51,13 @@ _kb-tasks/archive/YYYY/
 _kb-workstreams/
 ```
 
+If the derived feature set includes product-management artifacts, also create only the enabled directories:
+
+```
+_kb-roadmaps/
+_kb-journeys/
+```
+
 Instantiate these files from `templates/`:
 
 - `AGENTS.md` ← `personal-kb-AGENTS.md`
@@ -69,6 +76,8 @@ Instantiate these files from `templates/`:
 - Per workstream: `_kb-workstreams/<name>.md` ← `workstream.md`
 - Per theme: `_kb-references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
 - `index.html`, `dashboard.html`, `.nojekyll`
+
+When `roadmaps` or `journeys` are enabled, render their config blocks into `.kb-config/layers.yaml` under the owning layer and their template blocks into `.kb-config/artifacts.yaml`. The first-run default is one owning layer for both artifacts unless the user explicitly selects different owners.
 
 ## Scaffold — additional shared contributor layer
 
@@ -224,6 +233,7 @@ Run:
 
 - `/kb status` → expect clean state.
 - `/kb start-day` → expect a non-empty briefing or explicit *"no pending work"*.
+- If `roadmaps` or `journeys` are enabled, run their dry-run render/audit path and expect the output to name the configured owning layer, source directories, and missing-source gaps without writing to trackers.
 
 Print a quickstart card:
 
@@ -234,6 +244,8 @@ You're set up. Try:
   /kb start-day          → morning briefing
   /kb review             → process inputs
   /kb end-day            → commit + wrap
+  /kb roadmap            → roadmap status (if enabled)
+  /kb journeys           → journey status (if enabled)
 ```
 
 After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
@@ -242,4 +254,5 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Added setup guidance for deriving, placing, scaffolding, and verifying roadmap/journey product-management artifacts from role/goals instead of requiring users to know feature names upfront | Product-management surface integration |
 | 2026-04-27 | Added explicit VMG sourcing and update guidance for setup, including URL/file/direct-text population modes, parent-digest updates, manual edits, and conflict handling. Also removed the stale question-number reference from the `vmg.md` scaffold bullet | Documentation gap follow-up |

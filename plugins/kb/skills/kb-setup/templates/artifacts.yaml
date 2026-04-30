@@ -22,6 +22,17 @@ output:
   directory: _kb-references/reports
   filename-template: "{slug}-v{version}.html"
 
+# Product-management artifacts. Setup uncomment/renders these when the
+# selected owning layer enables `roadmaps` or `journeys`.
+# html-template:
+#   base: kb-roadmap/templates/roadmap.html.hbs
+#   tokens: neutral
+#   themes: [light, dark, auto]
+# journeys-template:
+#   base: kb-journeys/templates/journey.html.hbs
+#   tokens: neutral
+#   themes: [light, dark, auto]
+
 # Root index.html generation rules (see references/html-artifacts.md).
 # These apply to the index written by `.kb-scripts/generate-index`.
 index:

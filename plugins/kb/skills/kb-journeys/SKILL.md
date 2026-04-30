@@ -1,7 +1,7 @@
 ---
 name: kb-journeys
 description: Author and publish user/customer/product journeys as living markdown with generated HTML views and standalone UI mocks. Journeys are hierarchical (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and readiness assessments. The skill ships authoring commands (ideate, discuss, review, refine) shared with kb-roadmap's contract, a neutral HTML template whose tokens are set by the adopter's `.kb-config/artifacts.yaml`, and a mock-extraction pipeline that renders every embedded UI mock as a linkable standalone page. Triggered by `/kb journeys` and journey-authoring phrases.
-version: 0.1.0
+version: 0.2.0
 status: draft
 triggers:
   - "/kb journeys"
@@ -9,7 +9,12 @@ triggers:
   - "user journey"
   - "customer journey"
   - "product journey"
+  - "operator journey"
   - "journey map"
+  - "user flow"
+  - "customer flow"
+  - "experience map"
+  - "onboarding flow"
   - "sub-journey"
   - "journey phase"
   - "journey mock"
@@ -23,7 +28,7 @@ license: Apache-2.0
 
 # Skill: KB Journeys
 
-Journeys describe how a persona moves through a product, service, or process — as a **hierarchy** (journey → phase → sub-journey → step) with explicit entry conditions, exit conditions, cross-journey interfaces, and readiness assessments per visible step. They are a first-class KB artifact, separate from roadmaps (plan↔delivery) and topics (positions).
+Journeys describe how a persona moves through a product, service, or process — as a **hierarchy** (journey → phase → sub-journey → step) with explicit entry conditions, exit conditions, cross-journey interfaces, and readiness assessments per visible step. They are a first-class product-management KB artifact, separate from roadmaps (plan↔delivery) and topics (positions).
 
 This skill turns markdown journey specs into:
 
@@ -50,6 +55,8 @@ Invoke whenever the user:
 7. **Dual output always.** Every `render` run emits the per-journey HTMLs + the mocks index in the same pass. They never drift.
 8. **Journeys are ground truth for the roadmap.** When a scope in `kb-roadmap` declares `journey-refs` pointing here, every roadmap item is cross-checked against its cited step(s). Journey steps are the definition of what the product must do; roadmap items exist to move step readiness forward. A journey is **never** silently updated from roadmap findings — drift findings trigger `/kb journeys review <step>`, which is a deliberate authoring pass.
 9. **Log every run** to `.kb-log/YYYY-MM-DD.log`.
+10. **Setup decides ownership.** `/kb setup` proposes the owning layer from the user's role, audience, sources, and desired outputs. The conservative default is to co-locate journeys with the roadmap scope they ground. Cross-layer journey inheritance is allowed by the layer graph but treated as a later enhancement unless the user explicitly configures it.
+11. **Journey text stays value-oriented.** Step titles describe what the persona can do, learn, decide, or recover from; implementation mechanics belong in step detail, interfaces, or readiness notes.
 
 ## Hierarchy
 
@@ -203,10 +210,11 @@ The journey template reads the same tokens block as `kb-roadmap` (`--fg`, `--bg`
 
 ## Status
 
-Draft (`v0.1.0`). Not scaffolded by default. Opt in by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml`.
+Draft (`v0.2.0`). Setup-proposed when the user's role, goals, sources, or desired outputs imply product-management journey work. Activate by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml` for the confirmed owning layer.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Promoted journey work into the product-management surface: setup-derived ownership, broader journey/flow triggers, and value-oriented step-title rules | Product-management surface integration |
 | 2026-04-22 | Removed internal-repo reference from extract_mocks.py description | Vendor-neutrality review |
