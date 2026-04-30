@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 5.4.2
+> **Version:** 5.5.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -36,7 +36,7 @@ Core rules:
 - `role: contributor | consumer` governs shared mutation rights. Consumer layers may receive digests and expose read-down guidance, but promotion or publish targeting a consumer-only layer must refuse with a clear message.
 - `features:` opt a layer into primitives: `inputs`, `findings`, `topics`, `ideas`, `decisions`, `tasks`, `notes`, `workstreams`, `foundation`, `reports`, `delivery`, `operations`, `marketplace`, `roadmaps`, `journeys`.
 - `marketplace` is **cross-cutting**, not a numbered layer. Any layer may publish to or consume from its own marketplace repo.
-- Draft features (`roadmaps`, `journeys`) are enabled per layer, not globally.
+- Product-management draft features (`roadmaps`, `journeys`) are enabled per layer, not globally. `/kb setup` proposes them when the user's role, goals, sources, or desired outputs imply product-direction work, and asks which layer should own them before writing config.
 
 ### Contributor-scoped vs shared primitives
 
@@ -55,6 +55,8 @@ At multi-user layers, keep two separate ideas straight: layer role (`contributor
 | `workstreams` | shared | Workstream state is layer-level |
 | `foundation` | shared | Naming, sources, stakeholders, VMG are canonical |
 | `reports` | shared | Reports describe the layer, not one contributor |
+| `roadmaps` | shared | Roadmaps describe a layer's planning truth and delivery reality, not one contributor's private view |
+| `journeys` | shared by default; configurable for contributor-scoped research drafts | Shared journeys define the product, service, or process experience that roadmap items should move forward |
 
 Single-user layers flatten contributor-scoped primitives to the layer root.
 
@@ -506,7 +508,26 @@ Field contract:
 - `contributor-mode`: optional overrides for primitives that can be shared or contributor-scoped.
 - `marketplace`: marketplace repo and install mode for that layer's published skills.
 - `connections`: product repos, trackers, reference mode, and write-back policy for that layer.
-- `roadmap` / `journeys`: draft-skill configuration blocks nested under the layer that enabled those features.
+- `roadmap` / `journeys`: product-management draft-skill configuration blocks nested under the layer that enabled those features. Setup derives and confirms the owning layer; hand-edits must keep the block beside the layer whose `features` include `roadmaps` or `journeys`.
+
+### Product-management primitives
+
+Roadmaps and journeys are the product-direction side of the same operating model that briefs, specs, releases, and incidents cover for delivery and operations.
+
+| Primitive | Home | Primary question | Typical source inputs | Typical output |
+|-----------|------|------------------|-----------------------|----------------|
+| `journeys` | `_kb-journeys/` | What experience or process should exist for the target persona? | notes, research, briefs, support signals, existing docs | markdown journey specs, HTML journey maps, standalone mocks |
+| `roadmaps` | `_kb-roadmaps/` | What should happen when, what is already true, and where does delivery drift from plan? | tracker exports, milestones, goals, journeys, git/release signals | MD + HTML + JSON roadmap/status artifacts |
+
+Placement is an onboarding decision, not a fixed rule. A personal PM may own product-direction artifacts in their anchor layer; a team may place shared journeys and roadmaps in a team contributor layer; an org may own portfolio roll-ups in an org layer. The first setup path should keep ownership simple: one layer owns the roadmap scope and its cited journeys. Layered roadmaps/journeys are allowed by the graph, but cross-layer roll-ups and journey inheritance are deferred enhancement work until the single-layer ownership path is proven.
+
+The roadmap artifact should stay legible as a product-management artifact, not just an engineering status report:
+
+- make draft, proposed, agreed, and shipped status visible;
+- use checkmarks only for implemented or already-true items;
+- phrase roadmap item headlines as customer/user value, with implementation detail on the next line;
+- aggregate dense source data into lanes and phases before rendering a presentation;
+- preserve traceability to journeys, decisions, trackers, and delivery signals in the JSON/appendix.
 
 ### `.kb-config/automation.yaml`
 
@@ -773,6 +794,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-04-30 | Version aligned to 5.5.0 after promoting roadmap and journey work into the product-management operating surface: setup now derives their owning layer from role/goals and the reference names placement, visibility, and customer-value presentation rules |
 | 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix. Structural contracts in this reference are unchanged; the dispatcher now routes `/kb roadmap` and `/kb journeys` through the kb-management surface that this reference describes |
 | 2026-04-27 | Version aligned to 5.4.1 after the documentation-gap follow-up. Corrected the repo-as-OS bridge field name to `connections.product-repos[]` so the reference matches the live `layers.yaml` schema |
 | 2026-04-27 | Added §9 "Adoption Stages" (capture discipline → agent-assisted triage → bounded autonomous, with mapping to automation levels) and §10 "Relationship to Repo-as-OS Frameworks" (abstract knowledge-ops ↔ work-flow primitive mapping; explicit out-of-scope list). Renumbered the previous §9 / §10 to §11 / §12 and updated the kb-operator cross-reference accordingly. Reference version aligned to 5.4.0 |

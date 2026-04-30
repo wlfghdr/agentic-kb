@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 5.4.2
+version: 5.5.0
 uses:
   - kb-management
   - kb-setup
@@ -100,6 +100,7 @@ Rules (both): deterministic, fast. Watermark uses `latest · {YYYY-MM-DD HH:MM}`
 - `/kb end-week` → **weekly summary** as a finding (`findings/YYYY-MM-DD-weekly-summary.md`) + rendered HTML (`reports/weekly-YYYY-WW.html`).
 - `/kb present [topic]` → presentation.
 - `/kb report [scope]` → report.
+- `/kb roadmap [scope]` and `/kb journeys [scope]` → product-management artifacts when setup has enabled the owning layer's `roadmap:` or `journeys:` config.
 
 If `end-day` is skipped for a given date, the next `start-day` generates the missing day's summary from the log + git diff before producing its briefing.
 
@@ -178,6 +179,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Version aligned to 5.5.0 after setup began proposing product-management roadmap/journey ownership from role, goals, sources, and outputs. The operator inherits status and artifact handoffs through kb-management + kb-setup | Product-management surface integration |
 | 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix in kb-management + kb-setup's packaged `kb.prompt.md`. The composed operator now inherits the new `/kb roadmap` and `/kb journeys` handoffs without any change to its own contract | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Version aligned to 5.4.1 for the patch release. No behavioral changes to the agent contract | 5.4.1 patch release |
 | 2026-04-27 | Version aligned to 5.4.0 for the soft-transition extension (kb-setup's adoption-stage Q8, REFERENCE §9 + §10, glossary stage vocabulary). REFERENCE §10 cross-reference in the autonomous-loop section updated to §12 to match the renumbering. No behavioral changes to the agent contract | Soft-transition extension |

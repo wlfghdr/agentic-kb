@@ -9,6 +9,12 @@ roadmap:
   # Required. Default workstream/scope to render when /kb roadmap is called without --scope.
   default-scope: <string>
 
+  # Optional metadata written by setup when it derives roadmap work from role/goals.
+  ownership:
+    layer: <layer-name>
+    mode: single-layer                       # single-layer | roll-up | layered-future
+    rationale: <short plain-text reason>
+
   # Default timeframe. Accepts: week | month | quarter | since:YYYY-MM-DD | range:YYYY-MM-DD..YYYY-MM-DD
   default-timeframe: week
 
@@ -115,6 +121,22 @@ roadmap:
     shipped:
       required: []                         # e.g. [delivery-in-main, acceptance-met]
 
+  # Presentation view defaults. These affect human-readable boards, not the
+  # authoritative JSON sidecar.
+  presentation:
+    mode: phase-lane                       # phase-lane | timeline | kanban
+    max-items-per-lane-phase: 3
+    headline-style: customer-value         # customer-value | internal-label
+    detail-style: implementation-detail    # implementation-detail | source-summary
+    show-draft-callout: true
+    implemented-marker: "implemented"
+    commitment-statuses:
+      draft: []
+      proposed: []
+      agreed: []
+      committed: []
+      shipped: []
+
   # Continuous config tuning. See references/issue-trackers.md#continuous-tuning.
   tune:
     enabled: true                          # produce a tuning digest every run
@@ -132,15 +154,20 @@ roadmap:
 ## Validation rules
 
 - At least one of `plan-sources`, `issue-trackers`, active-layer `connections.trackers`, or scope-level `trackers` must be declared.
+- `ownership.layer`, when present, must match the layer entry that contains this `roadmap:` block.
+- `ownership.mode: layered-future` documents intent only; current setup should not synthesize cross-layer roll-ups unless an expert user configures them explicitly.
 - At least one `delivery-sources` entry must be declared.
 - Every `issue-trackers[]` entry with any `write-*` capability must declare `auth-env`.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
 - `mismatch-findings.route-to` empty string disables routing; any other value must be a relative path under the KB root.
 - `phases` keys must match the default pipeline names (`idea`, `defined`, `committed`, `in-delivery`, `shipped`, `archived`) — adopters rename display labels in `.kb-config/artifacts.yaml`, not the canonical keys.
+- `presentation.max-items-per-lane-phase` should stay small enough for a single slide or page section; default and recommended maximum is `3`.
+- `presentation.headline-style: customer-value` means the visible item headline states user/customer/operator value; implementation mechanics move to the detail line.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Added the presentation-view config surface for phase/lane roadmap boards, customer-value headlines, draft callouts, and implemented markers | Product-management surface integration |
 | 2026-04-25 | Clarified the 5.1 config contract: the active layer owns the roadmap block, `connections.trackers[]` can seed read-only tracker inputs, and `issue-trackers[]` is now documented as a legacy or override surface | v5.1.0 closeout release |

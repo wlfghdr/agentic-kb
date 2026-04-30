@@ -16,6 +16,7 @@ What's next, what's deferred, what's out of scope.
 - **Cross-org coordination** — digest mechanism across multiple peer org-unit layers. Deferred until real deployments exist.
 - **Company-source automation** — polling company channels for OKRs/strategy. Blocked on machine-readable company comms.
 - **Knowledge graph visualization** — interactive rendering of the finding→topic→decision graph.
+- **Layered roadmaps and journeys** — roll-ups, inheritance, and cross-layer readiness aggregation across roadmap and journey owners. Deferred until the single-owner setup path is proven in adopter KBs.
 - **Contradiction detection** — automated surfacing of conflicting positions across team contributors.
 - **Embedding-assisted routing** — semantic clustering instead of keyword-based workstream routing.
 
@@ -30,5 +31,6 @@ What's next, what's deferred, what's out of scope.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Added layered roadmap and journey roll-ups as a later enhancement, keeping the current product-management setup path focused on one confirmed owning layer | Product-management surface integration |
 | 2026-04-24 | Marked the export-backed roadmap proof fixture as delivered via the new roadmap regression test | Roadmap proof hardening |
 | 2026-04-20 | Marked simulated-workspace tests, HTML artifact CI validation, and automatic overview regeneration as delivered | v3.2.0 roadmap sync |

@@ -19,7 +19,23 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.4.2 follow-ups only.
+- Post-5.5.0 follow-ups only.
+
+## [5.5.0] — 2026-04-30
+
+> **Why MINOR:** this release makes roadmap and journey work a first-class product-management surface in setup and command routing. The layer graph and existing file formats remain compatible, but setup can now propose roadmap/journey ownership from role, goals, sources, and desired outputs instead of leaving the draft skills as discoverability-only opt-ins.
+
+### Added
+
+- **Setup-proposed product-management primitives** — `kb-setup` now treats customer journeys, phase/lane roadmaps, launch planning, stakeholder roadmap communication, and product sequencing as signals to propose `roadmaps` and `journeys` on a concrete owning layer. The proposal names source inputs, output folders, and whether roadmap/journey ownership is co-located.
+- **Roadmap and journey feature placement contract** — `docs/REFERENCE.md`, `docs/operating-model.md`, `docs/glossary.md`, the setup flow, setup templates, and first-run acceptance now document that placement is an onboarding decision. The first setup path keeps one confirmed owning layer by default; layered roll-ups and journey inheritance are documented as future enhancement work.
+- **Value-first roadmap presentation rules** — `kb-roadmap` now documents the generic phase/lane presentation contract: aggregate dense source data into lanes/phases, limit visible items per lane/phase, use customer/user value headlines with detail on the second line, preserve source traceability in JSON/appendix, make draft/proposed/agreed/shipped status visible, and reserve checkmarks for implemented or already-true work.
+
+### Changed
+
+- **Command and trigger surface expanded** — `kb-management` and the packaged `kb.prompt.md` now route natural-language roadmap/journey phrases such as product roadmap, phase roadmap, now/next/later, roadmap presentation, user journey, customer journey, journey map, and user flow through the `/kb roadmap` and `/kb journeys` draft skills. Missing config now points users to `/kb setup` as the normal ownership-placement path.
+- **Draft skills rolled forward** — `kb-roadmap` and `kb-journeys` moved to `v0.2.0` to reflect setup-proposed activation, explicit ownership metadata, and product-management wording while remaining draft and non-breaking.
+- **Manifests and public narrative rolled to 5.5.0** — root `VERSION`, marketplace manifests, README, reference docs, setup/management skills, and `kb-operator` all now describe the setup-proposed roadmap/journey surface.
 
 ## [5.4.2] — 2026-04-29
 

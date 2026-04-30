@@ -1,6 +1,6 @@
 # Software Engineering Operating Model
 
-> **Version:** 0.1.0 | **Last updated:** 2026-04-26
+> **Version:** 0.2.0 | **Last updated:** 2026-04-30
 
 This document describes what day-to-day software engineering work looks like across the main roles in a software company, which artifacts make that work legible, and which parts of that operating model `agentic-kb` did not model explicitly before this operating-model extension.
 
@@ -15,7 +15,7 @@ In a software company, "daily work" is a mesh of five loops that happen in paral
 
 | Loop | Primary question | Typical roles | Typical cadence | Minimum durable artifacts |
 |------|------------------|---------------|-----------------|---------------------------|
-| Direction | What problem matters now? | product manager, engineering manager, staff engineer, design lead | weekly to monthly | VMG, workstreams, briefs, decisions, roadmap reports |
+| Direction | What problem matters now, for whom, and in which order? | product manager, engineering manager, staff engineer, design lead | weekly to monthly | VMG, workstreams, journeys, briefs, decisions, roadmap reports |
 | Design | What should we build and how should it work? | tech lead, staff engineer, senior engineer, designer, security, QA | daily to weekly | specs, decisions, notes, linked findings |
 | Delivery | What is being built, by whom, and what is blocked? | engineers, tech leads, QA, program managers, EMs | daily | tasks, backlog, focus, release records, progress reports |
 | Operations | Is the system healthy in production, and what do we do when it is not? | SRE, on-call engineers, EMs, support, security | continuous | incidents, release records, findings, runbooks, follow-up decisions |
@@ -29,7 +29,7 @@ The same company day looks different depending on role.
 
 | Role | Daily reality | Questions they answer | Artifacts they read most | Artifacts they author most |
 |------|---------------|-----------------------|--------------------------|----------------------------|
-| Product manager | clarifies problem, scope, trade-offs, sequencing | Why this? Why now? For whom? | briefs, specs, roadmap reports, release records | briefs, decisions, status reports |
+| Product manager | clarifies problem, scope, trade-offs, sequencing, and customer value | Why this? Why now? For whom? What changes for the user? | journeys, briefs, specs, roadmap reports, release records | journeys, briefs, decisions, roadmap reports |
 | Engineering manager | aligns people, capacity, risk, escalation | Are we staffed correctly? What is blocked? What needs escalation? | briefs, specs, task views, incidents, weekly reports | decisions, task priorities, escalation notes, reports |
 | Staff or principal engineer | shapes architecture and cross-team alignment | What must stay true across teams? | briefs, specs, decisions, incidents, findings | specs, decisions, findings, design notes |
 | Tech lead | turns intent into implementable plans | What is the next safe design and rollout step? | briefs, specs, tasks, release records | specs, decisions, release records, meeting notes |
@@ -54,7 +54,7 @@ One realistic working day in a software company often looks like this:
 
 That chain is the minimum durable memory of modern software delivery:
 
-`goal/workstream -> brief -> spec -> decision/task -> release -> incident -> finding/topic/report`
+`goal/workstream -> journey/brief -> roadmap/spec -> decision/task -> release -> incident -> finding/topic/report`
 
 If the KB cannot represent those hops explicitly, it loses the handoff surfaces between roles.
 
@@ -68,7 +68,7 @@ Before v5.3.0, `agentic-kb` already modeled several important knowledge objects 
 - notes for meetings and working context,
 - tasks and workstreams for local execution focus,
 - reports and presentations for stakeholder communication,
-- roadmaps and journeys as opt-in draft extensions.
+- roadmaps and journeys as setup-proposed product-management draft extensions.
 
 This coverage was strong for individual sense-making, cross-layer promotion, and team knowledge synthesis.
 
@@ -116,15 +116,19 @@ Missing concept: **software engineering operating model** as a named layer above
 
 ## 6. What This Extension Adds
 
-This extension closes those gaps with two optional feature families and four standard artifacts.
+This extension closes those gaps with four optional feature families and six standard artifacts.
 
 | Feature family | New directories | Purpose |
 |----------------|-----------------|---------|
+| `journeys` | `_kb-journeys/` | Makes persona-centric experience and process intent durable |
+| `roadmaps` | `_kb-roadmaps/` | Reconciles product direction, tracker plans, and delivery reality |
 | `delivery` | `_kb-delivery/briefs/`, `_kb-delivery/specs/` | Makes intent and design handoffs durable |
 | `operations` | `_kb-operations/incidents/YYYY/`, `_kb-operations/releases/YYYY/` | Makes shipping and production response durable |
 
 | Artifact | Why it exists | Primary authors | Primary readers |
 |----------|---------------|-----------------|-----------------|
+| Journey | Defines the user/customer/operator path, step readiness, interfaces, and experience gaps | product, design, research, support, engineering | product, design, engineering, leadership |
+| Roadmap | Shows planned value, delivery reality, phase/lane sequencing, and drift from source-of-truth inputs | product, EM, program manager, tech lead | product, engineering, leadership, stakeholders |
 | Brief | Frames the problem, scope, non-goals, and success signals | product, EM, tech lead | engineering, design, leadership |
 | Spec | Defines requirements, design shape, risks, rollout, and verification | tech lead, staff engineer, engineers | engineers, QA, security, release owners |
 | Release record | Makes rollout, verification, rollback, and communications explicit | tech lead, release owner, QA | support, on-call, EM, stakeholders |
@@ -136,6 +140,8 @@ These additions do not replace findings, notes, decisions, or reports. They brid
 
 Use the artifact that matches the question being answered:
 
+- use a **journey** when aligning on the experience or process a persona should move through,
+- use a **roadmap** when aligning on sequencing, scope confidence, and plan-vs-delivery drift,
 - use a **brief** when aligning on the problem and intended outcome,
 - use a **spec** when aligning on implementation shape and verification,
 - use a **decision** when choosing between explicit options,
@@ -163,5 +169,6 @@ Those surfaces may still feed findings, briefs, specs, releases, or incidents th
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Added roadmap and journey artifacts to the role-loop model so product-management direction work is explicit alongside delivery and operations handoffs | Product-management surface integration |
 | 2026-04-26 | Initial operating-model analysis and artifact-gap definition for company-wide software engineering work; introduced the delivery/operations gap narrative for briefs, specs, releases, and incidents | Gap analysis for software-engineering daily work |
 | 2026-04-27 | Appended missing trailing newline to satisfy `markdownlint` MD047; no semantic change | CI fix |

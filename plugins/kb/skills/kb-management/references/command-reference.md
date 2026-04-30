@@ -80,16 +80,16 @@ Both helpers are dry-run first. The shipped helper scripts live under `plugins/k
 | `/kb report progress [scope]` | Generate the named progress report for a layer, workstream, or time window |
 | `/kb setup` | Hand off to `kb-setup` skill |
 
-## Draft-skill subcommands
+## Product-management draft-skill subcommands
 
-The plugin ships two opt-in draft skills that own their own subcommand surface. `/kb` routes to them after the stable subcommands above, and only when the active layer has declared the matching config block.
+The plugin ships two product-management draft skills that own their own subcommand surface. `/kb` routes to them after the stable subcommands above, and only when setup has proposed or the user has manually declared the matching config block on the confirmed owning layer.
 
 | Subcommand | Skill | Activated by |
 |-----------|-------|--------------|
 | `/kb roadmap [...]` | [`kb-roadmap`](../../kb-roadmap/SKILL.md) | `roadmap:` block on the active layer in `.kb-config/layers.yaml` (+ `html-template:` in `.kb-config/artifacts.yaml`) |
 | `/kb journeys [...]` (alias `/kb journey`) | [`kb-journeys`](../../kb-journeys/SKILL.md) | `journeys:` block on the active layer in `.kb-config/layers.yaml` (+ `journeys-template:` in `.kb-config/artifacts.yaml`) |
 
-When a user invokes `/kb roadmap` or `/kb journeys` and the matching block is missing, refuse with a message that names the missing block and points at the draft skill's `references/config-schema.md`. Never silently scaffold the config — the opt-in is the point. Full subcommand surface for each draft skill lives in its own `references/command-reference.md`.
+When a user invokes `/kb roadmap` or `/kb journeys` and the matching block is missing, refuse with a message that names the missing block and points at the draft skill's `references/config-schema.md`. Also offer `/kb setup` as the normal path for deciding which layer should own roadmap and journey artifacts. Never silently scaffold the config — the placement decision is the point. Full subcommand surface for each draft skill lives in its own `references/command-reference.md`.
 
 ## Publish flow (detail)
 
@@ -168,6 +168,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Clarified that missing roadmap/journey config should route to setup for the owning-layer decision, not silent scaffolding | Product-management surface integration |
 | 2026-04-29 | Added a Draft-skill subcommands section that names the `/kb roadmap` and `/kb journeys` handoffs to the opt-in kb-roadmap and kb-journeys skills and documents the per-layer config gates that activate them | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Added explicit pointers to the dedicated connection lifecycle and publish contract references, and aligned the publish package path with the current marketplace layout under `plugins/<plugin>/skills/<name>/` | Documentation gap follow-up |
 | 2026-04-25 | Added an explicit pointer from the command reference to the staged-review promote contract so adopters can see when staging happens and when it does not | Deep spec-audit follow-up |

@@ -16,7 +16,7 @@ Usage:
       --template <skill>/templates/journey.html.hbs \\
       --shared-css <skill>/templates/shared.css.hbs \\
       [--tokens brand-tokens.css] \\
-    [--skill-version 0.1.0]
+    [--skill-version 0.2.0]
 """
 from __future__ import annotations
 
@@ -181,7 +181,7 @@ def main() -> int:
     ap.add_argument("--tokens", type=Path, default=None)
     ap.add_argument("--logo-light", default="")
     ap.add_argument("--logo-dark", default="")
-    ap.add_argument("--skill-version", default="0.1.0")
+    ap.add_argument("--skill-version", default="0.2.0")
     args = ap.parse_args()
 
     out_dir: Path = args.output_dir

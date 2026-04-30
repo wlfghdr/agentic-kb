@@ -29,6 +29,32 @@ layers:
       writeback:
         enabled: false
         capabilities: []
+    # When /kb setup derives product-management artifacts from role/goals,
+    # it adds roadmaps/journeys to this layer's features and renders blocks
+    # like the examples below under the selected owning layer.
+    # roadmap:
+    #   ownership:
+    #     layer: {{KB_NAME}}
+    #     mode: single-layer
+    #     rationale: "Setup derived roadmap work from role/goals."
+    #   default-scope: {{WORKSTREAM_1_NAME}}
+    #   default-timeframe: quarter
+    #   output-dir: _kb-roadmaps
+    #   scopes:
+    #     {{WORKSTREAM_1_NAME}}:
+    #       kind: detail
+    #       label: {{WORKSTREAM_1_NAME}}
+    #   plan-sources: []
+    #   delivery-sources: []
+    # journeys:
+    #   ownership:
+    #     layer: {{KB_NAME}}
+    #     mode: co-located-with-roadmap
+    #     rationale: "Setup co-located journeys with their roadmap scope."
+    #   source-dir: _kb-journeys
+    #   output-dir: _kb-journeys
+    #   html-subdir: html
+    #   mocks-subdir: html/mocks
 
   # Add more layers as needed.
   # Example:

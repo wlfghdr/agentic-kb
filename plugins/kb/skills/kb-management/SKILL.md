@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.4.2
+version: 5.5.0
 triggers:
   # Command surface
   - "/kb"
@@ -68,8 +68,18 @@ triggers:
   # Draft-skill handoff (route to kb-roadmap / kb-journeys)
   - "roadmap"
   - "roadmaps"
+  - "product roadmap"
+  - "phase roadmap"
+  - "now next later"
+  - "roadmap presentation"
+  - "roadmap status"
   - "journey"
   - "journeys"
+  - "user journey"
+  - "customer journey"
+  - "product journey"
+  - "journey map"
+  - "user flow"
 tools:
   - run_in_terminal
   - read_file
@@ -160,6 +170,8 @@ Full command reference: `references/command-reference.md`.
 | Roadmap (draft) | `/kb roadmap [...]` | Hand off to `kb-roadmap` for plan-vs-delivery reconciliation; refuse if the active layer has no `roadmap:` block |
 | Journeys (draft) | `/kb journeys [...]` (alias `/kb journey`) | Hand off to `kb-journeys` for journey authoring + render; refuse if the active layer has no `journeys:` block |
 
+Roadmaps and journeys are product-management primitives, but they stay layer-owned. If a user asks for roadmap or journey work and the current layer has no matching block, route them to `/kb setup` or the expert config path so they can choose whether the artifact belongs in a personal, team, org, or other contributor layer. Do not silently choose a layer for them.
+
 ## Output contract
 
 Every response follows the same shape:
@@ -227,6 +239,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Added natural-language product roadmap/journey triggers and clarified that missing config should route to setup/placement rather than silent scaffolding | Product-management surface integration |
 | 2026-04-29 | Closed the draft-skill discoverability gap: added `roadmap`/`roadmaps`/`journey`/`journeys` to the trigger surface and a flow-primitive row that names the `/kb roadmap` and `/kb journeys` handoffs to the kb-roadmap and kb-journeys draft skills. Skill version aligned to 5.4.2 | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Behavioral surface unchanged; new connection lifecycle and publish contract details live in dedicated references | 5.4.1 patch release |
 | 2026-04-27 | Added load-on-demand references for connection lifecycle and publish contract details so the behavioral spec can stay concise while the edge-case and packaging rules live in dedicated docs | Documentation gap follow-up |
