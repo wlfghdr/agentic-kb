@@ -100,7 +100,7 @@
   <!-- HERO -->
   <section class="hero">
     <h1>agentic-kb</h1>
-    <p class="tagline">Make decisions and context travel at the same speed as creation.<br/><span style="color:var(--fg3);font-size:.95rem">AI-native knowledge ops. Vendor-neutral. No database. Lives in your repo.</span></p>
+    <p class="tagline">Make product direction, decisions, and context travel at the same speed as creation.<br/><span style="color:var(--fg3);font-size:.95rem">AI-native knowledge ops for roadmaps, journeys, decisions, and cross-role handoffs. Vendor-neutral. No database. Lives in your repo.</span></p>
     <ul class="questions">
       <li>"We're shipping more than ever and feel blurrier about where we're going."</li>
       <li>"I can't review every direction fast enough to say yes or no."</li>
@@ -128,7 +128,8 @@
     <p>Your agents made you 10× faster at <em>creating</em>. Nothing made you faster at <em>deciding</em>. The bottleneck didn't move to design, quality, or testing.</p>
     <p style="font-size:1.15rem;color:var(--fg);font-weight:600;margin:1.25rem 0">It moved to convergence.</p>
     <p>Creation at agent speed. Decisions at human speed. That gap is where budgets burn, alignment erodes, and smart teams end up running in three directions at once.</p>
-    <p><code>agentic-kb</code> is the piece of the fix that puts decisions, ideas, goals, and context on the same rails as the output — so a human at any level can stay in the loop with a swarm of agents and a team of other humans, without becoming the bottleneck.</p>
+    <p>Product direction is where the gap becomes painfully visible: roadmaps drift from delivery reality, journeys live in slides instead of source control, and stakeholder alignment depends on who saw the latest deck.</p>
+    <p><code>agentic-kb</code> is the piece of the fix that puts roadmaps, journeys, decisions, ideas, goals, and context on the same rails as the output — so a human at any level can stay in the loop with a swarm of agents and a team of other humans, without becoming the bottleneck.</p>
   </section>
 
   <!-- WHY IT'S BUILT THIS WAY -->
@@ -163,7 +164,7 @@
         <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">automation: levels 2–3</p>
       </div>
     </div>
-    <p style="text-align:center;font-size:.92rem;color:var(--fg2);margin-top:1.25rem"><code>agentic-kb</code> is the <strong>knowledge-ops layer</strong> of an agentic enterprise — it owns Strategy, Design, and Learning artifacts (foundation, briefs, specs, decisions, findings, topics, reports) and pairs cleanly with any <strong>repo-as-OS framework</strong> that owns the work-flow side (signals, missions, PRs, releases). Standalone is also a valid stop — capture-discipline-only is not a half-installed product.</p>
+    <p style="text-align:center;font-size:.92rem;color:var(--fg2);margin-top:1.25rem"><code>agentic-kb</code> is the <strong>knowledge-ops layer</strong> of an agentic enterprise — it owns Strategy, Product Direction, Design, Delivery, Operations, and Learning artifacts (foundation, roadmaps, journeys, briefs, specs, decisions, findings, topics, reports, releases, incidents) and pairs cleanly with any <strong>repo-as-OS framework</strong> that owns the work-flow side (signals, missions, PRs, releases). Standalone is also a valid stop — capture-discipline-only is not a half-installed product.</p>
     <p style="text-align:center;font-size:.85rem;color:var(--fg3)">Right move for most teams: <strong>start at Stage 1, graduate when the workflow is steady, never skip ahead.</strong></p>
   </section>
 
@@ -252,6 +253,10 @@
       <div class="card"><h3>tasks/</h3><p>Focus and backlog with explicit creation and closure.</p></div>
       <div class="card"><h3>foundation/</h3><p>Identity: who you are, your context, sources, stakeholders.</p></div>
       <div class="card"><h3>workstreams/</h3><p>Parallel tracks with their own themes and active decisions.</p></div>
+      <div class="card"><h3>roadmaps/</h3><p>Phase/lane plans that reconcile customer value, plan truth, and delivery reality.</p></div>
+      <div class="card"><h3>journeys/</h3><p>User, customer, operator, or product flows that ground roadmap scope in lived experience.</p></div>
+      <div class="card"><h3>delivery/</h3><p>Briefs and specs that make direction executable without losing intent.</p></div>
+      <div class="card"><h3>operations/</h3><p>Release and incident records that feed learning back into the KB.</p></div>
     </div>
   </section>
 
@@ -279,8 +284,8 @@
     </div>
     <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Two product-management draft subcommands ship with the same plugin and stay dormant until setup derives or you confirm their owning layer:</p>
     <div class="cmd-list">
-      <p><code>/kb roadmap</code> — plan-truth ↔ delivery reality reconciliation (MD + HTML + JSON)</p>
-      <p><code>/kb journeys</code> — author + render user/customer journeys with extractable mocks</p>
+      <p><code>/kb roadmap</code> — customer-value phase/lane roadmap (MD + HTML + JSON)</p>
+      <p><code>/kb journeys</code> — author + render user/customer/operator journeys with extractable mocks</p>
     </div>
   </section>
 
@@ -291,12 +296,12 @@
     <div class="grid" style="grid-template-columns: 1fr 1fr;">
       <div class="card">
         <h3><code>/kb roadmap</code> · kb-roadmap</h3>
-        <p>Reconciles ≥1 plan source (ticket export, milestone markdown, goals) against ≥1 delivery source (git, ADRs, releases) via a five-tier correlation ladder. Emits Markdown, HTML, and JSON, with value-first phase/lane presentation rules and explicit draft/proposed/agreed/shipped status.</p>
+        <p>Turns dense planning and delivery inputs into a customer-value roadmap: lanes, phases, confidence state, and traceability in one artifact. Emits Markdown, HTML, and JSON, with value-first headlines and explicit draft/proposed/agreed/shipped status.</p>
         <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">status: draft <code>v0.2.0</code> · setup-proposed or enable via <code>roadmap:</code> on the confirmed owning layer in <code>.kb-config/layers.yaml</code></p>
       </div>
       <div class="card">
         <h3><code>/kb journeys</code> · kb-journeys</h3>
-        <p>Authors hierarchical journeys (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and per-step readiness. Renders a browsable HTML set plus a standalone-mock index where every embedded UI mock becomes its own linkable page.</p>
+        <p>Authors hierarchical journeys (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and per-step readiness. Journeys become the product-management ground truth that roadmap items cite, review, and move forward.</p>
         <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">status: draft <code>v0.2.0</code> · setup-proposed or enable via <code>journeys:</code> on the confirmed owning layer + <code>journeys-template:</code> in <code>.kb-config/artifacts.yaml</code></p>
       </div>
     </div>

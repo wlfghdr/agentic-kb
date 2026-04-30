@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.5.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v5.5.1-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -293,7 +293,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.5.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v5.5.1), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Product-management draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.2.0`, setup-proposed by role/goals) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -311,6 +311,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | Rolled the public framework status to 5.5.1 after correcting the HTML landing-page value proposition so product direction, roadmaps, journeys, delivery, and operations are visible in the top-level story and first-class building blocks | HTML value-prop correction |
 | 2026-04-30 | Rolled the public framework status to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface: `/kb setup` now derives ownership/config from role, goals, sources, and desired outputs instead of leaving the draft skills hidden behind manual config | Product-management surface integration |
 | 2026-04-29 | Rolled the public framework status to 5.4.2 after the draft-skill discoverability fix: the packaged `/kb` dispatcher now routes `/kb roadmap` and `/kb journeys` to the matching draft skills, the kb-management trigger surface picks up roadmap/journey keywords, and the visual landing page advertises the two opt-in subcommands so marketplace adopters can find them | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Rolled the public framework status to 5.4.1 after the documentation-gap follow-up: added dedicated connection lifecycle and publish contract references, clarified the repo-as-OS bridge field name to `connections.product-repos[]`, and documented VMG sourcing/update behavior in setup flow | 5.4.1 patch release |
