@@ -19,7 +19,16 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-5.5.0 follow-ups only.
+- Post-5.5.1 follow-ups only.
+
+## [5.5.1] — 2026-04-30
+
+> **Why PATCH:** documentation and landing-page positioning fix. The v5.5.0 release made roadmap and journey work first-class in the setup/docs surface, but the public HTML landing page still led with the older generic knowledge-ops value proposition and did not show roadmaps/journeys in the first-class primitive grid. No command surface, file format, or layer-graph behavior changes.
+
+### Changed
+
+- **HTML value proposition now matches v5.5** — `index.html` now names product direction, roadmaps, journeys, delivery, and operations in the hero, problem framing, agentic-curve positioning, first-class building blocks, command summaries, and product-management draft-skill cards.
+- **Per-file versions and manifests rolled to 5.5.1** — `VERSION`, root `plugin.json`, `.claude-plugin/marketplace.json`, regenerated `plugins/kb/plugin.json`, `README.md`, and `AGENTS.md` now reflect the patch release.
 
 ## [5.5.0] — 2026-04-30
 
