@@ -19,6 +19,16 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Fixed
+
+- **Onboarding flow consistency review** — closed five long-standing gaps that prevented the documented "answer the wizard, get the promised artifacts" contract from working end-to-end:
+  1. `docs/first-run-acceptance.md` was a release behind. Phase 2 is now numbered Q9/Q10/Q11 (was Q8/Q9/Q10), and the missing Q8 (operating context / adoption stage, added in v5.4.0) is back in the baseline answer set with `human-only / capture discipline today; agent-assisted triage in 6 months` mapping to Stage 1. Phase 3 expected output now requires the adoption-stage label, the Stage↔automation-level consistency check, and the graduation-criteria block, so the team-lead acceptance baseline actually exercises the soft-transition flow it advertises.
+  2. `plugins/kb/skills/kb-setup/SKILL.md` placeholder mapping was incomplete and used stale Q-numbers in two rows. The mapping now documents the global Q-numbering convention and lists every placeholder the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), so the post-write placeholder scan no longer hits undocumented tokens. Skill version bumped to 5.5.1.
+  3. `plugins/kb/skills/kb-setup/templates/foundation-me.md` and `plugins/kb/skills/kb-setup/templates/automation.yaml` now carry the `{{ADOPTION_STAGE}}` slot the SKILL.md placeholder mapping promised since v5.4.0. The chosen stage is now durable in the scaffold instead of implicit.
+  4. `plugins/kb/skills/kb-setup/templates/automation.yaml` no longer ships `level: 1` together with active schedules. The schedules block is commented out by default (the wizard uncomments and fills it only at level ≥ 2), and the file gained an `adoption-stage` field plus the level-mapping comment block, matching the contract in `references/automation-levels.md`. The `level` field is now a `{{AUTOMATION_LEVEL}}` placeholder so the wizard can write the chosen level cleanly.
+  5. `plugins/kb/skills/kb-management/references/html-artifacts.md` and `plugins/kb/skills/kb-setup/templates/presentation-template.html` no longer point at "kb-setup Q13" for the presentation-template copy step — they now reference the phase-3 HTML-styling step, which survives any future renumbering.
+- **`docs/examples/first-hour.md` walkthrough refreshed (v5.0.0 → v5.5.1)** — replaced the legacy "Block | Suggested first-run answer" table that contradicted the v5.2.0 "Never ask the user to enumerate layers, features, contributor-mode flags, or scopes in phase 1" rule with the goal-oriented four-phase interview, including the Q8 operating-context answer and the phase-3 confirmation block. Success checks now also assert that the chosen adoption stage is durable in `automation.yaml` and `foundation/me.md`.
+
 - Post-5.5.1 follow-ups only.
 
 ## [5.5.1] — 2026-04-30

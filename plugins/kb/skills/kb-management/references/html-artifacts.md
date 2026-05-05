@@ -247,7 +247,7 @@ The generator fills placeholders from `.kb-config/artifacts.yaml` + topic conten
 
 ### Presentation-grade template
 
-For `/kb present` (and any slide-style report), the richer **`kb-setup/templates/presentation-template.html`** is the canonical starting point. kb-setup Q13 copies it into the adopter's KB under `_kb-references/templates/presentation-template.html` (or `<brand>-presentation.html` when a brand is supplied). It ships with:
+For `/kb present` (and any slide-style report), the richer **`kb-setup/templates/presentation-template.html`** is the canonical starting point. The kb-setup HTML-styling step in phase 3 copies it into the adopter's KB under `_kb-references/templates/presentation-template.html` (or `<brand>-presentation.html` when a brand is supplied). It ships with:
 
 - Dark + light theme token blocks (all customization points marked `CUSTOMIZE:`).
 - Slide types: `.cover`, `.section-title`, `.content`, `.full-image`, `.closing`.
@@ -257,12 +257,13 @@ For `/kb present` (and any slide-style report), the richer **`kb-setup/templates
 - Nav bar with keyboard shortcuts (←/→, Home, End, PgUp/PgDn, Space), progress bar, print CSS.
 - Built-in appendix/changelog slide.
 
-Every `/kb present` MUST use this file (as customized by Q13) rather than regenerating a fresh layout.
+Every `/kb present` MUST use this file (as customized by the phase-3 HTML-styling step) rather than regenerating a fresh layout.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-05 | Replaced two stale "kb-setup Q13" references for the presentation-template copy step with phase-relative wording so the doc no longer points at a question number that the v5.4.0 renumbering invalidated. Behavioral contract unchanged | Onboarding consistency review |
 | 2026-04-25 | Added an explicit external-read preflight contract plus a mandatory post-generation QA sweep so artifact generation has reviewable fetch boundaries and a defined completion gate | Generic learnings extracted from roadmap/presentation feature work |
 | 2026-04-23 | Family-2 filename default is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every KB layer; styling contract is explicitly layer-agnostic (configured reference template is THE template per layer); root-`index.html` regeneration is now an explicit offer-then-confirm step after every Family-2 create/update (automation levels 2/3 still run silently) | ISO 42001 presentation generation friction |
 | 2026-04-22 | Root `index.html` source-of-truth row now lists findings/topics/ideas/decisions markdown alongside HTML artifacts, matching the shipped generator behavior | Fixes #21 |

@@ -1,6 +1,6 @@
 # First Hour — Zero to First Useful Layer Graph
 
-> **Version:** 5.0.0 | **Last updated:** 2026-04-25
+> **Version:** 5.5.1 | **Last updated:** 2026-05-05
 
 This walkthrough covers the minimum path from nothing installed to the first useful `/kb` responses in a freshly initialized workspace. Target audience: a developer who wants to prove the adoption path end-to-end in under an hour.
 
@@ -27,28 +27,38 @@ Run:
 /kb setup
 ```
 
-Use this first-run answer set:
+The wizard runs the four-phase, goal-oriented interview. You never enumerate layers, features, or contributor-mode flags yourself — the wizard derives them from your prose and shows the proposal back in phase 3.
 
-| Block | Suggested first-run answer |
-|------|-----------------------------|
-| Name | `alice` |
-| Role and themes | `engineer on distributed systems — caching, reliability, observability` |
-| Workspace root | current directory |
-| Discovery pass | accept the empty baseline |
-| Layer 1 | `alice-personal`, `scope: personal`, `role: contributor`, `parent: team-observability`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports` |
-| Layer 2 | `team-observability`, `scope: team`, `role: contributor`, `parent: null`, features `findings, topics, decisions, tasks, notes, foundation, reports`, contributor-mode `notes: shared` |
-| Anchor layer | `alice-personal` |
-| Workstreams | `platform-signals` |
-| IDE targets | current harness only |
-| Connections | skip |
-| Draft features | skip |
-| Automation | `1` (manual only) |
-| HTML styling | `builtin` |
+**Phase 1 — context and goals (open prose, Q1–Q8):**
+
+| Question | Suggested first-run answer |
+|----------|----------------------------|
+| Q1 — Who you are | `alice — engineer on distributed systems; caching, reliability, observability` |
+| Q2 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues` |
+| Q3 — Why now | `too many parallel investigations; my lead keeps asking for status` |
+| Q4 — Who else needs to see what | `me and one team — observability` |
+| Q5 — Where information feeds in | `our product repo, GitHub issues, weekly observability sync` |
+| Q6 — What you want out | `morning briefing and a Friday status I can share with my lead` |
+| Q7 — How autonomous | `confirm everything before anything is written` |
+| Q8 — Operating context today, target in 6 months | `human-only / capture discipline today; agent-assisted triage in 6 months` |
+
+**Phase 2 — workspace and harness facts (Q9–Q11):**
+
+| Question | Suggested first-run answer |
+|----------|----------------------------|
+| Q9 — Workspace root | current directory |
+| Q10 — IDE targets | current harness only |
+| Q11 — Discovery pass | accept the empty baseline |
+
+**Phase 3 — confirm the wizard's derived plan (Q12–Q15):** the wizard shows a single block with the proposed layer graph (`alice-personal` + `team-observability`), the adoption-stage label (`Stage 1 — capture discipline`), the connections derived from Q5, the dashboard panels matching Q6, automation level `1` (manual only — consistent with Stage 1), the graduation criteria for moving to Stage 2, and HTML styling `builtin`. Accept as proposed.
+
+**Phase 4 (Q16):** one yes.
 
 Check for success:
 
-- `.kb-config/layers.yaml` exists in `alice-personal/`,
-- the file names both layers and sets `workspace.anchor-layer: alice-personal`,
+- `.kb-config/layers.yaml` exists in `alice-personal/` and names both layers with `workspace.anchor-layer: alice-personal`,
+- `.kb-config/automation.yaml` carries the chosen `adoption-stage` and a `level` consistent with Stage 1,
+- `_kb-references/foundation/me.md` records the same adoption stage,
 - year-based archive directories exist,
 - `index.html` and `dashboard.html` exist in both layers,
 - no unresolved placeholders remain outside deliberate presentation templates.
@@ -116,6 +126,7 @@ If the command targets a `role: consumer` layer, it must refuse clearly.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-05 | v5.5.1: replaced the legacy block-and-answer table that asked the user to enumerate layers, features, and contributor-mode flags with the goal-oriented four-phase interview (Q1–Q8 prose, Q9–Q11 admin, Q12–Q15 confirm-the-derived-plan, Q16 final yes), matching `kb-setup/SKILL.md` since v5.4.0. Success checks now also assert that the chosen adoption stage is durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
 | 2026-04-25 | Aligned the walkthrough with the acceptance baseline: Stage wording became Phase wording, the sample layer answers now include the parent graph fields, and automation level 1 is called out as manual-only | Deep spec-audit follow-up |
 | 2026-04-25 | Reworked the walkthrough for 5.0.0: setup now proves a two-layer graph, year-based archives, notes, and the first cross-layer promote path | v5.0.0 flexible layer model |
 | 2026-04-24 | Updated the Codex walkthrough to the installed `.agents/skills/` flow instead of the older bootstrap-only wording | Harness docs correction |
