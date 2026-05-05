@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
-version: 5.5.0
+version: 5.5.1
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -216,16 +216,24 @@ Running `/kb setup` again:
 
 ## Placeholder mapping
 
+Question references in this table use the global numbering: phase 1 covers Q1–Q8, phase 2 covers Q9–Q11, phase 3 covers Q12–Q15 (proposal blocks the user adjusts or accepts), phase 4 covers Q16 (final yes).
+
 The layer-graph scaffold uses these placeholders directly:
 
 | Placeholder | Source |
 |-------------|--------|
 | `{{USER_NAME}}` | Q1 |
 | `{{ROLE}}` | Q1 (role sentence extracted from the same answer) |
-| `{{KB_NAME}}` | anchor-layer name (derived in Q12) |
+| `{{THEMES}}` | extracted from Q1/Q2 (3–5 keywords); rendered as a bullet list into `foundation/me.md` |
+| `{{KB_NAME}}` | anchor-layer name (derived and confirmed in phase 3 question 1, i.e. Q12) |
 | `{{WORKSPACE_ROOT}}` | Q9 |
-| `{{WORKSTREAM_1_NAME}}`, `{{WORKSTREAM_1_THEMES}}` | extracted from Q2 (themes) and confirmed in Q12 |
+| `{{WORKSTREAM_1_NAME}}`, `{{WORKSTREAM_1_THEMES}}` | extracted from Q2 (themes) and confirmed in phase 3 question 1 (Q12) |
+| `{{WORKSTREAMS}}` | rendered list of all confirmed workstreams (`{{WORKSTREAM_1_*}}`, `{{WORKSTREAM_2_*}}`, …) for `personal-kb-AGENTS.md` |
 | `{{ADOPTION_STAGE}}` | derived from Q8 (today bucket); used in `automation.yaml` and the scaffolded `foundation/me.md` so the chosen stage is durable, not implicit |
+| `{{AUTOMATION_LEVEL}}` | derived from Q7 + Q8 (1, 2, or 3 per `references/automation-levels.md`); written into `automation.yaml` |
+| `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}` | layer name from phase 3 question 1 (Q12) when the proposal includes a shared contributor or synthesis layer; used by the `team-kb-*` and `org-kb-*` templates |
+| `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}` | rendered from the discovered + confirmed repo set (Q11 + phase 3 question 1, Q12); used by `workspace-AGENTS.md` |
+| `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}` | populated by the VMG sourcing step (URL fetch, file read, or direct text per `references/setup-flow.md`); placeholders survive only if the user opts to fill VMG later, in which case a backlog item is created |
 | `{{DATE}}` | today |
 | `{{VERSION}}` | `1.0` on first scaffold |
 
@@ -253,6 +261,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented placeholders the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Setup now derives roadmap/journey features from role/goals/outputs, asks which layer owns them, and writes matching config only after confirmation | Product-management surface integration |
 | 2026-04-29 | Skill version aligned to 5.4.2 after the draft-skill discoverability fix. The packaged `kb.prompt.md` template now routes `/kb roadmap` and `/kb journeys` to the matching draft skills with a config-block check; this skill's setup-flow contract is unchanged | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Clarified the repo-as-OS bridge field name to `connections.product-repos[]` and linked the setup-flow VMG sourcing/update guidance | 5.4.1 patch release |

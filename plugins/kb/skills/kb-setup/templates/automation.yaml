@@ -1,13 +1,30 @@
 # Automation configuration for the anchor layer.
-# Levels: 1 (manual), 2 (semi-auto), 3 (full-auto).
+# Levels (see plugins/kb/skills/kb-setup/references/automation-levels.md):
+#   1 — Manual only. `schedules:` MUST stay omitted or inactive.
+#       `auto-promote.enabled: false`.
+#   2 — Scheduled rituals and digests. `auto-promote.enabled: false`.
+#   3 — Scheduled rituals plus guarded auto-promote.
+#       `auto-promote.enabled: true` only with confidence threshold +
+#       excluded workstreams + an explicit user opt-in.
 
-level: 1
+level: {{AUTOMATION_LEVEL}}
 
-schedules:
-  start-day: "daily 08:00"
-  end-day: "daily 18:00"
-  start-week: "monday 08:00"
-  end-week: "friday 15:00"
+# Adoption stage chosen at setup. Recorded here so the configuration knob
+# (`level`) cannot drift away from the team's posture toward the agent.
+# A Stage-1 team must not be configured at level 2 or 3; a Stage-3 team
+# should not stay at level 1. See
+# plugins/kb/skills/kb-setup/references/adoption-stages.md for the full
+# stage ↔ level mapping.
+adoption-stage: {{ADOPTION_STAGE}}
+
+# Schedules are written by /kb setup ONLY when level >= 2. At level 1 the
+# block stays commented out so a manual-only adopter never gets surprise
+# scheduled runs. The wizard uncomments and fills the entries it needs.
+# schedules:
+#   start-day: "daily 08:00"
+#   end-day: "daily 18:00"
+#   start-week: "monday 08:00"
+#   end-week: "friday 15:00"
 
 auto-promote:
   enabled: false
