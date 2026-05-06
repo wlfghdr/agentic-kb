@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 5.5.0
+> **Version:** 5.6.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -59,6 +59,8 @@ At multi-user layers, keep two separate ideas straight: layer role (`contributor
 | `journeys` | shared by default; configurable for contributor-scoped research drafts | Shared journeys define the product, service, or process experience that roadmap items should move forward |
 
 Single-user layers flatten contributor-scoped primitives to the layer root.
+
+Decision and task promotion have an additional ownership rule: the layer that owns the scope and accountable decider/owner owns the canonical record. If a decision or task is promoted and the target layer now owns the same question or work item, the source-layer record must be closed, archived, or replaced with a backlink to the canonical target record. Keep separate source-layer items only when the source and target layers have genuinely different scopes, recommendations, accountable owners, or sub-task responsibilities.
 
 ---
 
@@ -794,6 +796,7 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now have one canonical layer unless the source and target scopes genuinely differ |
 | 2026-04-30 | Version aligned to 5.5.0 after promoting roadmap and journey work into the product-management operating surface: setup now derives their owning layer from role/goals and the reference names placement, visibility, and customer-value presentation rules |
 | 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix. Structural contracts in this reference are unchanged; the dispatcher now routes `/kb roadmap` and `/kb journeys` through the kb-management surface that this reference describes |
 | 2026-04-27 | Version aligned to 5.4.1 after the documentation-gap follow-up. Corrected the repo-as-OS bridge field name to `connections.product-repos[]` so the reference matches the live `layers.yaml` schema |

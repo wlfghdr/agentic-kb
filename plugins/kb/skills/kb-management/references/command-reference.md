@@ -30,6 +30,8 @@ Notes use a lighter gate than findings. They are cheap capture surfaces that fee
 
 `/kb todo` and `/kb tasks` are accepted aliases of `/kb task`. The canonical verb in the spec is `task`.
 
+Tasks follow the same canonical-ownership rule as decisions: if a team, org, or company layer owns the same work item and accountable owner, keep the task there and close/archive the source-layer duplicate. A contributor-owned layer may keep a separate task only for a narrower personal sub-task or owner-specific slice that links back to the canonical shared task.
+
 ## Ideas
 
 | Subcommand | Action |
@@ -48,6 +50,7 @@ Notes use a lighter gate than findings. They are cheap capture surfaces that fee
 
 If the target layer is `role: consumer`, `promote` and `publish` must refuse and point to the next valid contributor layer.
 For the staged-review contract behind `/kb promote`, see [`promote-contract.md`](./promote-contract.md).
+When promoting decisions or tasks, keep one canonical path for the owning scope; close or archive the source as `superseded` unless it still has a genuinely different scope, accountable owner, or sub-task responsibility.
 For connection declaration, watermarks, drift checks, and write-back, see [`connections-lifecycle.md`](./connections-lifecycle.md).
 
 ## Migration
@@ -168,6 +171,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-06 | Clarified that `/kb promote` must keep decisions and tasks canonical to one owning layer instead of leaving parallel active source and target records | Decision/task ownership follow-up |
 | 2026-04-30 | Clarified that missing roadmap/journey config should route to setup for the owning-layer decision, not silent scaffolding | Product-management surface integration |
 | 2026-04-29 | Added a Draft-skill subcommands section that names the `/kb roadmap` and `/kb journeys` handoffs to the opt-in kb-roadmap and kb-journeys skills and documents the per-layer config gates that activate them | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Added explicit pointers to the dedicated connection lifecycle and publish contract references, and aligned the publish package path with the current marketplace layout under `plugins/<plugin>/skills/<name>/` | Documentation gap follow-up |

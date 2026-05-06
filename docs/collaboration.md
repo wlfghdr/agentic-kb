@@ -1,6 +1,6 @@
 # Collaboration Guide
 
-> **Version:** 5.0.0 | **Last updated:** 2026-04-25
+> **Version:** 5.6.0 | **Last updated:** 2026-05-06
 
 This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
@@ -124,6 +124,8 @@ Before promotion, the human or agent should confirm:
 - the target layer is the right audience,
 - the target layer is contributor-capable.
 
+Decision and task promotion have one extra check: determine whether the target layer now owns the same decision question or work item and accountable decider/owner. If yes, the target record becomes canonical and the source-layer record is closed, archived, or replaced with a backlink. Keep two active records only when their scopes, recommendations, accountable owners, or sub-task responsibilities genuinely differ.
+
 ### 3. Digests are summaries, not overrides
 
 A digest should inform the receiving layer. It should not silently rewrite the receiving layer's priorities or positions.
@@ -245,6 +247,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-06 | Added the decision/task promotion ownership rule so shared promotions create one canonical record instead of parallel active source and target decisions/tasks | Decision/task ownership follow-up |
 | 2026-04-25 | Clarified that consumer layers can receive digest updates and host read-down guidance locally, while still refusing promote/publish as a source of new shared truth | Deep spec-audit follow-up |
 | 2026-04-25 | Reworked the collaboration contract for 5.0.0: replaced L1-L4 language with contributor/shared/consumer roles, clarified consumer-only behavior, and updated promotion/publish review points for named layers and per-layer marketplaces | v5.0.0 flexible layer model |
 | 2026-04-20 | Initial collaboration guide defining shared-workspace operating norms, review points, and failure recovery | Issue #7 |

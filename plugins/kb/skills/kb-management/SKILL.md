@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.5.0
+version: 5.6.0
 triggers:
   # Command surface
   - "/kb"
@@ -136,12 +136,13 @@ Full command reference: `references/command-reference.md`.
 2. **Set and preserve maturity.** New findings and topics must carry `**Maturity**:`. `raw` means weak or single-signal, `emerging` means accepted and worth revisiting, `durable` means ready to promote or cite broadly.
 3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only: it may receive digests, but it is never a `promote` or `publish` target.
 4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, delivery artifacts, operations artifacts, and meeting notes are shared unless the layer config says otherwise. This visibility rule is separate from the layer `role`.
-5. **Log every operation.** Write to `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` in the canonical `HH:MM:SSZ | operation | scope | target | details` format.
-6. **Regenerate live overviews after mutation.** `dashboard.html` and the root `index.html` are part of the same mutation as capture, review, promote, publish, digest, decide, note-end, present, report, and ritual flows.
-7. **Never mutate silently.** The response must make the action mode obvious: read-only analysis, proposed mutation, or applied mutation.
-8. **Task creation and closure are explicit.** Propose task lines when material is actionable; do not add or archive them silently. External completion signals can reconcile tasks, but archival still needs confirmation.
-9. **Next steps are mandatory.** End every response with 1–3 concrete follow-ups.
-10. **Offer commit/push/PR after substantive change.** Respect branch protection and never force-push silently.
+5. **Keep decisions and tasks canonical to one owning layer.** When promoting a decision or task, determine whether the target layer now owns the same scope and accountable decider/owner. If yes, close, archive, or replace the source item with a backlink; keep two active records only when their scopes, recommendations, accountable owners, or sub-task responsibilities differ.
+6. **Log every operation.** Write to `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` in the canonical `HH:MM:SSZ | operation | scope | target | details` format.
+7. **Regenerate live overviews after mutation.** `dashboard.html` and the root `index.html` are part of the same mutation as capture, review, promote, publish, digest, decide, note-end, present, report, and ritual flows.
+8. **Never mutate silently.** The response must make the action mode obvious: read-only analysis, proposed mutation, or applied mutation.
+9. **Task creation and closure are explicit.** Propose task lines when material is actionable; do not add or archive them silently. External completion signals can reconcile tasks, but archival still needs confirmation.
+10. **Next steps are mandatory.** End every response with 1–3 concrete follow-ups.
+11. **Offer commit/push/PR after substantive change.** Respect branch protection and never force-push silently.
 
 ## Layer-aware flow primitives
 
@@ -205,10 +206,12 @@ When promoting to a locally available contributor-capable layer, the agent must:
 
 1. run the promotion safety check,
 2. stage the artifact into the target contributor scope when the target layer uses contributor-scoped inputs,
-3. complete the destination-layer review immediately,
-4. write the durable result into the destination references or shared primitive,
-5. archive the staged intake under the year-based digested path, and
-6. log both the intake and the reviewed result in the destination layer.
+3. determine whether any promoted decision or task becomes canonical in the target layer or remains a distinct source-layer item,
+4. complete the destination-layer review immediately,
+5. write the durable result into the destination references or shared primitive,
+6. archive the staged intake under the year-based digested path,
+7. close or archive superseded source-layer decisions/tasks when the target layer owns the same scope, and
+8. log both the intake and the reviewed result in the destination layer.
 
 When the selected target is `role: consumer`, refuse and point to the next valid contributor layer.
 
@@ -239,6 +242,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now get one canonical owning layer, and source-layer records are closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Added natural-language product roadmap/journey triggers and clarified that missing config should route to setup/placement rather than silent scaffolding | Product-management surface integration |
 | 2026-04-29 | Closed the draft-skill discoverability gap: added `roadmap`/`roadmaps`/`journey`/`journeys` to the trigger surface and a flow-primitive row that names the `/kb roadmap` and `/kb journeys` handoffs to the kb-roadmap and kb-journeys draft skills. Skill version aligned to 5.4.2 | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Behavioral surface unchanged; new connection lifecycle and publish contract details live in dedicated references | 5.4.1 patch release |

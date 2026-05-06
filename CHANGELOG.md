@@ -19,6 +19,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Added
+
+- **Decision and task promotion ownership rule** — `kb-management` now requires promoted decisions and tasks to have one canonical owning layer. When the target layer owns the same decision question / work item and accountable decider / owner, the source-layer record must be closed, archived, or replaced with a backlink; separate active records are allowed only when the source and target scopes genuinely differ or when the source item is a narrower sub-task.
+
+### Changed
+
+- **Framework version rolled to 5.6.0** — root `VERSION`, marketplace manifests, README, `docs/REFERENCE.md`, `docs/collaboration.md`, and `kb-management` now describe the new decision/task promotion ownership semantics.
+
 ### Fixed
 
 - **Onboarding flow consistency review** — closed five long-standing gaps that prevented the documented "answer the wizard, get the promised artifacts" contract from working end-to-end:

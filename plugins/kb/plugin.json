@@ -1,7 +1,7 @@
 {
   "name": "kb",
   "description": "Knowledge-ops plugin: stable kb-management + kb-setup skills, the kb-operator agent, and setup-proposed kb-roadmap/kb-journeys skills.",
-  "version": "5.5.1",
+  "version": "5.6.0",
   "keywords": [
     "knowledge-management",
     "kb",
