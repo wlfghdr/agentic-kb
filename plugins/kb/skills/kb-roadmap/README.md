@@ -1,12 +1,12 @@
 # kb-roadmap
 
-A draft skill in the `agentic-kb` repo for reconciling planning-truth sources against delivery reality.
+A draft skill in the `agentic-kb` marketplace that reconciles planning-truth sources against delivery reality.
 
-**Status**: experimental draft. Not scaffolded by default. Not part of the release-ready marketplace claim. Opt in only for local experimentation by declaring `roadmap:` in your `.kb-config/layers.yaml`.
+**Status**: draft (`v0.1.0`). Not scaffolded by default. Opt in by declaring `roadmap:` in your `.kb-config/layers.yaml`.
 
 ## What it does
 
-Every organization has at least two sources of "planning truth" — tickets, milestones, OKRs — and at least one source of delivery signal — a repository, an ADR set, a release log. They drift. `/kb roadmap` is the experimental surface intended to close that loop:
+Every organization has at least two sources of "planning truth" — tickets, milestones, OKRs — and at least one source of delivery signal — a repository, an ADR set, a release log. They drift. `/kb roadmap` closes the loop:
 
 1. Ingests plan + delivery sources via pluggable adapters
 2. Runs a five-tier correlation ladder (direct key → cross-reference → heuristic → LLM-assisted → mismatch)
@@ -20,10 +20,6 @@ This skill ships zero vendor-specific names, colors, or adapters beyond the gene
 - Source adapter bindings via `.kb-config/layers.yaml` `roadmap.plan-sources[]` / `delivery-sources[]`
 - Brand tokens + logo via `.kb-config/artifacts.yaml` `html-template.tokens` / `html-template.logo`
 - Workstream vocabulary via `.kb-config/layers.yaml` `layers.personal.workstreams[]`
-
-## Important note
-
-The current repo ships roadmap design docs plus an early runtime. Treat the references here as draft design material unless a given behavior is explicitly verified in your environment.
 
 ## See
 

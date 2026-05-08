@@ -10,14 +10,11 @@
 | `/kb promote org [file]` | L2 → org-unit KB |
 | `/kb publish [file]` | L1/L2/L3 → marketplace skill (PR) |
 
-## Decisions, Ideas & Tasks
+## Decisions & Tasks
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb idea [text]` | Create an idea seed in `_kb-ideas/` |
-| `/kb develop [idea]` | Run a sparring pass on an idea and grow it toward a decision, task, or topic update |
-| `/kb todo` | Show `focus.md` (`/kb task` is the human-friendly alias) |
-| `/kb todo [text]` | Add a new focus/backlog item |
+| `/kb todo` | Show `focus.md` |
 | `/kb todo done [item]` | Complete item → archive, pull next from backlog |
 | `/kb decide [description]` | Create new `_kb-decisions/D-YYYY-MM-DD-slug.md` |
 | `/kb decide resolve [D-id]` | Archive decision + update topics + close related TODOs |

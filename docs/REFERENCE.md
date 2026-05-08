@@ -465,7 +465,7 @@ marketplace-repo/
 │   └── generate_plugins.py
 ```
 
-Skills require `name` and `description` in YAML frontmatter. Additional metadata such as `version`, `triggers`, `tools`, `author`, and `license` is recommended when the skill needs explicit packaging, routing, or governance metadata.
+Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`, `license` in YAML frontmatter.
 
 ---
 

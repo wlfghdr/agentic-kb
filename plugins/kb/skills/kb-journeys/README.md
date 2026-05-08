@@ -1,6 +1,6 @@
 # kb-journeys
 
-Vendor-neutral draft skill for authoring and publishing user / customer / product journeys as living markdown with generated HTML views and standalone UI mocks.
+Vendor-neutral skill for authoring and publishing user / customer / product journeys as living markdown with generated HTML views and standalone UI mocks.
 
 Journeys are a first-class KB artifact:
 
@@ -10,7 +10,7 @@ Journeys are a first-class KB artifact:
 
 ## Install
 
-The skill ships in the `agentic-kb` repo as an experimental draft surface. It is not part of the release-ready marketplace claim. Opt in only for local experimentation by adding a `journeys:` block to your `.kb-config/layers.yaml` and a `journeys-template:` block to your `.kb-config/artifacts.yaml`. See the SKILL.md and `references/config-schema.md` for the full schema.
+The skill ships with `agentic-kb`. Opt in by adding a `journeys:` block to your `.kb-config/layers.yaml` and a `journeys-template:` block to your `.kb-config/artifacts.yaml`. See the SKILL.md and `references/config-schema.md` for the full schema.
 
 ## Quick start
 
@@ -39,4 +39,4 @@ The skill ships in the `agentic-kb` repo as an experimental draft surface. It is
 
 ## Status
 
-Experimental draft (`v0.1.0`). Design direction is useful, but the shipped runtime and docs are not yet tight enough to claim release-ready marketplace quality.
+Draft (`v0.1.0`). Baseline contract stable. Adopters welcome.
