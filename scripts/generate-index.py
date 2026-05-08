@@ -342,16 +342,20 @@ def categorize(rel_path: str) -> tuple[str, str]:
         return 'Journey Maps', contributor
     if 'report' in rel_lower:
         return 'Reports', contributor
+    if any(token in rel_lower for token in ('architecture', 'decision', 'adr')):
+        return 'Architecture', contributor
     if 'strategy' in rel_lower or 'pitch' in rel_lower or 'vision' in rel_lower:
         return 'Strategy & Vision', contributor
     if 'finding' in rel_lower:
         return 'Findings', contributor
     if 'slide' in rel_lower or 'presentation' in rel_lower:
         return 'Presentations', contributor
-    if 'prototype' in rel_lower or 'mock' in rel_lower or 'website' in rel_lower:
+    if any(token in rel_lower for token in ('prototype', 'mock', 'website', 'brainstorm')):
         return 'Prototypes & Mocks', contributor
     if 'research' in rel_lower:
         return 'Research', contributor
+    if any(token in rel_lower for token in ('runbook', 'user-guide', 'guide')):
+        return 'Guides & Runbooks', contributor
     if 'output' in rel_lower:
         return 'Outputs', contributor
     return 'Other', contributor

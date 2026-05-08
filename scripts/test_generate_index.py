@@ -83,6 +83,21 @@ def main() -> int:
             'Newer report used to verify pinned categories still come first.',
         )
         write_html(
+            tempdir / '_kb-references' / 'architecture' / 'adr-2026-04-19-runtime-boundary.html',
+            'Runtime Boundary ADR',
+            'Architecture classification should include ADR artifacts.',
+        )
+        write_html(
+            tempdir / '_kb-references' / 'mockups' / '2026-04-19-agent-brainstorm.html',
+            'Agent Brainstorm',
+            'Brainstorm artifacts should route with prototypes and mocks.',
+        )
+        write_html(
+            tempdir / '_kb-references' / 'guides' / '2026-04-19-release-runbook.html',
+            'Release Runbook',
+            'Runbook artifacts should route with guides and runbooks.',
+        )
+        write_html(
             tempdir / '_kb-references' / 'reports' / 'strategy-report-v1-2026-04-17.html',
             'Strategy Report v1',
             'Older version that should be deduplicated away.',
@@ -214,6 +229,9 @@ def main() -> int:
         assert_contains(output, '<h2>Notes')
         assert_contains(output, '<h2>Ideas')
         assert_contains(output, '<h2>Decisions')
+        assert_contains(output, '<h2>Architecture')
+        assert_contains(output, '<h2>Prototypes &amp; Mocks')
+        assert_contains(output, '<h2>Guides &amp; Runbooks')
 
         print('generate-index regression test: OK')
         return 0
