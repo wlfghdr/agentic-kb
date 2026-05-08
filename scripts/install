@@ -4,7 +4,7 @@
 # Usage:
 #   scripts/install [--target claude|opencode|vscode|all] [--global] [--force] [skill...]
 #
-# Default: --target all, installs all declared skills + agents.
+# Default: auto-detect target harness when possible; use --target all only when you explicitly want every supported harness.
 #
 # On POSIX, installs are symlinks so the marketplace can update in place.
 # On Windows, installs are copies (see scripts/install.py).

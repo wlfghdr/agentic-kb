@@ -66,7 +66,7 @@ L1 Personal  ──promote──▶  L2 Team  ──promote──▶  L3 Org-Uni
 
 Only **L1** is required. Higher layers are optional and declared in the user's config.
 
-There is exactly one user-facing command: **`/kb`**. The core plugin ships stable knowledge-ops flows, and optional draft skills extend the same command with roadmap and journey subcommands when adopters opt in via config.
+There is exactly one user-facing command: **`/kb`**. The core plugin ships stable knowledge-ops flows. Optional draft skills for roadmap and journeys are included in the repo, but they are not part of the release-ready marketplace claim and should be treated as experimental until their runtime contracts catch up.
 
 ```
 # Stable core flows
@@ -77,16 +77,20 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb digest team            → pull team changes
 /kb idea [text]            → create an idea (seed)
 /kb develop [idea]         → sparring session on an idea
+/kb todo                   → show focus items (`/kb task` alias)
+/kb todo done [item]       → complete item and pull next from backlog
 /kb decide [description]   → open a decision
-/kb task                   → show focus items
 /kb start-day              → morning briefing
+/kb end-day                → daily wrap-up
+/kb start-week             → weekly planning
 /kb end-week               → Friday 15:00 summary
 /kb present [topic]        → versioned HTML presentation (light + dark)
+/kb report [scope]         → versioned HTML report
 /kb setup                  → interactive onboarding
 
-# Optional draft flows (installed with the plugin, not scaffolded by default)
-/kb roadmap                → reconcile plan truth vs delivery reality
-/kb journeys               → author and render journey specs + mocks
+# Experimental draft flows (repo-shipped, opt-in, not marketplace release claims)
+/kb roadmap                → draft roadmap reconciliation surface
+/kb journeys               → draft journey authoring and rendering surface
 ```
 
 ### The evaluation gate
@@ -103,7 +107,7 @@ Never silent. Every accept and reject carries a rationale.
 
 Connect this repo as a marketplace in your IDE, then run `/kb setup` — that's it.
 
-Marketplace install gives you the core plugin (`kb-management`, `kb-setup`, `kb-operator`) plus two opt-in draft skills (`kb-roadmap`, `kb-journeys`). The draft skills stay dormant until their config blocks are added to `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`.
+Marketplace install gives you the stable core plugin (`kb-management`, `kb-setup`, `kb-operator`). The repo also contains two opt-in draft skills (`kb-roadmap`, `kb-journeys`) for adopters who want to experiment locally, but those draft surfaces are not part of the release-ready marketplace quality claim. They stay dormant until their config blocks are added to `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`.
 
 ### Claude Code
 
@@ -221,7 +225,7 @@ agentic-kb/
 |------|--------|
 | Framework spec | Stable (v3.4.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
-| Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
+| Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, opt-in, experimental, not part of the release-ready marketplace claim) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
 
