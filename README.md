@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v3.4.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v3.4.1-green.svg)](CHANGELOG.md)
 
 **One-page visual overview** → [`index.html`](index.html)
 
@@ -88,6 +88,24 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb roadmap                → reconcile plan truth vs delivery reality
 /kb journeys               → author and render journey specs + mocks
 ```
+
+### Roadmap and journeys as one operating system
+
+`agentic-kb` treats roadmap and journeys as connected but different control layers:
+
+- **Roadmap** answers: what are we trying to move, what is actually moving, where is reality diverging, and what decision is needed now?
+- **Journeys** answer: what behavior is the product or process supposed to deliver for which persona, through which path, and at what readiness?
+
+A healthy operating model needs both:
+
+- **top-down** from strategy, goals, milestones, and leadership intent
+- **bottom-up** from engineering reality, prototypes, customer feedback, and daily work
+
+In practice that means:
+
+- a **joint roadmap** for lead-curated cross-scope progress, risks, scope changes, and decisions
+- **detail roadmaps / engineering backlogs per workstream** for domain-owned progress, demos, refinements, and feedback calls
+- **journeys** as the reference layer that explains what the work is supposed to make true in the product
 
 ### The evaluation gate
 
@@ -219,7 +237,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v3.4.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v3.4.1), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Optional draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.1.0`, opt-in) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode) |

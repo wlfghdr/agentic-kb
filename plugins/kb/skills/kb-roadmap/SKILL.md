@@ -1,7 +1,7 @@
 ---
 name: kb-roadmap
 description: Reconcile planning-truth sources against delivery reality. Ingests ≥1 plan source (ticket export, milestone markdown, OKRs) and ≥1 delivery source (git repository, ADR set, release log), runs a five-tier correlation ladder, detects mismatches, and emits a living roadmap artifact in Markdown, HTML, and JSON. Triggered by `/kb roadmap` and roadmap-reconciliation phrases.
-version: 0.1.0
+version: 0.1.1
 status: draft
 triggers:
   - "/kb roadmap"
@@ -20,7 +20,7 @@ license: Apache-2.0
 
 # Skill: KB Roadmap
 
-Organizations always have **at least two sources of planning truth** — tickets and the repository, milestones and delivery, OKRs and commits. They drift. Manual reconciliation is expensive and always stale. This skill closes the loop: it ingests plan + delivery, correlates them across a five-tier ladder, and produces a roadmap artifact that says what is planned, what is delivered, and where the two disagree.
+Organizations always have **at least two sources of planning truth** — tickets and the repository, milestones and delivery, OKRs and commits. They drift. Manual reconciliation is expensive and always stale. This skill closes the loop: it ingests plan + delivery, correlates them across a five-tier ladder, and produces a roadmap artifact that says what is planned, what is delivered, where the two disagree, and where delivery reality should push the plan itself to change.
 
 This skill is **vendor-neutral**. All vocabulary specific to a particular tracker, repository host, or organization lives in the adopter's `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, never in this skill.
 
@@ -31,6 +31,34 @@ Invoke whenever the user:
 - Types `/kb roadmap` (optionally followed by `--since`, `--scope`, `--workstream`, `digest`, `sync`).
 - Asks for a roadmap, status, or deviation report that spans both a planning tool and a repository.
 - Asks *"what shipped vs. what was planned?"*, *"where does my roadmap drift from reality?"*, or *"which tickets have no code?"*
+
+## Operating model
+
+`kb-roadmap` is a **bidirectional steering layer**, not a passive report.
+
+It combines:
+
+- **top-down intent** — strategy, goals, milestones, mandated scope, leadership asks
+- **bottom-up reality** — delivery progress, prototype learning, customer feedback, feasibility signals, technical constraints
+- **curation** — the lead or owner gathers, interprets, and frames what changed, what is at risk, and what needs a decision
+
+That produces two connected but different surfaces:
+
+1. **Joint Roadmap**
+   - inputs: strategy decks, goals, milestones, product items, portfolio scopes
+   - output: roadmap progress, scope changes, delivery updates, emerging risks, decisions needed
+   - owner posture: curated and reported by the lead
+
+2. **Engineering backlog / detail roadmaps per workstream**
+   - inputs: engineering progress, demos, delivery friction, prototype findings, implementation tradeoffs, customer/domain feedback
+   - output: refinements, steering proposals, feasibility corrections, scope-shape changes, explicit asks for feedback
+   - owner posture: maintained by whoever owns or demands the domain outcome
+
+The system is healthy only when information moves both ways:
+
+- top-down intent constrains and prioritizes detail work
+- bottom-up evidence changes expectations, sequence, and sometimes the roadmap itself
+- daily work is the feedstock, not an afterthought
 
 ## The single command model
 
@@ -98,9 +126,9 @@ my-kb/
 
 ## Two views
 
-**Detail view** (per workstream): full sections A–G — ticket + commit detail, correlation audit. Audience: the team driving the workstream.
+**Detail view** (per workstream): full sections A–G — ticket + commit detail, correlation audit, local scope refinement, and the bottom-up evidence trail from daily work. Audience: the team driving the workstream and whoever owns the domain outcome.
 
-**Roll-up view** (exec / C-level): sections X1–X7 — portfolio state, momentum, risks, shifts, scope changes, decisions needed, next-period focus. No commit-level detail. Audience: leadership.
+**Roll-up view** (exec / C-level): sections X1–X7 — portfolio state, momentum, risks, shifts, scope changes, decisions needed, next-period focus. No commit-level detail. Audience: leadership and the lead curating the joint roadmap.
 
 Declare scopes in `.kb-config/layers.yaml` under `roadmap.scopes`. Default: every workstream gets a detail scope; adopters add one `kind: roll-up` scope per leadership rhythm.
 
@@ -158,10 +186,10 @@ All sections are **mandatory**. Empty sections render with an explicit "no items
 | **A. Plan baseline** | All plan items in scope, grouped by the configured `hierarchy` |
 | **B. Delivery baseline** | All delivery signals in scope (commits, PRs, tags, ADRs) |
 | **C. Correlation matrix** | Matched pairs grouped by ladder tier; counts per tier |
-| **D. Delta since baseline** | Items newly opened, changed, merged, or shipped since `--since` |
+| **D. Delta since baseline** | Items newly opened, changed, merged, shipped, de-scoped, or materially re-shaped since `--since` |
 | **E. Mismatch findings** | `delivered-unplanned` · `planned-undelivered` · `traceability-gap` · `journey-uncovered` · `journey-citation-broken` · `journey-reality-mismatch` |
-| **F. Forward plan** | Plan items in status `next`/`in-progress`, kanban view, plus highest-impact uncovered journey steps as candidate-next-work |
-| **G. Decisions needed** | Cross-reference to `_kb-decisions/` + suggested new decisions from gaps, including journey-drift decisions |
+| **F. Forward plan** | Plan items in status `next`/`in-progress`, kanban view, highest-impact uncovered journey steps as candidate-next-work, and bottom-up steering proposals from delivery reality |
+| **G. Decisions needed** | Cross-reference to `_kb-decisions/` + suggested new decisions from gaps, including journey-drift decisions, scope-shape changes, and explicit tradeoff calls |
 
 ## Output contract
 
@@ -183,14 +211,15 @@ Every response:
 
 Source adapters are declared by name in config. The skill ships with a minimum neutral set; adopters add more by dropping a Python module under `scripts/adapters/` that exports a `load(config) -> list[Item]` function.
 
-Shipped adapters:
+Current helper-script adapters:
 
 | Name | Kind | Reads |
 |------|------|-------|
 | `ticket-export-markdown` | plan | a directory of markdown files with YAML frontmatter (Program/Package/Item hierarchy) |
-| `milestone-markdown` | plan | `*.md` files with a `## Milestones` heading |
-| `git-repo` | delivery | a git checkout — commits, PRs via GitHub CLI, tags, ADR glob |
-| `release-log` | delivery | a `CHANGELOG.md` or `RELEASES.md` |
+| `ticket-export-markdown` | delivery | the same markdown-export format when adopters want offline delivery snapshots |
+| `github-issues` | delivery | GitHub issues via authenticated `gh` CLI |
+
+Additional adapters documented under `references/adapters.md` remain part of the draft behavioral target, but are not implemented by the shipped helper script in this repo yet.
 
 See `references/adapters.md`.
 
@@ -220,4 +249,12 @@ See `references/adapters.md`.
 
 ## Status
 
-This skill is **draft (v0.1.0)**. It is not scaffolded by `kb-setup`; adopters opt in by declaring the `roadmap:` block in `.kb-config/layers.yaml`. Breaking changes are expected before v1.0.
+This skill is **draft (v0.1.1)**. It is not scaffolded by `kb-setup`; adopters opt in by declaring the `roadmap:` block in `.kb-config/layers.yaml`. Breaking changes are expected before v1.0.
+
+The shipped helper script in this repo currently covers config-driven generation and dry-run validation for detail and roll-up scopes. Interactive flows such as `sync`, `tune`, `review-tier-4`, and plan-source writes remain part of the behavioral spec rather than the local helper runtime.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-08 | Bumped to v0.1.1 and clarified the current helper-script adapter/runtime coverage against the draft command surface | Integration pass |
