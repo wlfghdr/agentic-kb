@@ -32,6 +32,25 @@ For meaningful repo-changing work, Engineering and Quality must run as separate 
 
 This separation is especially important for KB model changes, roadmap/journey behavior, report/runtime logic, and other collaboration-critical surfaces.
 
+## Minimal automation pattern
+
+The preferred automation model is intentionally small:
+
+1. **One standing orchestrator** watches assigned issues and starts Engineering work.
+2. **Engineering** works the issue, pushes or updates the branch/PR, and requests review.
+3. That **review request directly triggers Quality** — no separate standing Quality worker is required.
+4. **Quality** either returns `merge-ready` or sends explicit findings back to Engineering.
+5. **Engineering** responds only to those findings/change requests.
+6. When Quality says `merge-ready`, checks are green, and no unresolved findings remain, merge.
+
+This means the continuous worker footprint stays minimal:
+- **yes**: issue-intake/orchestration worker
+- **no**: separate standing quality worker
+- **no**: separate standing comment worker
+- **no**: separate standing merge worker
+
+The PR review loop itself is the trigger chain between Engineering and Quality.
+
 ## Layer responsibilities
 
 ### L1 Personal
