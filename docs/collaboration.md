@@ -1,6 +1,6 @@
 # Collaboration Guide
 
-> **Version:** 0.1 | **Last updated:** 2026-04-20
+> **Version:** 0.1 | **Last updated:** 2026-05-10
 
 This guide defines the **human collaboration contract** for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
@@ -20,6 +20,17 @@ Without that, the file structure may be clean while the collaboration model is n
 **Personal speed, shared caution.**
 
 At L1, the agent should help the user move fast. At L2 and L3, the agent should optimize for clarity, traceability, and low surprise for other humans.
+
+## Agent execution policy
+
+For meaningful repo-changing work, Engineering and Quality must run as separate dedicated Codex CLI style sessions.
+
+- **Engineering** implements with a clear scope, explicit artifact targets, and auditable output.
+- **Quality** reviews in a separate session, independently from Engineering, and returns an explicit verdict such as `merge-ready`, `needs-fix`, or `blocked`.
+- **Handoffs are mandatory.** Quality findings become the next Engineering scope when fixes are needed.
+- **No self-certification.** The same session that implemented a meaningful change must not certify that change as quality-complete.
+
+This separation is especially important for KB model changes, roadmap/journey behavior, report/runtime logic, and other collaboration-critical surfaces.
 
 ## Layer responsibilities
 
@@ -133,6 +144,65 @@ If these are missing, the agent should flag the decision as structurally weak.
 
 If there is a tradeoff between automation elegance and human confidence, prefer the option that a teammate can review in under two minutes.
 
+## Shared artifacts for software-engineering collaboration
+
+In day-to-day product and engineering work, teams need a **small set of recurring shared artifacts** that multiple roles can rely on without reopening the same chat history. In `agentic-kb`, these artifacts should stay explicit and linked back to roadmap, journeys, decisions, and findings.
+
+### Recommended shared artifacts
+
+| Artifact | Primary use | Typical owner | Canonical source path | Must link to |
+|---------|-------------|---------------|-----------------------|--------------|
+| **Status report** | Current operating picture for leads, product, and stakeholders | team lead or directly responsible owner | `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md` | active decisions, blockers, roadmap scope, latest delivery report |
+| **Delivery report** | Commitments vs actual delivery reality | engineering lead or delivery owner | `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md` | roadmap artifact, journey steps, shipped signals, traceability gaps |
+| **Roadmap change report** | Records baseline changes and why they happened | roadmap owner / PM / lead | `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md` | roadmap diff, affected journeys, impacted decisions, stakeholder asks |
+| **Daily / weekly summary** | Time-bounded memory of work performed | individual or team ritual owner | existing finding + HTML summary paths | findings, digests, completed tasks, promotion candidates |
+
+### Ownership and approval boundaries
+
+| Artifact | Who may initiate | Who may mark ready / approve | Agent limit |
+|---------|------------------|------------------------------|-------------|
+| Status report | report owner, team lead, or ritual owner | the named `Owner` in the report, unless the report is explicitly read-only draft | may draft and refresh facts, but may not imply stakeholder sign-off |
+| Delivery report | engineering lead, delivery owner, or directly responsible owner | engineering lead or delivery owner named in the report | may assemble evidence and suggest deltas, but may not declare traceability disputes resolved without a human |
+| Roadmap change report | roadmap owner, PM, team lead, or an agent reacting to a deterministic trigger | the accountable roadmap owner or PM, named in the report | may open the report automatically when the trigger fires, but may not approve roadmap baseline changes |
+
+### Deterministic triggers
+
+| Artifact | Emit or refresh when |
+|---------|----------------------|
+| Status report | weekly cadence, after a delivery report changes, after a roadmap change report is approved, or when a blocker / owner / due-date change affects the current operating picture |
+| Delivery report | weekly cadence, when a roadmap item changes phase to or from `in-delivery` or `shipped`, when a linked journey readiness changes, or when a shipped / blocked / unplanned delivery signal appears |
+| Roadmap change report | when roadmap scope is added or removed, milestone/date/sequence changes, an item moves between roadmap phases, ownership changes, or a committed item is materially re-scoped |
+
+### Feedback intake and KB loop
+
+Feedback about roadmap, journeys, product, or delivery may come from leaders, customers, demos, prototypes, support, analytics, or delivery reality. Route it through the same loop every time:
+
+1. Capture the raw signal as an input or finding.
+2. Link it to the affected roadmap scope, journey, topic, or decision.
+3. If it changes the current operating picture, refresh the delivery report and then the status report.
+4. If it changes the baseline itself, open or update a roadmap change report before future status reporting.
+5. If the feedback exposes a gap between roadmap and journey reality, capture both links explicitly instead of collapsing them into prose.
+
+### Role expectations
+
+- **Lead / PM** should keep the status report decision-ready and audience-aware.
+- **Engineering / delivery owners** should keep the delivery report honest about shipped, blocked, and ambiguous work.
+- **Roadmap owners / PMs** approve roadmap change reports and keep roadmap and journey references aligned.
+- **Domain owners / reviewers** should challenge missing evidence, weak traceability, and silent roadmap drift.
+- **Agents** should help assemble and refresh these artifacts, but should not invent agreement where humans have not aligned.
+
+### Interplay rule
+
+Use the artifacts together, not as substitutes for each other:
+
+1. **Roadmap** states intended movement.
+2. **Journeys** state the user or product reality that should become true.
+3. **Delivery report** reconciles roadmap intent with current delivery signals and journey readiness.
+4. **Status report** tells humans what matters right now, using the delivery report plus decisions and blockers.
+5. **Roadmap change report** explains when the baseline itself changed, so future status and delivery reports stay legible.
+
+A good collaboration loop is: roadmap changed → roadmap change report explains it → delivery report reflects the operational consequence → status report tells the team what to do next.
+
 ## Minimum operating discipline for teams
 
 A team using `agentic-kb` seriously should agree on at least these norms:
@@ -226,4 +296,5 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
 | 2026-04-20 | Initial collaboration guide defining shared-workspace operating norms, review points, and failure recovery | Issue #7 |
