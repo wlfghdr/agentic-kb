@@ -51,6 +51,12 @@ journeys:
     scope: <roadmap-scope-name>            # if declared, every journey step can cite
                                            # roadmap items, and roadmap items can link
                                            # back to their driving journey steps
+
+  # Ownership metadata written by setup when it derives journey work from role/goals.
+  ownership:
+    layer: <layer-name>
+    mode: co-located-with-roadmap           # co-located-with-roadmap | journey-only | layered-future
+    rationale: <short plain-text reason>
 ```
 
 ## Validation rules
@@ -60,3 +66,11 @@ journeys:
 - `readiness-levels[].key` must be unique.
 - `actors` names are free-form but should be stable once set (referenced from step metadata).
 - `mock-envelope.begin-marker` must end with a space; the slug follows it directly.
+- `ownership.layer`, when present, must match the layer entry that contains this `journeys:` block.
+- `ownership.mode: layered-future` documents intent only; current setup does not synthesize inherited journey maps across layers.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-30 | Added setup-written ownership metadata and clarified that layered journey inheritance remains future work | Product-management surface integration |

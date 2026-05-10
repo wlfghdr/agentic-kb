@@ -7,12 +7,12 @@ Two families of artifacts:
 
 ## Family 1 — Live overviews (auto-regenerated)
 
-| File | Source of truth | Refresh trigger |
-|------|-----------------|-----------------|
-| `_kb-references/reports/inventory.html` | `.kb-config/layers.yaml` + `_kb-references/foundation/sources.md` + git status per layer | every mutation |
-| `_kb-references/reports/open-decisions.html` | `_kb-decisions/*.md` across all layers | every mutation |
-| `_kb-references/reports/open-tasks.html` | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` across all layers | every mutation |
-| `_kb-references/reports/index.html` | chronological list of everything under `_kb-references/reports/` | every artifact create/update |
+| File | Source of truth | Refresh trigger | Generator |
+|------|-----------------|-----------------|-----------|
+| `dashboard.html` (owner-facing command center) | `_kb-tasks/focus.md` + `_kb-tasks/backlog.md` + `_kb-inputs/` + `_kb-ideas/` + `_kb-decisions/` + `_kb-references/{topics,findings,reports,digests}/` + `_kb-workstreams/` + optional GitHub/Jira | every mutation | `scripts/generate-dashboard.py` |
+| `index.html` (public GitHub Pages landing page — artifact inventory) | every `*.html` under the repo (deduped per `.kb-config/artifacts.yaml`) plus every `*.md` under `_kb-references/{findings,topics}/`, `_kb-ideas/`, `_kb-decisions/` (archived subdirs excluded) | every mutation | `scripts/generate-index.py` |
+
+The dashboard is the single owner-facing surface for live state — it renders focus, backlog, pending inputs, active ideas, open decisions, topics, recent findings/digests/reports, workstreams, and optional GitHub/Jira panels. There are no separate `inventory.html`, `open-decisions.html`, or `open-tasks.html` files; the equivalent signals are panels inside `dashboard.html`.
 
 **Regenerate after**: `capture`, `review`, `promote`, `publish`, `digest`, `decide`, `decide-resolve`, `task-add`, `task-done`, `update-topic`, `audit`, and every ritual.
 
@@ -36,13 +36,6 @@ Two families of artifacts:
 | Weekly summary | `/kb end-week` (Friday 15:00) | `reports/weekly-YYYY-WW.html` + finding `findings/YYYY-MM-DD-weekly-summary.md` |
 
 **Daily + weekly summaries live as findings** (the markdown source). The HTML is a rendered presentation layer. Both are part of historical memory.
-
-### Shared artifact interplay for recurring collaboration
-
-- **Status reports** should summarize the latest delivery report plus open decisions, owners, blockers, and asks.
-- **Delivery reports** should point back to roadmap artifacts and journey evidence, not restate them from scratch.
-- **Roadmap change reports** should be emitted when commitments, scope, sequencing, or milestone framing changes enough that future status reports would otherwise look confusing or contradictory.
-- **Daily and weekly summaries** are historical memory, not substitutes for the current status or delivery picture.
 
 ### Daily summary content
 
@@ -99,16 +92,26 @@ Source-artifact rules:
 
 These markdown sources belong in the KB as durable shared artifacts. The HTML output is the presentation layer, not the only source of truth.
 
+## External-read preflight
+
+If generating or regenerating an artifact requires external reads beyond the KB files already on disk, the agent must present a structured preflight summary before it fetches anything.
+
+Minimum contents:
+
+1. Declared source(s) that will be read.
+2. Scope: filters, time window, or selection criteria.
+3. Execution mode: read-only render, dry-run, or apply-capable follow-up.
+4. Concrete output path(s) that will be written.
+
+Examples include website-derived styling (`styling.source: website`), live tracker reads in optional draft skills, or any artifact flow that expands beyond the local repo. Fetch only after user confirmation unless the user already invoked the explicit execution step or automation level 2/3 authorizes the run.
+
 ## Commands
 
-| Command | Output | Trigger posture |
-|---------|--------|-----------------|
-| `/kb present [topic/file]` | Presentation — slides | on demand |
-| `/kb report [scope]` | Report — flowing document | on demand |
-| `/kb report status [scope]` | Status report sourced from the current operating picture | weekly plus operating-picture change triggers |
-| `/kb report delivery [scope]` | Delivery report that reconciles roadmap, journeys, and delivery signals | weekly plus delivery-signal and readiness-change triggers |
-| `/kb report roadmap-change [scope]` | Roadmap change report for baseline changes and their impact | event-driven when baseline changes |
-| `/kb present --pitch [topic]` | Pitch-style presentation (opinionated narrative + decision ask) | on demand |
+| Command | Output |
+|---------|--------|
+| `/kb present [topic/file]` | Presentation — slides |
+| `/kb report [scope]` | Report — flowing document |
+| `/kb present --pitch [topic]` | Pitch-style presentation (opinionated narrative + decision ask) |
 
 ## Mandatory contract
 
@@ -119,7 +122,9 @@ Every generated artifact:
 3. **Version watermark** on the intro slide / top of report — subtle, format: `v{version} · {date}`.
 4. **Changelog appendix** — the final slide (presentation) or section (report) lists versions.
 5. **Accessible** — semantic HTML, WCAG AA contrast, keyboard nav, alt text on images.
-6. **Versioned filenames** — `<slug>-v<major>.<minor>.html`. Regeneration writes a new file; does NOT overwrite old.
+6. **Versioned, dated filenames** — default pattern `YYYY-MM-DD-<slug>-v<major>.<minor>.html` for any topic-bound artifact (presentations, reports, pitches). Regeneration writes a new file; does NOT overwrite old. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for contributor, shared, and synthesis layers.
+7. **Layer-agnostic styling** — the configured reference template in `.kb-config/artifacts.yaml` (`styling.reference-file`) is THE template for every Family-2 artifact in that layer. Never hand-roll a fresh palette or layout per run. If the user works in a workspace with multiple KB layers, each layer reuses its own configured template — but within one layer, every artifact looks like it comes from one brand.
+8. **QA sweep before completion** — do not report the artifact done until the generated file itself passes a review sweep: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work.
 
 ## Styling sources
 
@@ -145,11 +150,12 @@ Concrete rules every generator implements:
 
 ## Output location
 
-| Layer | Directory |
-|-------|-----------|
-| Personal KB | `_kb-references/reports/` |
-| Team KB | `<contributor>/_kb-references/reports/` |
-| Org-Unit KB | `reports/` |
+| Layer kind | Directory |
+|------------|-----------|
+| Anchor or contributor-owned layer | `_kb-references/reports/` |
+| Shared contributor layer with contributor-scoped reports | `<contributor>/_kb-references/reports/` |
+| Shared contributor layer with shared reports | `_kb-references/reports/` |
+| Consumer or synthesis layer | `_kb-references/reports/` |
 
 Filename: `<slug>-v<version>.html` (per `.kb-config/artifacts.yaml → output.filename-template`).
 
@@ -205,12 +211,14 @@ index:
   category-order: recency          # recency | fixed
 ```
 
-**Auto-regeneration**: The root `index.html` MUST be regenerated after every operation that creates or modifies an HTML artifact:
+**Auto-regeneration contract**: After every operation that creates or modifies KB state, the skill MUST regenerate the affected layer's root `index.html` and `dashboard.html` as part of the same mutation. Regeneration targets the repo that received the change, not every layer in the workspace. The operation summary should mention the refreshed paths, but freshness must not depend on a follow-up confirmation.
+
+Triggers that must refresh automatically:
 
 - `/kb present`, `/kb report`, `/kb end-day`, `/kb end-week`
 - Any Family 1 overview regeneration
-- Any `/kb promote` that includes HTML files
-- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path; not required for freshness)
+- Any `/kb promote` that copies HTML files across layers (refresh both source and destination layer when applicable)
+- Manual trigger: `/kb status --refresh-overviews` (repair/rebuild path)
 
 **Regeneration command**:
 
@@ -231,7 +239,7 @@ When an HTML artifact is **copied** from another repo for reference (e.g. pullin
 
 This makes it obvious to any reader that the file is a point-in-time copy, not the canonical source. The snapshot banner is separate from the stale-date heuristic in the index — they complement each other.
 
-**For team/org-unit KBs**, the index scans all contributor directories and tags each artifact with a contributor badge.
+**For shared multi-user layers**, the index scans all contributor directories and tags each artifact with a contributor badge.
 
 ## GitHub Pages publishing
 
@@ -259,7 +267,7 @@ The generator fills placeholders from `.kb-config/artifacts.yaml` + topic conten
 
 ### Presentation-grade template
 
-For `/kb present` (and any slide-style report), the richer **`kb-setup/templates/presentation-template.html`** is the canonical starting point. kb-setup Q13 copies it into the adopter's KB under `_kb-references/templates/presentation-template.html` (or `<brand>-presentation.html` when a brand is supplied). It ships with:
+For `/kb present` (and any slide-style report), the richer **`kb-setup/templates/presentation-template.html`** is the canonical starting point. The kb-setup HTML-styling step in phase 3 copies it into the adopter's KB under `_kb-references/templates/presentation-template.html` (or `<brand>-presentation.html` when a brand is supplied). It ships with:
 
 - Dark + light theme token blocks (all customization points marked `CUSTOMIZE:`).
 - Slide types: `.cover`, `.section-title`, `.content`, `.full-image`, `.closing`.
@@ -269,11 +277,17 @@ For `/kb present` (and any slide-style report), the richer **`kb-setup/templates
 - Nav bar with keyboard shortcuts (←/→, Home, End, PgUp/PgDn, Space), progress bar, print CSS.
 - Built-in appendix/changelog slide.
 
-Every `/kb present` MUST use this file (as customized by Q13) rather than regenerating a fresh layout.
+Every `/kb present` MUST use this file (as customized by the phase-3 HTML-styling step) rather than regenerating a fresh layout.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |
+| 2026-05-05 | Replaced two stale "kb-setup Q13" references for the presentation-template copy step with phase-relative wording so the doc no longer points at a question number that the v5.4.0 renumbering invalidated. Behavioral contract unchanged | Onboarding consistency review |
+| 2026-04-25 | Added an explicit external-read preflight contract plus a mandatory post-generation QA sweep so artifact generation has reviewable fetch boundaries and a defined completion gate | Generic learnings extracted from roadmap/presentation feature work |
+| 2026-04-23 | Family-2 filename default is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every KB layer; styling contract is explicitly layer-agnostic (configured reference template is THE template per layer); root-`index.html` regeneration is now an explicit offer-then-confirm step after every Family-2 create/update (automation levels 2/3 still run silently) | ISO 42001 presentation generation friction |
+| 2026-04-22 | Root `index.html` source-of-truth row now lists findings/topics/ideas/decisions markdown alongside HTML artifacts, matching the shipped generator behavior | Fixes #21 |
+| 2026-04-22 | Added topics to the dashboard Family-1 contract and source-of-truth table so living positions are visible alongside findings, ideas, and decisions | Fixes #22 |
+| 2026-04-22 | Dropped the three phantom Family-1 overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals already live in `dashboard.html` panels | Fixes #18 |
 | 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

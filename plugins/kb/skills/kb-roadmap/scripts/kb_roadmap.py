@@ -5,6 +5,11 @@ Reads `.kb-config/layers.yaml` roadmap: block, enumerates items from configured
 trackers, performs tier-1 correlation (ticket-key match), and emits the
 triple artifact (MD + HTML + JSON) into <output-dir>/<scope>/roadmap-<DATE>.{md,html,json}.
 
+Recommended lean baseline: start with exported tracker markdown via
+`ticket-export-markdown` for both Jira- and GitHub-originated data, prove the
+correlation and artifact flow locally, then opt into live tracker adapters and
+write-back once the exported path is trusted.
+
 This is a pilot skeleton. It implements:
 - config loading + validation (scope + tracker discovery)
 - `ticket-export-markdown` adapter (reads a tree of md files, extracts key + status)
@@ -21,6 +26,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import copy
 import datetime as dt
 import html
 import json
@@ -95,6 +101,111 @@ def _resolve_artifacts_path(kb_root: Path) -> Path | None:
 def load_config(kb_root: Path) -> dict:
     cfg = _resolve_config_path(kb_root)
     return yaml.safe_load(cfg.read_text(encoding="utf-8"))
+
+
+def _resolve_active_layer(cfg: dict, kb_root: Path) -> dict:
+    layers = cfg.get("layers") or []
+    if not isinstance(layers, list):
+        return {}
+
+    for layer in layers:
+        if not isinstance(layer, dict):
+            continue
+        layer_path = layer.get("path")
+        if layer_path is None:
+            continue
+        if (kb_root / str(layer_path)).resolve() == kb_root:
+            return layer
+
+    anchor = (cfg.get("workspace") or {}).get("anchor-layer")
+    if anchor:
+        for layer in layers:
+            if isinstance(layer, dict) and layer.get("name") == anchor:
+                return layer
+
+    return {}
+
+
+def _normalized_tracker_name(tracker: dict, index: int) -> str:
+    if tracker.get("name"):
+        return str(tracker["name"])
+    if tracker.get("repo"):
+        return str(tracker["repo"]).replace("/", "-")
+    if tracker.get("export-dir"):
+        return Path(str(tracker["export-dir"])).name or f"tracker-{index}"
+    if tracker.get("kind"):
+        return f"{tracker['kind']}-{index}"
+    return f"tracker-{index}"
+
+
+def _normalize_connection_trackers(layer_cfg: dict) -> list[dict]:
+    connections = (layer_cfg.get("connections") or {}) if isinstance(layer_cfg, dict) else {}
+    trackers = connections.get("trackers") or []
+    normalized: list[dict] = []
+
+    for index, tracker in enumerate(trackers, start=1):
+        if not isinstance(tracker, dict):
+            continue
+        name = _normalized_tracker_name(tracker, index)
+        export_dir = tracker.get("export-dir")
+        kind = str(tracker.get("kind") or "").strip()
+
+        if export_dir:
+            normalized.append(
+                {
+                    "name": name,
+                    "adapter": "ticket-export-markdown",
+                    "config": {"path": export_dir},
+                    "source": "connections",
+                }
+            )
+            continue
+
+        if kind == "github-issues" and tracker.get("repo"):
+            state = "all"
+            scope = str(tracker.get("scope") or "")
+            if "is:open" in scope:
+                state = "open"
+            elif "is:closed" in scope:
+                state = "closed"
+            normalized.append(
+                {
+                    "name": name,
+                    "adapter": "github-issues",
+                    "config": {"repo": tracker["repo"], "state": state},
+                    "source": "connections",
+                }
+            )
+
+    return normalized
+
+
+def resolve_roadmap_config(cfg: dict, kb_root: Path) -> dict:
+    active_layer = _resolve_active_layer(cfg, kb_root)
+    roadmap_cfg = copy.deepcopy(active_layer.get("roadmap") or cfg.get("roadmap") or {})
+    if not roadmap_cfg:
+        return {}
+
+    legacy_trackers = roadmap_cfg.get("issue-trackers") or []
+    if not legacy_trackers:
+        normalized_trackers = _normalize_connection_trackers(active_layer)
+        if normalized_trackers:
+            roadmap_cfg["issue-trackers"] = normalized_trackers
+
+    scopes = roadmap_cfg.get("scopes") or {}
+    if isinstance(scopes, dict) and roadmap_cfg.get("issue-trackers"):
+        tracker_refs = [{"tracker": tracker["name"]} for tracker in roadmap_cfg["issue-trackers"] if tracker.get("name")]
+        for scope_name, scope_cfg in list(scopes.items()):
+            if not isinstance(scope_cfg, dict):
+                continue
+            if scope_cfg.get("trackers"):
+                continue
+            new_scope_cfg = dict(scope_cfg)
+            new_scope_cfg["trackers"] = tracker_refs
+            scopes[scope_name] = new_scope_cfg
+        roadmap_cfg["scopes"] = scopes
+
+    return roadmap_cfg
 
 
 def map_phase(status: str, phases: dict) -> str:
@@ -627,7 +738,7 @@ _Pilot: tier-2-through-4 mismatch classification not yet implemented._
 
 _Author-added section. Use `/kb roadmap refine {scope}` to append._
 
-## G. Decisions
+## G. Decisions needed
 
 _Author-added section. Link `_kb-decisions/D-*.md` as they arise._
 
@@ -1953,7 +2064,7 @@ def main() -> int:
 
     kb_root: Path = args.kb_root.resolve()
     cfg = load_config(kb_root)
-    roadmap_cfg = cfg.get("roadmap", {})
+    roadmap_cfg = resolve_roadmap_config(cfg, kb_root)
     if not roadmap_cfg:
         print("kb-roadmap: no roadmap: block in .kb-config/layers.yaml", file=sys.stderr)
         return 1

@@ -2,7 +2,7 @@
 
 A draft skill in the `agentic-kb` marketplace that reconciles planning-truth sources against delivery reality.
 
-**Status**: draft (`v0.1.0`). Not scaffolded by default. Opt in by declaring `roadmap:` in your `.kb-config/layers.yaml`.
+**Status**: draft (`v0.2.0`). Setup proposes this skill when role, goals, sources, or desired outputs imply product-management roadmap work. Activate it by confirming the owning layer and declaring `roadmap:` there in `.kb-config/layers.yaml`.
 
 ## What it does
 
@@ -12,14 +12,27 @@ Every organization has at least two sources of "planning truth" — tickets, mil
 2. Runs a five-tier correlation ladder (direct key → cross-reference → heuristic → LLM-assisted → mismatch)
 3. Classifies every unmatched item (delivered-unplanned, planned-undelivered, traceability-gap, stalled)
 4. Emits a roadmap artifact in three formats: Markdown (human), HTML (presentation, themed), JSON (machine)
+5. Produces value-first phase/lane views with explicit draft/proposed/agreed/shipped status when configured for presentation use
+
+## Lean first proof path
+
+Start with exported tracker markdown before live APIs:
+
+1. export a small GitHub or Jira slice to markdown,
+2. bind those directories through the active layer's `connections.trackers[]` export declarations or legacy roadmap tracker bindings,
+3. run the roadmap pilot or `/kb roadmap digest`,
+4. inspect the JSON sidecar and HTML output,
+5. only then add live tracker adapters or write-back.
+
+That keeps the first adoption proof deterministic, token-free, and easy to run in CI.
 
 ## Vendor-neutral by construction
 
 This skill ships zero vendor-specific names, colors, or adapters beyond the generic minimum. Adopters supply:
 
-- Source adapter bindings via `.kb-config/layers.yaml` `roadmap.plan-sources[]` / `delivery-sources[]`
+- Source adapter bindings via the active layer's `.kb-config/layers.yaml` `roadmap.*` block and `connections.*` declarations
 - Brand tokens + logo via `.kb-config/artifacts.yaml` `html-template.tokens` / `html-template.logo`
-- Workstream vocabulary via `.kb-config/layers.yaml` `layers.personal.workstreams[]`
+- Workstream vocabulary via the active layer's `.kb-config/layers.yaml` `workstreams[]`
 
 ## See
 
@@ -30,3 +43,10 @@ This skill ships zero vendor-specific names, colors, or adapters beyond the gene
 - [references/config-schema.md](references/config-schema.md) — `.kb-config/layers.yaml` `roadmap:` block
 - [references/artifact-contract.md](references/artifact-contract.md) — MD/HTML/JSON contract
 - [references/command-reference.md](references/command-reference.md) — subcommands + exit codes
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-30 | Updated status to v0.2.0 and described setup-proposed activation plus value-first phase/lane roadmap outputs | Product-management surface integration |
+| 2026-04-25 | Updated the draft roadmap README to point at the active-layer `roadmap:` + `connections:` model instead of the retired top-level shape | v5.1.0 closeout release |

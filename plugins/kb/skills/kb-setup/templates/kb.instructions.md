@@ -1,5 +1,5 @@
 ---
-applyTo: "**/.kb-config/**,**/_kb-inputs/**,**/_kb-references/**,**/_kb-decisions/**,**/_kb-tasks/**,**/_kb-workstreams/**,**/.kb-log/**"
+applyTo: "**/.kb-config/**,**/_kb-inputs/**,**/_kb-references/**,**/_kb-notes/**,**/_kb-decisions/**,**/_kb-tasks/**,**/_kb-workstreams/**,**/.kb-log/**"
 description: Routing rules for all KB operations
 ---
 
@@ -9,13 +9,11 @@ Use these rules when any `/kb` command is invoked.
 
 ## Layer detection
 
-Read `.kb-config/layers.yaml` in the personal KB root. It declares:
+Read `.kb-config/layers.yaml` in the anchor layer root. It declares:
 
-- `layers.personal.path` — always `.`
-- `layers.teams[]` — zero or more team KBs
-- `layers.org-unit` — zero or one org-unit KB
-- `layers.marketplace` — zero or one marketplace
-- `layers.company` — zero or one company source list
+- `workspace.anchor-layer`
+- `workspace.aliases`
+- `layers[]` — named layer entries with `scope`, `role`, `parent`, `path`, and optional `connections` / `marketplace`
 
 Given a file path, determine the layer by matching the path against the declared repo paths.
 
@@ -23,15 +21,14 @@ Given a file path, determine the layer by matching the path against the declared
 
 | User input | Action |
 |---|---|
-| URL / pasted text | Capture to L1 |
-| Path inside personal KB | L1 operation (review/update-topic/decide) |
-| Path inside a team repo | L2 operation |
-| Path inside an org-unit repo | L3 operation |
-| Explicit keyword (`team`, `org`, `publish`) | Disambiguates |
+| URL / pasted text | Capture to the anchor layer |
+| Path inside a declared layer repo | Run the operation in that layer context |
+| Explicit layer name or alias | Disambiguates the target layer |
+| Explicit keyword (`publish`, `connections`, `progress`) | Disambiguates the flow |
 
 ## Workstream routing
 
-Read `.kb-config/layers.yaml → layers.personal.workstreams`. Each entry has `name` and `themes` (keyword list). Match captured content against themes to pick the workstream. If multiple match, flag cross-workstream connection.
+Read the anchor layer entry in `.kb-config/layers.yaml`. Its `workstreams[]` entries each have `name` and `themes`. Match captured content against themes to pick the workstream. If multiple match, flag a cross-workstream connection.
 
 ## Output contract
 

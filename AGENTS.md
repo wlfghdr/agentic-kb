@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.1 | **Last updated:** 2026-04-18
+> **Version:** 0.8 | **Last updated:** 2026-04-30
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -60,6 +60,15 @@ The skills and agent files are the source of truth for behavior. `REFERENCE.md` 
 
 If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't invent synonyms mid-doc. If a better term is found, update the glossary and all references in the same PR.
 
+### 11. Keep artifact control points explicit
+
+If a change affects capture, reporting, presentations, or any artifact flow that reads beyond local KB files, the instructions and spec must keep two control points visible:
+
+- external reads require a preflight summary before fetch,
+- HTML artifacts are not complete at file-write; they complete only after the defined QA sweep passes.
+
+Keep this stated once, crisply, and point to the owning contract instead of restating the whole checklist.
+
 ---
 
 ## Before Starting Any Task
@@ -67,11 +76,12 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 1. Read this file.
 2. Read [README.md](README.md).
 3. Read [docs/collaboration.md](docs/collaboration.md) if the change affects shared layers, human handoffs, or multi-user behavior.
-4. Identify which docs your change touches (`docs/REFERENCE.md`, plugin skill docs, or agent docs).
-5. Draft the change.
-6. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
-7. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
-8. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
+4. Read [plugins/kb/skills/kb-management/references/html-artifacts.md](plugins/kb/skills/kb-management/references/html-artifacts.md) if the change affects artifact generation, external-source reads during generation, or artifact completion criteria.
+5. Identify which docs your change touches (`docs/REFERENCE.md`, plugin skill docs, or agent docs).
+6. Draft the change.
+7. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
+8. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+9. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
 
 ---
 
@@ -79,6 +89,16 @@ If a concept has a term in `docs/glossary.md`, use that term everywhere. Don't i
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-04-30 | v5.5.1 release alignment — bumped AGENTS version to 0.8 to track the HTML landing-page value-prop correction. AGENTS rules unchanged in semantics | HTML value-prop correction |
+| 2026-04-30 | v5.5.0 release alignment — bumped AGENTS version to 0.7 to track the product-management roadmap/journey surface integration. AGENTS rules unchanged in semantics | Product-management surface integration |
+| 2026-04-29 | v5.4.2 release alignment — bumped AGENTS version to 0.6 to track the draft-skill discoverability fix (the packaged `/kb` dispatcher now routes `/kb roadmap` and `/kb journeys`; kb-management's trigger surface picks up roadmap/journey keywords; the visual landing page advertises the two opt-in subcommands). AGENTS rules unchanged in semantics | v5.4.2 draft-skill discoverability fix |
+| 2026-04-25 | v5.2.0 release alignment — bumped AGENTS version to 0.5 to track the kb-management trigger expansion (skill now fires on natural-language feature keywords, not only on `/kb`) and the kb-setup goal-oriented question-flow rework. AGENTS rules unchanged in semantics | v5.2.0 trigger + setup rework |
+| 2026-04-25 | Concept audit follow-up: bumped AGENTS version to 0.4 and recorded the missing 4.1.0 / 5.0.0 / 5.1.0 / 5.1.1 alignment entries that had been skipped here, so the file reflects the framework's current 5.1.x state instead of stopping at 4.0.0 | Concept-audit drift correction |
+| 2026-04-25 | v5.1.0 release alignment — public command surface and migration-helper docs now match the 5.1.0 release; AGENTS file unchanged in semantics, only carrying the missing changelog row | v5.1.0 follow-up closeout |
+| 2026-04-25 | v5.0.0 release alignment — flexible layer graph became the canonical model; AGENTS rules unchanged, but the surrounding spec they reference now uses layer/scope/parent terminology | v5.0.0 flexible layer model |
+| 2026-04-25 | v4.1.0 release alignment — generic marketplace extension contract added to the spec; AGENTS rules unchanged, recorded here for traceability | v4.1.0 marketplace extension |
+| 2026-04-25 | v4.0.0 release alignment — kb-setup skill caught up from 3.4.4 to 4.0.0, README status row updated from v3.4.0 to v4.0.0, manifests and skill/agent versions all set to 4.0.0 | v4.0.0 release alignment |
+| 2026-04-25 | Added an explicit artifact-control rule: external-read preflights and post-generation QA sweeps must stay visible in repo instructions; bumped AGENTS version to 0.2 | Follow-up to the v3.5.0 artifact contract update |
 | 2026-04-22 | Updated behavioral-spec paths to `plugins/kb/` and added the collaboration guide to the mandatory shared-workspace reading list | Doc drift review |
 | 2026-04-18 | Initial file | Spec bootstrapping |
 | 2026-04-18 | Added blank lines around `### N.` rule headings and rule 3's bullet list (markdownlint MD022/MD032); no semantic change | CI fix |

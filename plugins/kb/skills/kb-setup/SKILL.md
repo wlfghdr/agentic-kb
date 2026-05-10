@@ -1,7 +1,7 @@
 ---
 name: kb-setup
-description: Interactive onboarding wizard that scaffolds a complete agentic-kb workspace. Creates the personal KB (required), any optional team/org-unit KBs, configures documented harness workflows (VS Code Copilot, Claude Code, OpenCode, plus compatible CLI guidance such as Codex CLI), and generates all required templates, configuration files, and AGENTS.md/CLAUDE.md indexes. Triggered by `/kb setup` and onboarding phrases.
-version: 3.4.0
+description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
+version: 5.5.1
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -11,6 +11,9 @@ triggers:
   - "bootstrap workspace"
   - "create kb"
   - "scaffold knowledge base"
+  - "set up agentic-kb"
+  - "start agentic-kb"
+  - "first time using kb"
 tools:
   - run_in_terminal
   - read_file
@@ -33,7 +36,7 @@ license: Apache-2.0
 
 # Skill: KB Setup
 
-This skill is the single entry point for bootstrapping an `agentic-kb` workspace. It runs once per user; subsequent invocations are **idempotent** (add missing pieces, never overwrite).
+This skill is the single entry point for bootstrapping an `agentic-kb` workspace. It is idempotent: reruns add missing pieces, propose graph extensions, and never overwrite existing material without confirmation.
 
 ## Scope boundary — install vs. init
 
@@ -43,321 +46,230 @@ Two concerns, two tools:
 
 | Concern | Who handles it | When |
 |---------|---------------|------|
-| Get `kb-management` + `kb-setup` + `kb-operator` into the harness (`.claude/`, `.opencode/`, `.github/`, or user-global equivalents) | Harness marketplace (`/plugin install kb@agentic-kb`) **or** `scripts/install.py` from a cloned marketplace repo | Before this skill runs — otherwise `/kb setup` wouldn't be callable |
-| Scaffold the user's KB repos (`.kb-config/`, foundation files, workstreams, topics, todos, log) | **This skill** | When the user types `/kb setup` |
-
-Concrete consequence: by the time this skill runs, the skills are already present. Step 5/6 below do not re-install them — they only create the user's workspace-level configuration files (`.github/prompts/kb.prompt.md`, `AGENTS.md`, etc.) and invoke `scripts/install` **only** when the user picks an additional harness that isn't yet present.
+| Get `kb-management` + `kb-setup` + `kb-operator` into the harness | Marketplace install or `scripts/install.py` | Before this skill runs |
+| Scaffold the user's layer repos, config, and workspace indexes | **This skill** | When the user types `/kb setup` |
 
 ## When to invoke
 
 - The user types `/kb setup`.
-- The user says *"set me up with a KB"*, *"onboard me"*, *"bootstrap my workspace"*, or equivalent.
-- `kb-management` detects no `.kb-config/layers.yaml` in the current directory and the user tries to run any `/kb` command — offer to run setup first.
+- The user says they want to set up, bootstrap, or onboard a KB workspace.
+- `kb-management` detects no `.kb-config/layers.yaml` in the current workspace and the user tries any `/kb` command.
 
 ## Interactive question flow
 
-Ask each block in order. Stop and wait after each block for the user's answer before proceeding. Each question includes a brief explanation of how the answer shapes the setup.
+The interview is **goal-oriented, not feature-list-driven**. Phase 1 asks the user about their world in their own language; phase 2 collects the minimum admin facts the wizard cannot infer; phase 3 shows a derived plan and lets the user adjust before anything is written.
 
-1. **Your name** (used for contributor directories): `your-name`.
-   *→ Sets your contributor directory name in team/org KBs, and the default KB repo name (`<name>-kb`).*
-2. **Your role and themes**: one sentence + 3–5 theme keywords (these become initial workstreams).
-   *→ Seeds your `me.md` foundation file, creates initial topic stubs under `_kb-references/topics/`, and pre-populates workstream files.*
-3. **Vision, mission & goals (VMG)**: provide any of:
-   - A URL to a strategy doc, OKR page, or team charter.
-   - A file path to an existing document.
-   - A short text description (vision in one sentence, mission in one sentence, 1–5 goals).
-   - "Skip" — creates the file with placeholder sections.
-   *→ Pre-fills `_kb-references/foundation/vmg.md`. If a URL or file is provided, the agent extracts vision/mission/goals and structures them. During `/kb digest team` and `/kb digest org`, upstream VMG from higher layers gets merged into this file automatically.*
-4. **Workspace root**: absolute path. Default: current directory.
-   *→ All repos, config files (`AGENTS.md`, `.kb-config/`), and harness hooks are created relative to this path.*
-5. **Personal KB (L1)** — required:
-   - Create new? → ask for name, initialize git, choose remote.
-   - Onboard existing? → ask for path.
-   *→ Your single source of truth. All `/kb` commands operate on this repo. "Onboard existing" runs migration analysis instead of scaffolding from scratch.*
-6. **Team KBs (L2)** — optional, multiple:
-   - Create new / onboard existing / skip.
-   *→ Shared decision logs and cross-contributor references. Creates your contributor directory (`<name>/_kb-inputs/`, `<name>/_kb-references/`) and team-level `_kb-decisions/`, `_kb-tasks/`.*
-7. **Org-Unit KB (L3)** — optional:
-   - Onboard existing / skip.
-   *→ Links your workspace to the org-wide aggregation layer. Enables `/kb promote` to push mature content upstream and, for local team KBs, complete the team-layer intake review in the same operation.*
-8. **Marketplace (L4)** — optional:
-   - Install from marketplace (recommended for users).
-   - Clone for contributing (for skill authors).
-   - Skip.
-   *→ "Install" adds skills/agents to your IDE for immediate use. "Clone" gives you the source repo for authoring or modifying skills.*
-9. **Personal workstreams**: 1–5 parallel workstreams with theme keywords.
-   *→ Creates `_kb-workstreams/<name>.md` files and links them to your topic stubs. The daily/weekly rituals use these to scope briefings and reviews.*
-10. **IDE targets**: multi-select from `vscode`, `claude-code`, `opencode`, `codex-cli`.
-    *→ Determines which harness configuration files are written (`.github/prompts/`, `.claude/skills/`, `.opencode/`) and whether the setup summary must explain a compatible CLI workflow. Multiple selections create cross-harness compatibility.*
-11. **Integrations**: marketplace-available MCP servers / APIs to wire up.
-    *→ Configures external tool access (e.g., Jira, Confluence, GitHub) in `.kb-config/layers.yaml`. Each integration is validated for connectivity before persisting.*
+Ask each block in order. Stop and wait after each block for the user's answer before proceeding. Never ask the user to enumerate layers, features, contributor-mode flags, or scopes in phase 1 — those are derived in phase 3 and only adjusted there.
 
-11b. **Roadmap trackers** (only if `kb-roadmap` is installed or selected in Q8):
-    For each workstream declared in Q9, ask:
-    - *"Where do plans live for `<workstream>`?"* — options: GitHub issues, Jira, Linear, markdown export (jira-sync, etc.), skip.
-    - *"Where does delivery happen for `<workstream>`?"* — option: one or more git repo paths.
-    - *"What search parameters identify items in scope?"* — free-text for JQL / GitHub issue filter / label set / component, with examples per tracker.
-    - *"Should the skill be allowed to write back (comments, status transitions, links)?"* — default no; if yes, which capabilities (`write-comments`, `write-status`, `write-link`, `write-item`) and which env var holds the auth token.
-    - *"Opt in to continuous config tuning?"* — default yes. Skill produces a post-run digest of zero-match filters, low-match filters, and suspected noise; user walks them via `/kb roadmap tune`.
+### Phase 1 — Context and goals (open-ended)
 
-    *→ Writes `.kb-config/layers.yaml roadmap.issue-trackers[]` + `roadmap.scopes.<workstream>.trackers[]` with the declared search params. Also writes `roadmap.tune.enabled: true|false`. These values are the starting point; the tune command refines them over time.*
+1. **Who you are** — name, role, and one sentence about the work you actually do day to day. Used for `foundation/me.md` and contributor directories.
+2. **What you're trying to track or decide** — open prose. The wizard extracts themes (3–5 keywords) and workstream candidates from this answer; do not ask for keywords or workstream names directly.
+3. **Why now** — what triggered this setup? "Too many directions to keep track of", "leadership keeps asking for status", "starting a new quarter", "team is drifting", etc. Used to bias which artifacts (briefings, weekly status, progress reports, roadmaps) the proposed plan emphasizes.
+4. **Who else needs to see what** — describe the audience in plain words: "just me", "me and one team", "two teams plus an org-unit lead", "a whole company". Used to derive layer count, scopes, and role boundaries (which higher layers should be `consumer` rather than `contributor`).
+5. **Where information feeds in** — describe the sources the user already reads from: product repos, issue trackers, dashboards, recurring meetings, stakeholder reports, exports. Used to derive `connections:` per layer and to decide whether the lean export-backed roadmap path applies.
+6. **What you want out** — describe the artifacts that would actually save time: morning briefing, weekly status to share with a boss, presentations, progress reports, roadmap reconciliation, journey specs, customer-value roadmaps, phase/lane plans, journey maps, or mock-backed flow specs. Used to derive enabled features (`reports`, `roadmaps`, `journeys`) and dashboard panels.
+7. **How autonomous** — describe how hands-on or hands-off the user wants the agent: "I want to confirm everything", "process the obvious stuff and ask me on edge cases", "run on its own and tell me what changed". Mapped to automation levels 1 (manual only), 2 (scheduled rituals/digests), or 3 (scheduled flows plus guarded auto-promote); see `references/automation-levels.md` for the full contract.
+8. **Operating context today, and target in 6 months** — pick one bucket for *today* and (optionally) one for *6 months out*: (a) **human-only / capture discipline first** — no agents in the workflow yet; goal is to get the artifact chain steady before adding any automation; (b) **repo-as-OS framework already in use** — the team already runs signals/missions/PRs or similar git-as-source-of-truth governance; agentic-kb slots in as the knowledge-ops layer; (c) **already running AI agents in daily work** — agents draft, triage, or act; goal is to ground them in shared context. This is mapped to **adoption stages 1 / 2 / 3** (see `references/adoption-stages.md`); answers steer the proposed scaffold scope and automation level so the user does not get a Stage-3 setup when they are starting at Stage 1, and does not get a Stage-1 setup when they are already past it.
 
-11c. **Import / export tools** (general, not scoped to a single primitive):
-    - *"Which tools should the agent use to export content out of your trackers for offline processing?"* — options: native API (needs auth env var), CLI tool already on PATH (e.g. a sync CLI), pre-generated markdown dump, custom script. Multi-select.
-    - *"Which tools can the agent call to reference a ticket from inside a KB file?"* — options: link only (URL), link + fetch summary on demand (requires read capability), deep-embed (mirror ticket body into the KB file; refresh on demand).
-    - *"Ticket-reference pattern"* — free-text regex for matching ticket keys in prose (e.g. `[A-Z]+-\d+` for Jira, `#\d+` for GitHub issues, `<slug>-\d+` for Linear). Default: detect from Q11b tracker selections.
-    - *"Branch / commit trailer convention"* — does your team encode ticket keys in branch names (`feat/<KEY>`, `feat/#<n>`) or commit trailers (`Refs: <KEY>`)? Both? Neither? Drives the correlation ladder's tier-2 heuristic.
-    *→ Writes `.kb-config/layers.yaml integrations.tools[]` + `integrations.reference-patterns[]` + `integrations.correlation-hints.branch-patterns`. Applies to roadmap + journeys + any future primitive needing tracker correlation.*
+### Phase 2 — Workspace and harness facts (short admin)
 
-11d. **Journeys** (only if `kb-journeys` is installed or selected in Q8):
-    - *"Do you want to author user/customer/product journeys in this KB?"* — yes/no.
-    - If yes:
-      - *"Where should journey source markdown live?"* — options: inside this KB under `_kb-journeys/`, or in an external repo path (agent reads, writes HTML back into KB).
-      - *"Tier taxonomy"* — default `Tier 1 / Tier 2 / Tier 3` or custom list of (key, label) pairs.
-      - *"Readiness chip taxonomy"* — default `Green / Amber / Red`, or custom.
-      - *"Actor vocabulary"* — default `CLI, WEB UI, AGENT, SYSTEM, PERSONA`, or custom list.
-      - *"Link journeys to a roadmap scope?"* — if `kb-roadmap` is also enabled, offer to bind journeys to one of the declared roadmap scopes for bidirectional traceability.
-    *→ Writes `.kb-config/layers.yaml journeys:` block with `source-dir`, `output-dir`, `tiers`, `readiness-levels`, `actors`, optional `roadmap-link.scope`. Scaffolds `_kb-journeys/` folder with a starter `overview.md` and an empty `html/` target. Binds journey HTML generation to the same brand tokens as presentations (Q13) — no separate brand choice.*
-12. **Automation level**: 1 (manual), 2 (semi-auto), 3 (full-auto).
-    *→Surfaces affected by this single choice** (the token file is reused across every HTML artifact — never re-pick per surface):
+1. **Workspace root** — absolute path; default current directory.
+2. **IDE targets** — multi-select from `claude-code`, `vscode`, `opencode`, `codex`, `gemini`, `kiro`.
+3. **Discovery pass** — scan the workspace for existing KB repos, harness hooks, and likely layer candidates. Also probe for repo-as-OS structures (e.g. `work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` with policy directories). If a repo-as-OS structure is detected, surface it before phase 3 so the proposal can reuse existing repos and propose bridge defaults instead of inventing parallel structure.
 
-    | Surface | Template bound | Config key |
-    |---------|---------------|-----------|
-    | KB root index + reports | `_kb-references/templates/<brand>-presentation.html` | `styling.reference-file` |
-    | Presentations | same | same |
-    | Roadmap HTML (`kb-roadmap`) | `kb-roadmap/templates/roadmap.html.hbs` + adopter's tokens CSS | `html-template.base` + `html-template.tokens` in `.kb-config/artifacts.yaml` |
-    | Journey HTML + mocks (`kb-journeys`, if enabled in Q11d) | `kb-journeys/templates/journey.html.hbs` + `kb-journeys/templates/shared.css.hbs` + adopter's tokens CSS | `journeys-template.base` + `journeys-template.tokens` in `.kb-config/artifacts.yaml` |
+### Phase 3 — Proposed plan (system shows, user adjusts)
 
-    For (b) website and (c) template paths, the skill extracts the adopter's `:root` / `[data-theme="dark"]` / `[data-theme="light"]` token blocks into a **single brand tokens CSS file** (default location `_kb-references/templates/brand/tokens.css`) and points **all four** surface configs at it. This ensures presentations, reports, roadmaps, and journeys share one source of brand truth.
+The wizard presents a single concrete proposal derived from phase 1 + 2. The user reviews, adjusts inline if needed, and confirms. Do not ask the user to author the plan from scratch.
 
-    ** Controls `.kb-config/automation.yaml`: Level 1 = agent always asks before committing/pushing. Level 2 = auto-commit locally, ask before push. Level 3 = auto-commit and push (requires CI safety net).*
-13. **HTML artifact styling** — corporate design is mandatory, not optional:
-    - *"For generated presentations and reports, which corporate design should the agent use?"*
-    - (a) **Default built-in template** — vendor-neutral accessible tokens shipped with agentic-kb.
-    - (b) **Derive from a website** — point to a corporate web page; agent fetches, extracts colors/typography/spacing, writes a token file.
-    - (c) **Point to a corporate template file** — the preferred path for adopters with an existing brand HTML. Agent copies the file to `_kb-references/templates/<brand>-presentation.html` and anchors all artifacts to it.
-    - Always generate both light and dark themes with an in-page toggle.
-    *→ This question configures the single source of truth for all HTML artifacts (root index, presentations, reports). Every `/kb present`, `/kb report`, and `/kb-report` run reads `.kb-config/artifacts.yaml → styling.reference-file` and reuses its CSS variables — they never improvise a fresh palette.*
+1. **Proposed layer graph and adoption stage** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor and label the proposed **adoption stage** (1 / 2 / 3) derived from Q8 + Q7 so the user can see at a glance whether the wizard is suggesting a capture-only scaffold, an agent-assisted scaffold, or a bounded-autonomous scaffold. Default for a new solo user starting at Stage 1: one contributor anchor layer (scope `personal`), no draft features, automation level 1, no `connections:` write-back. If Q1/Q2/Q6 mention product management, sequencing, customer journeys, launch planning, portfolio status, or stakeholder roadmap communication, propose `roadmaps` and/or `journeys` on the layer whose audience owns that work and label the placement as adjustable. Default for a team already on a repo-as-OS framework: one shared contributor layer plus a `connections.product-repos[]` entry pointing at the existing governance repo. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent, change stage, move roadmaps/journeys to another layer).
+2. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q5, plus any repo-as-OS product-repo detected in Q11), the dashboard panels and report types that match Q6 outputs, the automation level from Q7 (1 / 2 / 3 per `references/automation-levels.md`), and any product-management draft-feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. For each roadmap/journey block, show the chosen owning layer, source inputs, output directories, and whether the first proof path is export-backed or live-adapter-backed. Same single yes-or-adjust prompt.
+3. **Proposed graduation criteria for the next stage** — name the 2–3 concrete things the user would need before safely advancing to the next adoption stage (e.g. "≥ 4 weeks of clean `.kb-log/` entries, one cross-layer promote completed, foundation/vmg.md confirmed by stakeholders" before turning on automation level 2). The user can accept, edit, or skip this block; it is informational and does not block scaffold.
+4. **HTML artifact styling** — builtin, website-derived, or template-based corporate design. Default to `builtin` when Q3 does not mention external branding constraints.
 
-    **Customization contract (what the skill must do per choice):**
+### Phase 4 — Confirm and scaffold
 
-    | Choice | Required setup actions |
-    |--------|----------------------|
-    | (a) builtin | Copy `templates/presentation-template.html` → `_kb-references/templates/presentation-template.html` **unchanged**. Write `styling.source: builtin` and `styling.reference-file: _kb-references/templates/presentation-template.html` to `.kb-config/artifacts.yaml`. Index/reports use the vendor-neutral default theme in `.kb-scripts/generate-index`. |
-    | (b) website | Copy `templates/presentation-template.html` → `_kb-references/templates/<brand>-presentation.html`. Fetch the URL, extract primary/secondary/surface/text colors + heading/body font. Rewrite only the `:root`/`[data-theme="dark"]`/`[data-theme="light"]` token blocks and the `--font-family` variable in that file — keep all layout, slide types, and scripts intact. Also offer to fetch the site's favicon/signet and inline it into the `.brand-logo` and `.bg-brand` `<svg>` slots. Set `styling.source: template`, `styling.reference-file: _kb-references/templates/<brand>-presentation.html`, `styling.reference-url: <the-url>`. |
-    | (c) template | Copy the provided file to `_kb-references/templates/<brand>-presentation.html` (preserve the original source path in a comment header). If the file is missing any of: dark theme token block, light theme token block, `.brand-logo` slot, `.bg-brand` slot, theme toggle, or timestamp meta-line on the cover — offer to merge the missing pieces from `templates/presentation-template.html` (the skill's generic baseline). Set `styling.source: template`, `styling.reference-file: _kb-references/templates/<brand>-presentation.html`. |
+1. **Final confirmation** — restate the chosen plan in one short summary: number of layers, anchor, audiences, adoption stage, automation level, IDE targets, where files will land. Proceed to "What setup does after confirmation" only after explicit yes.
 
-    **The generic `templates/presentation-template.html`** is structured so that only five areas need brand customization (every customization point is marked with `CUSTOMIZE:` comments):
-    1. Dark-theme token block (`:root`, `[data-theme="dark"]`)
-    2. Light-theme token block (`[data-theme="light"]`)
-    3. `--font-family`
-    5. **If journeys are enabled (Q11d)**: render the starter `_kb-journeys/overview.md` via `kb-journeys render --dry-run`; confirm the generated `shared.css` `:root` block contains the same primary brand hex as the presentation template. If not, the token extraction missed a surface — abort Step 3 and rerun.
-    6. **If roadmap is enabled (Q11b)**: render a no-op `/kb roadmap <default-scope>` to verify the roadmap HTML uses the same tokens. Zero hex drift across the three surfaces is the exit criterion.
-    4. `.brand-logo` inline `<svg>` — the small signet in the header
-    5. `.bg-brand` inline `<svg>` — the large visible brand mark on the cover slide
+If the user wants to skip phase 1 entirely and author the plan directly, accept that and route to a compact expert path: ask the layer list with name/scope/role/parent/features/marketplace per layer, anchor, workstreams, automation, styling, IDE targets. Document this as the legacy entry point; the goal-oriented flow is the default.
 
-    Everything else (slide types, cards, callouts, badges, tables, nav, theme toggle, keyboard shortcuts, print CSS, changelog appendix, cover timestamp) is reusable as-is.
+## What setup does after confirmation
 
-    **Post-customization verification (MUST pass before Step 8 commit):**
+### Step 1 — Prerequisites
 
-    1. Run `python3 .kb-scripts/generate-index . --title "<KB_NAME>"` and confirm the generated `index.html` contains the adopter's accent color hex value (not the neutral default unless the adopter's brand IS that color).
-    2. Open the reference template and confirm it defines both `:root`/`[data-theme="dark"]` and `[data-theme="light"]` token blocks. If the adopter's file is single-theme, the skill MUST extend it with a light-theme counterpart derived from the dark tokens (or vice versa).
-    3. Grep the generated `index.html` for the adopter's primary brand color — if zero hits, token extraction failed; report the mismatch and ask the user to fix the template or switch to builtin.
-    4. Confirm the brand template still renders a non-placeholder `.brand-logo` and `.bg-brand` SVG. If the placeholders are still there, prompt the user for the brand signet SVG and inline it before proceeding.
-
-## What setup does (after confirmation)
-
-### Step 1 — Prerequisites (MUST abort on missing required tools)
-
-Required (setup cannot proceed without these):
+Required:
 
 | Tool | Check | Abort message if missing |
 |------|-------|--------------------------|
-| `git` | `git --version` exits 0 | macOS: `xcode-select --install` · Debian/Ubuntu: `sudo apt install git` · Fedora: `sudo dnf install git` · Windows: [git-scm.com/download/win](https://git-scm.com/download/win) |
-| Harness CLI (at least one first-class target: `claude`, `code`, or `opencode`) | binary on PATH | Install the harness first; the skill can't install itself into an absent harness |
-| Optional compatible CLI: `codex` | binary on PATH when Codex workflow is selected | Not required for bootstrap. If present, include Codex-specific repo-local workflow notes in the final setup summary. |
+| `git` | `git --version` exits 0 | Install `git` first |
+| At least one selected harness surface | binary or writable target path exists | Install the harness first or deselect it |
 
-Recommended (warn, do not abort):
+Recommended:
 
-| Tool | Why | Install hint if missing |
-|------|-----|------------------------|
-| `gh` | GitHub-native PR/issue flows in `/kb promote`, `/kb publish` | [cli.github.com](https://cli.github.com/) |
-| SSH key for the user's git host | Push without password prompts | Offer an `ssh-keygen -t ed25519 -C <email>` walkthrough |
+| Tool | Why |
+|------|-----|
+| `gh` | GitHub-native publish and issue flows |
+| SSH key for the user's git host | Push without password prompts |
 
-On abort: print the missing tool, the OS-specific install command, and exit. Do **not** proceed partially and leave the workspace half-scaffolded.
+### Step 2 — Create or onboard repos
 
-### Step 2 — Create / clone repos
-- Personal KB: `mkdir`, `git init`, remote setup.
-- Team KB(s): clone OR create + contributor dir.
-- Org-Unit KB: clone if configured.
-- Marketplace: clone or register.
+For each declared layer:
 
-### Step 3 — Scaffold personal KB
-Directories: `_kb-inputs/`, `_kb-inputs/digested/`, `_kb-references/{topics,findings,foundation,reports,legacy}/`, `_kb-ideas/`, `_kb-ideas/archive/`, `_kb-decisions/`, `_kb-decisions/archive/`, `_kb-tasks/{,archive}/`, `.kb-log/`, `.kb-scripts/`, `_kb-workstreams/`.
+- create a new repo or onboard an existing one,
+- initialize git when creating new repos,
+- configure remotes only when the user asked for them,
+- record the repo path in the anchor-layer `layers.yaml`.
 
-Files (from the scaffold template set):
-- `AGENTS.md`, `README.md`, `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, `.kb-config/artifacts.yaml` from `kb-setup/templates/`.
-- Initial `_kb-workstreams/<name>.md` per declared workstream from `kb-management/templates/workstream.md`.
-  - If the referenced template file is missing, stop and report the missing path instead of improvising a substitute scaffold.
-- `_kb-references/foundation/{me,context,vmg,stakeholders,sources,naming}.md` from `kb-setup/templates/`.
-  - `vmg.md` is pre-filled from Q3: if the user provided a URL, fetch and extract vision/mission/goals into structured sections. If a file path, read and extract. If short text, structure directly. If skipped, write placeholder sections.
-- Initial `_kb-references/topics/<slug>.md` per declared theme (with empty changelog) from `kb-management/templates/topic.md`.
-  - If the referenced template file is missing, stop and report the missing path instead of improvising a substitute scaffold.
-- `_kb-references/templates/presentation-template.html` — copied verbatim from `kb-setup/templates/presentation-template.html` (vendor-neutral baseline: design tokens, dark/light themes, slide nav, brand-mark slot, cover timestamp, appendix/changelog). Q13 rewrites this file in place when the adopter picks template/website; the copy is also the fallback for `source: builtin`.
-- `_kb-tasks/focus.md`, `_kb-tasks/backlog.md` from `kb-management/templates/{focus,backlog}.md`.
-  - If the referenced template file is missing, stop and report the missing path instead of improvising a substitute scaffold.
-- `.kb-scripts/generate-index` — artifact index generator (from `scripts/generate-index.py`).
-- `.nojekyll` — **required** empty marker file at the repo root. GitHub Pages runs Jekyll by default, which silently drops directories whose names start with `_` (e.g. `_kb-references/`, `_kb-inputs/`). Without `.nojekyll`, every artifact under an underscore-prefixed directory returns 404 on Pages. The file must be present on whichever branch Pages serves from (typically `main` or `gh-pages`).
-- `index.html` — initial root artifact index (generated by running the script).
+### Step 3 — Scaffold each layer according to features
 
-### Step 4 — Scaffold team KB (if creating new)
-- Contributor directory (`<your-name>/_kb-inputs/`, `<your-name>/_kb-references/{topics,findings}/`).
-- `_kb-decisions/`, `_kb-decisions/archive/`, `_kb-tasks/{focus,backlog}.md`, `_kb-tasks/archive/`, `.kb-log/`, `AGENTS.md`, `README.md`.
-- `.kb-scripts/generate-index` — artifact index generator (same script as personal KB).
-- `.nojekyll` — empty marker at repo root (same reason as personal KB: Pages would otherwise 404 every `_`-prefixed path).
-- `index.html` — initial root artifact index.
+For every declared layer, create only the directories required by its enabled features.
 
-### Step 5 — Workspace-level configuration
+Common files:
 
-Workspace-level *KB configuration* (distinct from harness-level *skill installation*):
+- `AGENTS.md`
+- `README.md`
+- `.kb-log/`
+- `.nojekyll` when the layer will publish HTML
+- `index.html` and `dashboard.html`
 
-- `AGENTS.md` at workspace root with a repo index + short-alias table + keyword lookup.
-- `CLAUDE.md` → symlink to `AGENTS.md`.
+Feature directories:
 
-Note: all configuration YAMLs live inside the personal KB under `.kb-config/` — not at workspace root. The workspace root only holds `AGENTS.md`, `CLAUDE.md`, and `.github/` harness hooks.
+- `inputs` → `_kb-inputs/` + `digested/YYYY/MM/`
+- `findings` → `_kb-references/findings/YYYY/`
+- `topics` → `_kb-references/topics/`
+- `foundation` → `_kb-references/foundation/`
+- `notes` → `_kb-notes/YYYY/`
+- `ideas` → `_kb-ideas/` + `archive/YYYY/`
+- `decisions` → `_kb-decisions/` + `archive/YYYY/`
+- `tasks` → `_kb-tasks/` + `archive/YYYY/`
+- `workstreams` → `_kb-workstreams/`
+- `reports` → `_kb-references/reports/`
+- `roadmaps` → `_kb-roadmaps/`
+- `journeys` → `_kb-journeys/`
 
-The repo index and alias table are generated by scanning the workspace for git repos with an `AGENTS.md`, `CLAUDE.md`, or `README.md`. Short aliases are derived automatically (initials of hyphenated segments, or first 2–3 chars for single-word repos). Collisions are resolved by appending digits. Users can override aliases in `.kb-config/layers.yaml` under `workspace.aliases`.
+For multi-user layers, shared primitives live at the repo root and contributor-scoped primitives are created under contributor or team directories.
 
-Optional workspace-level harness hooks (only written if the harness was **not** already configured by marketplace install or `scripts/install`):
+### Step 4 — Write the anchor-layer config
 
-- VS Code selected → write `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md` from `templates/` **only if missing**.
-- Claude Code / OpenCode selected → nothing to write at workspace level; plugin/install handles `.claude/` and `.opencode/`.
-- Codex CLI selected → do not claim native install support. Reuse the workspace-level `AGENTS.md`, `CLAUDE.md`, and any generated prompt/instruction files as the documented operating contract.
+Write `.kb-config/layers.yaml`, `.kb-config/automation.yaml`, and `.kb-config/artifacts.yaml` into the anchor layer.
 
-### Step 6 — Configure additional IDE targets
+The anchor config must include:
 
-For any harness the user selected that is **not yet installed**, run the installer and record the outcome:
+- `workspace.root`
+- `workspace.user`
+- `workspace.anchor-layer`
+- `workspace.aliases`
+- one `layers:` entry per declared layer
+- optional `connections`, `marketplace`, `roadmap`, and `journeys` blocks per layer
 
-- **Claude Code**: recommend `/plugin marketplace add <repo-url>` + `/plugin install kb@agentic-kb` from inside Claude Code (preferred — handles updates). Fall back to `<marketplace>/scripts/install --target claude` for dev installs.
-- **VS Code**: point the user at `chat.plugins.marketplaces` in `settings.json` for one-click install, or run `<marketplace>/scripts/install --target vscode` for direct workspace copy.
-- **OpenCode**: no marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global`. OpenCode also reads `.claude/skills/`, so a Claude Code install in the same workspace is picked up automatically.
-- **Codex CLI**: no native marketplace/install target yet. Mark it as a compatible CLI workflow, explain that `/kb setup` bootstrap should happen through a first-class supported harness (or a repo-local manual setup path), and point Codex users at the generated workspace files as the runtime contract.
+When Q1/Q2/Q6 indicate product-management work, setup should propose these blocks rather than waiting for the user to know the feature names. The user still confirms placement. The conservative default is to co-locate a roadmap scope with the journeys it cites in the same contributor-capable layer. Layered roadmaps and journeys are allowed by the layer graph, but setup should mark cross-layer roll-ups/inheritance as a later enhancement unless the user explicitly asks for an expert configuration.
 
-Never re-install into a harness that already has the skills — that causes symlink/file conflicts with `link_or_copy` falling back to "skip (exists)".
+### Step 5 — Configure harnesses
 
-### Step 7 — Configure integrations
-- For each opted-in integration: validate access; skip with a warning if unreachable.
+Write only the harness hooks needed for the selected surfaces:
 
-### Step 8 — Initial commits
-- Commit personal KB scaffold.
-- Commit workspace config.
-- Push if remotes are configured.
+- VS Code → `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md`
+- Claude Code → `.claude/commands/kb.md`
+- OpenCode → `.opencode/commands/kb.md`
+- Codex → `.agents/skills/kb/SKILL.md`
+- Gemini → `.gemini/commands/kb.toml`
+- Kiro → `.kiro/skills/kb/SKILL.md`
 
-### Step 9 — Verify
-- Run `/kb status` — expect clean state.
-- Run `/kb start-day` — expect a non-empty briefing or explicit *"no pending work"*.
-- Print a quickstart card.
+Never reinstall into a surface that is already up to date unless the user asked for `--force` behavior.
+
+### Step 6 — Verify
+
+Minimum verification sequence:
+
+1. scan for unresolved placeholders,
+2. generate `index.html` and `dashboard.html` for every layer,
+3. run `/kb status` in the anchor layer,
+4. run `/kb start-day` in the anchor layer,
+5. if a team or org layer exists, prove one promote or digest path,
+6. if `roadmaps` or `journeys` are enabled, render their dry-run outputs.
 
 ## Migration mode
 
-If the user points at an existing knowledge base in another layout:
+If the user points setup at an older fixed-ladder KB:
 
-1. Analyze the existing layout against this spec.
-2. Propose a diff (files to create, rename, restructure).
-3. Apply **only after explicit confirmation**.
-4. Use `git mv` to preserve history.
-5. Move material that doesn't fit into `_kb-references/legacy/` with a note — **never delete**.
+1. analyze the current layout,
+2. run `/kb migrate layer-model` in dry-run mode to preview the new layer graph,
+3. map old L1/L2/L3/L4/L5 references to named `layers:` entries,
+4. run `/kb migrate archives` in dry-run mode to preview the year-based archive moves,
+5. apply only after explicit confirmation.
 
 ## Idempotency
 
-Running `/kb setup` a second time:
+Running `/kb setup` again:
 
-- Detects existing structure.
-- Offers to add only missing pieces.
-- Prompts if a file with the same path but different content is detected.
+- detects existing repos and layer declarations,
+- proposes only missing or changed pieces,
+- offers to add a new layer without disturbing the current graph,
+- never rewrites an existing file without confirmation.
 
 ## Safety
 
-- Never overwrites existing files without explicit confirmation.
-- Never creates a remote repo without asking.
-- Never pushes to a remote without asking.
+- Never overwrite existing files without explicit confirmation.
+- Never create a remote repo without asking.
+- Never push to a remote without asking.
+- Never force personal-layer assumptions onto a team-only workspace.
 
-## Promote handoff expectation
+## Placeholder mapping
 
-Scaffolded team KBs must teach the same promote contract as `kb-management`:
+Question references in this table use the global numbering: phase 1 covers Q1–Q8, phase 2 covers Q9–Q11, phase 3 covers Q12–Q15 (proposal blocks the user adjusts or accepts), phase 4 covers Q16 (final yes).
 
-- L1 → L2 promotion is not mailbox-only.
-- If the destination team KB is available locally, `/kb promote` stages the
-   artifact in `<contributor>/_kb-inputs/`, performs the contributor-local team
-   review immediately, archives the staged intake under `digested/YYYY-MM/`, and
-   leaves the durable result in `<contributor>/_kb-references/`.
-- Team READMEs and prompts must describe `/kb review` as the command for
-   material created directly inside the team repo, not as a mandatory second step
-   after every L1 promotion.
+The layer-graph scaffold uses these placeholders directly:
 
-## References (load on demand)
+| Placeholder | Source |
+|-------------|--------|
+| `{{USER_NAME}}` | Q1 |
+| `{{ROLE}}` | Q1 (role sentence extracted from the same answer) |
+| `{{THEMES}}` | extracted from Q1/Q2 (3–5 keywords); rendered as a bullet list into `foundation/me.md` |
+| `{{KB_NAME}}` | anchor-layer name (derived and confirmed in phase 3 question 1, i.e. Q12) |
+| `{{WORKSPACE_ROOT}}` | Q9 |
+| `{{WORKSTREAM_1_NAME}}`, `{{WORKSTREAM_1_THEMES}}` | extracted from Q2 (themes) and confirmed in phase 3 question 1 (Q12) |
+| `{{WORKSTREAMS}}` | rendered list of all confirmed workstreams (`{{WORKSTREAM_1_*}}`, `{{WORKSTREAM_2_*}}`, …) for `personal-kb-AGENTS.md` |
+| `{{ADOPTION_STAGE}}` | derived from Q8 (today bucket); used in `automation.yaml` and the scaffolded `foundation/me.md` so the chosen stage is durable, not implicit |
+| `{{AUTOMATION_LEVEL}}` | derived from Q7 + Q8 (1, 2, or 3 per `references/automation-levels.md`); written into `automation.yaml` |
+| `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}` | layer name from phase 3 question 1 (Q12) when the proposal includes a shared contributor or synthesis layer; used by the `team-kb-*` and `org-kb-*` templates |
+| `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}` | rendered from the discovered + confirmed repo set (Q11 + phase 3 question 1, Q12); used by `workspace-AGENTS.md` |
+| `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}` | populated by the VMG sourcing step (URL fetch, file read, or direct text per `references/setup-flow.md`); placeholders survive only if the user opts to fill VMG later, in which case a backlog item is created |
+| `{{DATE}}` | today |
+| `{{VERSION}}` | `1.0` on first scaffold |
 
-- `references/setup-flow.md` — full step-by-step walkthrough with example output.
-- `../../../docs/first-run-acceptance.md` — deterministic onboarding acceptance path and rollout verification baseline.
+Layer-specific repeated content beyond the anchor layer is rendered from the interview answers rather than from hard-coded placeholder names.
+
+## Post-write placeholder check
+
+After writing the scaffold, scan the workspace for any remaining `{{...}}` sequences outside the deliberate presentation-template placeholders. If any remain:
+
+1. stop,
+2. list the file and placeholder,
+3. ask for the missing value,
+4. re-render and rescan.
+
+## References
+
+- `references/setup-flow.md` — full step-by-step walkthrough with example output, including VMG sourcing and update guidance.
+- `references/automation-levels.md` — meaning of setup levels 1/2/3 and how they map into `automation.yaml`.
+- `references/adoption-stages.md` — the human → agentic curve: Stage 1 (capture discipline) → Stage 2 (agent-assisted triage) → Stage 3 (bounded autonomous). Names what each stage scaffolds, the graduation criteria between stages, and how adoption stage and automation level relate.
 - `references/migration-guide.md` — how to migrate an existing KB.
 - `references/troubleshooting.md` — common setup issues.
-
-## Templates
-
-All templates are in `templates/`. The skill instantiates them with values from the interactive interview. Template keys are `{{DOUBLE_BRACE}}` placeholders.
-
-### Placeholder → interview-answer mapping (MUST be substituted)
-
-Every placeholder below has exactly one source — always from the interview answers collected in the 13 question blocks. If a source is missing, **ask the user again** before writing; never leave a literal `{{…}}` in an output file.
-
-| Placeholder | Source (question block) |
-|-------------|------------------------|
-| `{{USER_NAME}}` | Q1 (your name) |
-| `{{ROLE}}` | Q2 (role sentence) |
-| `{{THEMES}}` | Q2 (theme keywords, rendered as a bullet list) |
-| `{{KB_NAME}}` | Q5 (personal KB name; defaults to `<user-name>-kb` if the user accepts the default) |
-| `{{KB_DESCRIPTION}}` | Q2 (one-sentence role statement) |
-| `{{VMG_VISION}}` | Q3 (extracted vision statement — from URL fetch, file read, or direct text; placeholder if skipped) |
-| `{{VMG_MISSION}}` | Q3 (extracted mission statement — same sources as vision) |
-| `{{VMG_GOALS}}` | Q3 (extracted goals as table rows `| G-YYYY-Qn-N | description | horizon | active |`; placeholder row if skipped) |
-| `{{WORKSTREAMS}}` | Q9 (rendered as a bullet list: `- <name>: <themes>`) |
-| `{{WORKSTREAM_N_NAME}}`, `{{WORKSTREAM_N_THEMES}}` | Q9 (per declared workstream) |
-| `{{TEAM_NAME}}` | Q6 (per declared team, if any) |
-| `{{ORG_UNIT_NAME}}` | Q7 (if an org-unit KB was onboarded) |
-| `{{REPO_INDEX}}` | Computed — one bullet per configured KB layer with its path + role |
-| `{{KEYWORD_LOOKUP}}` | Computed — `docs/glossary.md` summary injected verbatim |
-| `{{RECENT_REPORTS}}` | Empty `<ul></ul>` on first run (will be filled by `/kb present` / `/kb report`) |
-| `{{DATE}}` | Today's ISO-8601 date (`YYYY-MM-DD`) |
-| `{{VERSION}}` | `1.0` on first scaffold; later artifacts bump their own version |
-| `{{BRAND_NAME}}` | Q13 — adopter brand display name (defaults to `{{KB_NAME}}` when not set) |
-| `{{CONFIDENTIAL_LABEL}}` | Q13 — e.g. `Confidential`, `Internal`, or empty string to hide |
-| `{{PRESENTATION_TITLE}}` | Left as-is in `presentation-template.html`; filled by `/kb present` |
-| `{{SUBTITLE}}`, `{{COVER_BADGE}}`, `{{CONTACT}}` | Left as-is in the template; filled per-artifact by `/kb present` |
-| `{{CREATED_ISO}}`, `{{CREATED_DATE}}`, `{{CREATED_TIME}}` | Filled at artifact render time with exact creation timestamp (ISO-8601, `YYYY-MM-DD`, `HH:MM TZ`) |
-
-### Post-write check (MUST run before Step 8)
-
-After all files are written and before the initial commit, scan the scaffolded workspace for any remaining `{{` sequence. If any match is found:
-
-1. Stop — do not commit.
-2. List the (file, line, placeholder) triples to the user.
-3. Ask for the missing values.
-4. Re-render, then re-scan.
-
-Concrete grep the skill must run (or equivalent):
-
-```
-grep -rn '{{[A-Z_0-9]*}}' <workspace-root> || true
-```
-
-A zero-hit run is the gate for Step 8.
+- `../../../docs/first-run-acceptance.md` — deterministic onboarding acceptance path.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-04-22 | Clarified which personal-KB scaffold files come from `kb-setup` templates versus `kb-management` templates and required setup to stop explicitly if a referenced template file is missing | Scaffold source contract |
-| 2026-04-22 | Clarified which personal-KB scaffold files come from `kb-setup` templates versus `kb-management` templates so `/kb setup` is implementable without guesswork | System test follow-up |
-| 2026-04-22 | Added Codex CLI as a documented compatible workflow and clarified that first-class install support still belongs to Claude Code, VS Code, and OpenCode; version bumped to 3.4.0 | Compatibility expansion |
-| 2026-04-22 | Team-KB scaffolding now explains that `/kb promote` completes local team intake review during the same operation; version bumped to 3.3.0 | Team promote flow fix |
-| 2026-04-22 | Version aligned to 3.2.0 | Spec review |
+| 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented placeholders the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
+| 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Setup now derives roadmap/journey features from role/goals/outputs, asks which layer owns them, and writes matching config only after confirmation | Product-management surface integration |
+| 2026-04-29 | Skill version aligned to 5.4.2 after the draft-skill discoverability fix. The packaged `kb.prompt.md` template now routes `/kb roadmap` and `/kb journeys` to the matching draft skills with a config-block check; this skill's setup-flow contract is unchanged | v5.4.2 draft-skill discoverability fix |
+| 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Clarified the repo-as-OS bridge field name to `connections.product-repos[]` and linked the setup-flow VMG sourcing/update guidance | 5.4.1 patch release |
+| 2026-04-27 | Clarified the repo-as-OS bridge wording so the proposal names the current schema field `connections.product-repos[]`, and pointed the setup-flow reference description at the new VMG sourcing/update guidance | Documentation gap follow-up |
+| 2026-04-27 | v5.4.0: added Q8 ("operating context today, and target in 6 months") to phase 1 so the wizard can bias the proposal to the team's adoption stage (1, 2, or 3) instead of forcing a Stage-3 scaffold on a Stage-1 team or vice versa; phase 2 discovery pass now also probes for repo-as-OS structures so the proposal can offer bridge defaults; phase 3 question 12 now labels the proposed scaffold with its adoption stage; phase 3 question 14 surfaces graduation criteria for the next stage. Added `references/adoption-stages.md` as the normative contract; subsequent question numbers renumbered. Skill version aligned to 5.4.0 | Soft-transition extension |
+| 2026-04-25 | v5.2.0: replaced the feature-list-driven 12-block interview with a four-phase, goal-oriented flow. Phase 1 asks the user about their identity, what they track, why now, audience, sources, desired outputs, and autonomy preference in their own language; phase 2 collects only the workspace and harness facts that cannot be inferred; phase 3 presents one derived plan (layer graph, connections, artifacts, automation, styling) for inline adjust-or-confirm; phase 4 takes a single yes. The legacy "author the plan directly" path stays available as a compact expert mode. Q7 wording carries the automation-level contract added in #76 forward into the new flow | Goal-oriented onboarding |
+| 2026-04-25 | Documented what automation levels 1/2/3 mean during setup and linked the interview step to a dedicated reference so adopters do not have to infer the contract from `automation.yaml` alone | Deep spec-audit follow-up |
+| 2026-04-25 | Added the explicit 5.1 migration-helper handoff so setup now points legacy adopters at `/kb migrate layer-model` and `/kb migrate archives` instead of leaving those follow-ups implicit | v5.1.0 closeout release |
+| 2026-04-25 | Reworked setup for 5.0.0: onboarding now discovers and scaffolds a flexible layer graph, supports team-only or multi-org adoption, writes per-layer marketplaces and connections, and scaffolds year-based archives plus notes | v5.0.0 flexible layer model |
+| 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release | v4.0.0 release alignment |
+| 2026-04-22 | Added Codex CLI acceptance guidance and clarified the difference between first-class supported harnesses and compatible CLI workflows | Compatibility expansion |

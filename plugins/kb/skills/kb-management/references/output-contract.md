@@ -16,7 +16,7 @@ Examples:
 - `/kb`
 - `/kb status`
 - `/kb start-day`
-- `/kb diff team`
+- `/kb diff <layer>`
 - `/kb audit` when no fixes were applied
 
 Required wording signal in **What I did**:
@@ -86,17 +86,17 @@ In collaborative contexts, those sections have stricter meaning.
 Must communicate all of these when relevant:
 
 - action mode: read-only, proposed, or applied,
-- scope: personal, team, org, or marketplace,
+- scope: anchor, team, org, company, or marketplace,
 - whether external material was fetched,
 - whether cross-layer movement happened.
 
 Good examples:
 
-- `Checked personal KB status, read-only.`
+- `Checked anchor-layer KB status, read-only.`
 - `Proposed a team promotion candidate, no files changed.`
 - `Captured the article as a finding after fetching the URL.`
-- `Promoted a personal finding into the team KB and completed the team review.`
-- `Digested new team changes into the personal KB and updated VMG.`
+- `Promoted an anchor-layer finding into the team layer and completed the destination review.`
+- `Digested new parent-layer changes into the anchor layer and updated VMG.`
 
 ### 2. Where it went
 
@@ -108,9 +108,9 @@ For cross-layer operations, show source and destination clearly enough that a hu
 
 Good examples:
 
-- `Read alice-kb/.kb-config/layers.yaml and alice-kb/_kb-tasks/focus.md.`
-- `Wrote alice-kb/_kb-references/findings/2026-04-20-cache-paper.md.`
-- `Copied alice-kb/_kb-references/findings/... -> team-kb/alice/_kb-inputs/...; wrote team-kb/alice/_kb-references/findings/...; archived team-kb/alice/_kb-inputs/digested/YYYY-MM/...`.
+- `Read alice-personal/.kb-config/layers.yaml and alice-personal/_kb-tasks/focus.md.`
+- `Wrote alice-personal/_kb-references/findings/2026-04-20-cache-paper.md.`
+- `Copied alice-personal/_kb-references/findings/... -> team-observability/alice/_kb-inputs/...; wrote team-observability/alice/_kb-references/findings/...; archived team-observability/alice/_kb-inputs/digested/YYYY/MM/...`.
 
 ### 3. Gate notes
 
@@ -177,8 +177,8 @@ A human reviewer should not need to inspect git diff first to understand what mo
 ### Capture example
 
 ```text
-What I did: Captured the article as a personal finding after fetching the URL.
-Where it went: Wrote alice-kb/_kb-references/findings/2026-04-20-cache-paper.md and updated alice-kb/_kb-references/topics/caching.md.
+What I did: Captured the article as an anchor-layer finding after fetching the URL.
+Where it went: Wrote alice-personal/_kb-references/findings/2026-04-20-cache-paper.md and updated alice-personal/_kb-references/topics/caching.md.
 Gate notes: 4/5, externally fetched, informs an open decision, likely durable, partial overlap with existing caching topic.
 Suggested next steps:
 - Promote this finding to team.
@@ -189,20 +189,20 @@ Suggested next steps:
 ### Promote example
 
 ```text
-What I did: Promoted one personal finding to the team KB and completed the team-layer review.
-Where it went: Copied alice-kb/_kb-references/findings/2026-04-20-cache-paper.md -> team-kb/alice/_kb-inputs/2026-04-20-cache-paper.md; wrote team-kb/alice/_kb-references/findings/2026-04-20-cache-paper.md; archived team-kb/alice/_kb-inputs/digested/2026-04/2026-04-20-cache-paper.md.
-Gate notes: Reused the L1 gate for promotion safety, then applied the L2 review gate in team context; team-relevant, no secret or PII indicators detected.
+What I did: Promoted one anchor-layer finding to the team layer and completed the destination-layer review.
+Where it went: Copied alice-personal/_kb-references/findings/2026-04-20-cache-paper.md -> team-observability/alice/_kb-inputs/2026-04-20-cache-paper.md; wrote team-observability/alice/_kb-references/findings/2026-04-20-cache-paper.md; archived team-observability/alice/_kb-inputs/digested/2026/04/2026-04-20-cache-paper.md.
+Gate notes: Reused the source-layer gate for promotion safety, then applied the destination-layer review gate; team-relevant, no secret or PII indicators detected.
 Suggested next steps:
 - Open a shared decision if the team needs alignment.
-- Cross-reference the new team finding via `/kb sync team` if the topic is already active.
+- Cross-reference the new team finding via `/kb sync team-observability` if the topic is already active.
 ```
 
 ### Digest example
 
 ```text
-What I did: Digested new team signals into the personal KB, applied mutation.
-Where it went: Read team-kb/alice/_kb-references/findings/... and wrote alice-kb/_kb-references/findings/2026-04-20-team-digest.md; updated alice-kb/_kb-references/foundation/vmg.md.
-Gate notes: Mixed evidence set, local synthesis from team inputs, one unresolved conflict remains between platform and reliability positions.
+What I did: Digested new team-layer signals into the anchor layer, applied mutation.
+Where it went: Read team-observability/alice/_kb-references/findings/... and wrote alice-personal/_kb-references/findings/2026-04-20-team-digest.md; updated alice-personal/_kb-references/foundation/vmg.md.
+Gate notes: Mixed evidence set, local synthesis from upstream inputs, one unresolved conflict remains between platform and reliability positions.
 Suggested next steps:
 - Open a decision for the unresolved conflict.
 - Review the updated VMG before promoting anything upward.

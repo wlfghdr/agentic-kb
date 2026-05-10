@@ -3,9 +3,9 @@
 
 Complements generate-index.py. While index.html lists HTML artifacts,
 dashboard.html surfaces live KB state the owner should have in mind:
-focus tasks, active ideas, open decisions, pending inputs, recent
-findings & reports, workstream freshness, and (opt-in) external
-work-items from GitHub and Jira.
+focus tasks, active ideas, open decisions, pending inputs, living
+topics, recent findings & reports, workstream freshness, and (opt-in)
+external work-items from GitHub and Jira.
 
 Panels are config-driven via .kb-config/artifacts.yaml → `dashboard:`
 section. Unknown or disabled panels are silently skipped so the same
@@ -64,7 +64,7 @@ DEFAULT_DASHBOARD = {
     'enabled': True,
     'panels': [
         'focus-tasks', 'pending-inputs', 'active-ideas', 'open-decisions',
-        'recent-findings', 'recent-reports', 'workstreams',
+        'topics', 'recent-findings', 'recent-reports', 'workstreams',
     ],
     'limits': {
         'recent-findings': 5,
@@ -72,6 +72,7 @@ DEFAULT_DASHBOARD = {
         'recent-digests': 3,
         'active-ideas': 8,
         'open-decisions': 8,
+        'topics': 8,
         'workstreams': 10,
         'github': 10,
         'jira': 10,
@@ -241,6 +242,12 @@ class Panel:
 # ── Panel collectors ───────────────────────────────────────────────────
 
 TASK_ITEM_RE = re.compile(r'^\s*(?:\d+\.|[-*])\s+(.*)$')
+# Placeholder bullet bodies we skip (after the bullet marker is stripped):
+# `(none)`, `(none yet)`, `(empty)`, `(empty — something)`, `—`, `-`.
+# Optional leading `[ ]` / `[x]` checkbox is tolerated.
+PLACEHOLDER_BODY_RE = re.compile(
+    r'^(?:\[[ xX]\]\s*)?(?:\(none(?:\s+yet)?\)|\(empty(?:\s*[—-]\s*[^)]*)?\)|[-—])\s*$'
+)
 
 
 def _read_text(path: Path) -> str:
@@ -251,20 +258,50 @@ def _read_text(path: Path) -> str:
 
 
 def _strip_md(s: str) -> str:
+    # HTML comments (single-line) — drop before other markdown cleanup so
+    # metadata like `<!-- workstream: … -->` doesn't leak into the UI.
+    s = re.sub(r'<!--.*?-->', '', s)
     s = re.sub(r'\*\*(.+?)\*\*', r'\1', s)
     s = re.sub(r'`(.+?)`', r'\1', s)
     s = re.sub(r'\[(.+?)\]\([^)]+\)', r'\1', s)
     return s.strip()
 
 
-def _parse_list_items(md: str, limit: int) -> list[str]:
-    items = []
+def _parse_list_items(md: str, limit: int, *, section_title: str | None = None) -> list[str]:
+    """Parse bullet items from markdown, respecting section boundaries.
+
+    When `section_title` is given, only bullets under the top-level heading
+    whose text matches `section_title` (case-insensitive) — or, if no such
+    heading exists, bullets before the first `##` subheading — are returned.
+    Placeholder bullets (`(none)`, `(empty)`, `—`, `-`) are skipped.
+    """
+    in_target_section = section_title is None
+    items: list[str] = []
     for line in md.splitlines():
-        if line.startswith('#') or line.startswith('>'):
+        stripped = line.lstrip()
+        if stripped.startswith('# '):
+            # Top-level heading — if we're targeting a section, enter it iff the title matches.
+            if section_title is not None:
+                in_target_section = stripped[2:].strip().lower() == section_title.lower()
+            continue
+        if stripped.startswith('## '):
+            # Sub-heading — leaves the target "pre-##" region. Never count bullets past it.
+            in_target_section = False
+            continue
+        if stripped.startswith('>'):
+            continue
+        if not in_target_section:
             continue
         m = TASK_ITEM_RE.match(line)
-        if m:
-            items.append(_strip_md(m.group(1)))
+        if not m:
+            continue
+        body = m.group(1).strip()
+        if PLACEHOLDER_BODY_RE.match(body):
+            continue
+        title = _strip_md(body)
+        if not title:
+            continue
+        items.append(title)
         if len(items) >= limit:
             break
     return items
@@ -274,7 +311,7 @@ def panel_focus_tasks(repo_root: Path, dash: dict) -> Panel | None:
     fp = repo_root / '_kb-tasks' / 'focus.md'
     if not fp.exists():
         return None
-    items = _parse_list_items(_read_text(fp), limit=10)
+    items = _parse_list_items(_read_text(fp), limit=10, section_title='Focus')
     panel = Panel(key='focus-tasks', title='Focus', note='Max 6 — what you\'re on right now',
                   empty='No focus items — add with `/kb task`.')
     for item in items:
@@ -286,8 +323,11 @@ def panel_backlog_count(repo_root: Path, dash: dict) -> Panel | None:
     fp = repo_root / '_kb-tasks' / 'backlog.md'
     if not fp.exists():
         return None
-    items = _parse_list_items(_read_text(fp), limit=5)
-    total = len([l for l in _read_text(fp).splitlines() if TASK_ITEM_RE.match(l)])
+    text = _read_text(fp)
+    # Full list (no limit) for the accurate count, then truncate for display.
+    all_items = _parse_list_items(text, limit=10_000, section_title='Backlog')
+    total = len(all_items)
+    items = all_items[:5]
     panel = Panel(key='backlog', title='Backlog',
                   note=f'{total} item{"s" if total != 1 else ""} total — showing top 5',
                   empty='Backlog clean.')
@@ -339,17 +379,22 @@ def panel_active_ideas(repo_root: Path, dash: dict) -> Panel | None:
     files = []
     for fp in sorted(ideas_dir.glob('I-*.md')):
         text = _read_text(fp)
-        status = _parse_meta_field(text, 'Status').lower()
-        if status in ('shipped', 'archived', 'dropped'):
+        # Canonical idea lifecycle field is `**Stage**:` (see REFERENCE.md
+        # + idea.md template). Accept `Status` as a legacy alias for
+        # backwards compatibility with pre-3.5 idea files.
+        stage = _parse_meta_field(text, 'Stage').lower()
+        if not stage:
+            stage = _parse_meta_field(text, 'Status').lower()
+        if stage in ('shipped', 'archived', 'dropped'):
             continue
         m = IDEA_TITLE_RE.search(text)
         title = m.group(1).strip() if m else fp.stem
-        files.append((fp, title, status or 'seed'))
+        files.append((fp, title, stage or 'seed'))
     files.sort(key=lambda x: x[0].stat().st_mtime, reverse=True)
-    for fp, title, status in files[:limit]:
+    for fp, title, stage in files[:limit]:
         rel = str(fp.relative_to(repo_root))
         panel.rows.append(Row(title=title, href=rel,
-                              badges=[status] if status else []))
+                              badges=[stage] if stage else []))
     panel.count = len(files)
     return panel
 
@@ -375,6 +420,34 @@ def panel_open_decisions(repo_root: Path, dash: dict) -> Panel | None:
     for fp, title, status in files[:limit]:
         rel = str(fp.relative_to(repo_root))
         panel.rows.append(Row(title=title, href=rel, badges=[status] if status else []))
+    panel.count = len(files)
+    return panel
+
+
+def panel_topics(repo_root: Path, dash: dict) -> Panel | None:
+    topics_dir = repo_root / '_kb-references' / 'topics'
+    if not topics_dir.is_dir():
+        return None
+    limit = int(dash.get('limits', {}).get('topics', 8))
+    panel = Panel(
+        key='topics',
+        title='Topics',
+        note='Living positions under `_kb-references/topics/`',
+        empty='No topics yet.',
+    )
+    files = []
+    for fp in sorted(topics_dir.glob('*.md')):
+        text = _read_text(fp)
+        title_m = re.search(r'^#\s+(?:Topic:\s*)?(.+?)\s*$', text, re.MULTILINE)
+        title = title_m.group(1).strip() if title_m else fp.stem.replace('-', ' ')
+        maturity = _parse_meta_field(text, 'Maturity').lower()
+        files.append((fp, title, maturity))
+    files.sort(key=lambda item: item[0].stat().st_mtime, reverse=True)
+    for fp, title, maturity in files[:limit]:
+        badges = [maturity] if maturity else []
+        rel = str(fp.relative_to(repo_root))
+        updated = datetime.fromtimestamp(fp.stat().st_mtime).strftime('%Y-%m-%d')
+        panel.rows.append(Row(title=title, href=rel, meta=updated, badges=badges))
     panel.count = len(files)
     return panel
 
@@ -630,6 +703,7 @@ PANEL_BUILDERS = {
     'pending-inputs': panel_pending_inputs,
     'active-ideas': panel_active_ideas,
     'open-decisions': panel_open_decisions,
+    'topics': panel_topics,
     'recent-findings': panel_recent_findings,
     'recent-digests': panel_recent_digests,
     'recent-reports': panel_recent_reports,

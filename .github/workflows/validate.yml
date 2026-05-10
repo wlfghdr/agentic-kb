@@ -89,9 +89,17 @@ jobs:
         run: python3 scripts/check_html_artifacts.py
       - name: Validate shared report artifact contracts
         run: python3 scripts/check_report_artifacts.py
+      - name: Regression test shipped HTML templates are self-contained
+        run: python3 scripts/test_html_templates.py
       - name: Regression test generate-index against a simulated workspace
         run: python3 scripts/test_generate_index.py
-      - name: Regression test kb-roadmap
+      - name: Regression test generate-dashboard focus/backlog parsing
+        run: python3 scripts/test_generate_dashboard.py
+      - name: Regression test layered acceptance fixture
+        run: python3 scripts/test_acceptance_fixture.py
+      - name: Regression test export-backed roadmap fixture
         run: python3 scripts/test_kb_roadmap.py
       - name: Regression test kb-journeys
         run: python3 scripts/test_kb_journeys.py
+      - name: Regression test migration helpers
+        run: python3 scripts/test_kb_migrations.py

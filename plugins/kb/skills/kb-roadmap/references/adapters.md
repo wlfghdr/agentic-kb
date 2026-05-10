@@ -110,6 +110,8 @@ issue-trackers:
 
 Reads a git checkout. Emits delivery items for each signal configured.
 
+In the 5.0 layer graph, the roadmap skill should source product repos and trackers from the active layer's `connections:` block in `.kb-config/layers.yaml`. The examples below show the adapter payload after that routing has already selected the linked repo.
+
 Supported signals:
 
 - `commits` — one item per commit in window
@@ -123,7 +125,7 @@ Config:
 delivery-sources:
   - name: repo
     adapter: git-repo
-    path: ../product-repo
+    path: ../linked-product-repo
     signals: [commits, prs, tags, adrs]
     adr-glob: docs/architecture/adr-*.md
     ignore-paths:
@@ -142,7 +144,7 @@ Config:
 delivery-sources:
   - name: releases
     adapter: release-log
-    path: ../product-repo/CHANGELOG.md
+    path: ../linked-product-repo/CHANGELOG.md
 ```
 
 ## Writing a custom adapter
@@ -168,7 +170,7 @@ Contracts:
 
 1. Built-in adapters (shipped with the skill)
 2. Adapters in the adopter's `.kb-scripts/roadmap-adapters/`
-3. Adapters in any team/org-unit KB referenced by `.kb-config/layers.yaml`
+3. Adapters in any shared contributor or synthesis layer referenced by `.kb-config/layers.yaml`
 
 Collisions raise an explicit error — no silent override.
 

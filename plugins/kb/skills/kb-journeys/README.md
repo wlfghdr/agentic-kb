@@ -10,7 +10,7 @@ Journeys are a first-class KB artifact:
 
 ## Install
 
-The skill ships with `agentic-kb`. Opt in by adding a `journeys:` block to your `.kb-config/layers.yaml` and a `journeys-template:` block to your `.kb-config/artifacts.yaml`. See the SKILL.md and `references/config-schema.md` for the full schema.
+The skill ships with `agentic-kb`. Setup proposes it when role, goals, sources, or desired outputs imply product-management journey work. Activate it by confirming the owning layer, then adding a `journeys:` block to `.kb-config/layers.yaml` and a `journeys-template:` block to `.kb-config/artifacts.yaml`. See the SKILL.md and `references/config-schema.md` for the full schema.
 
 ## Quick start
 
@@ -39,4 +39,10 @@ The skill ships with `agentic-kb`. Opt in by adding a `journeys:` block to your 
 
 ## Status
 
-Draft (`v0.1.0`). Baseline contract stable. Adopters welcome.
+Draft (`v0.2.0`). Setup-proposed product-management primitive. Baseline contract stable; ownership placement is confirmed during onboarding.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-30 | Updated status to v0.2.0 and described setup-proposed ownership placement for journey work | Product-management surface integration |

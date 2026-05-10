@@ -1,147 +1,124 @@
-# First Hour — Zero to First Briefing
+# First Hour — Zero to First Useful Layer Graph
 
-> **Version:** 0.1 | **Last updated:** 2026-04-20
+> **Version:** 5.5.1 | **Last updated:** 2026-05-05
 
-This walkthrough covers the minimum path from *nothing installed* to the first useful `/kb` response. Target audience: a developer who has just heard about `agentic-kb` and wants to try it on their own machine in under an hour. Runnable end-to-end — deviations from this path are where adopters usually hit friction.
+This walkthrough covers the minimum path from nothing installed to the first useful `/kb` responses in a freshly initialized workspace. Target audience: a developer who wants to prove the adoption path end-to-end in under an hour.
 
 ## Prerequisites (5 min)
 
 | Tool | Check | If missing |
 |------|-------|-----------|
-| `git` | `git --version` | macOS: `xcode-select --install` · Debian/Ubuntu: `sudo apt install git` · Windows: [git-scm.com/download/win](https://git-scm.com/download/win) |
-| At least one first-class harness: Claude Code, VS Code (Copilot Chat), or OpenCode | launch the harness | install it first — this walkthrough assumes Claude Code |
-| Optional compatible CLI workflow: Codex CLI | `codex --help` | optional for this walkthrough — use it after the workspace is initialized |
-| `gh` | `gh --version` | recommended, not required — [cli.github.com](https://cli.github.com/) |
+| `git` | `git --version` | install it first |
+| One supported harness | open the harness | install it first |
+| Optional compatible CLI workflow: Codex CLI | `codex --help` | optional |
+| `gh` | `gh --version` | recommended, not required |
 
-Stop here if `git` or the harness is missing. The setup skill's Step 1 will abort anyway.
+Stop here if `git` or the harness is missing. `/kb setup` will stop anyway.
 
-## Stage 1 — Install the skills into your harness (5 min)
+## Phase 1 — Install the skill surface (5 min)
 
-Two concerns, two tools. Stage 1 distributes the skills into the harness. Stage 2 (next section) initializes your KB.
+Marketplace install or `scripts/install` makes `/kb setup` callable. The install phase is successful when the harness can invoke `/kb setup` in the target workspace and the surface survives a restart.
 
-### Option A — Marketplace install (recommended)
+## Phase 2 — Initialize the workspace (20 min)
 
-From **inside Claude Code**:
+Run:
 
-```
-/plugin marketplace add https://github.com/wlfghdr/agentic-kb
-/plugin install kb@agentic-kb
-```
-
-The `/plugin marketplace add` command reads `.claude-plugin/marketplace.json` from the repo root. The `/plugin install` command registers the `kb` plugin — which bundles `kb-management`, `kb-setup`, and `kb-operator` — into `~/.claude/`.
-
-VS Code equivalent: add the repo to `chat.plugins.marketplaces` in `settings.json`, then install from the Extensions view (reads top-level `plugin.json`).
-
-OpenCode: no marketplace; use Option B.
-
-Codex CLI: compatible after the workspace is initialized, but not yet a native marketplace/install target. Treat it as a repo-local workflow that consumes the scaffolded files created by `/kb setup`.
-
-### Option B — Dev install from a clone
-
-For users who want edits to the marketplace repo to hot-reload (contributors, forks):
-
-```
-git clone https://github.com/wlfghdr/agentic-kb.git
-cd agentic-kb
-scripts/install --target claude          # or --target opencode / --target vscode / --target all
-```
-
-Symlinks on POSIX, copies on Windows. Auto-detects the harness if you omit `--target`. Falls back to user-global (`~/.claude/`) if no workspace-level `.claude/` exists.
-
-Verify Stage 1 worked: open the harness and type `/kb setup`. If the harness offers autocomplete for `kb-setup`, you're good.
-
-## Stage 2 — Initialize your KB workspace (20 min)
-
-From inside the harness, in the directory you want as your workspace root:
-
-```
+```text
 /kb setup
 ```
 
-The wizard asks 12 question blocks (see `plugins/kb/skills/kb-setup/SKILL.md`). Minimum viable answers for a first try:
+The wizard runs the four-phase, goal-oriented interview. You never enumerate layers, features, or contributor-mode flags yourself — the wizard derives them from your prose and shows the proposal back in phase 3.
 
-| Q | Suggested first-run answer |
-|---|----------------------------|
-| Q1 Name | `alice` |
-| Q2 Role & themes | `engineer on distributed systems — caching, reliability, observability` |
-| Q3 Workspace root | current directory (accept default) |
-| Q4 Personal KB | *create new* → `alice-kb`, skip remote for first try |
-| Q5 Team KB | *skip* |
-| Q6 Org-Unit KB | *skip* |
-| Q7 Marketplace | *skip* (you already installed it) |
-| Q8 Workstreams | one workstream matching Q2 themes |
-| Q9 IDE targets | just the harness you're in |
-| Q10 Integrations | *skip* |
-| Q11 Automation level | `1` (manual) — good default for first try |
-| Q12 HTML styling | `builtin` |
+**Phase 1 — context and goals (open prose, Q1–Q8):**
 
-The wizard then runs Steps 1–9. Step 9 verifies with `/kb status` (expects clean state) and `/kb start-day` (expects a briefing).
+| Question | Suggested first-run answer |
+|----------|----------------------------|
+| Q1 — Who you are | `alice — engineer on distributed systems; caching, reliability, observability` |
+| Q2 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues` |
+| Q3 — Why now | `too many parallel investigations; my lead keeps asking for status` |
+| Q4 — Who else needs to see what | `me and one team — observability` |
+| Q5 — Where information feeds in | `our product repo, GitHub issues, weekly observability sync` |
+| Q6 — What you want out | `morning briefing and a Friday status I can share with my lead` |
+| Q7 — How autonomous | `confirm everything before anything is written` |
+| Q8 — Operating context today, target in 6 months | `human-only / capture discipline today; agent-assisted triage in 6 months` |
 
-Check for success: zero literal `{{…}}` placeholders remain anywhere in the scaffolded workspace. The skill's post-write check enforces this before Step 8.
+**Phase 2 — workspace and harness facts (Q9–Q11):**
 
-## Stage 3 — First three commands (15 min)
+| Question | Suggested first-run answer |
+|----------|----------------------------|
+| Q9 — Workspace root | current directory |
+| Q10 — IDE targets | current harness only |
+| Q11 — Discovery pass | accept the empty baseline |
+
+**Phase 3 — confirm the wizard's derived plan (Q12–Q15):** the wizard shows a single block with the proposed layer graph (`alice-personal` + `team-observability`), the adoption-stage label (`Stage 1 — capture discipline`), the connections derived from Q5, the dashboard panels matching Q6, automation level `1` (manual only — consistent with Stage 1), the graduation criteria for moving to Stage 2, and HTML styling `builtin`. Accept as proposed.
+
+**Phase 4 (Q16):** one yes.
+
+Check for success:
+
+- `.kb-config/layers.yaml` exists in `alice-personal/` and names both layers with `workspace.anchor-layer: alice-personal`,
+- `.kb-config/automation.yaml` carries the chosen `adoption-stage` and a `level` consistent with Stage 1,
+- `_kb-references/foundation/me.md` records the same adoption stage,
+- year-based archive directories exist,
+- `index.html` and `dashboard.html` exist in both layers,
+- no unresolved placeholders remain outside deliberate presentation templates.
+
+## Phase 3 — First four commands (20 min)
+
+### `/kb status`
+
+Expected shape:
+
+```text
+What I did: Checked your KB status.
+Where it went: read alice-personal/.kb-config/layers.yaml, alice-personal/_kb-tasks/focus.md, alice-personal/.kb-log/...
+Gate notes: n/a.
+Suggested next steps:
+  - Run /kb start-day
+  - Capture something with /kb <URL-or-text>
+  - Try /kb note meeting <topic>
+```
 
 ### `/kb start-day`
 
-Expected output shape:
-
-```
-**What I did**: Checked your personal KB and briefed you, read-only.
-**Where it went**: read focus.md (0 items), _kb-decisions/ (0 items), .kb-log/2026-04-18.log (new), _kb-workstreams/<name>.md.
-**Gate notes**: n/a — briefing, not capture.
-**Suggested next steps**:
-  - Capture something: /kb <URL-or-paste>
-  - Add your first focus item: /kb todo "learn the cache invariant"
-```
-
-On a clean workspace with no inputs, the briefing is a one-liner "no pending work" plus the suggested next steps. If the skill claims items that don't exist, the placeholder substitution in Stage 2 was incomplete — abort and re-run `/kb setup`.
+Expected behavior: read-only briefing, no invented work, clear next actions, and no hidden assumptions about team or company state.
 
 ### `/kb <paste-a-URL>`
 
-```
+```text
 /kb https://example.com/article-about-caches
 ```
 
-Expected behavior: the skill fetches the URL (or asks for consent first), says explicitly that it used externally fetched material, applies the five-question evaluation gate, writes `_kb-references/findings/2026-04-18-<slug>.md`, possibly updates a workstream's topic file, logs the operation, and ends with 1–3 next steps that are clearly distinct from changes already applied.
+Expected behavior: the skill says whether it fetched external content, applies the five-question evaluation gate, writes a finding under `alice-personal/_kb-references/findings/YYYY/`, possibly updates a topic, logs the operation, and refreshes `index.html` and `dashboard.html`.
 
-If the URL needs auth or is a PDF, the skill should surface the blocker — not fail silently. If it fails silently, file an issue.
-
-### `/kb end-day`
-
-```
-/kb end-day
-```
+### `/kb promote <file> team-observability`
 
 Expected behavior:
 
-1. Summarize today's uncommitted diff.
-2. Generate `_kb-references/findings/2026-04-18-daily-summary.md` + `_kb-references/reports/daily-2026-04-18.html`.
-3. Move completed focus items to `_kb-tasks/archive/2026-04.md`.
-4. Offer `git commit` (+ push/PR if a remote is configured).
+1. names source and destination layers,
+2. stages the intake in the destination contributor area,
+3. completes the destination-layer review,
+4. archives the staged copy under `digested/YYYY/MM/`,
+5. refreshes the destination `index.html` and `dashboard.html`.
 
-The HTML report uses `plugins/kb/skills/kb-management/templates/artifact-base.html` with placeholders substituted. Light+dark toggle, watermark, changelog appendix — all inline, no external fetches.
-
-Overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`, `index.html`) stay current automatically after every state-mutating `/kb` operation. `/kb status --refresh-overviews` still exists as a manual rebuild path, but you should not need it during normal use.
+If the command targets a `role: consumer` layer, it must refuse clearly.
 
 ## What to do when this walkthrough breaks
 
 | Symptom | Likely cause | Fix |
 |---------|-------------|-----|
-| `/kb setup` is not offered as a command | Stage 1 didn't complete — skill isn't loaded | Re-run marketplace install or `scripts/install`, restart the harness |
-| Scaffolded files contain literal `{{USER_NAME}}` etc. | Post-write check skipped or an interview answer was empty | Re-run `/kb setup` — it's idempotent, it will re-render |
-| `/kb start-day` returns nothing / crashes | `.kb-config/layers.yaml` invalid or KB directory structure missing | Run `/kb status` — it should report which files are missing |
-| URL capture prints nothing | The skill couldn't fetch the URL (auth, PDF, CORS-only content) | Paste the text directly: `/kb <paste the article text>` |
-| Claude Code Level-3 automation doesn't trigger | VS Code-only limitation applies? Check `ide-support.md` capability matrix | Schedule via OS cron + CLI invocation instead |
-
-### Codex CLI after setup
-
-After Stage 2, you can work from the same initialized workspace in Codex CLI. Today that means using the generated repo-local instructions and KB files, not a Codex-specific marketplace install. If you need native `/kb setup` command discovery, do the bootstrap in a first-class supported harness first, then continue daily work in Codex CLI.
+| `/kb setup` is not offered | Install phase did not complete | Re-run marketplace install or `scripts/install`, restart the harness |
+| Scaffolded files contain literal `{{USER_NAME}}` etc. | Post-write check skipped or an interview answer was empty | Re-run `/kb setup`; it is idempotent |
+| `/kb status` returns nothing or crashes | `.kb-config/layers.yaml` invalid or the anchor layer is incomplete | Re-run `/kb setup` or fix the config |
+| URL capture prints nothing | The skill could not fetch the URL | Paste the text directly |
+| Promotion fails unexpectedly | Target layer role or path is wrong | Inspect `.kb-config/layers.yaml` and confirm the target layer is contributor-capable |
 
 ## Related
 
-- [REFERENCE.md](../REFERENCE.md) — architecture, layout, formats, and contracts.
-- [day-in-the-life.md](day-in-the-life.md) — a fuller day after this first hour.
-- [kb-setup SKILL.md](../../plugins/kb/skills/kb-setup/SKILL.md) — full onboarding flow spec.
+- [REFERENCE.md](../REFERENCE.md)
+- [first-run-acceptance.md](../first-run-acceptance.md)
+- [day-in-the-life.md](day-in-the-life.md)
+- [kb-setup SKILL.md](../../plugins/kb/skills/kb-setup/SKILL.md)
 
 ---
 
@@ -149,6 +126,10 @@ After Stage 2, you can work from the same initialized workspace in Codex CLI. To
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-04-22 | Added Codex CLI guidance as a compatible repo-local workflow after supported-harness bootstrap | Compatibility expansion |
+| 2026-05-05 | v5.5.1: replaced the legacy block-and-answer table that asked the user to enumerate layers, features, and contributor-mode flags with the goal-oriented four-phase interview (Q1–Q8 prose, Q9–Q11 admin, Q12–Q15 confirm-the-derived-plan, Q16 final yes), matching `kb-setup/SKILL.md` since v5.4.0. Success checks now also assert that the chosen adoption stage is durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
+| 2026-04-25 | Aligned the walkthrough with the acceptance baseline: Stage wording became Phase wording, the sample layer answers now include the parent graph fields, and automation level 1 is called out as manual-only | Deep spec-audit follow-up |
+| 2026-04-25 | Reworked the walkthrough for 5.0.0: setup now proves a two-layer graph, year-based archives, notes, and the first cross-layer promote path | v5.0.0 flexible layer model |
+| 2026-04-24 | Updated the Codex walkthrough to the installed `.agents/skills/` flow instead of the older bootstrap-only wording | Harness docs correction |
+| 2026-04-22 | Exempted the presentation template placeholder scan from the first-run success criteria because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
 | 2026-04-20 | Updated the walkthrough to match automatic overview regeneration after every `/kb` mutation | v3.2.0 live-overview refresh |
 | 2026-04-18 | Initial walkthrough — zero-to-first-briefing in three stages | First-hour fixture |

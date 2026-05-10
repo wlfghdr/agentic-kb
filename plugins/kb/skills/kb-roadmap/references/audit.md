@@ -98,7 +98,7 @@ All resolution actions follow the existing safety gates:
 - Tracker writes require `--apply` + interactive confirmation.
 - Journey reviews transition into `/kb journeys review --from-finding <file>`.
 - Config edits produce a diff preview before writing.
-- Decision entries route to `_kb-decisions/D-<date>-<slug>.md` with `status: proposed`.
+- Decision entries route to `_kb-decisions/D-<date>-<slug>.md` with `**Status**: gathering-evidence` per the decision template default.
 
 ## Resume routing integration
 

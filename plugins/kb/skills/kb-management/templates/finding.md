@@ -4,6 +4,7 @@
 **Workstream**: {{WORKSTREAM}}
 **Source**: {{SOURCE}}
 **Gate**: {{GATE_SCORE}} ({{GATE_NOTES}})
+**Maturity**: {{MATURITY}}
 
 ## TL;DR
 

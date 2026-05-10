@@ -7,6 +7,16 @@ index, then delegates to extract_mocks.py for standalone mock pages.
 The renderer prefers `python-markdown` when installed, but it does not require
 it. The built-in fallback keeps raw HTML/mock envelopes intact so extraction and
 back-links still work in minimal environments.
+
+Usage:
+  python3 render_journeys.py \
+      --source-dir _kb-journeys \
+      --output-dir _kb-journeys/html \
+      --template <skill>/templates/journey.html.hbs \
+      --shared-css <skill>/templates/shared.css.hbs \
+      [--tokens brand-tokens.css] \
+      [--mock-template <skill>/templates/mock-standalone.html.hbs] \
+      [--skill-version 0.2.0]
 """
 from __future__ import annotations
 
@@ -511,7 +521,7 @@ def main() -> int:
     ap.add_argument("--logo-light", default="")
     ap.add_argument("--logo-dark", default="")
     ap.add_argument("--mock-template", type=Path, default=None)
-    ap.add_argument("--skill-version", default="0.1.1")
+    ap.add_argument("--skill-version", default="0.2.0")
     ap.add_argument("--include-terminal-anim", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()

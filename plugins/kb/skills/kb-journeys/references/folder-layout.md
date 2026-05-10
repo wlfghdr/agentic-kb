@@ -24,7 +24,7 @@ my-kb/
 
 ## Configuration
 
-Defaults in `.kb-config/layers.yaml`:
+Defaults in the active layer's `journeys:` block inside `.kb-config/layers.yaml`:
 
 ```yaml
 journeys:
@@ -34,11 +34,11 @@ journeys:
   mocks-subdir: html/mocks
 ```
 
-Adopters can split source from output — e.g. source in an existing product repo, output written into the KB:
+Adopters can split source from output — e.g. source in a linked product repo declared under the same layer's `connections.product-repos[]`, output written into the KB:
 
 ```yaml
 journeys:
-  source-dir: ../product-repo/docs/journeys
+  source-dir: ../linked-product-repo/docs/journeys
   output-dir: _kb-journeys
   html-subdir: html
   mocks-subdir: html/mocks

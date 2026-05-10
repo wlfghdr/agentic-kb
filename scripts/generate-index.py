@@ -342,16 +342,20 @@ def categorize(rel_path: str) -> tuple[str, str]:
         return 'Journey Maps', contributor
     if 'report' in rel_lower:
         return 'Reports', contributor
+    if any(token in rel_lower for token in ('architecture', 'decision', 'adr')):
+        return 'Architecture', contributor
     if 'strategy' in rel_lower or 'pitch' in rel_lower or 'vision' in rel_lower:
         return 'Strategy & Vision', contributor
     if 'finding' in rel_lower:
         return 'Findings', contributor
     if 'slide' in rel_lower or 'presentation' in rel_lower:
         return 'Presentations', contributor
-    if 'prototype' in rel_lower or 'mock' in rel_lower or 'website' in rel_lower:
+    if any(token in rel_lower for token in ('prototype', 'mock', 'website', 'brainstorm')):
         return 'Prototypes & Mocks', contributor
     if 'research' in rel_lower:
         return 'Research', contributor
+    if any(token in rel_lower for token in ('runbook', 'user-guide', 'guide')):
+        return 'Guides & Runbooks', contributor
     if 'output' in rel_lower:
         return 'Outputs', contributor
     return 'Other', contributor
@@ -405,6 +409,107 @@ def discover_artifacts(repo_root: Path) -> list[Artifact]:
     return artifacts
 
 
+# ── Markdown source discovery (issue #21) ──────────────────────────────
+#
+# Scans the canonical human-authored directories so the public landing
+# page actually surfaces the KB's knowledge, not just its HTML artifacts.
+# Markdown sources bypass dedup_families / drop_referenced_subpages —
+# they are leaf content, not versioned or hub-child HTML.
+
+_MD_H1_RE = re.compile(r'^\s*#\s+(.+?)\s*$', re.MULTILINE)
+# Strips the canonical object-kind prefix (`Finding:`/`Topic:`/`Idea:`) or the
+# decision-id prefix (`D-YYYY-MM-DD-slug:`) from the raw heading text.
+_MD_TITLE_STRIP_RE = re.compile(
+    r'^(?:(?:Finding|Topic|Idea)\s*:\s*|(?:[DI]-\d{4}-\d{2}-\d{2}-[\w-]+)\s*:\s*)',
+    re.IGNORECASE,
+)
+_MD_DATE_FIELD_RE = re.compile(
+    r'^\*\*(?:Date|Created)\*\*\s*:\s*(\d{4}-\d{2}-\d{2})', re.MULTILINE
+)
+_MD_YAML_DATE_FIELD_RE = re.compile(
+    r'^(?:date|created)\s*:\s*(\d{4}-\d{2}-\d{2})', re.MULTILINE | re.IGNORECASE
+)
+
+# (dir, category, optional-exclude-subdir)
+_MD_SOURCES: list[tuple[str, str, str | None]] = [
+    ('_kb-references/findings', 'Findings', None),
+    ('_kb-references/topics', 'Topics', None),
+    ('_kb-notes', 'Notes', None),
+    ('_kb-ideas', 'Ideas', 'archive'),
+    ('_kb-decisions', 'Decisions', 'archive'),
+]
+
+
+def _extract_md_title(text: str, fallback: str) -> str:
+    m = _MD_H1_RE.search(text)
+    if m:
+        raw = m.group(1).strip()
+        stripped = _MD_TITLE_STRIP_RE.sub('', raw).strip()
+        return stripped or raw
+    return fallback.replace('-', ' ').replace('_', ' ').title()
+
+
+def _extract_md_date(text: str, filename: str) -> str:
+    m = DATE_RE.search(filename)
+    if m:
+        return m.group(1)
+    m = _MD_DATE_FIELD_RE.search(text)
+    if m:
+        return m.group(1)
+    m = _MD_YAML_DATE_FIELD_RE.search(text)
+    if m:
+        return m.group(1)
+    return ''
+
+
+def _extract_md_summary(text: str) -> str:
+    lines = text.splitlines()
+    in_frontmatter = False
+    frontmatter_seen = False
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not frontmatter_seen and line == '---':
+            in_frontmatter = True
+            frontmatter_seen = True
+            continue
+        if in_frontmatter:
+            if line == '---':
+                in_frontmatter = False
+            continue
+        if not line or line.startswith('#'):
+            continue
+        if line.startswith('**') or line.startswith('- **'):
+            continue
+        if line.startswith('## '):
+            continue
+        return _shorten(line)
+    return ''
+
+
+def discover_markdown_sources(repo_root: Path) -> list[Artifact]:
+    items: list[Artifact] = []
+    for rel_dir, category, exclude_sub in _MD_SOURCES:
+        src_dir = repo_root / rel_dir
+        if not src_dir.is_dir():
+            continue
+        exclude_token = f'/{exclude_sub}/' if exclude_sub else None
+        for fp in sorted(src_dir.rglob('*.md')):
+            rel = str(fp.relative_to(repo_root))
+            if exclude_token and exclude_token in f'/{rel.replace(os.sep, "/")}/':
+                continue
+            try:
+                text = fp.read_text(encoding='utf-8', errors='ignore')[:4096]
+            except Exception:
+                continue
+            title = _extract_md_title(text, fp.stem)
+            date = _extract_md_date(text, fp.name)
+            items.append(Artifact(path=rel, title=title, date=date,
+                                  category=category, contributor='',
+                                  family=f'md::{rel}', summary=_extract_md_summary(text)))
+    items.sort(key=lambda a: (a.date or '0000-00-00'), reverse=True)
+    return items
+
+
 def dedup_families(artifacts: list[Artifact]) -> list[Artifact]:
     """Keep only the newest artifact per (category, family) group."""
     seen: dict[tuple[str, str], Artifact] = {}
@@ -456,6 +561,11 @@ def drop_referenced_subpages(artifacts: list[Artifact],
     index. The hub stays; referenced leaves are removed — even when leaves
     share a navigation bar that cross-links every sibling.
 
+     Standalone mock trees are also treated as subordinate navigation when a
+     parent overview exists. For example, `_kb-journeys/html/index.html`
+     should surface on the root index, while `_kb-journeys/html/mocks/` stays
+     reachable only from the journey set itself.
+
     Algorithm:
       1. Build each artifact's set of outgoing refs that land on another
          indexed artifact (excluding self).
@@ -463,15 +573,33 @@ def drop_referenced_subpages(artifacts: list[Artifact],
          outward scope (`refs ∪ {self}`). These are typically pages in
          the same nav bar. Keep one representative per clique, preferring
          a file literally named ``index.html``, else the shortest path.
-      3. Among surviving artifacts, drop any leaf referenced by a hub
+        3. Drop any artifact under a `mocks/` subtree when the parent
+            directory already has an `index.html` overview in the index.
+        4. Among surviving artifacts, drop any leaf referenced by a hub
          (≥ 2 outgoing refs) unless the leaf is itself a hub reaching
          pages OUTSIDE the referring hub's scope.
     """
     paths = {a.path for a in artifacts}
+
+    # Treat standalone mock trees as subordinate navigation before clique
+    # detection so journey overview pages and their sibling journey pages can
+    # still collapse to a single canonical entry point.
+    mock_drops: set[str] = set()
+    for p in paths:
+        rel = Path(p)
+        if 'mocks' not in rel.parts:
+            continue
+        mock_index = rel.parts.index('mocks')
+        if mock_index == 0:
+            continue
+        parent_overview = Path(*rel.parts[:mock_index], 'index.html').as_posix()
+        if parent_overview in paths:
+            mock_drops.add(p)
+
     out_refs: dict[str, set[str]] = {}
     for a in artifacts:
         fp = repo_root / a.path
-        refs = _referenced_paths_from(fp, repo_root) & paths
+        refs = (_referenced_paths_from(fp, repo_root) & paths) - mock_drops
         refs.discard(a.path)
         out_refs[a.path] = refs
 
@@ -496,6 +624,8 @@ def drop_referenced_subpages(artifacts: list[Artifact],
 
     remaining_paths = paths - clique_drops
 
+    remaining_paths -= mock_drops
+
     # ── 2. Drop leaves referenced by surviving hubs ──────────────────
     HUB_MIN_REFS = 2
     surv_refs = {p: out_refs[p] & remaining_paths for p in remaining_paths}
@@ -509,7 +639,7 @@ def drop_referenced_subpages(artifacts: list[Artifact],
                 continue
             leaf_drops.add(ref)
 
-    to_drop = clique_drops | leaf_drops
+    to_drop = clique_drops | mock_drops | leaf_drops
     kept = [a for a in artifacts if a.path not in to_drop]
     return kept, len(artifacts) - len(kept)
 
@@ -929,6 +1059,11 @@ def main() -> None:
     subpage_dropped = 0
     if index_cfg.get('drop_referenced_subpages', True):
         artifacts, subpage_dropped = drop_referenced_subpages(artifacts, repo_root)
+    # Append markdown sources (findings / topics / ideas / decisions) AFTER
+    # dedup + subpage-drop — they are leaf content, not versioned HTML, and
+    # must not interact with those filters.
+    md_sources = discover_markdown_sources(repo_root)
+    artifacts = artifacts + md_sources
     has_dashboard = (repo_root / 'dashboard.html').exists()
     out = generate_html(artifacts, title, args.description, now, theme, index_cfg,
                         has_dashboard=has_dashboard)

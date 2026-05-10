@@ -6,6 +6,8 @@ Organizations track plans across heterogeneous systems — GitHub issues, Jira, 
 
 Trackers are **bidirectional** when the adopter opts in: the skill can read plans, propose updates derived from delivery reality, and (with confirmation) write back comments or status transitions.
 
+At 5.1, the preferred home for tracker declarations is the active layer's `connections.trackers[]` block in `.kb-config/layers.yaml`. The older `roadmap.issue-trackers[]` block remains accepted for adapter-specific writeback metadata and per-roadmap overrides.
+
 ## Generic tracker model
 
 Every tracker adapter implements a subset of these capabilities. Declare what the adapter supports; the skill degrades gracefully when a capability is absent.
@@ -38,29 +40,28 @@ Adopters add trackers by dropping a Python module under `<adopter-kb>/.kb-script
 Each scope declares **its own** tracker filter so one tracker instance can serve many workstreams:
 
 ```yaml
-roadmap:
-  issue-trackers:
-    - name: primary-tracker
-      adapter: jira-rest
-      capabilities: [read-items, read-graph, read-comments, write-comments, write-status, write-link]
-      config:
-        base-url: "https://example.atlassian.net"
-        project: PROD
-        auth-env: JIRA_API_TOKEN
-
-  scopes:
-    workstream-a:
+layers:
+  - name: alice-personal
+    path: .
+    connections:
       trackers:
-        - tracker: primary-tracker
-          search:
-            jql: "labels = workstream-a AND status != Done"
-            fields: [summary, status, assignee, labels, parent, links]
-          hierarchy: [Epic, Story, Task]
-    workstream-b:
-      trackers:
-        - tracker: primary-tracker
-          search:
-            jql: "component = 'workstream-b' AND updated >= -30d"
+        - name: primary-tracker
+          kind: jira
+          export-dir: ../jira-export/PROD
+    roadmap:
+      scopes:
+        workstream-a:
+          trackers:
+            - tracker: primary-tracker
+              search:
+                jql: "labels = workstream-a AND status != Done"
+                fields: [summary, status, assignee, labels, parent, links]
+              hierarchy: [Epic, Story, Task]
+        workstream-b:
+          trackers:
+            - tracker: primary-tracker
+              search:
+                jql: "component = 'workstream-b' AND updated >= -30d"
 ```
 
 `search` is a free-form adapter-specific block. Every adapter documents which fields it accepts.
@@ -92,6 +93,12 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 Earlier schema used `plan-sources:` generically. Trackers are a specialized plan source with bidirectional capability. Both forms are accepted:
 
 - Read-only plan sources (markdown milestones, release logs) stay under `plan-sources:`.
-- Bidirectional, adapter-driven trackers live under `issue-trackers:`.
+- Read-only tracker inputs now prefer active-layer `connections.trackers[]`; bidirectional, adapter-driven roadmap-specific overrides still live under `issue-trackers:` when needed.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-04-25 | Updated the tracker reference to prefer active-layer `connections.trackers[]` and recast `issue-trackers[]` as the legacy/override surface for the 5.1 closeout | v5.1.0 closeout release |
 
 Adopters can mix both in the same scope.

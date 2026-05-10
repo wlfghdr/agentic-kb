@@ -4,59 +4,86 @@
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb [text/URL/path]` | Capture: assess + persist via the gate; route to workstream |
-| `/kb review` | Process all pending items in `_kb-inputs/` |
-| `/kb promote [file]` | L1 → local team KB intake + immediate L2 review: stage in the contributor `_kb-inputs/`, process in team context, archive to `_kb-inputs/digested/YYYY-MM/`, and write the reviewed result to `_kb-references/` (ask which team if multiple) |
-| `/kb promote org [file]` | L2 → org-unit KB |
-| `/kb publish [file]` | L1/L2/L3 → marketplace skill (PR) |
+| `/kb [text/URL/path]` | Capture: assess + persist via the gate; route to the active layer and workstream |
+| `/kb review` | Process all pending items in `_kb-inputs/` for the current layer or contributor scope |
+| `/kb promote [file] [layer]` | Promote to the named target layer, or to the next contributor-capable parent layer if omitted |
+| `/kb publish [file] [layer]` | Package knowledge as a skill and publish it to the marketplace attached to the target layer |
+
+## Notes
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb note [text]` | Create a general note under `_kb-notes/YYYY/MM-DD-slug.md` |
+| `/kb note meeting [topic]` | Start a meeting note and prompt for attendees |
+| `/kb note end` | Close the current note, propose decisions/tasks/topic updates, and log the result |
+
+Notes use a lighter gate than findings. They are cheap capture surfaces that feed decisions, tasks, roadmap updates, and later findings without pretending to be immutable evidence.
 
 ## Decisions & Tasks
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb todo` | Show `focus.md` |
-| `/kb todo done [item]` | Complete item → archive, pull next from backlog |
+| `/kb task` | Show `focus.md` (top item is `Next up`) |
+| `/kb task done [item]` | Mark a task done and offer archival to `_kb-tasks/archive/YYYY/MM.md` |
 | `/kb decide [description]` | Create new `_kb-decisions/D-YYYY-MM-DD-slug.md` |
-| `/kb decide resolve [D-id]` | Archive decision + update topics + close related TODOs |
+| `/kb decide resolve [D-id]` | Archive decision + update topics + close related tasks |
+
+`/kb todo` and `/kb tasks` are accepted aliases of `/kb task`. The canonical verb in the spec is `task`.
+
+Tasks follow the same canonical-ownership rule as decisions: if a team, org, or company layer owns the same work item and accountable owner, keep the task there and close/archive the source-layer duplicate. A contributor-owned layer may keep a separate task only for a narrower personal sub-task or owner-specific slice that links back to the canonical shared task.
+
+## Ideas
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb idea [text]` | Create `_kb-ideas/I-YYYY-MM-DD-slug.md` (`**Stage**: seed`) |
+| `/kb develop [idea]` | Sparring session: probe assumptions, contradictions, gaps, convergence; append to the idea's Development Log |
+
+## Digests & Layer Flow
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb digest [layer]` | Pull changes from a named parent or adjacent layer into the current layer |
+| `/kb digest connections` | Walk the current layer's declared `connections:` and capture deltas since the last watermark |
+| `/kb sync [layer]` | Cross-reference contributor-scoped topics or findings when the layer uses contributor-scoped primitives |
+| `/kb diff [layer]` | Show what's new per contributor or per connected source |
+
+If the target layer is `role: consumer`, `promote` and `publish` must refuse and point to the next valid contributor layer.
+For the staged-review contract behind `/kb promote`, see [`promote-contract.md`](./promote-contract.md).
+When promoting decisions or tasks, keep one canonical path for the owning scope; close or archive the source as `superseded` unless it still has a genuinely different scope, accountable owner, or sub-task responsibility.
+For connection declaration, watermarks, drift checks, and write-back, see [`connections-lifecycle.md`](./connections-lifecycle.md).
+
+## Migration
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb migrate archives` | Preview or apply the year-based archive moves for digests, tasks, findings, decisions, ideas, notes, strategy digests, and optional daily logs |
+| `/kb migrate layer-model` | Preview or apply the conversion from the retired fixed-layer schema to the list-based layer graph |
+
+Both helpers are dry-run first. The shipped helper scripts live under `plugins/kb/skills/kb-management/scripts/` and apply only after explicit confirmation.
 
 ## Rituals
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb start-day` | Briefing: focus + decisions + new signals grouped by workstream |
-| `/kb end-day` | Wrap: summary, archive done, offer commit |
+| `/kb start-day` | Briefing: focus + decisions + connection deltas grouped by workstream |
+| `/kb end-day` | Wrap: summary, archive done items, offer commit |
 | `/kb start-week` | Weekly planning: all-layer digest + priorities |
-| `/kb end-week` | Friday 15:00 summary: promotion candidates, presentation suggestions |
-
-## Team & Org (L2/L3)
-
-| Subcommand | Action |
-|-----------|--------|
-| `/kb digest team` | Pull team changes → new `findings/YYYY-MM-DD-<team>-contrib-digest.md` |
-| `/kb digest org` | Pull org-unit changes |
-| `/kb sync team` | Cross-reference contributor topics |
-| `/kb diff team` | Show what's new per contributor |
-
-## Marketplace (L4)
-
-| Subcommand | Action |
-|-----------|--------|
-| `/kb publish [file]` | Package knowledge as skill → PR to marketplace |
-| `/kb browse` | List marketplace skills |
-| `/kb install [skill]` | Install a skill into the current harness |
+| `/kb end-week` | Weekly summary: promotion candidates, progress deltas, presentation suggestions |
 
 ## Meta
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb audit` | Check contradictions, gaps, staleness |
-| `/kb status` | Pending inputs, recent activity, todo counts, workstream summary |
-| `/kb status --refresh-overviews` | Manually rebuild `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` when you need a repair/rebuild pass |
-| `/kb present [topic/file]` | Generate HTML presentation from topic/finding |
-| `/kb report [scope]` | Generate HTML report (personal / team / org / weekly / topic) |
+| `/kb audit` | Check contradictions, gaps, staleness, and layer-shape mismatches |
+| `/kb status` | Pending inputs, recent activity, task counts, connection drift, and workstream summary |
+| `/kb status --refresh-overviews` | Manually rebuild `dashboard.html` and the root artifact `index.html` |
+| `/kb present [topic/file]` | Generate HTML presentation from topic, finding, note, or report source |
+| `/kb report [scope]` | Generate HTML report for a topic, layer, or ritual summary |
 | `/kb report status [scope]` | Generate a shared status report for leads, product, and stakeholders |
-| `/kb report delivery [scope]` | Generate a delivery report grounded in roadmap + journeys + delivery signals |
+| `/kb report delivery [scope]` | Generate a delivery report grounded in roadmap, journeys, and delivery signals |
 | `/kb report roadmap-change [scope]` | Generate a roadmap change report that explains baseline updates and downstream impact |
+| `/kb report progress [scope]` | Generate the named progress report for a layer, workstream, or time window |
 | `/kb setup` | Hand off to `kb-setup` skill |
 
 ## `/kb report` guidance for shared artifacts
@@ -83,46 +110,61 @@ Canonical shared-report contract:
 - `roadmap-change` may be opened automatically when roadmap scope, sequencing, dates, ownership, or committed phase changes, but it is only approved by the accountable roadmap owner or PM.
 - In other words, roadmap-change may be opened automatically, but never auto-approved.
 
+## Product-management draft-skill subcommands
+
+The plugin ships two product-management draft skills that own their own subcommand surface. `/kb` routes to them after the stable subcommands above, and only when setup has proposed or the user has manually declared the matching config block on the confirmed owning layer.
+
+| Subcommand | Skill | Activated by |
+|-----------|-------|--------------|
+| `/kb roadmap [...]` | [`kb-roadmap`](../../kb-roadmap/SKILL.md) | `roadmap:` block on the active layer in `.kb-config/layers.yaml` (+ `html-template:` in `.kb-config/artifacts.yaml`) |
+| `/kb journeys [...]` (alias `/kb journey`) | [`kb-journeys`](../../kb-journeys/SKILL.md) | `journeys:` block on the active layer in `.kb-config/layers.yaml` (+ `journeys-template:` in `.kb-config/artifacts.yaml`) |
+
+When a user invokes `/kb roadmap` or `/kb journeys` and the matching block is missing, refuse with a message that names the missing block and points at the draft skill's `references/config-schema.md`. Also offer `/kb setup` as the normal path for deciding which layer should own roadmap and journey artifacts. Never silently scaffold the config — the placement decision is the point. Full subcommand surface for each draft skill lives in its own `references/command-reference.md`.
+
 ## Publish flow (detail)
 
-1. Take source file (finding, topic, or team output).
-2. Extract generalizable pattern — strip personal context, add trigger description.
+1. Take source file (finding, topic, note, or shared layer output).
+2. Extract the generalizable pattern and strip local-only context.
 3. Format as `SKILL.md` with YAML frontmatter (`name`, `description`, `version`, `triggers`, `tools`, `requires`, `license`).
 4. Safety validation:
    - No PII
    - No credentials / tokens / API keys
-   - No hardcoded external URLs (use `sources.md` aliases)
+   - No hardcoded external URLs (use `sources.md` aliases or `connections` config)
    - No destructive shell commands
-5. Only reference tools available via the marketplace.
-6. Scaffold `skills/<name>/` with `SKILL.md`, `references/`, and `scripts/` as needed.
-7. Open a PR against the marketplace repo.
+5. Only reference tools available via the target marketplace.
+6. Scaffold `plugins/<plugin>/skills/<name>/` with `SKILL.md`, `references/`, `templates/`, and `scripts/` as needed.
+7. Open a PR against the marketplace repo configured for the target layer.
 
-Not every piece of knowledge becomes a skill. Skills are for **reusable instructions** that help an agent do a specific job.
+For the full publish contract, including the generalizability gate and response expectations, see [`publish-contract.md`](./publish-contract.md).
 
 ## Capture decision tree
 
-```
+```text
 input?
 ├── URL → fetch if user confirms; treat content as text
-├── File path inside a KB → run gate on file content
+├── File path inside a known layer → run gate on file content
 ├── Pasted text → run gate on text directly
 └── Bare `/kb` → run triage scan (see below)
 ```
 
 ## Triage scan (bare `/kb`)
 
-When `/kb` is invoked with no argument, report a read-only consolidated status. Canonical signal list (also defined in `kb.prompt.md`):
+When `/kb` is invoked with no argument, report a read-only consolidated status. Canonical signal list:
 
 | Signal | Where to look |
 |---|---|
-| Setup complete? | `.kb-config/layers.yaml` exists |
+| Setup complete? | `.kb-config/layers.yaml` exists and names an anchor layer |
+| Top task | First item in `_kb-tasks/focus.md` (if any) — always surface as `Next up: ...` |
+| External completions | Open focus/backlog tasks with evidence of closure (merged PR / closed ticket / commit reference / same slug already archived upstream) — propose archiving only; never auto-close in triage |
 | Pending inputs | `_kb-inputs/` not yet in `_kb-inputs/digested/` |
-| Open decisions | `_kb-decisions/*.md` with `status: proposed` |
-| Overdue todos | `_kb-tasks/*.md` with status `todo`/`doing` > 7 days |
-| Rituals | Today's `.kb-log/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
-| Upstream digest drift | L2/L3 HEAD differs from `_kb-references/strategy-digests/.last-digest` (or per-repo watermark) |
-| Promotions due | `maturity: durable` findings/topics not yet referenced in L2/L3 |
-| Stale topics | Topics unchanged > 60 days but still cited by recent findings |
+| Open decisions | `_kb-decisions/*.md` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` |
+| Overdue focus | Bullets in `_kb-tasks/focus.md` with `status: doing` held > 7 days (`focus-overdue-days`) |
+| Stale backlog | Bullets in `_kb-tasks/backlog.md` untouched > 14 days (`backlog-stale-days`) — annotated `stale: true`, never removed |
+| Rituals | Today's `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
+| Upstream digest drift | Declared parent layers whose HEAD commit differs from the latest strategy-digest watermark |
+| Connection drift | `connections` sources changed since the last connection digest watermark |
+| Promotions due | Findings/topics declaring `**Maturity**: durable` not yet referenced in a higher contributor layer |
+| Stale topics | Topics unchanged > 60 days and still referenced by recent findings |
 
 Triage is read-only — no mutations, no commits. Output ends with 1–3 concrete next steps.
 
@@ -136,7 +178,7 @@ Triage is read-only — no mutations, no commits. Output ends with 1–3 concret
 
 ## Output shape
 
-```
+```text
 1. What I did       (one sentence)
 2. Where it went    (relative paths)
 3. Gate notes       (which Q matched, optional)
@@ -157,6 +199,14 @@ See `output-contract.md` for the full wording contract and examples.
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
+| 2026-05-06 | Clarified that `/kb promote` must keep decisions and tasks canonical to one owning layer instead of leaving parallel active source and target records | Decision/task ownership follow-up |
+| 2026-04-30 | Clarified that missing roadmap/journey config should route to setup for the owning-layer decision, not silent scaffolding | Product-management surface integration |
+| 2026-04-29 | Added a Draft-skill subcommands section that names the `/kb roadmap` and `/kb journeys` handoffs to the opt-in kb-roadmap and kb-journeys skills and documents the per-layer config gates that activate them | v5.4.2 draft-skill discoverability fix |
+| 2026-04-27 | Added explicit pointers to the dedicated connection lifecycle and publish contract references, and aligned the publish package path with the current marketplace layout under `plugins/<plugin>/skills/<name>/` | Documentation gap follow-up |
+| 2026-04-25 | Added an explicit pointer from the command reference to the staged-review promote contract so adopters can see when staging happens and when it does not | Deep spec-audit follow-up |
+| 2026-04-25 | Added the explicit migration helper commands so the command surface now includes the 5.1 closeout path for old archive layouts and fixed-layer configs | v5.1.0 closeout release |
+| 2026-04-25 | Reworked the command surface for the 5.0 layer graph: promote/publish now target named layers, notes became a first-class primitive, `digest connections` and `report progress` were added, and triage now checks anchor-layer setup plus connection drift | v5.0.0 flexible layer model |
+| 2026-04-22 | Clarified that `--refresh-overviews` is the manual repair path for rebuilding `dashboard.html` and the root artifact `index.html`, replacing the prior always-current/phantom-overview wording | PR #53 fix |
+| 2026-04-22 | Added the missing `Top task` and `External completions` triage signals so the bare-`/kb` status table fully matches `kb.prompt.md` and the task-handling rules | PR #49 follow-up |
+| 2026-04-22 | `/kb task` named as the canonical task verb (with `todo` / `tasks` as accepted aliases); new Ideas section covering `/kb idea` + `/kb develop`; triage stale-task rule split into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching `kb.prompt.md` and SKILL rule 11g | Fixes #24, #25, #26 |
 | 2026-04-22 | Reframed `/kb promote` as a composite local-team operation: intake plus immediate team review and archival, not a pure inbox copy | Team promote flow fix |
-| 2026-04-22 | Fixed stale `inputs/` path in promote command; renamed section from "Decisions & TODOs" to "Decisions & Tasks" | Spec review |
-| 2026-04-20 | Documented `/kb status --refresh-overviews` as the explicit manual repair and rebuild path, and aligned triage guidance with always-current overviews | v3.2.0 live-overview refresh |

@@ -1,8 +1,8 @@
 # Collaboration Guide
 
-> **Version:** 0.1 | **Last updated:** 2026-05-10
+> **Version:** 5.6.0 | **Last updated:** 2026-05-06
 
-This guide defines the **human collaboration contract** for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
+This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
 ## Why this guide exists
 
@@ -17,56 +17,50 @@ Without that, the file structure may be clean while the collaboration model is n
 
 ## Core principle
 
-**Personal speed, shared caution.**
+**Contributor speed, shared caution.**
 
-At L1, the agent should help the user move fast. At L2 and L3, the agent should optimize for clarity, traceability, and low surprise for other humans.
+In a contributor-owned anchor layer, the agent should help the user move fast. In shared team, org, or company-facing layers, the agent should optimize for clarity, traceability, and low surprise for other humans.
 
 ## Agent execution policy
 
-For meaningful repo-changing work, Engineering and Quality must run as separate dedicated Codex CLI style sessions.
+For meaningful repo-changing work, Engineering and Quality should run as separate dedicated sessions.
 
 - **Engineering** implements with a clear scope, explicit artifact targets, and auditable output.
-- **Quality** reviews in a separate session, independently from Engineering, and returns an explicit verdict such as `merge-ready`, `needs-fix`, or `blocked`.
+- **Quality** reviews independently and returns an explicit verdict such as `merge-ready`, `needs-fix`, or `blocked`.
 - **Handoffs are mandatory.** Quality findings become the next Engineering scope when fixes are needed.
-- **No self-certification.** The same session that implemented a meaningful change must not certify that change as quality-complete.
+- **No self-certification.** The same session that implemented a meaningful change should not certify that change as quality-complete.
 
-This separation is especially important for KB model changes, roadmap/journey behavior, report/runtime logic, and other collaboration-critical surfaces.
+This separation matters most for KB model changes, roadmap/journey behavior, report/runtime logic, and other collaboration-critical surfaces.
 
 ## Minimal automation pattern
 
 The preferred automation model is intentionally small:
 
-1. **One standing orchestrator** watches assigned issues and starts Engineering work.
-2. **Engineering** works the issue, pushes or updates the branch/PR, and requests review.
-3. That **review request directly triggers Quality** — no separate standing Quality worker is required.
-4. **Quality** either returns `merge-ready` or sends explicit findings back to Engineering.
-5. **Engineering** responds only to those findings/change requests.
+1. One standing orchestrator watches assigned issues and starts Engineering work.
+2. Engineering works the issue, pushes or updates the branch/PR, and requests review.
+3. That review request directly triggers Quality.
+4. Quality either returns `merge-ready` or sends explicit findings back to Engineering.
+5. Engineering responds only to those findings or change requests.
 6. When Quality says `merge-ready`, checks are green, and no unresolved findings remain, merge.
 
-This means the continuous worker footprint stays minimal:
-- **yes**: issue-intake/orchestration worker
-- **no**: separate standing quality worker
-- **no**: separate standing comment worker
-- **no**: separate standing merge worker
-
-The PR review loop itself is the trigger chain between Engineering and Quality.
+This keeps the continuous worker footprint minimal and uses the PR review loop itself as the trigger chain between Engineering and Quality.
 
 ## Layer responsibilities
 
-### L1 Personal
+### Contributor-owned layer
 
-Purpose: individual sense-making and preparation.
+Purpose: individual sense-making, preparation, and early shaping.
 
 Agent may:
 
 - capture findings,
-- update personal topics,
-- open personal decisions,
+- update topics,
+- open decisions,
 - suggest tasks,
 - generate reports and presentations,
 - prepare promotion candidates.
 
-Agent must not assume L1 truth is shared truth.
+Agent must not assume contributor-owned truth is already shared truth.
 
 Human responsibility:
 
@@ -74,14 +68,14 @@ Human responsibility:
 - remove or redact sensitive material before promotion,
 - review promoted material for clarity outside personal context.
 
-### L2 Team
+### Shared team layer
 
-Purpose: shared team memory and team coordination.
+Purpose: shared team memory and coordination.
 
 Agent may:
 
-- place promoted material into the correct contributor area,
-- digest team changes into personal KBs,
+- place promoted material into the correct contributor or shared area,
+- digest team changes into contributor-owned layers,
 - open or update team decisions when explicitly requested or clearly implied by agreed process,
 - suggest conflicts, duplicates, and missing evidence.
 
@@ -92,25 +86,43 @@ Human responsibility:
 - confirm team-relevant promotions,
 - review shared decisions and RACI,
 - resolve conflicts between contributor interpretations,
-- keep team VMG current enough that agents can align against it.
+- keep shared foundation material current enough that agents can align against it.
 
-### L3 Org-Unit
+### Shared org or company-facing layer
 
-Purpose: cross-team synthesis and steering.
+Purpose: cross-team synthesis, steering, or top-down guidance.
 
 Agent may:
 
-- digest org-level changes downward,
-- package mature team outputs upward,
-- highlight cross-team contradictions and dependency signals.
+- digest higher-layer changes downward,
+- package mature shared outputs upward,
+- highlight contradictions and dependency signals across teams.
 
-Agent must be more conservative here than at L2. Cross-team meaning is easier to distort than personal meaning.
+Agent must be more conservative here than in a contributor-owned layer. Cross-team meaning is easier to distort than local context.
 
 Human responsibility:
 
 - validate framing before broad publication,
 - assign decision authority explicitly,
-- treat L3 as synthesis, not raw dumping.
+- treat synthesis layers as curated outputs, not raw dumping grounds.
+
+### Consumer-only layer
+
+Purpose: read-down guidance, not local authoring.
+
+Agent may:
+
+- read and digest,
+- compare local state to published guidance,
+- flag mismatches.
+
+Agent must not promote or publish into a `role: consumer` layer.
+Consumer layers may still receive downward digest updates and expose shared guidance locally, but they are not where new shared truth originates.
+
+Human responsibility:
+
+- keep the consuming boundary clear,
+- name the correct upstream contributor layer when contribution is actually needed.
 
 ## Shared-workspace rules
 
@@ -133,7 +145,10 @@ Before promotion, the human or agent should confirm:
 - context is understandable outside the source layer,
 - the artifact does not depend on hidden chat history,
 - sensitive material is removed,
-- the target layer is the right audience.
+- the target layer is the right audience,
+- the target layer is contributor-capable.
+
+Decision and task promotion have one extra check: determine whether the target layer now owns the same decision question or work item and accountable decider/owner. If yes, the target record becomes canonical and the source-layer record is closed, archived, or replaced with a backlink. Keep two active records only when their scopes, recommendations, accountable owners, or sub-task responsibilities genuinely differ.
 
 ### 3. Digests are summaries, not overrides
 
@@ -148,7 +163,7 @@ If upstream material conflicts with the current local view, the agent should:
 
 ### 4. Shared decisions need explicit humans
 
-In team and org layers, decisions must name the humans around the decision clearly enough that others can act on them.
+In team, org, and company-facing contributor layers, decisions must name the humans around the decision clearly enough that others can act on them.
 
 Minimum expectation:
 
@@ -163,95 +178,67 @@ If these are missing, the agent should flag the decision as structurally weak.
 
 If there is a tradeoff between automation elegance and human confidence, prefer the option that a teammate can review in under two minutes.
 
-## Shared artifacts for software-engineering collaboration
-
-In day-to-day product and engineering work, teams need a **small set of recurring shared artifacts** that multiple roles can rely on without reopening the same chat history. In `agentic-kb`, these artifacts should stay explicit and linked back to roadmap, journeys, decisions, and findings.
-
-### Recommended shared artifacts
-
-| Artifact | Primary use | Typical owner | Canonical source path | Must link to |
-|---------|-------------|---------------|-----------------------|--------------|
-| **Status report** | Current operating picture for leads, product, and stakeholders | team lead or directly responsible owner | `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md` | active decisions, blockers, roadmap scope, latest delivery report |
-| **Delivery report** | Commitments vs actual delivery reality | engineering lead or delivery owner | `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md` | roadmap artifact, journey steps, shipped signals, traceability gaps |
-| **Roadmap change report** | Records baseline changes and why they happened | roadmap owner / PM / lead | `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md` | roadmap diff, affected journeys, impacted decisions, stakeholder asks |
-| **Daily / weekly summary** | Time-bounded memory of work performed | individual or team ritual owner | existing finding + HTML summary paths | findings, digests, completed tasks, promotion candidates |
-
-### Ownership and approval boundaries
-
-| Artifact | Who may initiate | Who may mark ready / approve | Agent limit |
-|---------|------------------|------------------------------|-------------|
-| Status report | report owner, team lead, or ritual owner | the named `Owner` in the report, unless the report is explicitly read-only draft | may draft and refresh facts, but may not imply stakeholder sign-off |
-| Delivery report | engineering lead, delivery owner, or directly responsible owner | engineering lead or delivery owner named in the report | may assemble evidence and suggest deltas, but may not declare traceability disputes resolved without a human |
-| Roadmap change report | roadmap owner, PM, team lead, or an agent reacting to a deterministic trigger | the accountable roadmap owner or PM, named in the report | may open the report automatically when the trigger fires, but may not approve roadmap baseline changes |
-
-### Deterministic triggers
-
-| Artifact | Emit or refresh when |
-|---------|----------------------|
-| Status report | weekly cadence, after a delivery report changes, after a roadmap change report is approved, or when a blocker / owner / due-date change affects the current operating picture |
-| Delivery report | weekly cadence, when a roadmap item changes phase to or from `in-delivery` or `shipped`, when a linked journey readiness changes, or when a shipped / blocked / unplanned delivery signal appears |
-| Roadmap change report | when roadmap scope is added or removed, milestone/date/sequence changes, an item moves between roadmap phases, ownership changes, or a committed item is materially re-scoped |
-
-### Feedback intake and KB loop
-
-Feedback about roadmap, journeys, product, or delivery may come from leaders, customers, demos, prototypes, support, analytics, or delivery reality. Route it through the same loop every time:
-
-1. Capture the raw signal as an input or finding.
-2. Link it to the affected roadmap scope, journey, topic, or decision.
-3. If it changes the current operating picture, refresh the delivery report and then the status report.
-4. If it changes the baseline itself, open or update a roadmap change report before future status reporting.
-5. If the feedback exposes a gap between roadmap and journey reality, capture both links explicitly instead of collapsing them into prose.
-
-### Role expectations
-
-- **Lead / PM** should keep the status report decision-ready and audience-aware.
-- **Engineering / delivery owners** should keep the delivery report honest about shipped, blocked, and ambiguous work.
-- **Roadmap owners / PMs** approve roadmap change reports and keep roadmap and journey references aligned.
-- **Domain owners / reviewers** should challenge missing evidence, weak traceability, and silent roadmap drift.
-- **Agents** should help assemble and refresh these artifacts, but should not invent agreement where humans have not aligned.
-
-### Interplay rule
-
-Use the artifacts together, not as substitutes for each other:
-
-1. **Roadmap** states intended movement.
-2. **Journeys** state the user or product reality that should become true.
-3. **Delivery report** reconciles roadmap intent with current delivery signals and journey readiness.
-4. **Status report** tells humans what matters right now, using the delivery report plus decisions and blockers.
-5. **Roadmap change report** explains when the baseline itself changed, so future status and delivery reports stay legible.
-
-A good collaboration loop is: roadmap changed → roadmap change report explains it → delivery report reflects the operational consequence → status report tells the team what to do next.
-
 ## Minimum operating discipline for teams
 
 A team using `agentic-kb` seriously should agree on at least these norms:
 
-1. **One canonical personal KB per person.**
-2. **One shared team KB per actual working team.**
-3. **Promotions include a destination-layer review before being treated as team truth.**
-4. **Team decisions are not left without owners or dates.**
-5. **Conflicts are captured explicitly, not flattened away.**
-6. **Agents log what they changed.**
-7. **Humans remain accountable for shared meaning.**
+1. One canonical contributor-owned layer per person or clearly bounded working context.
+2. One shared team layer per real working team.
+3. Promotions include a destination-layer review before being treated as shared truth.
+4. Shared decisions are not left without owners or dates.
+5. Conflicts are captured explicitly, not flattened away.
+6. Agents log what they changed.
+7. Humans remain accountable for shared meaning.
+
+### Ownership and approval boundaries
+
+For the shared report family, ownership and approval should be explicit before the artifact is treated as shared truth:
+
+- **status** reports are usually owned by the reporting lead or ritual owner;
+- **delivery** reports are usually owned by engineering or delivery leadership;
+- **roadmap-change** reports are only approved by the accountable roadmap owner or PM, even when the report was opened automatically from detected baseline drift.
+
+The markdown source is the review surface. HTML is the consumption surface.
+
+### Deterministic triggers
+
+The most useful triggers are predictable and reviewable:
+
+- recurring cadence for status and delivery reports,
+- event-driven opening for roadmap-change reports when sequencing, dates, scope, or ownership shifts,
+- explicit refresh after major demos, customer learning, or delivery surprises that materially change the operating picture.
+
+Teams should prefer named triggers over vague "update when needed" expectations.
+
+### Feedback intake and KB loop
+
+Shared reports should not be terminal outputs. They should feed the KB back into action:
+
+- stakeholder questions become decisions, findings, or follow-up tasks,
+- delivery drift feeds roadmap review,
+- roadmap changes feed journey review when product behavior is affected,
+- new customer or prototype evidence feeds both journey refinement and the next delivery/status cycle.
+
+That loop is what keeps roadmap, journeys, decisions, and delivery reports from drifting into parallel narratives.
 
 ## Recommended review points
 
-### Before promoting L1 → L2
+### Before promoting into a shared team layer
 
-- Is the artifact understandable without personal background?
+- Is the artifact understandable without source-layer background?
 - Did the gate score reflect real team relevance?
 - Are next steps clear for another human?
 
-### Before promoting L2 → L3
+### Before promoting into an org or company-facing contributor layer
 
-- Is this a team position or only one contributor's view?
+- Is this a shared team position or only one contributor's view?
 - Are dependencies and implications stated?
 - Is there a named human owner for follow-up?
 
-### Before publishing to L4
+### Before publishing to a layer marketplace
 
 - Is the pattern truly reusable beyond the originating context?
-- Has personal/company-specific material been removed?
+- Has local or company-specific material been removed?
 - Would another team understand the skill without private history?
 
 ## Failure modes and recovery
@@ -302,10 +289,10 @@ Recovery:
 
 For real teams, start with this posture:
 
-- L1: fast and flexible
-- L2: reviewable and explicit
-- L3: conservative and synthesis-oriented
-- L4: manual and high bar
+- contributor-owned layers: fast and flexible
+- shared team layers: reviewable and explicit
+- shared org/company-facing contributor layers: conservative and synthesis-oriented
+- consumer-only layers: read-only and high signal
 
 That is the safest path to getting value without trust erosion.
 
@@ -316,4 +303,7 @@ That is the safest path to getting value without trust erosion.
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
+| 2026-05-06 | Added the decision/task promotion ownership rule so shared promotions create one canonical record instead of parallel active source and target decisions/tasks | Decision/task ownership follow-up |
+| 2026-04-25 | Clarified that consumer layers can receive digest updates and host read-down guidance locally, while still refusing promote/publish as a source of new shared truth | Deep spec-audit follow-up |
+| 2026-04-25 | Reworked the collaboration contract for 5.0.0: replaced L1-L4 language with contributor/shared/consumer roles, clarified consumer-only behavior, and updated promotion/publish review points for named layers and per-layer marketplaces | v5.0.0 flexible layer model |
 | 2026-04-20 | Initial collaboration guide defining shared-workspace operating norms, review points, and failure recovery | Issue #7 |

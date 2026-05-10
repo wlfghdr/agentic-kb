@@ -3,7 +3,7 @@
 - **Context**: {{CONTEXT}}
 - **Options**: {{OPTIONS}}
 - **Stakeholders**: {{STAKEHOLDERS}}
-- **RACI**:                # remove for personal KB; required for team/org
+- **RACI**:                # remove for contributor-only private layers; required for shared team/org/company decisions
   - Responsible: {{R}}
   - Accountable: {{A}}
   - Consulted: {{C}}

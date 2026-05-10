@@ -26,6 +26,7 @@ EXTERNAL_RESOURCE_RE = re.compile(
     r"<(?:script|link)[^>]*\s(?:src|href)\s*=\s*['\"](https?:|//)[^'\"]+['\"]",
     re.IGNORECASE,
 )
+EXTERNAL_CSS_IMPORT_RE = re.compile(r"@import\s+url\((['\"]?)(https?:|//)", re.IGNORECASE)
 LIGHT_THEME_PATTERNS = [
     r"""theme[-"':=\s]*["']?light""",
     r"prefers-color-scheme:\s*light",
@@ -45,6 +46,8 @@ def check_artifact(path: Path) -> list[str]:
 
     if EXTERNAL_RESOURCE_RE.search(text):
         errors.append(f"{rel}: contains an external <script|link> resource — artifacts must be self-contained")
+    if EXTERNAL_CSS_IMPORT_RE.search(text):
+        errors.append(f"{rel}: contains an external CSS @import — artifacts must be self-contained")
 
     if not any(re.search(p, text, re.IGNORECASE) for p in LIGHT_THEME_PATTERNS):
         errors.append(f"{rel}: light theme marker not found")
