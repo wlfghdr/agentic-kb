@@ -6,6 +6,8 @@
 /kb journeys
 ```
 
+The behavioral spec below describes the intended `/kb journeys` surface. The shipped helper scripts in this repo currently cover `render` and `extract-mocks`, with no-extra-dependency fallback paths; the broader state-machine, authoring, and rename flows remain draft-spec behavior.
+
 No-argument invocation. Runs the state machine: scan `journeys.source-dir`, compare against `journeys.output-dir`, report:
 
 - Journeys unrendered (source newer than HTML)
@@ -36,12 +38,12 @@ Generates HTML set + mocks. Without `--journey`, renders all journeys. With `--d
 
 Steps:
 
-1. Audit the source tree. Abort if structural errors.
-2. Read `.kb-config/artifacts.yaml` `journeys-template.tokens`, emit `shared.css`.
-3. Render each journey markdown → HTML via `templates/journey.html.hbs`.
-4. Render `overview.md` → `index.html`.
-5. Run mock extractor.
-6. Update state markers in the changelog appendix.
+1. Read `.kb-config/artifacts.yaml` `journeys-template.tokens`, emit `shared.css`.
+2. Render each discovered journey markdown file (single-file roots plus directory `README.md` journeys) via `templates/journey.html.hbs`.
+3. Render `overview.md` plus the discovered journey set into `index.html`.
+4. Run mock extractor to refresh standalone mock pages and source-page backlinks.
+
+If `python-markdown` or `beautifulsoup4` are absent, the shipped helper falls back to its built-in local renderer/extractor path instead of failing hard.
 
 ### `extract-mocks`
 
@@ -97,3 +99,9 @@ Rewrites every occurrence of a step id across journeys, overview, roadmap items,
 | 2 | Audit failure |
 | 3 | Render succeeded but warnings present (missing readiness, orphan mocks) |
 | 4 | User aborted an interactive prompt |
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-08 | Clarified the shipped `render`/`extract-mocks` helper behavior, discovery rules, and optional dependency fallbacks | Integration pass |

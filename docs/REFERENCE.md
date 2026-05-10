@@ -592,6 +592,8 @@ journeys-template:
 
 Recommended lean roadmap baseline: start with exported tracker markdown bound through `connections.trackers[]`, prove the artifact flow locally, then opt into live tracker adapters and write-back later.
 
+Current draft-helper reality: the repo ships neutral renderer helpers for roadmap and journey artifacts under `plugins/kb/skills/*/scripts/`. They are sufficient for local validation and artifact generation, but they do not yet implement the full interactive `/kb roadmap` and `/kb journeys` command surface described by the behavioral specs.
+
 ### Migration helpers
 
 Two explicit migration helpers close the remaining 5.0 follow-up path for older adopters:
@@ -642,6 +644,25 @@ Two families:
 | Topic Presentation | Cover → Content slides → Comparison → Closing |
 
 `/kb report progress [scope]` consumes KB state plus any configured `connections:` for that scope. Progress reports must add a Sources appendix naming every repo, tracker, or export consulted and the watermark used for the delta.
+
+### Shared collaboration artifacts
+
+For recurring software-engineering work, the KB should keep a reviewable markdown source behind the most common shared reports:
+
+| Artifact | Source template | Canonical markdown source path | Relationship to roadmap and journeys |
+|----------|-----------------|-------------------------------|--------------------------------------|
+| Status report | `kb-management/templates/report-status.md` | `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md` | summarizes the current operating picture using roadmap scope, delivery reality, blockers, and decisions |
+| Delivery report | `kb-management/templates/report-delivery.md` | `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md` | reconciles roadmap commitments against journey readiness and delivery signals |
+| Roadmap change report | `kb-management/templates/report-roadmap-change.md` | `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md` | records baseline changes, their reasons, and the required downstream updates |
+
+Rules:
+
+1. The markdown source is the canonical collaboration artifact. HTML is a rendering for consumption.
+2. `<scope>` must match the roadmap or journey scope name when one exists, for example `growth`, `platform`, or `exec`.
+3. Revisions append a new dated source file, they do not silently overwrite an older one.
+4. Status and delivery reports belong beside roadmap and journey work, not inside those primitives. They link to roadmap and journey artifacts but do not replace them.
+
+These are shared-memory artifacts, not just pretty HTML outputs. The markdown source is for collaboration, review, and traceability.
 
 ### Ritual triggers
 
@@ -790,12 +811,16 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for marketplace-backed and installer-supported harnesses. Compatible Codex workflows reuse the same workspace contract through `AGENTS.md` plus repo/user skill directories.
 
+Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.json`, `plugin.json`, and `plugins/kb/plugin.json` must match the repo release version declared in `VERSION` and the current release/changelog line. Marketplace versioning is release versioning, not a separate numbering scheme.
+
 ---
 
 ## Changelog
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-10 | Added shared collaboration artifact guidance for status, delivery, and roadmap-change report sources |
+| 2026-05-08 | Clarified the shipped role of the draft roadmap/journey helper scripts and bumped the reference patch version |
 | 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now have one canonical layer unless the source and target scopes genuinely differ |
 | 2026-04-30 | Version aligned to 5.5.0 after promoting roadmap and journey work into the product-management operating surface: setup now derives their owning layer from role/goals and the reference names placement, visibility, and customer-value presentation rules |
 | 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix. Structural contracts in this reference are unchanged; the dispatcher now routes `/kb roadmap` and `/kb journeys` through the kb-management surface that this reference describes |

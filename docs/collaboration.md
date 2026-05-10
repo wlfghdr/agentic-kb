@@ -21,6 +21,30 @@ Without that, the file structure may be clean while the collaboration model is n
 
 In a contributor-owned anchor layer, the agent should help the user move fast. In shared team, org, or company-facing layers, the agent should optimize for clarity, traceability, and low surprise for other humans.
 
+## Agent execution policy
+
+For meaningful repo-changing work, Engineering and Quality should run as separate dedicated sessions.
+
+- **Engineering** implements with a clear scope, explicit artifact targets, and auditable output.
+- **Quality** reviews independently and returns an explicit verdict such as `merge-ready`, `needs-fix`, or `blocked`.
+- **Handoffs are mandatory.** Quality findings become the next Engineering scope when fixes are needed.
+- **No self-certification.** The same session that implemented a meaningful change should not certify that change as quality-complete.
+
+This separation matters most for KB model changes, roadmap/journey behavior, report/runtime logic, and other collaboration-critical surfaces.
+
+## Minimal automation pattern
+
+The preferred automation model is intentionally small:
+
+1. One standing orchestrator watches assigned issues and starts Engineering work.
+2. Engineering works the issue, pushes or updates the branch/PR, and requests review.
+3. That review request directly triggers Quality.
+4. Quality either returns `merge-ready` or sends explicit findings back to Engineering.
+5. Engineering responds only to those findings or change requests.
+6. When Quality says `merge-ready`, checks are green, and no unresolved findings remain, merge.
+
+This keeps the continuous worker footprint minimal and uses the PR review loop itself as the trigger chain between Engineering and Quality.
+
 ## Layer responsibilities
 
 ### Contributor-owned layer
@@ -166,6 +190,37 @@ A team using `agentic-kb` seriously should agree on at least these norms:
 6. Agents log what they changed.
 7. Humans remain accountable for shared meaning.
 
+### Ownership and approval boundaries
+
+For the shared report family, ownership and approval should be explicit before the artifact is treated as shared truth:
+
+- **status** reports are usually owned by the reporting lead or ritual owner;
+- **delivery** reports are usually owned by engineering or delivery leadership;
+- **roadmap-change** reports are only approved by the accountable roadmap owner or PM, even when the report was opened automatically from detected baseline drift.
+
+The markdown source is the review surface. HTML is the consumption surface.
+
+### Deterministic triggers
+
+The most useful triggers are predictable and reviewable:
+
+- recurring cadence for status and delivery reports,
+- event-driven opening for roadmap-change reports when sequencing, dates, scope, or ownership shifts,
+- explicit refresh after major demos, customer learning, or delivery surprises that materially change the operating picture.
+
+Teams should prefer named triggers over vague "update when needed" expectations.
+
+### Feedback intake and KB loop
+
+Shared reports should not be terminal outputs. They should feed the KB back into action:
+
+- stakeholder questions become decisions, findings, or follow-up tasks,
+- delivery drift feeds roadmap review,
+- roadmap changes feed journey review when product behavior is affected,
+- new customer or prototype evidence feeds both journey refinement and the next delivery/status cycle.
+
+That loop is what keeps roadmap, journeys, decisions, and delivery reports from drifting into parallel narratives.
+
 ## Recommended review points
 
 ### Before promoting into a shared team layer
@@ -247,6 +302,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
 | 2026-05-06 | Added the decision/task promotion ownership rule so shared promotions create one canonical record instead of parallel active source and target decisions/tasks | Decision/task ownership follow-up |
 | 2026-04-25 | Clarified that consumer layers can receive digest updates and host read-down guidance locally, while still refusing promote/publish as a source of new shared truth | Deep spec-audit follow-up |
 | 2026-04-25 | Reworked the collaboration contract for 5.0.0: replaced L1-L4 language with contributor/shared/consumer roles, clarified consumer-only behavior, and updated promotion/publish review points for named layers and per-layer marketplaces | v5.0.0 flexible layer model |

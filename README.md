@@ -124,6 +124,24 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb journeys               → author and render journey specs + mocks
 ```
 
+### Roadmap and journeys as one operating system
+
+`agentic-kb` treats roadmap and journeys as connected but different control layers:
+
+- **Roadmap** answers: what are we trying to move, what is actually moving, where is reality diverging, and what decision is needed now?
+- **Journeys** answer: what behavior is the product or process supposed to deliver for which persona, through which path, and at what readiness?
+
+A healthy operating model needs both:
+
+- **top-down** from strategy, goals, milestones, and leadership intent
+- **bottom-up** from engineering reality, prototypes, customer feedback, and daily work
+
+In practice that means:
+
+- a **joint roadmap** for lead-curated cross-scope progress, risks, scope changes, and decisions
+- **detail roadmaps / engineering backlogs per workstream** for domain-owned progress, demos, refinements, and feedback calls
+- **journeys** as the reference layer that explains what the work is supposed to make true in the product
+
 For roadmap adoption, keep the first proof path lean: start with exported tracker markdown bound through `ticket-export-markdown`, prove the artifact flow locally, then add live tracker adapters and write-back only after the export-backed path is trusted. For journey adoption, start with one end-to-end journey owned by the same layer that owns the roadmap scope, then split across layers only after the ownership boundary is clear.
 
 ### The evaluation gate

@@ -72,6 +72,26 @@ The skill offers HTML artifact generation when:
 | Topic accumulated ≥5 new findings since last artifact | *"Regenerate the artifact for <topic>?"* |
 | Org-level digest produced | *"Publish this as an HTML digest?"* |
 
+## Report source artifacts (shared collaboration inputs)
+
+Before rendering HTML, the agent should prefer a small markdown source artifact that other humans can review and update. For recurring software-engineering collaboration, the canonical source shapes are:
+
+| Report type | Source template | Canonical source path | Primary question answered |
+|-------------|-----------------|-----------------------|---------------------------|
+| Status report | `templates/report-status.md` | `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md` | What matters right now, who owns it, and what needs attention? |
+| Delivery report | `templates/report-delivery.md` | `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md` | What did we commit to deliver, what is actually happening, and where is traceability weak? |
+| Roadmap change report | `templates/report-roadmap-change.md` | `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md` | What changed in the baseline, why, and what downstream artifacts need to be updated? |
+
+Source-artifact rules:
+
+1. `<scope>` uses the same canonical scope name as the linked roadmap or journey artifacts when one exists.
+2. Source markdown is durable and reviewable. HTML is a derived presentation artifact.
+3. A new dated markdown file is created whenever the shared report is materially updated.
+4. The report source must include `Report type`, `Scope`, `Date`, `Audience`, and `Owner` metadata before HTML generation.
+5. `roadmap-change` sources additionally require an explicit `**Approval required from**:` line naming the accountable human before they are treated as approved baseline changes.
+
+These markdown sources belong in the KB as durable shared artifacts. The HTML output is the presentation layer, not the only source of truth.
+
 ## External-read preflight
 
 If generating or regenerating an artifact requires external reads beyond the KB files already on disk, the agent must present a structured preflight summary before it fetches anything.
@@ -263,6 +283,7 @@ Every `/kb present` MUST use this file (as customized by the phase-3 HTML-stylin
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |
 | 2026-05-05 | Replaced two stale "kb-setup Q13" references for the presentation-template copy step with phase-relative wording so the doc no longer points at a question number that the v5.4.0 renumbering invalidated. Behavioral contract unchanged | Onboarding consistency review |
 | 2026-04-25 | Added an explicit external-read preflight contract plus a mandatory post-generation QA sweep so artifact generation has reviewable fetch boundaries and a defined completion gate | Generic learnings extracted from roadmap/presentation feature work |
 | 2026-04-23 | Family-2 filename default is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every KB layer; styling contract is explicitly layer-agnostic (configured reference template is THE template per layer); root-`index.html` regeneration is now an explicit offer-then-confirm step after every Family-2 create/update (automation levels 2/3 still run silently) | ISO 42001 presentation generation friction |

@@ -80,8 +80,35 @@ Both helpers are dry-run first. The shipped helper scripts live under `plugins/k
 | `/kb status --refresh-overviews` | Manually rebuild `dashboard.html` and the root artifact `index.html` |
 | `/kb present [topic/file]` | Generate HTML presentation from topic, finding, note, or report source |
 | `/kb report [scope]` | Generate HTML report for a topic, layer, or ritual summary |
+| `/kb report status [scope]` | Generate a shared status report for leads, product, and stakeholders |
+| `/kb report delivery [scope]` | Generate a delivery report grounded in roadmap, journeys, and delivery signals |
+| `/kb report roadmap-change [scope]` | Generate a roadmap change report that explains baseline updates and downstream impact |
 | `/kb report progress [scope]` | Generate the named progress report for a layer, workstream, or time window |
 | `/kb setup` | Hand off to `kb-setup` skill |
+
+## `/kb report` guidance for shared artifacts
+
+Use `/kb report` as a family, not a single vague output. For recurring software-engineering collaboration, prefer these specific report intents:
+
+| Report kind | Purpose | Should pull from |
+|-------------|---------|------------------|
+| `status` | shared operating picture | active decisions, blockers, latest delivery report, roadmap scope |
+| `delivery` | commitments vs reality | roadmap artifact, journey coverage, tracker / PR / shipped signals |
+| `roadmap-change` | explain baseline changes | roadmap diff, affected journeys, stakeholder impact, required follow-up |
+| `weekly` | time-boxed memory | week dailies, completed tasks, promotion candidates |
+| `topic` | narrative explanation | findings, topics, decisions, proposals |
+
+When one of these report kinds exists, the agent should say so explicitly in `What I did` and should link the upstream shared artifacts it relied on.
+
+Canonical shared-report contract:
+
+- `status` source: `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md`
+- `delivery` source: `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md`
+- `roadmap-change` source: `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md`
+- `status` may be initiated by the report owner or ritual owner and approved by the named `Owner`.
+- `delivery` may be initiated by engineering or delivery owners and approved by the named engineering or delivery owner.
+- `roadmap-change` may be opened automatically when roadmap scope, sequencing, dates, ownership, or committed phase changes, but it is only approved by the accountable roadmap owner or PM.
+- In other words, roadmap-change may be opened automatically, but never auto-approved.
 
 ## Product-management draft-skill subcommands
 
@@ -171,6 +198,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
 | 2026-05-06 | Clarified that `/kb promote` must keep decisions and tasks canonical to one owning layer instead of leaving parallel active source and target records | Decision/task ownership follow-up |
 | 2026-04-30 | Clarified that missing roadmap/journey config should route to setup for the owning-layer decision, not silent scaffolding | Product-management surface integration |
 | 2026-04-29 | Added a Draft-skill subcommands section that names the `/kb roadmap` and `/kb journeys` handoffs to the opt-in kb-roadmap and kb-journeys skills and documents the per-layer config gates that activate them | v5.4.2 draft-skill discoverability fix |

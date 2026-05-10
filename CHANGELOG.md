@@ -22,12 +22,17 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 ### Added
 
 - **Decision and task promotion ownership rule** — `kb-management` now requires promoted decisions and tasks to have one canonical owning layer. When the target layer owns the same decision question / work item and accountable decider / owner, the source-layer record must be closed, archived, or replaced with a backlink; separate active records are allowed only when the source and target scopes genuinely differ or when the source item is a narrower sub-task.
+- **Shared report collaboration contract** — status, delivery, and roadmap-change reports now have canonical markdown source paths under `_kb-references/reports/sources/<scope>/`, explicit ownership/approval guidance, and documented ties back into roadmap and journey work.
 
 ### Changed
 
 - **Framework version rolled to 5.6.0** — root `VERSION`, marketplace manifests, README, `docs/REFERENCE.md`, `docs/collaboration.md`, and `kb-management` now describe the new decision/task promotion ownership semantics.
+- **Roadmap/journey operating-model narrative tightened** — README, the collaboration guide, and the day-in-the-life example now explain how roadmap, journeys, status, delivery, and roadmap-change reports fit together in day-to-day work.
 
 ### Fixed
+
+- **`kb-journeys` helper runtime and docs aligned** — the shipped renderer/extractor and draft-skill docs now agree on current helper coverage, fallback behavior, and the `v0.2.0` draft version while preserving the richer render pipeline added on this branch.
+- **Roadmap regression coverage expanded** — `scripts/test_kb_roadmap.py` now covers both export-backed artifact generation and roll-up index refresh behavior so helper/runtime drift is caught in CI.
 
 - **Onboarding flow consistency review** — closed five long-standing gaps that prevented the documented "answer the wizard, get the promised artifacts" contract from working end-to-end:
   1. `docs/first-run-acceptance.md` was a release behind. Phase 2 is now numbered Q9/Q10/Q11 (was Q8/Q9/Q10), and the missing Q8 (operating context / adoption stage, added in v5.4.0) is back in the baseline answer set with `human-only / capture discipline today; agent-assisted triage in 6 months` mapping to Stage 1. Phase 3 expected output now requires the adoption-stage label, the Stage↔automation-level consistency check, and the graduation-criteria block, so the team-lead acceptance baseline actually exercises the soft-transition flow it advertises.

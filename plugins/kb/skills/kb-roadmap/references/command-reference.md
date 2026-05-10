@@ -2,6 +2,8 @@
 
 ## Base command
 
+The behavioral spec below describes the intended `/kb roadmap` surface. The shipped helper script in this repo currently implements config-driven generation for detail/roll-up scopes plus `--dry-run`; interactive mutation flows remain draft-spec behavior.
+
 ```
 /kb roadmap [--scope NAME] [--since DATE | --week | --month | --quarter | --range A..B]
             [--plan-source NAME] [--delivery-source NAME]
@@ -136,3 +138,9 @@ See `references/authoring-commands.md` for stance rules, output shapes, and trac
 | 4 | User aborted during interactive prompt |
 
 Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-delivery above threshold appears.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-08 | Clarified which `/kb roadmap` behaviors are covered by the shipped helper script versus the broader draft command spec | Integration pass |

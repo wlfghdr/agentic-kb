@@ -109,9 +109,9 @@ my-kb/
 
 ## Two views
 
-**Detail view** (per workstream): full sections A–G — ticket + commit detail, correlation audit. Audience: the team driving the workstream.
+**Detail view** (per workstream): full sections A–G — ticket + commit detail, correlation audit, local scope refinement, and the bottom-up evidence trail from daily work. Audience: the team driving the workstream and whoever owns the domain outcome.
 
-**Roll-up view** (exec / C-level): sections X1–X7 — portfolio state, momentum, risks, shifts, scope changes, decisions needed, next-period focus. No commit-level detail. Audience: leadership.
+**Roll-up view** (exec / C-level): sections X1–X7 — portfolio state, momentum, risks, shifts, scope changes, decisions needed, next-period focus. No commit-level detail. Audience: leadership and the lead curating the joint roadmap.
 
 Declare scopes in the active layer's `.kb-config/layers.yaml` entry under `roadmap.scopes`. Default: every workstream gets a detail scope; adopters add one `kind: roll-up` scope per leadership rhythm.
 
@@ -249,9 +249,12 @@ See `references/adapters.md`.
 
 This skill is **draft (v0.2.0)**. It is setup-proposed when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`. Breaking changes are expected before v1.0.
 
+The shipped helper script in this repo currently covers config-driven generation and dry-run validation for detail and roll-up scopes. Interactive flows such as `sync`, `tune`, `review-tier-4`, and plan-source writes remain part of the behavioral spec rather than the local helper runtime.
+
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-08 | Bumped to v0.2.0 and clarified the current helper-script adapter/runtime coverage against the broader draft command surface | Integration pass |
 | 2026-04-30 | Promoted roadmap work into the product-management surface: added value-first presentation rules, draft/agreed/shipped commitment visibility, setup-proposed status, and broader natural-language triggers | Product-management surface integration |
 | 2026-04-25 | Aligned the draft roadmap contract with the shipped 5.1 behavior: the active layer owns the `roadmap:` block, `connections.trackers[]` can seed read-only tracker inputs, and the examples no longer imply the retired top-level shape | v5.1.0 closeout release |

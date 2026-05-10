@@ -32,6 +32,7 @@ import html
 import json
 import re
 import sys
+from copy import deepcopy
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
@@ -494,19 +495,64 @@ ADAPTERS = {
 }
 
 
+def _source_registry(roadmap_cfg: dict) -> dict[str, dict]:
+    registry: dict[str, dict] = {}
+    for key in ("plan-sources", "delivery-sources", "issue-trackers"):
+        for entry in roadmap_cfg.get(key, []) or []:
+            if isinstance(entry, dict) and entry.get("name"):
+                registry[entry["name"]] = entry
+    return registry
+
+
+def _resolve_scope_source_entries(scope_cfg: dict, roadmap_cfg: dict) -> list[dict]:
+    registry = _source_registry(roadmap_cfg)
+    resolved: list[dict] = []
+
+    def add_entry(entry: object) -> None:
+        source_cfg: dict | None = None
+        if isinstance(entry, str):
+            source_cfg = registry.get(entry)
+        elif isinstance(entry, dict):
+            if entry.get("adapter"):
+                source_cfg = entry
+            elif entry.get("name") and entry["name"] in registry:
+                source_cfg = deepcopy(registry[entry["name"]])
+                source_cfg.update({k: v for k, v in entry.items() if k != "name"})
+            elif entry.get("tracker") and entry["tracker"] in registry:
+                source_cfg = deepcopy(registry[entry["tracker"]])
+                source_cfg.update({k: v for k, v in entry.items() if k != "tracker"})
+        if source_cfg and source_cfg.get("adapter"):
+            resolved.append(source_cfg)
+
+    scope_plan = scope_cfg.get("plan-sources")
+    scope_delivery = scope_cfg.get("delivery-sources")
+    if scope_plan is None and scope_delivery is None:
+        for entry in roadmap_cfg.get("plan-sources", []) or []:
+            add_entry(entry)
+        for entry in roadmap_cfg.get("delivery-sources", []) or []:
+            add_entry(entry)
+    else:
+        for entry in scope_plan or []:
+            add_entry(entry)
+        for entry in scope_delivery or []:
+            add_entry(entry)
+
+    for entry in scope_cfg.get("trackers", []) or []:
+        add_entry(entry)
+
+    return resolved
+
+
 def collect_items(scope_cfg: dict, roadmap_cfg: dict, kb_root: Path) -> list[Item]:
-    trackers_by_name = {t["name"]: t for t in roadmap_cfg.get("issue-trackers", [])}
     items: list[Item] = []
-    for tref in scope_cfg.get("trackers", []):
-        tname = tref["tracker"] if isinstance(tref, dict) else tref
-        tcfg = trackers_by_name.get(tname, {"name": tname})
-        adapter_name = tcfg.get("adapter")
+    for source_cfg in _resolve_scope_source_entries(scope_cfg, roadmap_cfg):
+        adapter_name = source_cfg.get("adapter")
         adapter = ADAPTERS.get(adapter_name)
         if not adapter:
-            print(f"kb-roadmap: unknown adapter {adapter_name!r} for tracker {tname}",
+            print(f"kb-roadmap: unknown adapter {adapter_name!r} for source {source_cfg.get('name')}",
                   file=sys.stderr)
             continue
-        items.extend(adapter(tcfg, kb_root))
+        items.extend(adapter(source_cfg, kb_root))
     phases = roadmap_cfg.get("phases", {})
     for it in items:
         it.phase = map_phase(it.status, phases)
@@ -1892,8 +1938,120 @@ def render_json(scope: str, date: str, items: list[Item], groups: dict[str, list
             "correlated": sum(1 for g in groups.values() if len(g) > 1),
             "single_tracker": sum(1 for g in groups.values() if len(g) == 1),
         },
+        "warnings": [],
     }
     return json.dumps(payload, indent=2, default=str)
+
+
+def resolve_scope_config(cfg: dict, roadmap_cfg: dict, scope: str) -> dict | None:
+    scopes = roadmap_cfg.get("scopes", {}) or {}
+    if scope in scopes:
+        return deepcopy(scopes[scope])
+
+    workstreams = (
+        cfg.get("layers", {})
+        .get("personal", {})
+        .get("workstreams", [])
+    )
+    for entry in workstreams:
+        if isinstance(entry, dict) and entry.get("name") == scope:
+            return {
+                "kind": "detail",
+                "label": entry.get("name", scope).replace("-", " ").title(),
+                "description": f"Generated roadmap for workstream {scope}.",
+            }
+    if scope == roadmap_cfg.get("default-scope"):
+        return {
+            "kind": "detail",
+            "label": scope.replace("-", " ").title(),
+            "description": f"Generated roadmap for scope {scope}.",
+        }
+    return None
+
+
+def build_scope_items(scope: str, scope_cfg: dict, roadmap_cfg: dict, cfg: dict, kb_root: Path) -> list[Item]:
+    kind = scope_cfg.get("kind", "detail")
+    if kind != "roll-up":
+        return collect_items(scope_cfg, roadmap_cfg, kb_root)
+
+    aggregate_names = scope_cfg.get("aggregates", []) or []
+    merged: list[Item] = []
+    seen_keys: set[tuple[str, str]] = set()
+    for child_scope in aggregate_names:
+        child_cfg = resolve_scope_config(cfg, roadmap_cfg, child_scope)
+        if not child_cfg:
+            print(
+                f"kb-roadmap: roll-up scope {scope!r} references unknown aggregate {child_scope!r}",
+                file=sys.stderr,
+            )
+            continue
+        for item in collect_items(child_cfg, roadmap_cfg, kb_root):
+            dedupe_key = (item.tracker, item.id)
+            if dedupe_key in seen_keys:
+                continue
+            seen_keys.add(dedupe_key)
+            merged.append(item)
+    return merged
+
+
+def scope_basename(scope: str, scope_cfg: dict, date: str) -> str:
+    if scope_cfg.get("kind") == "roll-up":
+        return f"roadmap-{scope}-{date}"
+    return f"roadmap-{date}"
+
+
+def render_scope_index(root_dir: Path) -> str:
+    scopes: list[tuple[str, list[Path]]] = []
+    for scope_dir in sorted(p for p in root_dir.iterdir() if p.is_dir() and p.name != "archive"):
+        html_files = sorted(
+            scope_dir.glob("roadmap-*.html"),
+            key=lambda p: p.name,
+            reverse=True,
+        )
+        if html_files:
+            scopes.append((scope_dir.name, html_files))
+    rows = []
+    for scope_name, html_files in scopes:
+        latest = html_files[0]
+        rows.append(
+            f"<li><a href=\"{scope_name}/{latest.name}\">{html.escape(scope_name)}</a>"
+            f"<span> · latest {html.escape(latest.stem.replace('roadmap-', ''))}</span></li>"
+        )
+    if not rows:
+        rows.append("<li>No roadmap artifacts generated yet.</li>")
+    return """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadmaps</title>
+  <style>
+    :root { --bg:#0e141b; --surface:#16202a; --border:#2d3d4d; --text:#eef4f8; --text-dim:#9aaebd; --accent:#28b8c7; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg:#f5f7fa; --surface:#ffffff; --border:#d7dde5; --text:#111821; --text-dim:#4a5968; --accent:#108ea0; }
+    }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); }
+    main { max-width:840px; margin:0 auto; padding:48px 24px; }
+    h1 { margin:0 0 8px; }
+    p { color:var(--text-dim); }
+    ul { list-style:none; padding:0; margin:24px 0 0; display:grid; gap:10px; }
+    li { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+    a { color:var(--accent); text-decoration:none; font-weight:600; }
+    a:hover { text-decoration:underline; }
+    span { color:var(--text-dim); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Roadmap Artifacts</h1>
+    <p>Latest generated roadmap per scope.</p>
+    <ul>
+""" + "\n".join(f"      {row}" for row in rows) + """
+    </ul>
+  </main>
+</body>
+</html>
+"""
 
 
 def main() -> int:
@@ -1915,14 +2073,14 @@ def main() -> int:
     if not scope:
         print("kb-roadmap: --scope required (no default-scope configured)", file=sys.stderr)
         return 1
-    scope_cfg = roadmap_cfg.get("scopes", {}).get(scope)
+    scope_cfg = resolve_scope_config(cfg, roadmap_cfg, scope)
     if not scope_cfg:
-        print(f"kb-roadmap: scope {scope!r} not in roadmap.scopes", file=sys.stderr)
+        print(f"kb-roadmap: scope {scope!r} is not configured", file=sys.stderr)
         return 1
 
     date = args.date or dt.date.today().isoformat()
 
-    items = collect_items(scope_cfg, roadmap_cfg, kb_root)
+    items = build_scope_items(scope, scope_cfg, roadmap_cfg, cfg, kb_root)
     groups = correlate_tier1(items)
 
     # Brand tokens CSS (optional) — spliced into the HTML <style> block verbatim.
@@ -1940,7 +2098,8 @@ def main() -> int:
     logo_light = tpl_cfg.get("logo", {}).get("light", "")
     logo_dark = tpl_cfg.get("logo", {}).get("dark", "")
 
-    output_dir = (kb_root / roadmap_cfg.get("output-dir", "_kb-roadmaps") / scope).resolve()
+    roadmap_root = (kb_root / roadmap_cfg.get("output-dir", "_kb-roadmaps")).resolve()
+    output_dir = (roadmap_root / scope).resolve()
     if not args.dry_run:
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1948,16 +2107,20 @@ def main() -> int:
     html_out = render_html(scope, date, items, groups, tokens_css, logo_light, logo_dark,
                            scope_cfg, roadmap_cfg)
     json_out = render_json(scope, date, items, groups)
+    basename = scope_basename(scope, scope_cfg, date)
 
     if args.dry_run:
         print(f"kb-roadmap (dry-run): {len(items)} items, {sum(1 for g in groups.values() if len(g)>1)} correlated")
-        print(f"  would write: {output_dir}/roadmap-{date}.md|.html|.json")
+        print(f"  would write: {output_dir}/{basename}.md|.html|.json")
+        print(f"  would refresh: {roadmap_root}/index.html")
         return 0
 
-    (output_dir / f"roadmap-{date}.md").write_text(md, encoding="utf-8")
-    (output_dir / f"roadmap-{date}.html").write_text(html_out, encoding="utf-8")
-    (output_dir / f"roadmap-{date}.json").write_text(json_out, encoding="utf-8")
-    print(f"kb-roadmap: wrote roadmap-{date}.[md|html|json] to {output_dir}")
+    (output_dir / f"{basename}.md").write_text(md, encoding="utf-8")
+    (output_dir / f"{basename}.html").write_text(html_out, encoding="utf-8")
+    (output_dir / f"{basename}.json").write_text(json_out, encoding="utf-8")
+    roadmap_root.mkdir(parents=True, exist_ok=True)
+    (roadmap_root / "index.html").write_text(render_scope_index(roadmap_root), encoding="utf-8")
+    print(f"kb-roadmap: wrote {basename}.[md|html|json] to {output_dir}")
     print(f"  items: {len(items)}  correlated: {sum(1 for g in groups.values() if len(g)>1)}  single: {sum(1 for g in groups.values() if len(g)==1)}")
     return 0
 

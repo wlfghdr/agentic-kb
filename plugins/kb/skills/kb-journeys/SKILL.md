@@ -28,7 +28,7 @@ license: Apache-2.0
 
 # Skill: KB Journeys
 
-Journeys describe how a persona moves through a product, service, or process — as a **hierarchy** (journey → phase → sub-journey → step) with explicit entry conditions, exit conditions, cross-journey interfaces, and readiness assessments per visible step. They are a first-class product-management KB artifact, separate from roadmaps (plan↔delivery) and topics (positions).
+Journeys describe how a persona moves through a product, service, or process — as a **hierarchy** (journey → phase → sub-journey → step) with explicit entry conditions, exit conditions, cross-journey interfaces, and readiness assessments per visible step. They are a first-class product-management KB artifact, separate from roadmaps (plan↔delivery) and topics (positions), but tightly coupled to both as the product-behavior reference layer.
 
 This skill turns markdown journey specs into:
 
@@ -44,6 +44,17 @@ Invoke whenever the user:
 - Describes a user flow, a phase map, an onboarding path, an incident response path, or any multi-step persona-centric narrative.
 - Asks *"how does a user / customer / operator move through X?"*.
 
+## Why journeys matter in the operating model
+
+Journeys are the cleanest shared answer to: **what is the thing supposed to do for whom, through which path, at what level of readiness?**
+
+That makes them the bridge between:
+
+- **joint roadmap intent** — what leadership/product says should move
+- **workstream detail reality** — what engineering is actually building, learning, changing, and proving
+
+Roadmap items should move journey readiness. Delivery updates should be explainable in journey terms. Scope changes should be visible as changes in journey shape, step priority, or readiness movement, not only as ticket churn.
+
 ## Core rules (always apply)
 
 1. **Markdown is the source of truth.** HTML is generated; never hand-edit the HTML.
@@ -54,9 +65,11 @@ Invoke whenever the user:
 6. **Zero vendor strings.** Brand colors, fonts, logos come from the adopter's `.kb-config/artifacts.yaml`. The skill's template ships with neutral tokens.
 7. **Dual output always.** Every `render` run emits the per-journey HTMLs + the mocks index in the same pass. They never drift.
 8. **Journeys are ground truth for the roadmap.** When a scope in `kb-roadmap` declares `journey-refs` pointing here, every roadmap item is cross-checked against its cited step(s). Journey steps are the definition of what the product must do; roadmap items exist to move step readiness forward. A journey is **never** silently updated from roadmap findings — drift findings trigger `/kb journeys review <step>`, which is a deliberate authoring pass.
-9. **Log every run** to `.kb-log/YYYY-MM-DD.log`.
-10. **Setup decides ownership.** `/kb setup` proposes the owning layer from the user's role, audience, sources, and desired outputs. The conservative default is to co-locate journeys with the roadmap scope they ground. Cross-layer journey inheritance is allowed by the layer graph but treated as a later enhancement unless the user explicitly configures it.
-11. **Journey text stays value-oriented.** Step titles describe what the persona can do, learn, decide, or recover from; implementation mechanics belong in step detail, interfaces, or readiness notes.
+9. **Journeys must work both top-down and bottom-up.** Top-down: strategy or roadmap intent can introduce or re-prioritize a journey or step. Bottom-up: engineering discoveries, demo feedback, prototype learning, and customer signal can force a journey refinement, split, merge, or readiness downgrade.
+10. **Daily work should feed journeys with intent, not noise.** Not every ticket touches a journey, but every meaningful product behavior change should be able to point to the step it advances, challenges, or invalidates.
+11. **Log every run** to `.kb-log/YYYY-MM-DD.log`.
+12. **Setup decides ownership.** `/kb setup` proposes the owning layer from the user's role, audience, sources, and desired outputs. The conservative default is to co-locate journeys with the roadmap scope they ground. Cross-layer journey inheritance is allowed by the layer graph but treated as a later enhancement unless the user explicitly configures it.
+13. **Journey text stays value-oriented.** Step titles describe what the persona can do, learn, decide, or recover from; implementation mechanics belong in step detail, interfaces, or readiness notes.
 
 ## Hierarchy
 
@@ -199,7 +212,6 @@ The journey template reads the same tokens block as `kb-roadmap` (`--fg`, `--bg`
 - `templates/journey.md.hbs` — single-journey markdown template
 - `templates/journey-overview.md.hbs` — cross-journey overview template
 - `templates/journey.html.hbs` — per-journey HTML template (neutral tokens; brand tokens merged from adopter's config)
-- `templates/overview.html.hbs` — index/overview HTML template
 - `templates/mock-standalone.html.hbs` — standalone mock page template
 - `templates/shared.css.hbs` — base CSS; adopter's brand tokens block is inlined at render time
 
@@ -212,9 +224,12 @@ The journey template reads the same tokens block as `kb-roadmap` (`--fg`, `--bg`
 
 Draft (`v0.2.0`). Setup-proposed when the user's role, goals, sources, or desired outputs imply product-management journey work. Activate by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml` for the confirmed owning layer.
 
+The shipped helper scripts in this repo currently cover artifact rendering and standalone-mock extraction, including no-extra-dependency fallback paths when `python-markdown` or `beautifulsoup4` are absent. The broader `/kb journeys` authoring and audit flows remain part of the behavioral spec rather than the local helper runtime.
+
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-08 | Bumped to v0.2.0, removed the stale `overview.html.hbs` template claim, and clarified current helper-script coverage plus optional dependency fallbacks | Integration pass |
 | 2026-04-30 | Promoted journey work into the product-management surface: setup-derived ownership, broader journey/flow triggers, and value-oriented step-title rules | Product-management surface integration |
 | 2026-04-22 | Removed internal-repo reference from extract_mocks.py description | Vendor-neutrality review |

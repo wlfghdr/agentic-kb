@@ -18,28 +18,34 @@ Top-level shape:
 
 ```json
 {
-  "version": "0.2.0",
-  "generated_at": "2026-04-21T14:30:00Z",
+  "generated_at": "2026-05-08T14:30:00",
   "scope": "product-a",
-  "timeframe": { "kind": "since", "since": "2026-04-01" },
-  "plan_sources": [ { "name": "...", "adapter": "...", "items": [...] } ],
-  "delivery_sources": [ { "name": "...", "adapter": "...", "items": [...] } ],
-  "correlations": [ { "plan_id": "...", "delivery_id": "...", "tier": 2, ... } ],
-  "mismatches": {
-    "delivered-unplanned": [...],
-    "planned-undelivered": [...],
-    "traceability-gap": [...],
-    "stalled-in-progress": [...]
-  },
-  "sections": {
-    "A": {...}, "B": {...}, "C": {...},
-    "D": {...}, "E": {...}, "F": {...}, "G": {...}
-  },
-  "counts": {
-    "plan_items": 42,
-    "delivery_items": 118,
-    "matches_by_tier": { "1": 12, "2": 8, "3": 5, "4": 3 },
-    "mismatches_total": 17
+  "date": "2026-05-08",
+  "generator": "kb-roadmap",
+  "items": [
+    {
+      "id": "ABC-101",
+      "title": "Planned item",
+      "status": "In Progress",
+      "phase": "in-delivery",
+      "tracker": "plan-export"
+    }
+  ],
+  "correlations": [
+    { "id": "ABC-101", "appearances": 2, "trackers": ["delivery-export", "plan-export"] }
+  ],
+  "summary": {
+    "total": 2,
+    "by_phase": {
+      "idea": 0,
+      "defined": 0,
+      "committed": 0,
+      "in-delivery": 1,
+      "shipped": 1,
+      "archived": 0
+    },
+    "correlated": 1,
+    "single_tracker": 0
   },
   "warnings": []
 }
@@ -115,12 +121,17 @@ html-template:
     dark: .kb-references/brand/logo-dark.svg
 ```
 
+## Root index
+
+`<output-dir>/index.html` is refreshed after every non-dry-run render. It lists the latest HTML artifact per scope and links directly into the scope folder.
+
 ## Versioning
 
-The `version` field in the JSON matches the skill's SKILL.md `version`. Schema changes bump this. Older JSON artifacts remain readable across minor versions within a major.
+The helper's JSON payload does not currently carry the SKILL version field. Compatibility is tracked through the scope/date filename contract plus the root `CHANGELOG.md`. The richer versioned schema remains the draft target.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-08 | Aligned the artifact contract with the shipped helper output shape, roll-up filename rule, and root index refresh behavior | Integration pass |
 | 2026-04-30 | Updated the JSON sidecar version example to match kb-roadmap v0.2.0 | Product-management surface integration |

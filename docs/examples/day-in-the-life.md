@@ -1,6 +1,6 @@
 # Example: Day in the Life
 
-> **Version:** 5.0.0 | **Last updated:** 2026-04-25
+> **Version:** 5.0.0 | **Last updated:** 2026-05-10
 
 An illustrative walkthrough of a single day for a user named Alex, a principal engineer working on an observability platform. Alex has one anchor layer, two shared team layers, and consumes company guidance from a consumer layer. The examples below are not normative; they show what the system feels like in practice.
 
@@ -79,6 +79,16 @@ Suggested next steps:
   2. Use /kb report progress team-observability before the weekly sync
 ```
 
+## Shared artifact rhythm behind the scenes
+
+In a team using roadmap and journeys seriously, Alex would usually keep three recurring shared artifacts in motion:
+
+- a **status report** such as `_kb-references/reports/sources/platform/status-platform-2026-04-18.md` for what matters now,
+- a **delivery report** such as `_kb-references/reports/sources/platform/delivery-platform-2026-04-18.md` for roadmap-vs-reality,
+- and a **roadmap change report** such as `_kb-references/reports/sources/platform/roadmap-change-platform-2026-04-18.md` whenever the baseline itself moves.
+
+That keeps the daily chat, the roadmap, the journeys, and stakeholder updates from drifting apart.
+
 ## The Point
 
 Alex never had to manually maintain a wiki hierarchy. The agent handled the bookkeeping while the human kept control over meaning, audience, and promotion.
@@ -89,5 +99,6 @@ Alex never had to manually maintain a wiki hierarchy. The agent handled the book
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added the shared artifact rhythm connecting status, delivery, and roadmap-change reports | Adoption-oriented engineering pass |
 | 2026-04-25 | Reworked the example for 5.0.0: anchor layer, named team layers, year-based finding paths, and explicit cross-layer promotion replaced the old fixed-ladder example | v5.0.0 flexible layer model |
 | 2026-04-18 | Initial version | Extracted from source spec §13 |
