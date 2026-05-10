@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 3.1.0
+> **Version:** 3.1.1
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -352,6 +352,8 @@ The same config files also host optional draft primitives:
 
 These blocks are ignored unless the corresponding skills are installed and configured.
 
+Current draft-helper reality: the repo ships neutral renderer helpers for roadmap and journey artifacts under `plugins/kb/skills/*/scripts/`. They are sufficient for local validation and artifact generation, but they do not yet implement the full interactive `/kb roadmap` and `/kb journeys` command surface described by the behavioral specs.
+
 ---
 
 ## 6. HTML Artifacts
@@ -397,6 +399,25 @@ The `report.html` template has 12 slide types. Agents pick per purpose:
 | Pitch | Cover → Pitch → Comparison → Closing |
 | Roadmap Status | Cover → Metrics → Kanban → Stakeholder Map → Closing |
 | Topic Presentation | Cover → Content slides → Comparison → Closing |
+
+### Shared collaboration artifacts
+
+For recurring software-engineering work, the KB should keep a reviewable markdown source behind the most common shared reports:
+
+| Artifact | Source template | Canonical markdown source path | Relationship to roadmap and journeys |
+|----------|-----------------|-------------------------------|--------------------------------------|
+| Status report | `kb-management/templates/report-status.md` | `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md` | summarizes the current operating picture using roadmap scope, delivery reality, blockers, and decisions |
+| Delivery report | `kb-management/templates/report-delivery.md` | `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md` | reconciles roadmap commitments against journey readiness and delivery signals |
+| Roadmap change report | `kb-management/templates/report-roadmap-change.md` | `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md` | records baseline changes, their reasons, and the required downstream updates |
+
+Rules:
+
+1. The markdown source is the canonical collaboration artifact. HTML is a rendering for consumption.
+2. `<scope>` must match the roadmap or journey scope name when one exists, for example `growth`, `platform`, or `exec`.
+3. Revisions append a new dated source file, they do not silently overwrite an older one.
+4. Status and delivery reports belong beside roadmap and journey work, not inside those primitives. They link to roadmap and journey artifacts but do not replace them.
+
+These are shared-memory artifacts, not just pretty HTML outputs. The markdown source is for collaboration, review, and traceability.
 
 ### Ritual triggers
 
@@ -487,6 +508,8 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-10 | Added shared collaboration artifact guidance for status, delivery, and roadmap-change report sources |
+| 2026-05-08 | Clarified the shipped role of the draft roadmap/journey helper scripts and bumped the reference patch version |
 | 2026-04-22 | Added Codex CLI to the harness support model as a compatible CLI workflow, clarified first-class vs partial/manual support tiers |
 | 2026-04-22 | Fixed markdown-lint violations (indented heading/list, extra table column), removed stale doc-drift source column |
 | 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree |

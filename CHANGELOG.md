@@ -21,10 +21,29 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Changed
 
+- **Shared report collaboration contract** (`docs/REFERENCE.md`, `docs/collaboration.md`, `plugins/kb/skills/kb-management/references/*.md`) — status, delivery, and roadmap-change reports now have canonical markdown source paths under `_kb-references/reports/sources/<scope>/`, explicit ownership and approval boundaries, deterministic refresh triggers, and a documented feedback loop that connects leaders, customers, demos, prototypes, and delivery reality back into roadmap, journeys, and decisions.
+
+### Added
+
+- **Shared report contract validation** (`scripts/check_report_artifacts.py`, `.github/workflows/validate.yml`) — CI now validates the report templates and docs for the shared report family so canonical paths, metadata, approval fields, and section contracts do not drift.
+
+### Version bumps
+
+- Root `VERSION`: 3.4.1 → 3.4.2.
+- `plugin.json`: 3.4.1 → 3.4.2.
+- `plugins/kb/plugin.json`: 3.4.1 → 3.4.2.
+- `.claude-plugin/marketplace.json`: 3.4.1 → 3.4.2.
+- `plugins/kb/skills/kb-management/SKILL.md`: 3.4.0 → 3.4.2.
+
+### Changed
+
+- **`kb-roadmap` scope/source contract alignment** — the shipped helper now resolves roadmap data from the published `roadmap.plan-sources[]` / `roadmap.delivery-sources[]` path (with legacy `issue-trackers[]` / `scopes.<name>.trackers[]` compatibility), auto-refreshes `_kb-roadmaps/index.html`, and supports roll-up scopes with the documented `roadmap-<scope>-<date>` filename pattern. The roadmap docs now distinguish this shipped helper behavior from the broader future command surface.
 - **`/kb promote` for local team KBs** — promotion is now a composite operation: stage the intake in the target contributor `_kb-inputs/`, run the L2 review immediately in team context, archive the staged input under `_kb-inputs/digested/YYYY-MM/`, and leave the reviewed result in `_kb-references/`. Updated `kb-management`, its command/output docs, the team-scaffold template, and collaboration guidance so promote no longer teaches a mandatory second manual `/kb review` after every L1 promotion.
 
 ### Fixed
 
+- **`kb-journeys` render pipeline drift** — `render_journeys.py` now emits `shared.css`, per-journey HTML, `index.html`, and the standalone mocks set in one pass, preserves step anchors in no-dependency fallback mode, and keeps mock extraction working even when `python-markdown` or `beautifulsoup4` are absent.
+- **Draft-surface regression coverage** — CI now exercises the shipped roadmap/journey helpers directly with simulated workspaces so config/artifact drift is caught before merge.
 - **Missing `idea.md` scaffold template** — restored `plugins/kb/skills/kb-management/templates/idea.md` so `/kb idea` has a canonical file source again, matching the behavioral spec and REFERENCE docs.
 - **`/kb setup` scaffold source ambiguity** — clarified in `plugins/kb/skills/kb-setup/SKILL.md` which personal-KB scaffold files come from `kb-setup/templates/` versus `kb-management/templates/`, so implementers no longer have to guess across two directories.
 - **Residual vendor-neutrality cleanup** — removed the last internal-specific residue from the public spec by replacing an internal example label in `kb-roadmap` adapter docs and generalizing a changelog note that still exposed a vendor-prefixed token pattern.
@@ -54,6 +73,13 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 ### Tooling
 
 - **`check_consistency.py` forbidden-term scanning** — extended to cover all text file types and removed the `plugins/` exclusion so skill/agent docs are also checked.
+
+### Version bumps
+
+- Root `VERSION`: 3.4.0 → 3.4.1.
+- `plugin.json`: 3.4.0 → 3.4.1.
+- `plugins/kb/plugin.json`: 3.4.0 → 3.4.1.
+- `.claude-plugin/marketplace.json`: 3.4.0 → 3.4.1.
 
 ## [3.4.0] — 2026-04-22
 

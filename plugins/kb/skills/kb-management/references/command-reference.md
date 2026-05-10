@@ -54,7 +54,34 @@
 | `/kb status --refresh-overviews` | Manually rebuild `inventory.html`, `open-decisions.html`, `open-tasks.html`, and the root artifact `index.html` when you need a repair/rebuild pass |
 | `/kb present [topic/file]` | Generate HTML presentation from topic/finding |
 | `/kb report [scope]` | Generate HTML report (personal / team / org / weekly / topic) |
+| `/kb report status [scope]` | Generate a shared status report for leads, product, and stakeholders |
+| `/kb report delivery [scope]` | Generate a delivery report grounded in roadmap + journeys + delivery signals |
+| `/kb report roadmap-change [scope]` | Generate a roadmap change report that explains baseline updates and downstream impact |
 | `/kb setup` | Hand off to `kb-setup` skill |
+
+## `/kb report` guidance for shared artifacts
+
+Use `/kb report` as a family, not a single vague output. For recurring software-engineering collaboration, prefer these specific report intents:
+
+| Report kind | Purpose | Should pull from |
+|-------------|---------|------------------|
+| `status` | shared operating picture | active decisions, blockers, latest delivery report, roadmap scope |
+| `delivery` | commitments vs reality | roadmap artifact, journey coverage, tracker / PR / shipped signals |
+| `roadmap-change` | explain baseline changes | roadmap diff, affected journeys, stakeholder impact, required follow-up |
+| `weekly` | time-boxed memory | week dailies, completed tasks, promotion candidates |
+| `topic` | narrative explanation | findings, topics, decisions, proposals |
+
+When one of these report kinds exists, the agent should say so explicitly in `What I did` and should link the upstream shared artifacts it relied on.
+
+Canonical shared-report contract:
+
+- `status` source: `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md`
+- `delivery` source: `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md`
+- `roadmap-change` source: `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md`
+- `status` may be initiated by the report owner or ritual owner and approved by the named `Owner`.
+- `delivery` may be initiated by engineering or delivery owners and approved by the named engineering or delivery owner.
+- `roadmap-change` may be opened automatically when roadmap scope, sequencing, dates, ownership, or committed phase changes, but it is only approved by the accountable roadmap owner or PM.
+- In other words, roadmap-change may be opened automatically, but never auto-approved.
 
 ## Publish flow (detail)
 
@@ -129,6 +156,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
 | 2026-04-22 | Reframed `/kb promote` as a composite local-team operation: intake plus immediate team review and archival, not a pure inbox copy | Team promote flow fix |
 | 2026-04-22 | Fixed stale `inputs/` path in promote command; renamed section from "Decisions & TODOs" to "Decisions & Tasks" | Spec review |
 | 2026-04-20 | Documented `/kb status --refresh-overviews` as the explicit manual repair and rebuild path, and aligned triage guidance with always-current overviews | v3.2.0 live-overview refresh |

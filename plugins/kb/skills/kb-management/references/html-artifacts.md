@@ -37,6 +37,13 @@ Two families of artifacts:
 
 **Daily + weekly summaries live as findings** (the markdown source). The HTML is a rendered presentation layer. Both are part of historical memory.
 
+### Shared artifact interplay for recurring collaboration
+
+- **Status reports** should summarize the latest delivery report plus open decisions, owners, blockers, and asks.
+- **Delivery reports** should point back to roadmap artifacts and journey evidence, not restate them from scratch.
+- **Roadmap change reports** should be emitted when commitments, scope, sequencing, or milestone framing changes enough that future status reports would otherwise look confusing or contradictory.
+- **Daily and weekly summaries** are historical memory, not substitutes for the current status or delivery picture.
+
 ### Daily summary content
 
 1. At a glance — counts (findings, decisions, todos, skipped).
@@ -72,13 +79,36 @@ The skill offers HTML artifact generation when:
 | Topic accumulated ≥5 new findings since last artifact | *"Regenerate the artifact for <topic>?"* |
 | Org-level digest produced | *"Publish this as an HTML digest?"* |
 
+## Report source artifacts (shared collaboration inputs)
+
+Before rendering HTML, the agent should prefer a small markdown source artifact that other humans can review and update. For recurring software-engineering collaboration, the canonical source shapes are:
+
+| Report type | Source template | Canonical source path | Primary question answered |
+|-------------|-----------------|-----------------------|---------------------------|
+| Status report | `templates/report-status.md` | `_kb-references/reports/sources/<scope>/status-<scope>-YYYY-MM-DD.md` | What matters right now, who owns it, and what needs attention? |
+| Delivery report | `templates/report-delivery.md` | `_kb-references/reports/sources/<scope>/delivery-<scope>-YYYY-MM-DD.md` | What did we commit to deliver, what is actually happening, and where is traceability weak? |
+| Roadmap change report | `templates/report-roadmap-change.md` | `_kb-references/reports/sources/<scope>/roadmap-change-<scope>-YYYY-MM-DD.md` | What changed in the baseline, why, and what downstream artifacts need to be updated? |
+
+Source-artifact rules:
+
+1. `<scope>` uses the same canonical scope name as the linked roadmap or journey artifacts when one exists.
+2. Source markdown is durable and reviewable. HTML is a derived presentation artifact.
+3. A new dated markdown file is created whenever the shared report is materially updated.
+4. The report source must include `Report type`, `Scope`, `Date`, `Audience`, and `Owner` metadata before HTML generation.
+5. `roadmap-change` sources additionally require an explicit `**Approval required from**:` line naming the accountable human before they are treated as approved baseline changes.
+
+These markdown sources belong in the KB as durable shared artifacts. The HTML output is the presentation layer, not the only source of truth.
+
 ## Commands
 
-| Command | Output |
-|---------|--------|
-| `/kb present [topic/file]` | Presentation — slides |
-| `/kb report [scope]` | Report — flowing document |
-| `/kb present --pitch [topic]` | Pitch-style presentation (opinionated narrative + decision ask) |
+| Command | Output | Trigger posture |
+|---------|--------|-----------------|
+| `/kb present [topic/file]` | Presentation — slides | on demand |
+| `/kb report [scope]` | Report — flowing document | on demand |
+| `/kb report status [scope]` | Status report sourced from the current operating picture | weekly plus operating-picture change triggers |
+| `/kb report delivery [scope]` | Delivery report that reconciles roadmap, journeys, and delivery signals | weekly plus delivery-signal and readiness-change triggers |
+| `/kb report roadmap-change [scope]` | Roadmap change report for baseline changes and their impact | event-driven when baseline changes |
+| `/kb present --pitch [topic]` | Pitch-style presentation (opinionated narrative + decision ask) | on demand |
 
 ## Mandatory contract
 
@@ -245,4 +275,5 @@ Every `/kb present` MUST use this file (as customized by Q13) rather than regene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |
 | 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

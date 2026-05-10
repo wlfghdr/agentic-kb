@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import os
 import re
 import sys
 from pathlib import Path
@@ -26,9 +27,8 @@ from pathlib import Path
 try:
     from bs4 import BeautifulSoup, Tag
 except ImportError:
-    print("kb-journeys extract-mocks requires beautifulsoup4. "
-          "Install with: pip install beautifulsoup4", file=sys.stderr)
-    sys.exit(1)
+    BeautifulSoup = None  # type: ignore[assignment]
+    Tag = object  # type: ignore[assignment]
 
 
 MOCK_BEGIN_RE = re.compile(r"<!--\s*mock-begin:\s*([a-z0-9][a-z0-9-]*)\s*-->")
@@ -86,8 +86,64 @@ def render_template(template: str, **vars: str) -> str:
     return out
 
 
+def _extract_one_regex(html_text: str, source_path: Path) -> tuple[list[dict], str]:
+    mocks: list[dict] = []
+    patched = html_text
+    pairs = list(
+        re.finditer(
+            r"<!--\s*mock-begin:\s*([a-z0-9][a-z0-9-]*)\s*-->([\s\S]*?)<!--\s*mock-end:\s*\1\s*-->",
+            html_text,
+        )
+    )
+    for match in pairs:
+        slug = match.group(1)
+        block_html = match.group(2).strip()
+        if not block_html:
+            continue
+        title_match = re.search(r'class="[^"]*mockup-title[^"]*"[^>]*>(.*?)<', block_html, re.DOTALL)
+        title = re.sub(r"<[^>]+>", "", title_match.group(1)).strip() if title_match else slug
+        styles = "\n".join(re.findall(r"(<style[\s\S]*?</style>)", block_html))
+        scripts = "\n".join(re.findall(r"(<script[\s\S]*?</script>)", block_html))
+        before = html_text[:match.start()]
+        anchors = re.findall(r'id="(J\d+(?:\.\d+)*-S\d+)"', before)
+        anchor = anchors[-1] if anchors else None
+        mocks.append(
+            {
+                "slug": slug,
+                "title": title,
+                "anchor": anchor,
+                "container_html": block_html,
+                "styles": styles,
+                "scripts": scripts,
+            }
+        )
+        target_href = f"mocks/{source_path.stem}_{slug}.html"
+        existing_link = re.compile(
+            r'(<a[^>]*class="[^"]*mock-standalone-link[^"]*"[^>]*href=")[^"]+("[^>]*>[^<]*</a>)'
+        )
+        if existing_link.search(block_html):
+            new_block_html = existing_link.sub(rf"\1{target_href}\2", block_html, count=1)
+        else:
+            header_close = re.search(r"(<div[^>]*class=\"[^\"]*mockup-header[^\"]*\"[^>]*>[\s\S]*?</div>)", block_html)
+            if header_close:
+                header_html = header_close.group(1)
+                injected = header_html.replace(
+                    "</div>",
+                    f'<a class="mock-standalone-link" href="{target_href}">↗ Open standalone</a></div>',
+                    1,
+                )
+                new_block_html = block_html.replace(header_html, injected, 1)
+            else:
+                new_block_html = block_html
+        patched = patched.replace(block_html, new_block_html, 1)
+    return mocks, patched
+
+
 def extract_one(html_text: str, source_path: Path) -> tuple[list[dict], str]:
     """Return (mocks, patched_html_text)."""
+    if BeautifulSoup is None or os.environ.get("KB_JOURNEYS_DISABLE_BS4"):
+        return _extract_one_regex(html_text, source_path)
+
     soup = BeautifulSoup(html_text, "html.parser")
     mocks: list[dict] = []
 
@@ -207,7 +263,7 @@ def main() -> int:
     ap.add_argument("--html-dir", required=True, type=Path)
     ap.add_argument("--mocks-dir", required=True, type=Path)
     ap.add_argument("--template", required=True, type=Path)
-    ap.add_argument("--skill-version", default="0.1.0")
+    ap.add_argument("--skill-version", default="0.1.1")
     args = ap.parse_args()
 
     html_dir: Path = args.html_dir

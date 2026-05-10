@@ -1,6 +1,6 @@
 # Reference: source adapters
 
-Adapters normalize heterogeneous plan and delivery sources into a common item shape. The skill ships a minimum neutral set; adopters can add more.
+Adapters normalize heterogeneous plan and delivery sources into a common item shape. The draft behavioral spec covers the full set below. The shipped helper script in this repo currently implements `ticket-export-markdown` and `github-issues`; the remaining adapters stay documented as the next extension points so the published surface remains explicit.
 
 ## Common item shape
 
@@ -34,8 +34,8 @@ Reads a directory of markdown files with YAML frontmatter. Each file is one tick
 
 Expected frontmatter keys:
 
-- `id` (required)
-- `title` (required)
+- `key` (preferred; falls back to the first ticket-style key found in the file)
+- `summary` (preferred; falls back to the H1 body heading)
 - `status`, `assignee`, `labels`, `created`, `updated`, `closed`
 - `hierarchy`: list, e.g. `[Program, Package, Item]`
 
@@ -176,4 +176,5 @@ Collisions raise an explicit error — no silent override.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-08 | Clarified which roadmap adapters are implemented by the shipped helper script versus still spec-only in the draft contract | Integration pass |
 | 2026-04-22 | Replaced an internal example label with a generic one to keep the roadmap adapter reference vendor-neutral | Vendor-neutrality rescreen |

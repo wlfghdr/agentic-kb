@@ -83,7 +83,15 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
       - name: Validate any checked-in HTML artifacts
         run: python3 scripts/check_html_artifacts.py
+      - name: Validate shared report artifact contracts
+        run: python3 scripts/check_report_artifacts.py
       - name: Regression test generate-index against a simulated workspace
         run: python3 scripts/test_generate_index.py
+      - name: Regression test kb-roadmap
+        run: python3 scripts/test_kb_roadmap.py
+      - name: Regression test kb-journeys
+        run: python3 scripts/test_kb_journeys.py

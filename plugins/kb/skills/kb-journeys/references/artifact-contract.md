@@ -42,7 +42,7 @@ The baseline `templates/shared.css.hbs` ships with vendor-neutral tokens:
 }
 ```
 
-When `.kb-config/artifacts.yaml` `journeys-template.tokens` is set, the renderer reads the adopter's CSS file, extracts the `:root` block(s), and **replaces** the baseline block. Everything else (layout, nav, cards, chips, print CSS) stays intact.
+When `.kb-config/artifacts.yaml` `journeys-template.tokens` is set, the renderer reads the adopter's CSS file and replaces the baseline `:root` block, plus the shipped light-theme overrides when they are present in the adopter file. Everything else (layout, nav, cards, chips, print CSS) stays intact.
 
 Tier and readiness chips are configured via `.kb-config/layers.yaml` `journeys.tiers` and `journeys.readiness-levels`. The renderer emits CSS classes per configured tier and readiness level, using the color tokens declared in `journeys.tiers[].color-token`.
 
@@ -52,12 +52,12 @@ Each `<journey-slug>.html` page has:
 
 1. **Top nav** — links to every other journey and the overview, with tier-colored pill classes.
 2. **View-mode toggle** — "Only Journey Description" | "Only Mocks" | "Show Both". Persists in `localStorage`.
-3. **Header** — h1 from the markdown file, plus the metadata block rendered as grid cards (Persona, Entry Point, Value Proposition).
-4. **Readiness strip** — tier-colored callout with target-duration + latest state marker.
+3. **Header** — h1 from the markdown file plus subtitle / tier / target-duration metadata.
+4. **Readiness strip** — summary state derived from the declared step readiness chips.
 5. **Step summary** — auto-generated ToC; every entry links to the step anchor.
 6. **Flow** — each step rendered with id, actor chip, readiness chip, mock (with "↗ Open standalone" link), alternates.
 7. **Interfaces** — the table rendered as a small graph.
-8. **Footer** — watermark (version + last-updated) + theme toggle.
+8. **Footer** — watermark (version + generated-at).
 
 ## Mock standalone pages
 
@@ -76,17 +76,14 @@ The mock's journey file is **patched in place** to inject an "↗ Open standalon
 
 - Mock title + slug
 - Source journey + step id (back-linked)
-- Thumbnail or one-line description (extracted from the first `<h3>`/`<h4>` inside the container, or the container's `aria-label`)
 - Standalone link
 
 ## Overview HTML
 
-`index.html` renders from `overview.md` + the master journey map. Includes:
+`index.html` renders from `overview.md` + the discovered journey set. Includes:
 
 - Tier-grouped journey cards
-- Persona → journey matrix
-- Interface graph across all journeys
-- Entry-point markers
+- The rendered `overview.md` prose below the generated cards
 
 ## Watermark & versioning
 
@@ -94,4 +91,19 @@ Every generated page carries a `<meta name="generator" content="kb-journeys v<ve
 
 ## Idempotency
 
-`render` is idempotent. Running twice with no source change produces byte-identical HTML. This makes git diffs on the generated HTML readable (only real changes show up).
+`render` is idempotent. Running twice with no source change produces byte-identical HTML apart from timestamp fields. This keeps git diffs readable while still stamping each generated artifact.
+
+## Dependency posture
+
+`python-markdown` and `beautifulsoup4` are optional accelerators, not hard requirements for the shipped helper scripts in this repo:
+
+- If `python-markdown` is available, the renderer uses it for richer markdown handling.
+- If it is absent, the built-in fallback renderer still preserves step anchors, mock envelopes, lists, and tables well enough for artifact generation and mock extraction.
+- If `beautifulsoup4` is available, mock extraction uses the DOM-aware path.
+- If it is absent, the extractor falls back to a regex-based local-file path that still emits standalone pages and source-page backlinks for the supported mock envelope contract.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-08 | Aligned the journey artifact contract with the shipped overview/index output, current metadata rendering, and optional dependency fallback behavior | Integration pass |

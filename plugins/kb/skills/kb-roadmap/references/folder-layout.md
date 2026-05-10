@@ -11,15 +11,12 @@ my-kb/
 │   │   ├── roadmap-YYYY-MM-DD.md     # living roadmap (detail)
 │   │   ├── roadmap-YYYY-MM-DD.html
 │   │   ├── roadmap-YYYY-MM-DD.json
-│   │   ├── status-YYYY-MM-DD.md      # short-form status (digest output)
-│   │   ├── status-YYYY-MM-DD.html
-│   │   └── status-YYYY-MM-DD.json
 │   ├── exec/                         # cross-workstream roll-up
 │   │   ├── roadmap-exec-YYYY-MM-DD.md
 │   │   ├── roadmap-exec-YYYY-MM-DD.html
 │   │   └── roadmap-exec-YYYY-MM-DD.json
 │   ├── index.html                    # auto-generated; links to latest per scope
-│   └── archive/                      # roadmaps older than retention window
+│   └── archive/                      # reserved for future retention handling
 ```
 
 ## Two views
@@ -32,21 +29,9 @@ Optimized for the team driving that workstream: ticket-level detail, commit-leve
 
 ### Roll-up view (exec / C-level)
 
-Output of `/kb roadmap --scope exec` (or any scope configured with `kind: roll-up` in `.kb-config/layers.yaml`). Different section set — optimized for a leadership audience reading across workstreams.
+Output of `/kb roadmap --scope exec` (or any scope configured with `kind: roll-up` in `.kb-config/layers.yaml`). The shipped helper aggregates items from the configured `aggregates:` scopes and renders them through the same timeline / findings / status-board frame as a detail scope, with the roll-up scope name baked into the filename.
 
-Sections:
-
-| Section | Content | Aggregation |
-|---|---|---|
-| **X1. Portfolio state** | One card per workstream: status traffic light, top-3 in-flight items, % complete vs plan | Rolled up from each workstream's detail view |
-| **X2. Momentum** | Delta summary per workstream: items shipped, items opened, net change | From delta sections |
-| **X3. Risks** | Stalled items, execution risks, cross-workstream dependencies at risk | Aggregated from mismatches + stalled |
-| **X4. Shifts** | Items moved between workstreams; scope changes; re-prioritizations | From plan-source diff over window |
-| **X5. Scope changes** | Newly added or removed plan items with reason (or "reason unknown") | From plan-source diff, with audit trail |
-| **X6. Decisions needed** | Open `_kb-decisions/` items across workstreams + gaps surfaced by the engine | Aggregated |
-| **X7. Next period focus** | Top plan items per workstream for next window | From forward-plan sections |
-
-Roll-up view deliberately **does not** include commit-level detail, per-ticket tables, or correlation-tier counts. Those live in the detail view one click away. The exec artifact links to each workstream's latest detail artifact under X1.
+The broader leadership-specific `X1`–`X7` section split remains part of the draft behavioral target, but it is not a distinct helper-script layout in this repo yet.
 
 ## Roll-up configuration
 
@@ -67,7 +52,7 @@ roadmap:
       max-items-per-workstream: 3               # for X1, X7
 ```
 
-Running `/kb roadmap --scope exec` iterates the `aggregates` list, loads each workstream's latest JSON sidecar (or generates fresh if `--fresh`), then composes the roll-up.
+Running `/kb roadmap --scope exec` iterates the `aggregates` list, loads each configured child scope through the same source-resolution path as a detail render, de-duplicates identical `(tracker, id)` pairs, then writes `roadmap-exec-YYYY-MM-DD.{md,html,json}` plus the refreshed root `_kb-roadmaps/index.html`.
 
 ## Cadence (non-normative)
 
@@ -85,4 +70,10 @@ The skill uses `_kb-roadmaps/` by default. Adopters may override via `roadmap.ou
 
 ## Retention + archive
 
-Files older than `roadmap.retention-days` (default 180) are moved to `<output-dir>/archive/` on the next run. The `index.html` always links to the latest file per scope; archive is a flat directory with date-prefixed filenames.
+The `archive/` directory is reserved for future retention handling. The shipped helper script does not currently move files automatically; it only refreshes `index.html` so the latest artifact per scope stays discoverable at a stable path.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-08 | Removed unimplemented `status-*` outputs and clarified the current helper-script behavior for roll-up scopes and root index generation | Integration pass |
