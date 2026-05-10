@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 5.5.0
+version: 6.0.0
 uses:
   - kb-management
   - kb-setup
@@ -77,8 +77,8 @@ Monitor `_kb-ideas/`:
 ### 5. Cross-layer flow
 
 - Promotion candidates surface in `end-week`.
-- Digests run automatically when a team KB is ahead of the local watermark (Level 2+).
-- Publication (L4) is always manual — never auto-publishes a skill.
+- Digests run automatically when a parent layer is ahead of the local watermark (automation level 2 or 3).
+- Publication to a layer marketplace is always manual — never auto-publishes a skill, even at level 3.
 - Cross-layer promotions check mission alignment when VMG is declared.
 
 ### 6. Artifact generation
@@ -96,8 +96,8 @@ Rules (both): deterministic, fast. Watermark uses `latest · {YYYY-MM-DD HH:MM}`
 
 **Historical artifacts** — dated, immutable, versioned:
 
-- `/kb end-day` → **daily summary** as a finding (`findings/YYYY-MM-DD-daily-summary.md`) + rendered HTML (`reports/daily-YYYY-MM-DD.html`).
-- `/kb end-week` → **weekly summary** as a finding (`findings/YYYY-MM-DD-weekly-summary.md`) + rendered HTML (`reports/weekly-YYYY-WW.html`).
+- `/kb end-day` → **daily summary** as a finding (`findings/YYYY/YYYY-MM-DD-daily-summary.md`) + rendered HTML (`reports/daily-YYYY-MM-DD.html`).
+- `/kb end-week` → **weekly summary** as a finding (`findings/YYYY/YYYY-MM-DD-weekly-summary.md`) + rendered HTML (`reports/weekly-YYYY-WW.html`).
 - `/kb present [topic]` → presentation.
 - `/kb report [scope]` → report.
 - `/kb roadmap [scope]` and `/kb journeys [scope]` → product-management artifacts when setup has enabled the owning layer's `roadmap:` or `journeys:` config.
@@ -149,7 +149,7 @@ notify user via configured channel (terminal | slack | email)
 
 The loop MUST:
 
-- Never publish to L4 automatically.
+- Never publish to any layer marketplace automatically.
 - Never auto-promote topics listed in `auto-promote.exclude-topics`.
 - Never push to a red CI state.
 - Always log every action.
@@ -179,6 +179,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Version aligned to 6.0.0 for the v5 adoption-arc closeout. Removed the residual fixed-ladder `L4` references from the cross-layer-flow section ("Publication (L4) is always manual" → "Publication to a layer marketplace is always manual") and the autonomous-loop section ("Never publish to L4 automatically" → "Never publish to any layer marketplace automatically"). Tightened the digest-automation note from the ambiguous "Level 2+" to the explicit "automation level 2 or 3" wording. Corrected the daily-summary and weekly-summary finding paths from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec. No behavioral changes — the publish path was already manual at every automation level | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-30 | Version aligned to 5.5.0 after setup began proposing product-management roadmap/journey ownership from role, goals, sources, and outputs. The operator inherits status and artifact handoffs through kb-management + kb-setup | Product-management surface integration |
 | 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix in kb-management + kb-setup's packaged `kb.prompt.md`. The composed operator now inherits the new `/kb roadmap` and `/kb journeys` handoffs without any change to its own contract | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Version aligned to 5.4.1 for the patch release. No behavioral changes to the agent contract | 5.4.1 patch release |

@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 5.6.0
+version: 6.0.0
 triggers:
   # Command surface
   - "/kb"
@@ -162,6 +162,10 @@ Full command reference: `references/command-reference.md`.
 | Idea | `/kb idea [text]` | Create a seed idea |
 | Develop | `/kb develop [idea]` | Spar on assumptions, contradictions, and convergence |
 | Decide | `/kb decide [desc]` / `/kb decide resolve [D-id]` | Open or resolve a decision |
+| Brief | `/kb brief [title]` | Open a delivery-intent artifact under `_kb-delivery/briefs/`; requires `delivery` feature on the layer |
+| Spec | `/kb spec [title]` | Open a design-contract artifact under `_kb-delivery/specs/`; requires `delivery` feature on the layer |
+| Release | `/kb release [title]` | Open a release record under `_kb-operations/releases/YYYY/`; requires `operations` feature on the layer |
+| Incident | `/kb incident [title]` | Open an incident record under `_kb-operations/incidents/YYYY/`; requires `operations` feature on the layer |
 | Present | `/kb present [topic/file]` | Generate a versioned HTML presentation |
 | Report | `/kb report [scope]` | Generate a layer or topic report |
 | Progress report | `/kb report progress [scope]` | Generate the multi-source progress narrative |
@@ -242,6 +246,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | v6.0.0: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical flow primitives in the layer-aware flow table so the four operating-model artifacts have discoverable command verbs (the trigger keywords were already declared, but the verb path was implicit). Each verb requires the matching `delivery` or `operations` feature on the target layer; the skill refuses cleanly if it is not enabled. No changes to gate scoring, promote/publish/digest semantics, the layer-graph rules, or any other behavioral contract | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now get one canonical owning layer, and source-layer records are closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Added natural-language product roadmap/journey triggers and clarified that missing config should route to setup/placement rather than silent scaffolding | Product-management surface integration |
 | 2026-04-29 | Closed the draft-skill discoverability gap: added `roadmap`/`roadmaps`/`journey`/`journeys` to the trigger surface and a flow-primitive row that names the `/kb roadmap` and `/kb journeys` handoffs to the kb-roadmap and kb-journeys draft skills. Skill version aligned to 5.4.2 | v5.4.2 draft-skill discoverability fix |

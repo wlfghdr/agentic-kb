@@ -95,3 +95,9 @@ HH:MM:SSZ | <op> | <scope> | <target> | <details>
 Ops include: `capture`, `digest`, `digest-connections`, `promote`, `publish`, `note`, `note-end`, `update-topic`, `task-add`, `task-done`, `decide`, `decide-resolve`, `audit`, `report`, `presentation`, `skipped`, `install`, `ritual-*`, `automation-failure`, `correction`.
 
 Scopes are descriptive, not numbered: `personal`, `team`, `org-unit`, `company`, `workspace`, `personal→team`, `team→personal`, `team→company`, `marketplace`, `connections`.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3. No semantic changes to the layer-graph summary, the layout examples, the config shape, the log-line format, or the descriptive scope list | v6.0.0 adoption + daily-usage gap audit |

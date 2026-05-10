@@ -42,7 +42,7 @@ Before: todo.md (mixed open + done)
 After:
   _kb-tasks/focus.md
   _kb-tasks/backlog.md
-  _kb-tasks/archive/YYYY-MM.md   (done items grouped by completion month)
+  _kb-tasks/archive/YYYY/MM.md   (done items grouped by completion year/month)
 ```
 
 ### Single `decisions.md` / `decisions/open.md` → individual files
@@ -84,4 +84,5 @@ Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Corrected the task-archive migration target from the flat `_kb-tasks/archive/YYYY-MM.md` to the canonical `_kb-tasks/archive/YYYY/MM.md` shape defined in `docs/REFERENCE.md` §3, so the migration helper produces a layout that matches the rest of the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-25 | Added the explicit `/kb migrate layer-model` and `/kb migrate archives` helper guidance for the 5.1 closeout so legacy adopters have a deterministic migration path | v5.1.0 closeout release |

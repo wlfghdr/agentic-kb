@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 5.6.0
+> **Version:** 6.0.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -299,40 +299,51 @@ Meeting notes should be shared at multi-user layers unless the adopter intention
 ```markdown
 # Brief: <title>
 
-**Date**: YYYY-MM-DD
-**Workstream**: <name>
-**Owner**: @name
 **Status**: draft | active | superseded | complete
+**Owner**: @name
+**Stakeholders**: @names
+**Workstream**: <name>
+**Outcome window**: <date or quarter>
 
 ## Problem
-## Outcome sought
-## Constraints
-## Stakeholders
+## Why now
+## Scope
 ## Non-goals
-## Linked artifacts
+## Success signals
+## Dependencies and handoffs
+
+---
+## Changelog
+| Date | What changed | Source |
 ```
 
-Briefs are direction-setting handoff artifacts. They explain why work matters and what outcome is expected without prescribing the full implementation shape.
+Briefs are direction-setting handoff artifacts. They explain why work matters, why now, and what outcome is expected without prescribing the full implementation shape. The inline changelog is required because briefs are living documents, not snapshots — they get refined as direction sharpens.
 
 ### Spec (`_kb-delivery/specs/YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Spec: <title>
 
-**Date**: YYYY-MM-DD
-**Workstream**: <name>
-**Owner**: @name
 **Status**: draft | proposed | accepted | superseded
+**Owner**: @name
+**Brief**: <link to originating brief>
+**Linked decisions**: D-id list
+**Workstream**: <name>
 
 ## Context
-## Scope
-## Design
+## Requirements
+## Proposed shape
 ## Risks and trade-offs
-## Validation plan
-## Linked artifacts
+## Rollout and migration
+## Verification
+## Open questions
+
+---
+## Changelog
+| Date | What changed | Source |
 ```
 
-Specs are design-decision artifacts. They connect briefs, findings, decisions, and delivery work into a reviewable implementation proposal.
+Specs are design-decision artifacts. They connect briefs, findings, decisions, and delivery work into a reviewable implementation proposal. The inline changelog tracks how the design moved from `draft` toward `accepted` and what was learned along the way.
 
 ### Release record (`_kb-operations/releases/YYYY/YYYY-MM-DD-slug.md`)
 
@@ -340,30 +351,33 @@ Specs are design-decision artifacts. They connect briefs, findings, decisions, a
 # Release: <title>
 
 **Date**: YYYY-MM-DD
-**Workstream**: <name>
-**Owner**: @name
-**Environment**: dev | staging | prod
 **Status**: planned | in-progress | shipped | rolled-back
+**Owner**: @name
+**Audience**: <who is affected>
+**Linked spec**: <link to driving spec>
+**Workstream**: <name>
 
-## Summary
-## Change set
-## Validation
-## Risks
-## Follow-up tasks
-## Linked artifacts
+## Scope
+## Rollout plan
+## Verification
+## Rollback plan
+## Communications
+## Follow-up
 ```
 
-Release records make delivery state auditable across engineering, QA, release coordination, and leadership.
+Release records make delivery state auditable across engineering, QA, release coordination, and leadership. Once shipped, the record becomes append-only apart from clearly marked corrections.
 
 ### Incident record (`_kb-operations/incidents/YYYY/YYYY-MM-DD-slug.md`)
 
 ```markdown
 # Incident: <title>
 
-**Date**: YYYY-MM-DD
-**Workstream**: <name>
+**Opened**: YYYY-MM-DD HH:MM
 **Severity**: sev-1 | sev-2 | sev-3 | sev-4
 **Status**: active | mitigated | resolved | follow-up
+**Owners**: @names
+**Services**: <affected services or surfaces>
+**Workstream**: <name>
 
 ## Impact
 ## Detection
@@ -819,6 +833,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-10 | Version aligned to 6.0.0 after the v5 adoption-arc closeout. Updated the §4 brief, spec, release, and incident file formats so they match the templates the skill actually instantiates: brief gains "Why now", "Success signals", "Dependencies and handoffs", and an inline changelog and moves stakeholders into the frontmatter; spec gains "Requirements", "Proposed shape", "Rollout and migration", "Verification", "Open questions", and an inline changelog and links to the originating brief in the frontmatter; release gains "Audience" and "Linked spec" frontmatter and switches to the rollout/rollback/communications/follow-up section set; incident gains "Owners", "Services", and the precise "Opened" timestamp. The four artifacts are now the same shape across REFERENCE, templates, and the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs in `command-reference.md` |
 | 2026-05-10 | Added shared collaboration artifact guidance for status, delivery, and roadmap-change report sources |
 | 2026-05-08 | Clarified the shipped role of the draft roadmap/journey helper scripts and bumped the reference patch version |
 | 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now have one canonical layer unless the source and target scopes genuinely differ |

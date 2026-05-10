@@ -32,8 +32,8 @@ The dashboard is the single owner-facing surface for live state — it renders f
 | Presentation | `/kb present [topic]` | `reports/<slug>-v<version>.html` |
 | Report | `/kb report [scope]` | `reports/<slug>-v<version>.html` |
 | Pitch | `/kb present --pitch [topic]` | `reports/<slug>-pitch-v<version>.html` |
-| Daily summary | `/kb end-day` (automatic) | `reports/daily-YYYY-MM-DD.html` + finding `findings/YYYY-MM-DD-daily-summary.md` |
-| Weekly summary | `/kb end-week` (Friday 15:00) | `reports/weekly-YYYY-WW.html` + finding `findings/YYYY-MM-DD-weekly-summary.md` |
+| Daily summary | `/kb end-day` (automatic) | `reports/daily-YYYY-MM-DD.html` + finding `findings/YYYY/YYYY-MM-DD-daily-summary.md` |
+| Weekly summary | `/kb end-week` (Friday 15:00) | `reports/weekly-YYYY-WW.html` + finding `findings/YYYY/YYYY-MM-DD-weekly-summary.md` |
 
 **Daily + weekly summaries live as findings** (the markdown source). The HTML is a rendered presentation layer. Both are part of historical memory.
 
@@ -283,6 +283,7 @@ Every `/kb present` MUST use this file (as customized by the phase-3 HTML-stylin
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Corrected the daily-summary and weekly-summary finding paths in the historical-artifacts table from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |
 | 2026-05-05 | Replaced two stale "kb-setup Q13" references for the presentation-template copy step with phase-relative wording so the doc no longer points at a question number that the v5.4.0 renumbering invalidated. Behavioral contract unchanged | Onboarding consistency review |
 | 2026-04-25 | Added an explicit external-read preflight contract plus a mandatory post-generation QA sweep so artifact generation has reviewable fetch boundaries and a defined completion gate | Generic learnings extracted from roadmap/presentation feature work |

@@ -39,6 +39,17 @@ Tasks follow the same canonical-ownership rule as decisions: if a team, org, or 
 | `/kb idea [text]` | Create `_kb-ideas/I-YYYY-MM-DD-slug.md` (`**Stage**: seed`) |
 | `/kb develop [idea]` | Sparring session: probe assumptions, contradictions, gaps, convergence; append to the idea's Development Log |
 
+## Delivery & Operations
+
+| Subcommand | Action |
+|-----------|--------|
+| `/kb brief [title]` | Open a delivery-intent artifact under `_kb-delivery/briefs/YYYY-MM-DD-slug.md` from the brief template; prompts for missing problem, scope, success signals, and dependency fields |
+| `/kb spec [title]` | Open a design-contract artifact under `_kb-delivery/specs/YYYY-MM-DD-slug.md` from the spec template; prompts for missing context, requirements, proposed shape, verification, and open-questions fields, and offers to link an existing brief |
+| `/kb release [title]` | Open a release record under `_kb-operations/releases/YYYY/YYYY-MM-DD-slug.md` from the release template; prompts for audience, scope, rollout plan, verification, and rollback before the change ships |
+| `/kb incident [title]` | Open an incident record under `_kb-operations/incidents/YYYY/YYYY-MM-DD-slug.md` from the incident template; opened timestamp, severity, owners, services, impact, detection, and timeline are required and append-only once mitigated |
+
+These four verbs require the layer to declare the matching feature in `.kb-config/layers.yaml`: `delivery` for `brief` and `spec`, `operations` for `release` and `incident`. If the feature is not enabled, the skill refuses with a clear message and points at the layer config. Brief and spec link upward into decisions and findings; release and incident link downward into follow-up tasks and findings.
+
 ## Digests & Layer Flow
 
 | Subcommand | Action |
@@ -198,6 +209,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Added a dedicated Delivery & Operations subcommand section (`/kb brief`, `/kb spec`, `/kb release`, `/kb incident`) so the four operating-model artifacts have canonical command verbs that match the file paths in `docs/REFERENCE.md` §3 and the templates in `plugins/kb/skills/kb-management/templates/`. Each verb requires the matching `delivery` or `operations` feature on the target layer and refuses cleanly when the feature is not enabled. They were already wired as feature-keyword triggers in the kb-management skill but had no discoverable verb, which forced users to rely on natural-language intent matching | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
 | 2026-05-06 | Clarified that `/kb promote` must keep decisions and tasks canonical to one owning layer instead of leaving parallel active source and target records | Decision/task ownership follow-up |
 | 2026-04-30 | Clarified that missing roadmap/journey config should route to setup for the owning-layer decision, not silent scaffolding | Product-management surface integration |

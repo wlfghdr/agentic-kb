@@ -215,3 +215,9 @@ Suggested next steps:
 - `../../../../docs/collaboration.md`
 - `../../../../docs/examples/first-hour.md`
 - `../../../../docs/examples/day-in-the-life.md`
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3. No semantic changes to the action-mode rules, the four required sections, or the example outputs | v6.0.0 adoption + daily-usage gap audit |

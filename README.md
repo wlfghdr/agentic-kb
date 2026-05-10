@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v5.6.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v6.0.0-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -99,12 +99,15 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 
 ```
 # Stable core flows
-/kb                        → status
+/kb                        → status / triage scan
 /kb [text/URL/path]        → capture + evaluate
 /kb review                 → process inputs/
 /kb promote [file] [layer] → promote to the next or named contributor layer
+/kb publish [file] [layer] → package as a skill and publish to a layer marketplace
 /kb digest [layer]         → pull parent-layer changes
 /kb digest connections     → pull linked repo / tracker deltas
+/kb sync [layer]           → cross-reference contributor-scoped artifacts
+/kb diff [layer]           → show what's new per contributor or connection
 /kb migrate archives       → preview or apply year-based archive moves
 /kb migrate layer-model    → preview or apply fixed-ladder to layer-graph migration
 /kb note [text]            → create a working note
@@ -112,10 +115,18 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb idea [text]            → create an idea (seed)
 /kb develop [idea]         → sparring session on an idea
 /kb decide [description]   → open a decision
+/kb brief [title]          → open a delivery-intent artifact
+/kb spec [title]           → open a design-contract artifact
+/kb release [title]        → open a release record
+/kb incident [title]       → open an incident record
 /kb task                   → show focus items
 /kb start-day              → morning briefing
+/kb end-day                → wrap, archive done items, offer commit
+/kb start-week             → Monday planning briefing
 /kb end-week               → Friday 15:00 summary
+/kb audit                  → contradictions, staleness, layer-shape drift
 /kb present [topic]        → versioned HTML presentation (light + dark)
+/kb report [scope]         → topic, layer, or ritual report
 /kb report progress [scope]→ cross-source progress report
 /kb setup                  → interactive onboarding
 
@@ -311,7 +322,7 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v5.6.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v6.0.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
 | Product-management draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.2.0`, setup-proposed by role/goals) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
@@ -329,6 +340,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Rolled the public framework status to 6.0.0 after the v5 adoption-arc closeout: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical command verbs (matching the operating-model artifact chain and the templates the skill instantiates), surfaced the previously undocumented `/kb publish`, `/kb sync`, `/kb diff`, `/kb start-week`, `/kb end-day`, `/kb audit`, and `/kb report [scope]` flows in the public command list, removed the residual fixed-ladder `L1`/`L2/L3`/`L4` drift from the routing prompt and operator agent, aligned the four delivery/operations file formats in `docs/REFERENCE.md` §4 with the templates, and corrected the year-nested archive and weekly-summary paths so daily and weekly rituals write where the spec says they should | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-06 | Rolled the public framework status to 5.6.0 after adding canonical ownership semantics for promoted decisions and tasks, so adopters do not leave parallel active source and target records behind | Decision/task ownership follow-up |
 | 2026-04-30 | Rolled the public framework status to 5.5.1 after correcting the HTML landing-page value proposition so product direction, roadmaps, journeys, delivery, and operations are visible in the top-level story and first-class building blocks | HTML value-prop correction |
 | 2026-04-30 | Rolled the public framework status to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface: `/kb setup` now derives ownership/config from role, goals, sources, and desired outputs instead of leaving the draft skills hidden behind manual config | Product-management surface integration |

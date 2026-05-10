@@ -28,7 +28,7 @@ The user invokes `/kb` from any harness. Route to the `kb-management` skill.
 Evaluate in order and stop at the first match:
 
 1. **No `.kb-config/layers.yaml` anywhere in the workspace** → hand off to the `kb-setup` skill (even if the user typed only `/kb` with no args). Announce: "No KB detected — running setup." Then run the onboarding interview.
-2. **Explicit subcommand** after `/kb` (`review`, `promote`, `publish`, `digest`, `todo`, `task`, `idea`, `develop`, `decide`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`, `setup`) → route to that action per `references/command-reference.md`.
+2. **Explicit subcommand** after `/kb` (`review`, `promote`, `publish`, `digest`, `todo`, `task`, `idea`, `develop`, `decide`, `note`, `brief`, `spec`, `release`, `incident`, `migrate`, `sync`, `diff`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`, `setup`) → route to that action per `references/command-reference.md`.
 3. **Product-management draft-skill subcommand** after `/kb` — `roadmap` (or `roadmaps`) hands off to the `kb-roadmap` skill; `journeys` (or `journey`) hands off to the `kb-journeys` skill. If the active layer has not declared the matching `roadmap:` / `journeys:` config block in `.kb-config/layers.yaml`, refuse with a clear message that names the missing block, points the user at the skill's `references/config-schema.md`, and offers `/kb setup` as the normal path for deciding which layer should own the artifact.
 4. **URL or pasted text** → capture to the anchor layer. Apply the five-question evaluation gate.
 5. **File path inside a known KB layer** → layer-appropriate operation (review/update-topic/decide) on that file.
@@ -42,7 +42,7 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 |---|---|---|
 | Setup complete? | `.kb-config/layers.yaml` exists and names at least one contributor-capable layer | If missing → `/kb setup` |
 | **Top task** | First item in `_kb-tasks/focus.md` (if any) | Always include as `Next up: …` |
-| **External completions** | Open focus/backlog tasks with evidence of closure (merged PR / closed Jira ticket / commit referencing the task slug / same slug already in a shared `_kb-tasks/archive/`). See SKILL.md rule #10c. | Propose archiving — never auto-close |
+| **External completions** | Open focus/backlog tasks with evidence of closure (merged PR / closed tracker ticket / commit referencing the task slug / same slug already in a shared `_kb-tasks/archive/`). See SKILL.md rule 8 (Task creation and closure are explicit). | Propose archiving — never auto-close |
 | Pending inputs | Files under `_kb-inputs/` not yet in `_kb-inputs/digested/` | Count + suggest `/kb review` |
 | Open decisions | Files under `_kb-decisions/` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` | Count + suggest `/kb decide <key>` |
 | Stale tasks | `_kb-tasks/backlog.md` items untouched > 14 days | Annotate `stale: true`; list but don't remove |

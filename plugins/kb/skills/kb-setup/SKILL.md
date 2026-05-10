@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
-version: 5.5.1
+version: 6.0.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -261,6 +261,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | Skill version aligned to 6.0.0 for the v5 adoption-arc closeout. No behavioral changes to the four-phase interview, scaffold output, or migration flow. The setup output contract picks up the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs because the kb-management plugin it composes ships them as canonical flows; the templated `kb.prompt.md` was patched in lock-step to enumerate those subcommands and to drop the retired `SKILL.md rule #10c` cross-reference in favor of rule 8 | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented placeholders the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Setup now derives roadmap/journey features from role/goals/outputs, asks which layer owns them, and writes matching config only after confirmation | Product-management surface integration |
 | 2026-04-29 | Skill version aligned to 5.4.2 after the draft-skill discoverability fix. The packaged `kb.prompt.md` template now routes `/kb roadmap` and `/kb journeys` to the matching draft skills with a config-block check; this skill's setup-flow contract is unchanged | v5.4.2 draft-skill discoverability fix |

@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.8 | **Last updated:** 2026-04-30
+> **Version:** 0.9 | **Last updated:** 2026-05-10
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -89,6 +89,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-10 | v6.0.0 release alignment — bumped AGENTS version to 0.9 to track the v5 adoption-arc closeout (canonical `/kb brief`, `/kb spec`, `/kb release`, `/kb incident` verbs; REFERENCE ↔ template format alignment for the four delivery/operations artifacts; removal of residual fixed-ladder L1/L2/L3/L4 vocabulary; year-nested archive and weekly-summary path corrections; five missing changelog sections added). AGENTS rules unchanged in semantics | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-30 | v5.5.1 release alignment — bumped AGENTS version to 0.8 to track the HTML landing-page value-prop correction. AGENTS rules unchanged in semantics | HTML value-prop correction |
 | 2026-04-30 | v5.5.0 release alignment — bumped AGENTS version to 0.7 to track the product-management roadmap/journey surface integration. AGENTS rules unchanged in semantics | Product-management surface integration |
 | 2026-04-29 | v5.4.2 release alignment — bumped AGENTS version to 0.6 to track the draft-skill discoverability fix (the packaged `/kb` dispatcher now routes `/kb roadmap` and `/kb journeys`; kb-management's trigger surface picks up roadmap/journey keywords; the visual landing page advertises the two opt-in subcommands). AGENTS rules unchanged in semantics | v5.4.2 draft-skill discoverability fix |

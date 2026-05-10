@@ -11,7 +11,7 @@
 ## `/kb start-day`
 
 1. Read `_kb-tasks/focus.md`.
-2. **Run task reconciliation** (see SKILL.md rule #11c) — detect external completions from Jira / GitHub / commits / shared archives. Propose closures; do not auto-archive.
+2. **Run task reconciliation** under SKILL.md rule 8 (Task creation and closure are explicit) — detect external completions from declared `connections:` (commits, merged PRs, closed tracker tickets) or from a shared archive. Propose closures; do not auto-archive.
 3. Scan `_kb-decisions/` — any due soon or blocked?
 4. Read today's and yesterday's `.kb-log/`.
 5. `git diff` in the anchor layer since last activity.
@@ -24,11 +24,11 @@
 ## `/kb end-day`
 
 1. Review uncommitted changes; summarize the day.
-2. **Run task reconciliation** (SKILL.md rule #11c) for anything closed during the day.
-3. Propose moving confirmed-done focus items → `_kb-tasks/archive/YYYY-MM.md`. **Do not move silently** — show the diff, ask once.
+2. **Run task reconciliation** under SKILL.md rule 8 for anything closed during the day.
+3. Propose moving confirmed-done focus items → `_kb-tasks/archive/YYYY/MM.md`. **Do not move silently** — show the diff, ask once.
 4. Update decisions if any state changed.
 5. Propose pulling next items from `backlog.md` → `focus.md` (if space). Show diff, ask.
-6. Append to today's `log/`.
+6. Append to today's `.kb-log/` entry.
 7. Offer to stage, commit, push (PR if branch protection).
 8. **Suggest**: promotion candidates, overdue decisions.
 
@@ -37,14 +37,14 @@
 1. Full parent-layer or shared-layer digest.
 2. Review all workstream files for movement.
 3. Audit `_kb-decisions/` — overdue? new evidence?
-4. **Run task reconciliation** (SKILL.md rule #11c) across `focus.md` and `backlog.md`; annotate items untouched > 14 days with `stale: true` (annotation only — no removal).
+4. **Run task reconciliation** under SKILL.md rule 8 across `focus.md` and `backlog.md`; annotate items untouched > 14 days with `stale: true` (annotation only — no removal).
 5. Check marketplace for new skills matching themes.
 6. **Output**: weekly briefing grouped by workstream. Include reconciled completions + stale-annotated items.
 7. **Suggest**.
 
 ## `/kb end-week` — Friday 15:00
 
-1. Generate `_kb-references/findings/YYYY-MM-DD-weekly-summary.md`.
+1. Generate `_kb-references/findings/YYYY/YYYY-MM-DD-weekly-summary.md`.
 2. Task cleanup pass — propose archive for all reconciled-done items; propose drop for stale items the user confirms are obsolete. **Every move is confirmed, never silent.**
 3. Identify promotion candidates for parent contributor layers and publish candidates for layer marketplaces.
 4. Identify presentation-worthy items for next week.
@@ -60,3 +60,9 @@ Rituals are idempotent within a day / week — running twice doesn't duplicate l
 
 - Deliberately early — leaves slack for the user to act before the weekend.
 - If user is unavailable at 15:00, queue output as an `_kb-inputs/` item for next session.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-10 | First changelog row in this file (closes the AGENTS rule 3 gap), plus three drift fixes the v6 audit surfaced: replaced the retired `SKILL.md rule #11c` cross-references with pointers to the current rule 8 (Task creation and closure are explicit); corrected the task-archive path from `_kb-tasks/archive/YYYY-MM.md` to the canonical `_kb-tasks/archive/YYYY/MM.md` declared in `docs/REFERENCE.md` §3 so end-of-day archival writes to the right place; corrected the weekly-summary finding path to the year-nested `_kb-references/findings/YYYY/YYYY-MM-DD-weekly-summary.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |

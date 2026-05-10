@@ -95,3 +95,9 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 | 2 | Delegated audits failed (roadmap or journeys reported violations beyond their severity-gate) |
 | 3 | Cross-primitive violations |
 | 4 | Audit itself failed to run (config error, missing delegated skill) |
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3 (every long-lived spec/concept doc carries an inline changelog). No semantic changes to the audit rules, delegated audits, or exit codes | v6.0.0 adoption + daily-usage gap audit |
