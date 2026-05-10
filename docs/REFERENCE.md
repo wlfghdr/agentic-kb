@@ -502,6 +502,8 @@ Skills require: `name`, `description`, `version`, `triggers`, `tools`, `author`,
 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for first-class supported harnesses. Compatible CLI workflows reuse the same workspace contract even when no native installer target exists yet.
 
+Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.json`, `plugin.json`, and `plugins/kb/plugin.json` must match the repo release version declared in `VERSION` and the current release/changelog line. Marketplace versioning is release versioning, not a separate numbering scheme.
+
 ---
 
 ## Changelog
