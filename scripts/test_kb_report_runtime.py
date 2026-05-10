@@ -16,7 +16,7 @@ def assert_contains(text: str, needle: str) -> None:
         raise AssertionError(f"expected to find {needle!r}")
 
 
-def write_ticket(path: Path, key: str, title: str, status: str, owner: str, target: str) -> None:
+def write_ticket(path: Path, key: str, title: str, status: str, owner: str, target: str, body: str = "") -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         f"""---
@@ -32,6 +32,7 @@ labels:
 ---
 
 # {key}: {title}
+{body}
 """,
         encoding="utf-8",
     )
@@ -53,16 +54,16 @@ Choose whether activation work stays in Q2.
     )
 
 
-def write_journey(path: Path) -> None:
+def write_journey(path: Path, title: str, readiness: str, step_id: str, body: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        """# 1.1 — Activation Journey
+        f"""# {title}
 
 #### Readiness
-<span class=\"status-chip feasible\">Green</span> — Demo-ready.
+{readiness}
 
-### Step 1: Activate · `J1.1-S1` · `[WEB UI]`
-The user activates the workspace.
+### Step 1: {body} · `{step_id}` · `[WEB UI]`
+{body}
 """,
         encoding="utf-8",
     )
@@ -110,15 +111,22 @@ roadmap:
 """,
             encoding="utf-8",
         )
-        write_ticket(kb_root / "plan" / "PLAT-101.md", "PLAT-101", "Activation work", "Committed", "eng-lead", "2026 CQ2")
-        write_ticket(kb_root / "delivery" / "PLAT-101.md", "PLAT-101", "Activation work", "In Progress", "eng-lead", "2026 CQ2")
+        write_ticket(kb_root / "plan" / "PLAT-101.md", "PLAT-101", "Activation work", "Committed", "eng-lead", "2026 CQ2", "journey: J1.1-S1")
+        write_ticket(kb_root / "delivery" / "PLAT-101.md", "PLAT-101", "Activation work", "In Progress", "eng-lead", "2026 CQ2", "journey: J1.1-S1")
+        write_ticket(kb_root / "plan" / "PLAT-201.md", "PLAT-201", "Billing follow-up", "Committed", "eng-lead", "2026 CQ2")
+        write_ticket(kb_root / "delivery" / "PLAT-201.md", "PLAT-201", "Billing follow-up", "Done", "eng-lead", "2026 CQ2")
+        write_ticket(kb_root / "plan" / "PLAT-301.md", "PLAT-301", "Merge-safe delivery signal", "Done", "eng-lead", "2026 CQ2", "journey: J1.1-S1")
+        write_ticket(kb_root / "delivery" / "PLAT-301.md", "PLAT-301", "Merge-safe delivery signal", "In Progress", "eng-lead", "2026 CQ2")
+        write_ticket(kb_root / "plan" / "PLAT-401.md", "PLAT-401", "Delivery-side journey citation", "Committed", "eng-lead", "2026 CQ2")
+        write_ticket(kb_root / "delivery" / "PLAT-401.md", "PLAT-401", "Delivery-side journey citation", "In Progress", "eng-lead", "2026 CQ2", "journey: J1.2-S2")
         write_decision(kb_root / "_kb-decisions" / "D-2026-05-09-sequencing-choice.md")
-        write_journey(kb_root / "_kb-journeys" / "1.1-activation.md")
+        write_journey(kb_root / "_kb-journeys" / "1.1-activation.md", "1.1 — Activation Journey", '<span class="status-chip feasible">Green</span> — Demo-ready.', "J1.1-S1", "The user activates the workspace.")
+        write_journey(kb_root / "_kb-journeys" / "1.2-billing.md", "1.2 — Billing Journey", '<span class="status-chip blocked">Red</span> — Needs fixes.', "J1.2-S2", "The user updates billing details.")
         write_finding(kb_root / "findings" / "2026-05-09-platform-activation.md")
 
         subprocess.run(["python3", str(ROADMAP_SCRIPT), str(kb_root), "--scope", "platform", "--date", "2026-05-08"], check=True, cwd=REPO)
 
-        write_ticket(kb_root / "plan" / "PLAT-101.md", "PLAT-101", "Activation work", "In Progress", "eng-lead", "2026 CQ3")
+        write_ticket(kb_root / "plan" / "PLAT-101.md", "PLAT-101", "Activation work", "In Progress", "eng-lead-2", "2026 CQ3", "journey: J1.1-S1")
         write_ticket(kb_root / "delivery" / "PLAT-102.md", "PLAT-102", "Invite fallback", "Done", "eng-lead", "2026 CQ2")
 
         subprocess.run(["python3", str(ROADMAP_SCRIPT), str(kb_root), "--scope", "platform", "--date", "2026-05-10"], check=True, cwd=REPO)
@@ -133,10 +141,20 @@ roadmap:
 
         assert_contains(delivery_md, "**Report type**: delivery")
         assert_contains(delivery_md, "PLAT-101 Activation work")
+        assert_contains(delivery_md, "PLAT-201 Billing follow-up")
+        assert_contains(delivery_md, "PLAT-301 Merge-safe delivery signal")
+        assert_contains(delivery_md, "PLAT-401 Delivery-side journey citation")
+        assert delivery_md.count("| PLAT-101 Activation work | in-delivery | J1.1-S1 | In Progress | on-track | Mapped from explicit step citation in 1.1-activation.md |") == 1, delivery_md
+        assert_contains(delivery_md, "| PLAT-201 Billing follow-up | shipped | n/a | shipped (delivery-export) | shipped | No explicit journey-step mapping found; linkage remains absent |")
+        assert_contains(delivery_md, "| PLAT-301 Merge-safe delivery signal | in-delivery | J1.1-S1 | In Progress | on-track | Mapped from explicit step citation in 1.1-activation.md |")
+        assert_contains(delivery_md, "| PLAT-401 Delivery-side journey citation | in-delivery | J1.2-S2 | In Progress | on-track | Mapped from explicit step citation in 1.2-billing.md |")
+        assert_contains(delivery_md, "2 commitment(s) have no explicit journey-step citation")
         assert_contains(delivery_md, "_kb-roadmaps/platform/roadmap-2026-05-10.json")
         assert_contains(roadmap_change_md, "**Report type**: roadmap-change")
-        assert_contains(roadmap_change_md, "phase-change")
-        assert_contains(roadmap_change_md, "milestone-change")
+        assert_contains(roadmap_change_md, "**Approval status**: draft")
+        assert_contains(roadmap_change_md, "phase-change | PLAT-101 | committed | in-delivery")
+        assert_contains(roadmap_change_md, "milestone-change | PLAT-101 | 2026 CQ2 | 2026 CQ3")
+        assert_contains(roadmap_change_md, "ownership-change | PLAT-101 | eng-lead | eng-lead-2")
         assert_contains(status_md, "**Report type**: status")
         assert_contains(status_md, "delivery-platform-2026-05-10")
         assert_contains(delivery_html, "delivery")

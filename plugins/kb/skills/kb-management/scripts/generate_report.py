@@ -158,6 +158,108 @@ def by_id(items: list[dict]) -> dict[str, dict]:
     return {str(item.get("id")): item for item in items}
 
 
+def item_sort_key(item: dict) -> tuple[int, str, str]:
+    phase_rank = {
+        "shipped": 0,
+        "in-delivery": 1,
+        "committed": 2,
+        "defined": 3,
+        "idea": 4,
+        "archived": 5,
+    }
+    return (phase_rank.get(str(item.get("phase") or "idea"), 9), str(item.get("target") or ""), str(item.get("id") or ""))
+
+
+def tracker_priority(item: dict, prefer_plan: bool = False) -> tuple[int, tuple[int, str, str]]:
+    tracker = str(item.get("tracker") or "").lower()
+    plan_like = 0 if "plan" in tracker else 1
+    return ((plan_like if prefer_plan else 1 - plan_like), item_sort_key(item))
+
+
+def choose_delivery_signal(group: list[dict], preferred: dict) -> str:
+    preferred_phase = str(preferred.get("phase") or "")
+    preferred_status = str(preferred.get("status") or "")
+    preferred_tracker = str(preferred.get("tracker") or "")
+    if preferred_phase == "shipped":
+        return f"shipped ({preferred_tracker or preferred_status or 'delivery signal'})"
+    if preferred_phase == "in-delivery":
+        if preferred_status:
+            return preferred_status
+        for candidate in group:
+            if str(candidate.get("phase") or "") == "in-delivery" and str(candidate.get("status") or ""):
+                return str(candidate.get("status") or "")
+        return preferred_phase
+    for candidate in group:
+        status = str(candidate.get("status") or "")
+        if status:
+            return status
+    return "unknown"
+
+
+def merge_item_group(group: list[dict], prefer_plan: bool = False) -> dict:
+    merged = dict(group[0])
+    preferred = sorted(group, key=lambda item: tracker_priority(item, prefer_plan=prefer_plan))[0]
+    for key in ("title", "status", "phase", "state", "owner", "target", "lane", "issue_type"):
+        value = preferred.get(key)
+        if value not in (None, ""):
+            merged[key] = value
+    merged["trackers"] = sorted({str(item.get("tracker")) for item in group if item.get("tracker")})
+    merged["delivery_signal"] = choose_delivery_signal(group, preferred)
+    merged["appearances"] = len(group)
+    merged["raw_records"] = [item.get("raw") for item in group if isinstance(item.get("raw"), dict)]
+    merged["source_titles"] = [str(item.get("title") or "") for item in group if item.get("title")]
+    return merged
+
+
+def merged_items(items: list[dict], prefer_plan: bool = False) -> list[dict]:
+    grouped: dict[str, list[dict]] = {}
+    for item in items:
+        grouped.setdefault(str(item.get("id")), []).append(item)
+    return [merge_item_group(group, prefer_plan=prefer_plan) for group in grouped.values()]
+
+
+def merged_delivery_items(ctx: ReportContext) -> list[dict]:
+    filtered = [i for i in roadmap_items(ctx) if i.get("issue_type") not in {"Theme", "Initiative", "Milestone"}]
+    merged = merged_items(filtered)
+    commitments = [item for item in merged if item.get("phase") in {"committed", "in-delivery", "shipped"}]
+    return sorted(commitments, key=item_sort_key)[:5]
+
+
+def item_journey_links(item: dict, journeys: list[JourneySignal]) -> tuple[list[str], str]:
+    raws = [raw for raw in item.get("raw_records", []) if isinstance(raw, dict)]
+    if not raws and isinstance(item.get("raw"), dict):
+        raws = [item.get("raw")]
+
+    haystacks = [str(item.get("title") or "")]
+    haystacks.extend(str(title) for title in item.get("source_titles", []) if title)
+    for raw in raws:
+        source_body = ""
+        raw_path = raw.get("path")
+        if raw_path:
+            try:
+                source_body = Path(str(raw_path)).read_text(encoding="utf-8")
+            except OSError:
+                source_body = ""
+        haystacks.extend([
+            source_body,
+            str(raw.get("body") or ""),
+            str(raw.get("summary") or ""),
+        ])
+
+    linked_steps: list[str] = []
+    linked_paths: list[str] = []
+    for journey in journeys:
+        matched = [step for step in journey.step_ids if any(step in haystack for haystack in haystacks)]
+        if matched:
+            linked_steps.extend(matched)
+            linked_paths.append(journey.path.as_posix())
+    if linked_steps:
+        deduped_steps = sorted(dict.fromkeys(linked_steps))
+        detail = "; ".join(sorted(dict.fromkeys(Path(path).name for path in linked_paths)))
+        return deduped_steps, f"Mapped from explicit step citation in {detail}"
+    return [], "No explicit journey-step mapping found; linkage remains absent"
+
+
 def summarize_readiness(ctx: ReportContext) -> tuple[int, int]:
     ready = 0
     risky = 0
@@ -246,15 +348,17 @@ def fill_status(ctx: ReportContext) -> str:
 
 
 def fill_delivery(ctx: ReportContext) -> str:
-    items = [i for i in roadmap_items(ctx) if i.get("issue_type") not in {"Theme", "Initiative", "Milestone"}]
-    commitments = [i for i in items if i.get("phase") in {"committed", "in-delivery", "shipped"}][:5]
+    commitments = merged_delivery_items(ctx)
     ready, risky = summarize_readiness(ctx)
     summary = f"Delivery reality for {ctx.scope}: {sum(1 for i in commitments if i.get('phase') == 'shipped')} shipped, {sum(1 for i in commitments if i.get('phase') == 'in-delivery')} in delivery, {risky} journey signals need attention."
     rows = []
+    missing_links = 0
     for item in commitments:
-        journey = next((j for j in ctx.journeys if any(step.startswith("J") for step in j.step_ids)), None)
+        linked_steps, linkage_note = item_journey_links(item, ctx.journeys)
+        if not linked_steps:
+            missing_links += 1
         rows.append(
-            f"| {item['id']} {item['title']} | {item.get('phase','idea')} | {journey.step_ids[0] if journey and journey.step_ids else 'n/a'} | {item.get('status','unknown')} | {'shipped' if item.get('phase') == 'shipped' else 'on-track'} | {journey.readiness if journey else 'No linked journey signal'} |"
+            f"| {item['id']} {item['title']} | {item.get('phase','idea')} | {', '.join(linked_steps) if linked_steps else 'n/a'} | {item.get('delivery_signal','unknown')} | {'shipped' if item.get('phase') == 'shipped' else 'on-track'} | {linkage_note} |"
         )
     shipped = [f"- {i['id']} {i['title']}" for i in commitments if i.get("phase") == "shipped"] or ["- Nothing newly shipped in the latest roadmap snapshot"]
     at_risk = [f"- {i['id']} {i['title']}" for i in commitments if i.get("phase") in {"committed", "in-delivery"}][:3] or ["- No committed item is currently flagged at risk"]
@@ -263,10 +367,12 @@ def fill_delivery(ctx: ReportContext) -> str:
         gaps.append("- No journey artifacts were found for this scope")
     if ready == 0:
         gaps.append("- No journey step is currently marked ready")
+    if missing_links:
+        gaps.append(f"- {missing_links} commitment(s) have no explicit journey-step citation, so the report leaves journey linkage absent instead of guessing")
     if not ctx.decisions:
         gaps.append("- No decision records found to explain trade-offs")
     if not gaps:
-        gaps.append("- Scope has roadmap and journey evidence, but linkage is still heuristic rather than explicit")
+        gaps.append("- Scope has roadmap and journey evidence with explicit step-level linkage for the current commitments")
     template = (TEMPLATE_DIR / "report-delivery.md").read_text(encoding="utf-8")
     replacements = {
         "{{TITLE}}": f"{ctx.scope.title()} delivery report {ctx.date}",
@@ -277,9 +383,9 @@ def fill_delivery(ctx: ReportContext) -> str:
         "{{CADENCE}}": "weekly",
         "{{DELIVERY_SUMMARY}}": summary,
         "{{ITEM_1}}": commitments[0]["id"] + " " + commitments[0]["title"] if commitments else "No commitment found",
-        "{{JOURNEY_STEP_1}}": ctx.journeys[0].step_ids[0] if ctx.journeys and ctx.journeys[0].step_ids else "n/a",
-        "{{DELIVERY_SIGNAL_1}}": commitments[0].get("status", "unknown") if commitments else "unknown",
-        "{{NOTES_1}}": ctx.journeys[0].readiness if ctx.journeys else "No journey signal",
+        "{{JOURNEY_STEP_1}}": "n/a",
+        "{{DELIVERY_SIGNAL_1}}": commitments[0].get("delivery_signal", "unknown") if commitments else "unknown",
+        "{{NOTES_1}}": "No explicit journey-step mapping found" if commitments else "No journey signal",
         "{{TRACEABILITY_GAP_1}}": gaps[0].removeprefix("- "),
         "{{ROADMAP_ACTION}}": source_rel(ctx, ctx.roadmap_json_path),
         "{{JOURNEY_ACTION}}": ", ".join(j.path.relative_to(ctx.kb_root).as_posix() for j in ctx.journeys[:2]) or "add journey artifacts",
@@ -289,9 +395,10 @@ def fill_delivery(ctx: ReportContext) -> str:
         "{{ROADMAP_LINK}}": source_rel(ctx, ctx.roadmap_json_path),
         "{{JOURNEY_LINK}}": ", ".join(j.path.relative_to(ctx.kb_root).as_posix() for j in ctx.journeys[:3]) or "not available",
     }
+    row_placeholder = "| {{ITEM_1}} | committed | {{JOURNEY_STEP_1}} | {{DELIVERY_SIGNAL_1}} | on-track | {{NOTES_1}} |"
+    template = template.replace(row_placeholder, "\n".join(rows) if rows else "| none | idea | n/a | unknown | unknown | No data |")
     for old, new in replacements.items():
         template = template.replace(old, new)
-    template = re.sub(r"\| \{\{ITEM_1\}\}.+", "\n".join(rows) if rows else "| none | idea | n/a | unknown | unknown | No data |", template, count=1)
     template = template.replace("- {{SHIPPED_1}}", "\n".join(shipped))
     template = template.replace("- {{AT_RISK_1}}", "\n".join(at_risk))
     template = template.replace("- {{TRACEABILITY_GAP_1}}", "\n".join(gaps))
@@ -299,8 +406,8 @@ def fill_delivery(ctx: ReportContext) -> str:
 
 
 def diff_roadmaps(previous: dict | None, current: dict | None) -> list[dict]:
-    prev_items = by_id((previous or {}).get("items", []))
-    curr_items = by_id((current or {}).get("items", []))
+    prev_items = by_id(merged_items((previous or {}).get("items", []), prefer_plan=True))
+    curr_items = by_id(merged_items((current or {}).get("items", []), prefer_plan=True))
     changes: list[dict] = []
     for item_id, item in curr_items.items():
         before = prev_items.get(item_id)
@@ -310,7 +417,6 @@ def diff_roadmaps(previous: dict | None, current: dict | None) -> list[dict]:
         for field, label in (("phase", "phase-change"), ("target", "milestone-change"), ("owner", "ownership-change"), ("lane", "sequence-change")):
             if (before.get(field) or "") != (item.get(field) or ""):
                 changes.append({"class": label, "item": item_id, "before": before.get(field) or "unset", "after": item.get(field) or "unset", "reason": f"{field} changed between roadmap snapshots"})
-                break
     for item_id, item in prev_items.items():
         if item_id not in curr_items:
             changes.append({"class": "scope-remove", "item": item_id, "before": item.get("phase", "idea"), "after": "not present", "reason": "item left roadmap scope"})
@@ -332,6 +438,7 @@ def fill_roadmap_change(ctx: ReportContext) -> str:
         "{{AUDIENCE}}": report_audience(ctx, "roadmap-change"),
         "{{OWNER}}": report_owner(ctx),
         "{{APPROVER}}": report_owner(ctx),
+        "{{APPROVAL_STATUS}}": "draft",
         "{{CHANGE_SUMMARY}}": summary,
         "{{ITEM_1}}": changes[0]["item"] if changes else "scope",
         "{{BEFORE_1}}": changes[0]["before"] if changes else "not present",

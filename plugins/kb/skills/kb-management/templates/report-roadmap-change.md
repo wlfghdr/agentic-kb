@@ -8,7 +8,7 @@
 **Cadence**: event-driven
 **Trigger**: scope-change | milestone-change | phase-change | ownership-change | re-scope
 **Approval required from**: {{APPROVER}}
-**Approval status**: draft | approved
+**Approval status**: {{APPROVAL_STATUS}}
 
 ## Change Summary
 
