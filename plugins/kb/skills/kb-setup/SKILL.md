@@ -220,26 +220,24 @@ Running `/kb setup` again:
 
 Question references in this table use the global numbering: phase 1 covers Q1–Q8, phase 2 covers Q9–Q11, phase 3 covers Q12–Q15 (proposal blocks the user adjusts or accepts), phase 4 covers Q16 (final yes).
 
-The layer-graph scaffold uses these placeholders directly:
+The layer-graph scaffold uses double-curly setup placeholders for these token names:
 
-{% raw %}
-
-| Placeholder | Source |
-|-------------|--------|
-| `{{USER_NAME}}` | Q1 |
-| `{{ROLE}}` | Q1 (role sentence extracted from the same answer) |
-| `{{THEMES}}` | extracted from Q1/Q2 (3–5 keywords); rendered as a bullet list into `foundation/me.md` |
-| `{{KB_NAME}}` | anchor-layer name (derived and confirmed in phase 3 question 1, i.e. Q12) |
-| `{{WORKSPACE_ROOT}}` | Q9 |
-| `{{WORKSTREAM_1_NAME}}`, `{{WORKSTREAM_1_THEMES}}` | extracted from Q2 (themes) and confirmed in phase 3 question 1 (Q12) |
-| `{{WORKSTREAMS}}` | rendered list of all confirmed workstreams (`{{WORKSTREAM_1_*}}`, `{{WORKSTREAM_2_*}}`, …) for `personal-kb-AGENTS.md` |
-| `{{ADOPTION_STAGE}}` | derived from Q8 (today bucket); used in `automation.yaml` and the scaffolded `foundation/me.md` so the chosen stage is durable, not implicit |
-| `{{AUTOMATION_LEVEL}}` | derived from Q7 + Q8 (1, 2, or 3 per `references/automation-levels.md`); written into `automation.yaml` |
-| `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}` | layer name from phase 3 question 1 (Q12) when the proposal includes a shared contributor or synthesis layer; used by the `team-kb-*` and `org-kb-*` templates |
-| `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}` | rendered from the discovered + confirmed repo set (Q11 + phase 3 question 1, Q12); used by `workspace-AGENTS.md` |
-| `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}` | populated by the VMG sourcing step (URL fetch, file read, or direct text per `references/setup-flow.md`); placeholders survive only if the user opts to fill VMG later, in which case a backlog item is created |
-| `{{DATE}}` | today |
-| `{{VERSION}}` | `1.0` on first scaffold |
+| Token name | Source |
+|------------|--------|
+| `USER_NAME` | Q1 |
+| `ROLE` | Q1 (role sentence extracted from the same answer) |
+| `THEMES` | extracted from Q1/Q2 (3–5 keywords); rendered as a bullet list into `foundation/me.md` |
+| `KB_NAME` | anchor-layer name (derived and confirmed in phase 3 question 1, i.e. Q12) |
+| `WORKSPACE_ROOT` | Q9 |
+| `WORKSTREAM_1_NAME`, `WORKSTREAM_1_THEMES` | extracted from Q2 (themes) and confirmed in phase 3 question 1 (Q12) |
+| `WORKSTREAMS` | rendered list of all confirmed workstreams, including repeated workstream token groups, for `personal-kb-AGENTS.md` |
+| `ADOPTION_STAGE` | derived from Q8 (today bucket); used in `automation.yaml` and the scaffolded `foundation/me.md` so the chosen stage is durable, not implicit |
+| `AUTOMATION_LEVEL` | derived from Q7 + Q8 (1, 2, or 3 per `references/automation-levels.md`); written into `automation.yaml` |
+| `TEAM_NAME`, `ORG_UNIT_NAME` | layer name from phase 3 question 1 (Q12) when the proposal includes a shared contributor or synthesis layer; used by the `team-kb-*` and `org-kb-*` templates |
+| `REPO_INDEX`, `ALIAS_INDEX`, `KEYWORD_LOOKUP` | rendered from the discovered + confirmed repo set (Q11 + phase 3 question 1, Q12); used by `workspace-AGENTS.md` |
+| `VMG_VISION`, `VMG_MISSION`, `VMG_GOALS` | populated by the VMG sourcing step (URL fetch, file read, or direct text per `references/setup-flow.md`); placeholders survive only if the user opts to fill VMG later, in which case a backlog item is created |
+| `DATE` | today |
+| `VERSION` | `1.0` on first scaffold |
 
 Layer-specific repeated content beyond the anchor layer is rendered from the interview answers rather than from hard-coded placeholder names.
 
@@ -248,23 +246,21 @@ Substitution examples:
 ```yaml
 # before substitution
 workspace:
-  anchor-layer: {{KB_NAME}}
+  anchor-layer: <KB_NAME placeholder>
 
 # after confirmation
 workspace:
   anchor-layer: alice-personal
 
 # if the user deliberately defers VMG text
-vision: "{{VMG_VISION}}"  # follow-up task required before setup is complete
+vision: "<VMG_VISION placeholder>"  # follow-up task required before setup is complete
 ```
 
 The `notes` feature always includes general notes, meeting notes, and retros. Setup does not ask for those variants separately; it only decides whether the layer gets the `notes` feature at all. `/kb note retro [topic]` then uses the same `_kb-notes/YYYY/` directory as the other note variants.
 
 ## Post-write placeholder check
 
-After writing the scaffold, scan the workspace for any remaining `{{...}}` sequences outside the deliberate presentation-template placeholders. If any remain:
-
-{% endraw %}
+After writing the scaffold, scan the workspace for any remaining double-curly placeholder sequences outside the deliberate presentation-template placeholders. If any remain:
 
 1. stop,
 2. list the file and placeholder,
@@ -284,10 +280,10 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-05-15 | Escaped placeholder examples with Liquid raw guards so GitHub Pages can build the released docs while preserving the literal `{{...}}` setup-token contract for agents | Pages release fix |
+| 2026-05-15 | Removed literal double-curly placeholder examples from the published setup skill so GitHub Pages can build the released docs while preserving the setup-token contract for agents | Pages release fix |
 | 2026-05-15 | Skill version aligned to 6.1.0. Setup now documents that notes include general, meeting, and retro variants under one feature; delivery/operations scaffold directories are explicit; roadmap/journey blocks are stable setup-proposed features instead of draft-feature blocks; and placeholder substitution examples show confirmed and deliberately deferred values | Release-readiness audit |
 | 2026-05-10 | Skill version aligned to 6.0.0 for the v5 adoption-arc closeout. No behavioral changes to the four-phase interview, scaffold output, or migration flow. The setup output contract picks up the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs because the kb-management plugin it composes ships them as canonical flows; the templated `kb.prompt.md` was patched in lock-step to enumerate those subcommands and to drop the retired `SKILL.md rule #10c` cross-reference in favor of rule 8 | v6.0.0 adoption + daily-usage gap audit |
-| 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented placeholders the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
+| 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented token names the templates emit (`THEMES`, `WORKSTREAMS`, `TEAM_NAME`, `ORG_UNIT_NAME`, `REPO_INDEX`, `ALIAS_INDEX`, `KEYWORD_LOOKUP`, `VMG_VISION`, `VMG_MISSION`, `VMG_GOALS`, `AUTOMATION_LEVEL`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Setup now derives roadmap/journey features from role/goals/outputs, asks which layer owns them, and writes matching config only after confirmation | Product-management surface integration |
 | 2026-04-29 | Skill version aligned to 5.4.2 after the draft-skill discoverability fix. The packaged `kb.prompt.md` template now routes `/kb roadmap` and `/kb journeys` to the matching draft skills with a config-block check; this skill's setup-flow contract is unchanged | v5.4.2 draft-skill discoverability fix |
 | 2026-04-27 | Skill version aligned to 5.4.1 after the documentation-gap follow-up. Clarified the repo-as-OS bridge field name to `connections.product-repos[]` and linked the setup-flow VMG sourcing/update guidance | 5.4.1 patch release |

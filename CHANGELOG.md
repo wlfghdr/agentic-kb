@@ -41,6 +41,7 @@ No entries yet.
 
 - **Release-readiness audit closeout** — version surfaces now agree on v6.1.0 across `VERSION`, manifests, README, and the visual landing page; first-run acceptance now covers delivery/operations and retro notes; and the product-management roadmap/journey command surface is documented as stable setup-proposed functionality rather than an unfinished add-on.
 - **Manifest version drift guard** — `scripts/check_consistency.py` now fails when the root marketplace manifest, Claude marketplace manifest, or generated per-plugin manifest drift from `VERSION`, keeping release metadata aligned in CI.
+- **GitHub Pages release build** — the repository now ships `.nojekyll` so the static landing page deploy does not interpret intentional skill/template tokens as Liquid expressions.
 
 ## [6.0.0] — 2026-05-10
 
