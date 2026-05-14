@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v6.0.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v6.1.0-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -169,7 +169,7 @@ Never silent. Every accept and reject carries a rationale.
 
 Connect this repo as a marketplace in your IDE, then run `/kb setup` — that's it.
 
-Marketplace install gives you the core plugin (`kb-management`, `kb-setup`, `kb-operator`) plus two product-management draft skills (`kb-roadmap`, `kb-journeys`). The skills stay dormant until `/kb setup` derives and the user confirms matching config blocks in `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, or until an expert adds those blocks manually.
+Marketplace install gives you the core plugin (`kb-management`, `kb-setup`, `kb-operator`) plus two setup-proposed product-management skills (`kb-roadmap`, `kb-journeys`). Roadmap and journey flows activate only after `/kb setup` derives and the user confirms matching config blocks in `.kb-config/layers.yaml` and `.kb-config/artifacts.yaml`, or after an expert adds those blocks manually.
 
 ### Claude Code
 
@@ -195,20 +195,13 @@ Install from the Extensions view (reads [`plugin.json`](plugin.json)), then run 
 
 ### Compatibility model
 
-`agentic-kb` distinguishes three supported setup tiers — plus two "not yet" buckets that document why some harnesses sit outside the supported matrix today:
+`agentic-kb` distinguishes three supported setup tiers:
 
 | Tier | Meaning | Current examples |
 |------|---------|------------------|
 | Marketplace/native plugin path | Native install path and documented day-to-day workflow with a working `/kb` slash command | Claude Code, VS Code Copilot Chat |
 | Installer-supported native command/skill path | No marketplace yet, but `scripts/install --target <harness>` writes the harness's documented native surface | OpenCode, Gemini CLI, Kiro IDE |
 | Compatible skill workflow | Same repo contract, but no custom `/kb` slash command; use `AGENTS.md` plus the harness skill picker or native skill invocation | Codex CLI |
-
-Not (yet) covered as a supported tier:
-
-| Bucket | Why | Current examples |
-|--------|-----|------------------|
-| Rules-only harness | No slash-command slot for third-party commands — adopters can reuse the scaffolded KB files as context, but invocation is wired manually | Cursor, Windsurf |
-| Not feasible | The harness has no user-custom command hook, or is not a developer harness at all | Aider (no plugin system yet), raw Claude / Inflection Pi (no slash-command concept) |
 
 ### OpenCode
 
@@ -323,9 +316,9 @@ agentic-kb/
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v6.0.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v6.1.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
-| Product-management draft skills | `kb-roadmap`, `kb-journeys` (draft, `v0.2.0`, setup-proposed by role/goals) |
+| Product-management skills | `kb-roadmap`, `kb-journeys` (stable setup-proposed skills, enabled per owning layer) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
 
@@ -341,7 +334,8 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes. No version-status row change yet — the retro/role-handbook bundle accumulates under `[Unreleased]` in `CHANGELOG.md` | Daily-reality gap audit across software-company roles |
+| 2026-05-15 | Rolled the public framework status to 6.1.0 after the release-readiness audit: the role-handbook/retro bundle moved from `[Unreleased]` into a real release, roadmap/journey skill language now presents them as stable setup-proposed product-management flows, and the README compatibility model now lists supported tiers without foregrounding unsupported buckets | Release-readiness audit |
+| 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Rolled the public framework status to 6.0.0 after the v5 adoption-arc closeout: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical command verbs (matching the operating-model artifact chain and the templates the skill instantiates), surfaced the previously undocumented `/kb publish`, `/kb sync`, `/kb diff`, `/kb start-week`, `/kb end-day`, `/kb audit`, and `/kb report [scope]` flows in the public command list, removed the residual fixed-ladder `L1`/`L2/L3`/`L4` drift from the routing prompt and operator agent, aligned the four delivery/operations file formats in `docs/REFERENCE.md` §4 with the templates, and corrected the year-nested archive and weekly-summary paths so daily and weekly rituals write where the spec says they should | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-06 | Rolled the public framework status to 5.6.0 after adding canonical ownership semantics for promoted decisions and tasks, so adopters do not leave parallel active source and target records behind | Decision/task ownership follow-up |
 | 2026-04-30 | Rolled the public framework status to 5.5.1 after correcting the HTML landing-page value proposition so product direction, roadmaps, journeys, delivery, and operations are visible in the top-level story and first-class building blocks | HTML value-prop correction |

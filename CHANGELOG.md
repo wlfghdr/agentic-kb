@@ -19,6 +19,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+No entries yet.
+
+## [6.1.0] — 2026-05-15
+
 ### Added
 
 - **Role handbook** — `docs/role-handbook.md` is the new role-by-role companion to `docs/operating-model.md`. It maps PM, EM, staff/principal engineer, tech lead, engineer, designer, QA, SRE/on-call, security, and data/analytics each to their daily reality, primary operating-model loop, top `/kb` commands, primary artifacts read and written, and one realistic chain through the artifact graph. The operating model stays the analytical view; the handbook is the usable view. Referenced from `README.md` "Where to start" and from the top of `docs/operating-model.md`.
@@ -32,6 +36,11 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 - **Operating model v0.3.0** — named Gap F (no canonical shape for team reflection — closed by the retro variant) and Gap G (no user-facing role view — closed by the role handbook). Retros added to the §1 Learning-loop artifact list, the §6 artifact table, and the §7 modeling rule of thumb.
 - **Reference v6.1.0** — §4 Note format now declares the retro variant: `type` accepts `meeting | note | retro`, with the structured section set and the `cadence`/`facilitator`/`period` frontmatter documented inline.
 - **kb-management SKILL v6.1.0** — description mentions retros, template list now includes `retro.md`, and the Note flow row covers the three variants.
+
+### Fixed
+
+- **Release-readiness audit closeout** — version surfaces now agree on v6.1.0 across `VERSION`, manifests, README, and the visual landing page; first-run acceptance now covers delivery/operations and retro notes; and the product-management roadmap/journey command surface is documented as stable setup-proposed functionality rather than an unfinished add-on.
+- **Manifest version drift guard** — `scripts/check_consistency.py` now fails when the root marketplace manifest, Claude marketplace manifest, or generated per-plugin manifest drift from `VERSION`, keeping release metadata aligned in CI.
 
 ## [6.0.0] — 2026-05-10
 

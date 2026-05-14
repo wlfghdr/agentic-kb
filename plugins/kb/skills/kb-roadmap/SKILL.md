@@ -1,8 +1,7 @@
 ---
 name: kb-roadmap
 description: Reconcile planning-truth sources against delivery reality. Ingests ≥1 plan source (ticket export, milestone markdown, OKRs) and ≥1 delivery source (git repository, ADR set, release log), runs a five-tier correlation ladder, detects mismatches, and emits a living roadmap artifact in Markdown, HTML, and JSON. Triggered by `/kb roadmap` and roadmap-reconciliation phrases.
-version: 0.2.0
-status: draft
+version: 1.0.0
 triggers:
   - "/kb roadmap"
   - "roadmap synthesis"
@@ -31,7 +30,7 @@ This skill is **vendor-neutral**. All vocabulary specific to a particular tracke
 
 The roadmap is a **product-management artifact**, not just a tracker report. Its job is to make planned customer/user value, confidence, delivery reality, and source traceability visible in one place.
 
-At 5.1, the skill resolves its `roadmap:` block from the **active layer** entry in `.kb-config/layers.yaml` and can normalize read-only tracker inputs from that layer's `connections.trackers[]` declarations when legacy `roadmap.issue-trackers[]` entries are absent.
+The skill resolves its `roadmap:` block from the **active layer** entry in `.kb-config/layers.yaml` and can normalize read-only tracker inputs from that layer's `connections.trackers[]` declarations when legacy `roadmap.issue-trackers[]` entries are absent.
 
 ## When to invoke
 
@@ -247,14 +246,15 @@ See `references/adapters.md`.
 
 ## Status
 
-This skill is **draft (v0.2.0)**. It is setup-proposed when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`. Breaking changes are expected before v1.0.
+Stable setup-proposed skill (`v1.0.0`). It is offered when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`.
 
-The shipped helper script in this repo currently covers config-driven generation and dry-run validation for detail and roll-up scopes. Interactive flows such as `sync`, `tune`, `review-tier-4`, and plan-source writes remain part of the behavioral spec rather than the local helper runtime.
+The shipped helper script covers config-driven generation and dry-run validation for detail and roll-up scopes. Apply-capable flows such as `sync`, `tune`, `review-tier-4`, and plan-source writes stay behind explicit command and confirmation gates defined in the behavioral contract above.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Promoted the roadmap skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified that apply-capable flows are stable but gated by explicit commands and confirmations | Release-readiness audit |
 | 2026-05-08 | Bumped to v0.2.0 and clarified the current helper-script adapter/runtime coverage against the broader draft command surface | Integration pass |
 | 2026-04-30 | Promoted roadmap work into the product-management surface: added value-first presentation rules, draft/agreed/shipped commitment visibility, setup-proposed status, and broader natural-language triggers | Product-management surface integration |
 | 2026-04-25 | Aligned the draft roadmap contract with the shipped 5.1 behavior: the active layer owns the `roadmap:` block, `connections.trackers[]` can seed read-only tracker inputs, and the examples no longer imply the retired top-level shape | v5.1.0 closeout release |

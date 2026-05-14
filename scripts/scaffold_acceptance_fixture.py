@@ -102,7 +102,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
                         role: contributor
                         parent: team-observability
                         path: .
-                        features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes]
+                        features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes, delivery, operations]
                         workstreams:
                             - name: platform-signals
                                 themes: [observability, reliability]
@@ -132,7 +132,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
                         role: contributor
                         parent: engineering-org
                         path: ../team-observability-kb
-                        features: [findings, topics, decisions, tasks, notes, foundation, reports, marketplace]
+                        features: [findings, topics, decisions, tasks, notes, foundation, reports, delivery, operations, marketplace]
                         contributor-mode:
                             findings: contributor-scoped
                             topics: contributor-scoped
@@ -278,6 +278,40 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         - Which features should default on for team-only adoption?
         """,
     )
+    write(kb / "_kb-notes" / "2026" / "04-24-retro-example.md", """
+        ---
+        type: retro
+        date: 2026-04-24
+        cadence: project
+        facilitator: '@alice'
+        period: 2026-04
+        linked-artifacts: [D-2026-04-24-harness-tiers]
+        ---
+
+        # Retro: Acceptance fixture review
+
+        ## What went well
+        - The proof path stays inspectable.
+
+        ## What didn't
+        - Delivery and operations coverage was implicit.
+
+        ## What we changed already
+        - Added explicit fixture directories.
+
+        ## What we will change
+        - Keep release proofs wired into acceptance.
+
+        ## Open questions
+        - None.
+
+        ## Linked artifacts
+        - D-2026-04-24-harness-tiers
+        """)
+    write(kb / "_kb-delivery" / "briefs" / ".gitkeep", "")
+    write(kb / "_kb-delivery" / "specs" / ".gitkeep", "")
+    write(kb / "_kb-operations" / "releases" / "2026" / ".gitkeep", "")
+    write(kb / "_kb-operations" / "incidents" / "2026" / ".gitkeep", "")
     write(kb / "_kb-references" / "reports" / f"{DATE}-personal-brief-v1-0.html", html_report("Personal Acceptance Brief", "Fixture artifact for personal-layer verification."))
     write(kb / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals-v1-0.html", html_report("Progress Report", "Fixture artifact for progress-report verification."))
     write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T09:00:00Z | start-day | personal | briefing created |\n")
@@ -314,6 +348,10 @@ def scaffold_team_kb(workspace: Path) -> Path:
         Team review stays shared even when findings remain contributor-scoped.
         """,
     )
+    write(kb / "_kb-delivery" / "briefs" / ".gitkeep", "")
+    write(kb / "_kb-delivery" / "specs" / ".gitkeep", "")
+    write(kb / "_kb-operations" / "releases" / "2026" / ".gitkeep", "")
+    write(kb / "_kb-operations" / "incidents" / "2026" / ".gitkeep", "")
     write(kb / "reports" / f"{DATE}-team-review-v1-0.html", html_report("Team Promotion Review", "Fixture artifact for team-layer verification."))
     return kb
 

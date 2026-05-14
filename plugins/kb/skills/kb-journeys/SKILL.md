@@ -1,8 +1,7 @@
 ---
 name: kb-journeys
 description: Author and publish user/customer/product journeys as living markdown with generated HTML views and standalone UI mocks. Journeys are hierarchical (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and readiness assessments. The skill ships authoring commands (ideate, discuss, review, refine) shared with kb-roadmap's contract, a neutral HTML template whose tokens are set by the adopter's `.kb-config/artifacts.yaml`, and a mock-extraction pipeline that renders every embedded UI mock as a linkable standalone page. Triggered by `/kb journeys` and journey-authoring phrases.
-version: 0.2.0
-status: draft
+version: 1.0.0
 triggers:
   - "/kb journeys"
   - "/kb journey"
@@ -222,14 +221,15 @@ The journey template reads the same tokens block as `kb-roadmap` (`--fg`, `--bg`
 
 ## Status
 
-Draft (`v0.2.0`). Setup-proposed when the user's role, goals, sources, or desired outputs imply product-management journey work. Activate by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml` for the confirmed owning layer.
+Stable setup-proposed skill (`v1.0.0`). Setup offers it when the user's role, goals, sources, or desired outputs imply product-management journey work. Activate by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml` for the confirmed owning layer.
 
-The shipped helper scripts in this repo currently cover artifact rendering and standalone-mock extraction, including no-extra-dependency fallback paths when `python-markdown` or `beautifulsoup4` are absent. The broader `/kb journeys` authoring and audit flows remain part of the behavioral spec rather than the local helper runtime.
+The shipped helper scripts cover artifact rendering and standalone-mock extraction, including no-extra-dependency fallback paths when `python-markdown` or `beautifulsoup4` are absent. Authoring and audit flows use the same explicit command and confirmation gates documented in this skill.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Promoted the journeys skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified helper coverage without presenting authoring/audit as unfinished | Release-readiness audit |
 | 2026-05-08 | Bumped to v0.2.0, removed the stale `overview.html.hbs` template claim, and clarified current helper-script coverage plus optional dependency fallbacks | Integration pass |
 | 2026-04-30 | Promoted journey work into the product-management surface: setup-derived ownership, broader journey/flow triggers, and value-oriented step-title rules | Product-management surface integration |
 | 2026-04-22 | Removed internal-repo reference from extract_mocks.py description | Vendor-neutrality review |

@@ -271,9 +271,14 @@
       <p><code>/kb digest [layer]</code> — pull parent-layer changes</p>
       <p><code>/kb digest connections</code> — pull repo / tracker deltas</p>
       <p><code>/kb note meeting [topic]</code> — start a meeting note</p>
+      <p><code>/kb note retro [topic]</code> — start a retrospective</p>
       <p><code>/kb idea [text]</code> — create idea</p>
       <p><code>/kb develop [idea]</code> — sparring session</p>
       <p><code>/kb decide [desc]</code> — open decision</p>
+      <p><code>/kb brief [title]</code> — frame delivery intent</p>
+      <p><code>/kb spec [title]</code> — open design contract</p>
+      <p><code>/kb release [title]</code> — record rollout and rollback</p>
+      <p><code>/kb incident [title]</code> — capture impact and follow-up</p>
       <p><code>/kb task</code> — show focus items</p>
       <p><code>/kb start-day</code> — morning briefing</p>
       <p><code>/kb end-week</code> — weekly summary</p>
@@ -282,7 +287,7 @@
       <p><code>/kb migrate layer-model</code> — legacy ladder → graph</p>
       <p><code>/kb setup</code> — onboarding wizard</p>
     </div>
-    <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Two product-management draft subcommands ship with the same plugin and stay dormant until setup derives or you confirm their owning layer:</p>
+    <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Two product-management subcommands ship with the same plugin and activate only after setup derives or you confirm their owning layer:</p>
     <div class="cmd-list">
       <p><code>/kb roadmap</code> — customer-value phase/lane roadmap (MD + HTML + JSON)</p>
       <p><code>/kb journeys</code> — author + render user/customer/operator journeys with extractable mocks</p>
@@ -291,21 +296,21 @@
 
   <!-- PRODUCT MANAGEMENT SKILLS -->
   <section>
-    <h2>Product-management draft skills</h2>
-    <p>The same marketplace install ships two draft skills next to the stable core. Setup proposes them when your role, goals, sources, or desired outputs imply roadmap or journey work; expert users can also add the config blocks manually. Same `/kb` surface, no second install.</p>
+    <h2>Product-management skills</h2>
+    <p>The same marketplace install ships roadmap and journey skills next to the core. Setup proposes them when your role, goals, sources, or desired outputs imply roadmap or journey work; expert users can also add the config blocks manually. Same `/kb` surface, no second install.</p>
     <div class="grid" style="grid-template-columns: 1fr 1fr;">
       <div class="card">
         <h3><code>/kb roadmap</code> · kb-roadmap</h3>
-        <p>Turns dense planning and delivery inputs into a customer-value roadmap: lanes, phases, confidence state, and traceability in one artifact. Emits Markdown, HTML, and JSON, with value-first headlines and explicit draft/proposed/agreed/shipped status.</p>
-        <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">status: draft <code>v0.2.0</code> · setup-proposed or enable via <code>roadmap:</code> on the confirmed owning layer in <code>.kb-config/layers.yaml</code></p>
+        <p>Turns dense planning and delivery inputs into a customer-value roadmap: lanes, phases, confidence state, and traceability in one artifact. Emits Markdown, HTML, and JSON, with value-first headlines and explicit proposed/agreed/shipped status.</p>
+        <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">stable setup-proposed skill · enable via <code>roadmap:</code> on the confirmed owning layer in <code>.kb-config/layers.yaml</code></p>
       </div>
       <div class="card">
         <h3><code>/kb journeys</code> · kb-journeys</h3>
         <p>Authors hierarchical journeys (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and per-step readiness. Journeys become the product-management ground truth that roadmap items cite, review, and move forward.</p>
-        <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">status: draft <code>v0.2.0</code> · setup-proposed or enable via <code>journeys:</code> on the confirmed owning layer + <code>journeys-template:</code> in <code>.kb-config/artifacts.yaml</code></p>
+        <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">stable setup-proposed skill · enable via <code>journeys:</code> on the confirmed owning layer + <code>journeys-template:</code> in <code>.kb-config/artifacts.yaml</code></p>
       </div>
     </div>
-    <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Both skills share an authoring arc — <code>ideate</code> · <code>discuss</code> · <code>review</code> · <code>refine</code> — and treat the journey as the third party in every roadmap critique when both are enabled. Breaking changes are expected before <code>v1.0</code>.</p>
+    <p style="margin-top:1rem;font-size:.88rem;color:var(--fg2)">Both skills share an authoring arc — <code>ideate</code> · <code>discuss</code> · <code>review</code> · <code>refine</code> — and treat the journey as the third party in every roadmap critique when both are enabled.</p>
   </section>
 
   <!-- DECISIONS + IDEAS -->

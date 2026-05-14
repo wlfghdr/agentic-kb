@@ -1,6 +1,6 @@
 # Adoption Stages
 
-> **Version:** 0.1.0 | **Last updated:** 2026-04-27
+> **Version:** 0.1.1 | **Last updated:** 2026-05-15
 
 This reference defines the three adoption stages `agentic-kb` is designed for, the graduation criteria between them, and how the stages relate to automation levels.
 
@@ -21,7 +21,7 @@ What it scaffolds:
 - one contributor anchor layer,
 - the minimum feature set the team actually authors today (typically `findings`, `topics`, `decisions`, `notes`, `tasks`, `foundation`),
 - automation level **1** (manual only),
-- no `connections:` write-back, no `auto-promote`, no draft features.
+- no `connections:` write-back, no `auto-promote`, no roadmap/journey features unless the team's own goals require them.
 
 What it gives the team that they did not have before:
 
@@ -30,7 +30,7 @@ What it gives the team that they did not have before:
 - audit trail in `.kb-log/` and git history for every change, before any agent ever runs,
 - the same artifact shapes (`brief`, `spec`, `release`, `incident`) the team will use later when agents are added — so the upgrade is purely behavioral, not structural.
 
-What it does not yet do:
+What stays off at this stage:
 
 - no evaluation gate firing on the user's behalf,
 - no automatic promotion or digestion,
@@ -55,7 +55,7 @@ What it gives the team:
 - consistent evaluation gate scoring instead of ad-hoc filing,
 - audit trail of every accept and reject with rationale.
 
-What it still does not do:
+What stays off at this stage:
 
 - no scheduled rituals,
 - no auto-promote,
@@ -139,4 +139,5 @@ This mapping is intentionally generic. `agentic-kb` does not depend on any speci
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Reframed Stage 1 exclusions without draft-feature wording and renamed "not yet" capability sections to "stays off at this stage" so staged adoption reads as intentional scope, not unfinished behavior | Release-readiness audit |
 | 2026-04-27 | Initial reference: three-stage adoption ladder, graduation criteria, mapping to automation levels and to repo-as-OS frameworks | Soft-transition extension |

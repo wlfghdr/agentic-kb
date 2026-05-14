@@ -71,7 +71,7 @@ triggers:
   - "present"
   - "report"
   - "progress report"
-  # Draft-skill handoff (route to kb-roadmap / kb-journeys)
+  # Product-management handoff (route to kb-roadmap / kb-journeys)
   - "roadmap"
   - "roadmaps"
   - "product roadmap"
@@ -178,8 +178,8 @@ Full command reference: `references/command-reference.md`.
 | Rituals | `/kb start-day`, `/kb end-day`, `/kb start-week`, `/kb end-week` | Run composed briefings and summaries |
 | Audit | `/kb audit` | Check contradictions, staleness, gaps, and layer-shape drift |
 | Status | `/kb status` | Report pending work, connection drift, tasks, and recent activity |
-| Roadmap (draft) | `/kb roadmap [...]` | Hand off to `kb-roadmap` for plan-vs-delivery reconciliation; refuse if the active layer has no `roadmap:` block |
-| Journeys (draft) | `/kb journeys [...]` (alias `/kb journey`) | Hand off to `kb-journeys` for journey authoring + render; refuse if the active layer has no `journeys:` block |
+| Roadmap | `/kb roadmap [...]` | Hand off to `kb-roadmap` for plan-vs-delivery reconciliation; refuse if the active layer has no `roadmap:` block |
+| Journeys | `/kb journeys [...]` (alias `/kb journey`) | Hand off to `kb-journeys` for journey authoring + render; refuse if the active layer has no `journeys:` block |
 
 Roadmaps and journeys are product-management primitives, but they stay layer-owned. If a user asks for roadmap or journey work and the current layer has no matching block, route them to `/kb setup` or the expert config path so they can choose whether the artifact belongs in a personal, team, org, or other contributor layer. Do not silently choose a layer for them.
 
@@ -252,6 +252,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Reframed roadmap and journey rows as stable setup-proposed product-management flow primitives. They remain explicitly gated by `roadmap:` / `journeys:` config on the confirmed owning layer, but are no longer described as unfinished draft-skill handoffs | Release-readiness audit |
 | 2026-05-14 | v6.1.0: added the retro note variant. `/kb note retro [topic]` now opens a structured retrospective using the new `templates/retro.md` shape (sprint, project/launch, post-incident, quarterly cadences). Retros stay inside the `notes` feature — no new directory or feature flag — and must produce tracked commitments (tasks or decisions) before they are considered closed. Added retro/retrospective/post-mortem trigger phrases so natural-language invocations route here. Workstream template enriched with Owner, Status, Cadence, Last reviewed, Linked briefs/specs, Recent shipments, and Upcoming milestones | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | v6.0.0: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical flow primitives in the layer-aware flow table so the four operating-model artifacts have discoverable command verbs (the trigger keywords were already declared, but the verb path was implicit). Each verb requires the matching `delivery` or `operations` feature on the target layer; the skill refuses cleanly if it is not enabled. No changes to gate scoring, promote/publish/digest semantics, the layer-graph rules, or any other behavioral contract | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now get one canonical owning layer, and source-layer records are closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |

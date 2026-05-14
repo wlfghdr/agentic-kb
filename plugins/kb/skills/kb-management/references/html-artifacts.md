@@ -103,7 +103,7 @@ Minimum contents:
 3. Execution mode: read-only render, dry-run, or apply-capable follow-up.
 4. Concrete output path(s) that will be written.
 
-Examples include website-derived styling (`styling.source: website`), live tracker reads in optional draft skills, or any artifact flow that expands beyond the local repo. Fetch only after user confirmation unless the user already invoked the explicit execution step or automation level 2/3 authorizes the run.
+Examples include website-derived styling (`styling.source: website`), live tracker reads in roadmap/journey skills, or any artifact flow that expands beyond the local repo. Fetch only after user confirmation unless the user already invoked the explicit execution step or automation level 2/3 authorizes the run.
 
 ## Commands
 
@@ -283,6 +283,7 @@ Every `/kb present` MUST use this file (as customized by the phase-3 HTML-stylin
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Reframed external-read examples to refer to stable roadmap/journey skills instead of optional draft skills | Release-readiness audit |
 | 2026-05-10 | Corrected the daily-summary and weekly-summary finding paths in the historical-artifacts table from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |
 | 2026-05-05 | Replaced two stale "kb-setup Q13" references for the presentation-template copy step with phase-relative wording so the doc no longer points at a question number that the v5.4.0 renumbering invalidated. Behavioral contract unchanged | Onboarding consistency review |

@@ -1,6 +1,6 @@
 # First Hour — Zero to First Useful Layer Graph
 
-> **Version:** 6.0.0 | **Last updated:** 2026-05-10
+> **Version:** 6.1.0 | **Last updated:** 2026-05-15
 
 This walkthrough covers the minimum path from nothing installed to the first useful `/kb` responses in a freshly initialized workspace. Target audience: a developer who wants to prove the adoption path end-to-end in under an hour.
 
@@ -126,6 +126,7 @@ If the command targets a `role: consumer` layer, it must refuse clearly.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | v6.1.0: bumped doc version to match the release-readiness baseline. The first-hour walkthrough remains compatible with the goal-oriented setup flow while the canonical acceptance path now carries the expanded delivery/operations and retro proofs | Release-readiness audit |
 | 2026-05-10 | v6.0.0: bumped doc version for the v5 adoption-arc closeout. The walkthrough body did not need rework — phase 1 / phase 2 / phase 3 / phase 4 already match the goal-oriented interview shipped in v5.5.1; it now sits under the v6 baseline together with the rest of the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-05 | v5.5.1: replaced the legacy block-and-answer table that asked the user to enumerate layers, features, and contributor-mode flags with the goal-oriented four-phase interview (Q1–Q8 prose, Q9–Q11 admin, Q12–Q15 confirm-the-derived-plan, Q16 final yes), matching `kb-setup/SKILL.md` since v5.4.0. Success checks now also assert that the chosen adoption stage is durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
 | 2026-04-25 | Aligned the walkthrough with the acceptance baseline: Stage wording became Phase wording, the sample layer answers now include the parent graph fields, and automation level 1 is called out as manual-only | Deep spec-audit follow-up |

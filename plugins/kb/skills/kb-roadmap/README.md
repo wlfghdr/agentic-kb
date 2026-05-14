@@ -1,8 +1,8 @@
 # kb-roadmap
 
-A draft skill in the `agentic-kb` marketplace that reconciles planning-truth sources against delivery reality.
+A stable setup-proposed skill in the `agentic-kb` marketplace that reconciles planning-truth sources against delivery reality.
 
-**Status**: draft (`v0.2.0`). Setup proposes this skill when role, goals, sources, or desired outputs imply product-management roadmap work. Activate it by confirming the owning layer and declaring `roadmap:` there in `.kb-config/layers.yaml`.
+**Status**: stable (`v1.0.0`). Setup proposes this skill when role, goals, sources, or desired outputs imply product-management roadmap work. Activate it by confirming the owning layer and declaring `roadmap:` there in `.kb-config/layers.yaml`.
 
 ## What it does
 
@@ -48,5 +48,6 @@ This skill ships zero vendor-specific names, colors, or adapters beyond the gene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Promoted status to stable v1.0.0 and aligned the README with the release-ready setup-proposed roadmap contract | Release-readiness audit |
 | 2026-04-30 | Updated status to v0.2.0 and described setup-proposed activation plus value-first phase/lane roadmap outputs | Product-management surface integration |
 | 2026-04-25 | Updated the draft roadmap README to point at the active-layer `roadmap:` + `connections:` model instead of the retired top-level shape | v5.1.0 closeout release |

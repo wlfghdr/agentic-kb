@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 5.5.1 | **Last updated:** 2026-05-05
+> **Version:** 6.1.0 | **Last updated:** 2026-05-15
 
 This document defines the canonical first-run acceptance path for `agentic-kb`.
 
@@ -13,6 +13,8 @@ If the answer is not clearly yes, onboarding is not good enough yet.
 ## What this acceptance path covers
 
 This path starts at nothing installed and ends at the first useful `/kb` outputs in a newly initialized workspace.
+
+Before running the path, read [`operating-model.md`](./operating-model.md) for the five loops and [`role-handbook.md`](./role-handbook.md) for role-specific command/artifact expectations. Those two docs explain why the baseline now proves notes, retros, delivery, and operations alongside the older finding/topic/decision path.
 
 It is intentionally narrow:
 
@@ -231,7 +233,7 @@ The setup wizard runs the four-phase, goal-oriented interview defined in `plugin
 
 The wizard must derive and propose:
 
-- two layers — `alice-personal` (scope `personal`, role `contributor`, parent `team-observability`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports`) and `team-observability` (scope `team`, role `contributor`, parent `null`, features `findings, topics, decisions, tasks, notes, foundation, reports`, contributor-mode `notes: shared`),
+- two layers — `alice-personal` (scope `personal`, role `contributor`, parent `team-observability`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports, delivery, operations`) and `team-observability` (scope `team`, role `contributor`, parent `null`, features `findings, topics, decisions, tasks, notes, foundation, reports, delivery, operations`, contributor-mode `notes: shared`),
 - anchor layer `alice-personal`,
 - **adoption-stage label**: `Stage 1 — capture discipline (human-only baseline)`, derived from Q8 + Q7 per `references/adoption-stages.md`. The proposal must show the stage explicitly so the user can see the wizard is suggesting a capture-only scaffold rather than an agent-assisted or bounded-autonomous one,
 - workstream `platform-signals` extracted from Q2,
@@ -279,6 +281,12 @@ demo-agentic-kb/
 │   │   ├── topics/
 │   │   └── reports/
 │   ├── _kb-notes/YYYY/
+│   ├── _kb-delivery/
+│   │   ├── briefs/
+│   │   └── specs/
+│   ├── _kb-operations/
+│   │   ├── releases/YYYY/
+│   │   └── incidents/YYYY/
 │   ├── _kb-ideas/
 │   │   └── archive/YYYY/
 │   ├── _kb-decisions/
@@ -297,6 +305,8 @@ demo-agentic-kb/
     ├── README.md
     ├── _kb-references/
     ├── _kb-notes/
+    ├── _kb-delivery/
+    ├── _kb-operations/
     ├── _kb-decisions/
     ├── _kb-tasks/
     ├── .kb-log/
@@ -310,6 +320,8 @@ Acceptance checks:
 - `.kb-config/layers.yaml` exists in the anchor layer and names both layers,
 - `workspace.anchor-layer` points to `alice-personal`,
 - `_kb-tasks/focus.md` exists,
+- `_kb-delivery/briefs/` and `_kb-delivery/specs/` exist when `delivery` is enabled,
+- `_kb-operations/releases/YYYY/` and `_kb-operations/incidents/YYYY/` exist when `operations` is enabled,
 - at least one workstream file exists,
 - at least one topic stub exists,
 - `index.html` and `dashboard.html` exist in both layers.
@@ -341,6 +353,7 @@ Suggested next steps:
 - Run /kb start-day
 - Capture a first source with /kb <URL-or-text>
 - Try /kb note meeting <topic> before the next sync
+- Try /kb note retro <topic> after a review or incident
 ```
 
 ## Step 7 — First briefing
@@ -423,7 +436,41 @@ Acceptance checks:
 
 Greenfield adopters can skip this step.
 
-## Optional Step 11 — Progress report proof
+## Optional Step 11 — Delivery and operations proof
+
+If the baseline enables `delivery` and `operations`, prove the four artifact verbs with the smallest useful records:
+
+```text
+/kb brief cache-invalidation-safety
+/kb spec cache-invalidation-rollout
+/kb release cache-invalidation-pilot
+/kb incident cache-invalidation-timeout
+```
+
+Acceptance checks:
+
+- `brief` and `spec` refuse clearly if the layer lacks `delivery`, and create files under `_kb-delivery/` when it is enabled,
+- `release` and `incident` refuse clearly if the layer lacks `operations`, and create files under `_kb-operations/` when it is enabled,
+- the created files match the templates documented in `docs/REFERENCE.md` §4,
+- linked decisions/tasks are proposed explicitly rather than silently written.
+
+## Optional Step 12 — Retro proof
+
+Run after any meeting or incident review:
+
+```text
+/kb note retro cache-invalidation-review
+/kb note end
+```
+
+Acceptance checks:
+
+- the retro file lives under `_kb-notes/YYYY/` with `type: retro`,
+- cadence, facilitator, period, and linked artifacts are captured,
+- action items from "What we will change" are surfaced as proposed tasks or decisions,
+- a retro with no tracked commitments is flagged as a false-convergence risk instead of being silently accepted.
+
+## Optional Step 13 — Progress report proof
 
 If the adopter wants to prove the report surface, use the narrowest path first:
 
@@ -439,7 +486,7 @@ Acceptance checks:
 - no live tracker auth is required for the first proof run,
 - the team lead can trace the narrative back to the generated artifacts.
 
-## Optional Step 12 — Product-management proof
+## Optional Step 14 — Product-management proof
 
 If the Phase 1 answers mention customer journeys, launch planning, phase/lane roadmaps, product sequencing, or stakeholder roadmap presentations, setup must propose `journeys` and/or `roadmaps` on a concrete owning layer.
 
@@ -456,7 +503,7 @@ Acceptance checks:
 - `.kb-config/layers.yaml` contains the matching `roadmap:` / `journeys:` blocks only after confirmation,
 - scaffolded `_kb-roadmaps/` and `_kb-journeys/` folders exist when those features are enabled,
 - `/kb roadmap --dry-run` and `/kb journeys --dry-run` produce read-only validation output and name missing sources without writing to external trackers,
-- the roadmap presentation rules are visible in generated guidance: value headlines, implementation/detail second lines, explicit draft/proposed/agreed/shipped status, and no checkmarks for proposed work.
+- the roadmap presentation rules are visible in generated guidance: value headlines, implementation/detail second lines, explicit commitment status, and no checkmarks for proposed work.
 
 ## Team lead verification checklist
 
@@ -497,6 +544,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | v6.1.0: updated the deterministic first-run path for the release-ready surface. The baseline now enables delivery and operations on the starter layers, calls out the operating model and role handbook as pre-acceptance reading, verifies delivery/operations directories, and adds optional proofs for `/kb brief`, `/kb spec`, `/kb release`, `/kb incident`, and `/kb note retro` | Release-readiness audit |
 | 2026-05-05 | v5.5.1: closed the v5.4.0 numbering drift. Phase 1 now baselines Q1–Q8 (Q8 = operating context / adoption stage, which had been silently dropped from this doc since v5.4.0). Phase 2 questions are renumbered Q9/Q10/Q11 to match `kb-setup/SKILL.md`. Phase 3 expected output now requires the adoption-stage label, explicit Stage↔automation-level consistency, and the graduation-criteria block, so the acceptance baseline actually proves the soft-transition flow it advertises. Added an explicit acceptance bullet that the chosen stage must be durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
 | 2026-04-30 | v5.5.0: added the optional product-management proof path so first-run acceptance covers setup-derived roadmap/journey ownership, source/output placement, and read-only dry-run validation when role/goals imply those artifacts | Product-management surface integration |
 | 2026-04-25 | v5.2.0: replaced the flat 13-question baseline with the four-phase, goal-oriented interview (Phase 1 context/goals, Phase 2 workspace facts, Phase 3 derived plan to confirm, Phase 4 single yes) so the canonical proof matches the new kb-setup behavior. Layer features and contributor-mode flags are now derived in Phase 3 from the user's own answers, not enumerated by the user. Q7 baseline answer pinned to "confirm everything" so the derived automation level stays at 1 (manual only) per the existing baseline | v5.2.0 setup rework |

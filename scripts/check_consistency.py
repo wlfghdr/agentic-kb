@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 import sys
+import json
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -124,6 +125,54 @@ def check_changelog_exists() -> list[str]:
     return []
 
 
+def check_manifest_versions() -> list[str]:
+    version_file = REPO / "VERSION"
+    if not version_file.is_file():
+        return []
+    expected = version_file.read_text(encoding="utf-8").strip()
+    checks = [
+        (REPO / "plugin.json", ("version",)),
+        (REPO / ".claude-plugin" / "marketplace.json", ("metadata", "version")),
+        (REPO / "plugins" / "kb" / "plugin.json", ("version",)),
+    ]
+    errors: list[str] = []
+    for path, key_path in checks:
+        rel = path.relative_to(REPO)
+        if not path.is_file():
+            errors.append(f"MISSING manifest for version check: {rel}")
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"INVALID JSON for version check: {rel}: {exc}")
+            continue
+        value = data
+        for key in key_path:
+            if not isinstance(value, dict) or key not in value:
+                errors.append(f"MISSING version field {'.'.join(key_path)} in: {rel}")
+                value = None
+                break
+            value = value[key]
+        if value is not None and value != expected:
+            errors.append(f"VERSION drift in {rel}: expected {expected}, got {value}")
+
+    marketplace = REPO / ".claude-plugin" / "marketplace.json"
+    if marketplace.is_file():
+        try:
+            data = json.loads(marketplace.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            data = {}
+        for plugin in data.get("plugins", []) or []:
+            if not isinstance(plugin, dict):
+                continue
+            if plugin.get("version") != expected:
+                errors.append(
+                    f"VERSION drift in .claude-plugin/marketplace.json plugin {plugin.get('name', '?')}: "
+                    f"expected {expected}, got {plugin.get('version')!r}"
+                )
+    return errors
+
+
 def check_forbidden_terms() -> list[str]:
     terms = FORBIDDEN_TERMS + _load_external_blocklist()
     if not terms:
@@ -202,6 +251,7 @@ def main() -> int:
     all_errors: list[str] = []
     all_errors += check_root_version()
     all_errors += check_changelog_exists()
+    all_errors += check_manifest_versions()
     all_errors += check_versions_and_changelogs()
     all_errors += check_forbidden_terms()
     all_errors += check_internal_links()

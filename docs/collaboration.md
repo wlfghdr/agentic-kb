@@ -1,6 +1,6 @@
 # Collaboration Guide
 
-> **Version:** 5.6.0 | **Last updated:** 2026-05-06
+> **Version:** 6.1.0 | **Last updated:** 2026-05-15
 
 This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
@@ -302,6 +302,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Version aligned to 6.1.0 after the release-readiness audit. Collaboration semantics unchanged; this guide now tracks the released retro/role-handbook/delivery-operations surface carried by the rest of the spec | Release-readiness audit |
 | 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
 | 2026-05-06 | Added the decision/task promotion ownership rule so shared promotions create one canonical record instead of parallel active source and target decisions/tasks | Decision/task ownership follow-up |
 | 2026-04-25 | Clarified that consumer layers can receive digest updates and host read-down guidance locally, while still refusing promote/publish as a source of new shared truth | Deep spec-audit follow-up |

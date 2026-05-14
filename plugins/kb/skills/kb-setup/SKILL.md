@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
-version: 6.0.0
+version: 6.1.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -82,8 +82,8 @@ Ask each block in order. Stop and wait after each block for the user's answer be
 
 The wizard presents a single concrete proposal derived from phase 1 + 2. The user reviews, adjusts inline if needed, and confirms. Do not ask the user to author the plan from scratch.
 
-1. **Proposed layer graph and adoption stage** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor and label the proposed **adoption stage** (1 / 2 / 3) derived from Q8 + Q7 so the user can see at a glance whether the wizard is suggesting a capture-only scaffold, an agent-assisted scaffold, or a bounded-autonomous scaffold. Default for a new solo user starting at Stage 1: one contributor anchor layer (scope `personal`), no draft features, automation level 1, no `connections:` write-back. If Q1/Q2/Q6 mention product management, sequencing, customer journeys, launch planning, portfolio status, or stakeholder roadmap communication, propose `roadmaps` and/or `journeys` on the layer whose audience owns that work and label the placement as adjustable. Default for a team already on a repo-as-OS framework: one shared contributor layer plus a `connections.product-repos[]` entry pointing at the existing governance repo. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent, change stage, move roadmaps/journeys to another layer).
-2. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q5, plus any repo-as-OS product-repo detected in Q11), the dashboard panels and report types that match Q6 outputs, the automation level from Q7 (1 / 2 / 3 per `references/automation-levels.md`), and any product-management draft-feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. For each roadmap/journey block, show the chosen owning layer, source inputs, output directories, and whether the first proof path is export-backed or live-adapter-backed. Same single yes-or-adjust prompt.
+1. **Proposed layer graph and adoption stage** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor and label the proposed **adoption stage** (1 / 2 / 3) derived from Q8 + Q7 so the user can see at a glance whether the wizard is suggesting a capture-only scaffold, an agent-assisted scaffold, or a bounded-autonomous scaffold. Default for a new solo user starting at Stage 1: one contributor anchor layer (scope `personal`), no roadmap/journey features unless Q1/Q2/Q6 explicitly call for them, automation level 1, no `connections:` write-back. If Q1/Q2/Q6 mention product management, sequencing, customer journeys, launch planning, portfolio status, or stakeholder roadmap communication, propose `roadmaps` and/or `journeys` on the layer whose audience owns that work and label the placement as adjustable. Default for a team already on a repo-as-OS framework: one shared contributor layer plus a `connections.product-repos[]` entry pointing at the existing governance repo. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent, change stage, move roadmaps/journeys to another layer).
+2. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q5, plus any repo-as-OS product-repo detected in Q11), the dashboard panels and report types that match Q6 outputs, the automation level from Q7 (1 / 2 / 3 per `references/automation-levels.md`), and any product-management feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. For each roadmap/journey block, show the chosen owning layer, source inputs, output directories, and whether the first proof path is export-backed or live-adapter-backed. Same single yes-or-adjust prompt.
 3. **Proposed graduation criteria for the next stage** — name the 2–3 concrete things the user would need before safely advancing to the next adoption stage (e.g. "≥ 4 weeks of clean `.kb-log/` entries, one cross-layer promote completed, foundation/vmg.md confirmed by stakeholders" before turning on automation level 2). The user can accept, edit, or skip this block; it is informational and does not block scaffold.
 4. **HTML artifact styling** — builtin, website-derived, or template-based corporate design. Default to `builtin` when Q3 does not mention external branding constraints.
 
@@ -139,6 +139,8 @@ Feature directories:
 - `topics` → `_kb-references/topics/`
 - `foundation` → `_kb-references/foundation/`
 - `notes` → `_kb-notes/YYYY/`
+- `delivery` → `_kb-delivery/briefs/` + `_kb-delivery/specs/`
+- `operations` → `_kb-operations/releases/YYYY/` + `_kb-operations/incidents/YYYY/`
 - `ideas` → `_kb-ideas/` + `archive/YYYY/`
 - `decisions` → `_kb-decisions/` + `archive/YYYY/`
 - `tasks` → `_kb-tasks/` + `archive/YYYY/`
@@ -239,6 +241,23 @@ The layer-graph scaffold uses these placeholders directly:
 
 Layer-specific repeated content beyond the anchor layer is rendered from the interview answers rather than from hard-coded placeholder names.
 
+Substitution examples:
+
+```yaml
+# before substitution
+workspace:
+  anchor-layer: {{KB_NAME}}
+
+# after confirmation
+workspace:
+  anchor-layer: alice-personal
+
+# if the user deliberately defers VMG text
+vision: "{{VMG_VISION}}"  # follow-up task required before setup is complete
+```
+
+The `notes` feature always includes general notes, meeting notes, and retros. Setup does not ask for those variants separately; it only decides whether the layer gets the `notes` feature at all. `/kb note retro [topic]` then uses the same `_kb-notes/YYYY/` directory as the other note variants.
+
 ## Post-write placeholder check
 
 After writing the scaffold, scan the workspace for any remaining `{{...}}` sequences outside the deliberate presentation-template placeholders. If any remain:
@@ -261,6 +280,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Skill version aligned to 6.1.0. Setup now documents that notes include general, meeting, and retro variants under one feature; delivery/operations scaffold directories are explicit; roadmap/journey blocks are stable setup-proposed features instead of draft-feature blocks; and placeholder substitution examples show confirmed and deliberately deferred values | Release-readiness audit |
 | 2026-05-10 | Skill version aligned to 6.0.0 for the v5 adoption-arc closeout. No behavioral changes to the four-phase interview, scaffold output, or migration flow. The setup output contract picks up the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs because the kb-management plugin it composes ships them as canonical flows; the templated `kb.prompt.md` was patched in lock-step to enumerate those subcommands and to drop the retired `SKILL.md rule #10c` cross-reference in favor of rule 8 | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented placeholders the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Setup now derives roadmap/journey features from role/goals/outputs, asks which layer owns them, and writes matching config only after confirmation | Product-management surface integration |

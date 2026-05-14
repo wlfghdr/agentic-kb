@@ -39,10 +39,11 @@ The skill ships with `agentic-kb`. Setup proposes it when role, goals, sources, 
 
 ## Status
 
-Draft (`v0.2.0`). Setup-proposed product-management primitive. Baseline contract stable; ownership placement is confirmed during onboarding.
+Stable (`v1.0.0`). Setup-proposed product-management primitive; ownership placement is confirmed during onboarding.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Promoted status to stable v1.0.0 and aligned the README with the release-ready setup-proposed journey contract | Release-readiness audit |
 | 2026-04-30 | Updated status to v0.2.0 and described setup-proposed ownership placement for journey work | Product-management surface integration |

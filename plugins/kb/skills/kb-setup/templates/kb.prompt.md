@@ -29,8 +29,8 @@ Evaluate in order and stop at the first match:
 
 1. **No `.kb-config/layers.yaml` anywhere in the workspace** → hand off to the `kb-setup` skill (even if the user typed only `/kb` with no args). Announce: "No KB detected — running setup." Then run the onboarding interview.
 2. **Explicit subcommand** after `/kb` (`review`, `promote`, `publish`, `digest`, `todo`, `task`, `idea`, `develop`, `decide`, `note`, `brief`, `spec`, `release`, `incident`, `migrate`, `sync`, `diff`, `start-day`, `end-day`, `start-week`, `end-week`, `present`, `report`, `browse`, `install`, `audit`, `status`, `setup`) → route to that action per `references/command-reference.md`.
-3. **Product-management draft-skill subcommand** after `/kb` — `roadmap` (or `roadmaps`) hands off to the `kb-roadmap` skill; `journeys` (or `journey`) hands off to the `kb-journeys` skill. If the active layer has not declared the matching `roadmap:` / `journeys:` config block in `.kb-config/layers.yaml`, refuse with a clear message that names the missing block, points the user at the skill's `references/config-schema.md`, and offers `/kb setup` as the normal path for deciding which layer should own the artifact.
-4. **URL or pasted text** → capture to the anchor layer. Apply the five-question evaluation gate.
+3. **Product-management subcommand** after `/kb` — `roadmap` (or `roadmaps`) hands off to the `kb-roadmap` skill; `journeys` (or `journey`) hands off to the `kb-journeys` skill. If the active layer has not declared the matching `roadmap:` / `journeys:` config block in `.kb-config/layers.yaml`, refuse with a clear message that names the missing block, points the user at the skill's `references/config-schema.md`, and offers `/kb setup` as the normal path for deciding which layer should own the artifact.
+4. **URL or pasted text** → capture into the active layer (the anchor unless context selects another contributor-capable layer). Apply the five-question evaluation gate.
 5. **File path inside a known KB layer** → layer-appropriate operation (review/update-topic/decide) on that file.
 6. **Bare `/kb` (no input)** → run the **triage scan** below and present the result.
 
@@ -40,7 +40,7 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 
 | Signal | Check | Action hint |
 |---|---|---|
-| Setup complete? | `.kb-config/layers.yaml` exists and names at least one contributor-capable layer | If missing → `/kb setup` |
+| Setup complete? | `.kb-config/layers.yaml` exists and names an anchor layer | If missing → `/kb setup` |
 | **Top task** | First item in `_kb-tasks/focus.md` (if any) | Always include as `Next up: …` |
 | **External completions** | Open focus/backlog tasks with evidence of closure (merged PR / closed tracker ticket / commit referencing the task slug / same slug already in a shared `_kb-tasks/archive/`). See SKILL.md rule 8 (Task creation and closure are explicit). | Propose archiving — never auto-close |
 | Pending inputs | Files under `_kb-inputs/` not yet in `_kb-inputs/digested/` | Count + suggest `/kb review` |
@@ -48,8 +48,9 @@ When the user invokes `/kb` with no argument, scan the workspace and report a si
 | Stale tasks | `_kb-tasks/backlog.md` items untouched > 14 days | Annotate `stale: true`; list but don't remove |
 | Overdue focus | `_kb-tasks/focus.md` items with status `doing` > 7 days | Surface so user can re-plan |
 | Rituals overdue | Today's `.kb-log/YYYY-MM-DD.log` missing a `start-day` entry; current week missing `start-week` | Suggest the missing ritual |
-| Upstream digest drift | Parent or connected repos declared in `layers.yaml` whose HEAD commit differs from the local digest watermark | Suggest `/kb digest <layer>` or `/kb digest connections` |
-| Promotions due | Findings/topics declaring `**Maturity**: durable` not yet referenced in any declared parent contributor layer | Suggest `/kb promote <file> <layer>` |
+| Upstream digest drift | Parent layers declared in `.kb-config/layers.yaml` whose HEAD commit differs from the watermark in `_kb-references/strategy-digests/.last-digest` (or per-source watermark file) | Suggest `/kb digest <layer>` |
+| Connection drift | Declared `connections:` sources changed since the last connection digest watermark | Suggest `/kb digest connections` |
+| Promotions due | Findings/topics declaring `**Maturity**: durable` not yet referenced in any contributor-capable parent layer | Suggest `/kb promote <file>` |
 | Stale topics | Topics unchanged > 60 days and still referenced by recent findings | Suggest `/kb audit` |
 
 Output shape:
@@ -64,7 +65,7 @@ KB triage — <anchor-layer-name>
   Stale tasks: <N> (annotated, not removed)
   Overdue focus items: <N>
   Rituals: start-day ✓ / ✗, start-week ✓ / ✗
-  Upstream drift: <layers>                  → /kb digest <layer>
+  Upstream drift: <layers>                  → /kb digest team
   Promotions due: <N>                       → /kb promote <file>
   Stale topics: <N>                         → /kb audit
 

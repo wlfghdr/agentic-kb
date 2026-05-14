@@ -74,6 +74,11 @@ class AcceptanceFixtureTests(unittest.TestCase):
 
             for path in (
                 personal / "_kb-notes" / "2026" / "04-24-adoption-sync.md",
+                personal / "_kb-notes" / "2026" / "04-24-retro-example.md",
+                personal / "_kb-delivery" / "briefs" / ".gitkeep",
+                personal / "_kb-delivery" / "specs" / ".gitkeep",
+                personal / "_kb-operations" / "releases" / "2026" / ".gitkeep",
+                personal / "_kb-operations" / "incidents" / "2026" / ".gitkeep",
                 personal / "_kb-references" / "findings" / "2026" / "2026-04-24-proof-strip.md",
                 personal / "_kb-inputs" / "digested" / "2026" / "04" / ".gitkeep",
                 personal / "_kb-tasks" / "archive" / "2026" / "04.md",
@@ -81,6 +86,10 @@ class AcceptanceFixtureTests(unittest.TestCase):
                 personal / "_kb-ideas" / "archive" / "2026" / ".gitkeep",
                 personal / "_kb-references" / "strategy-digests" / "2026" / ".last-progress-platform-signals",
                 team / "_kb-notes" / "2026" / "04-24-review.md",
+                team / "_kb-delivery" / "briefs" / ".gitkeep",
+                team / "_kb-delivery" / "specs" / ".gitkeep",
+                team / "_kb-operations" / "releases" / "2026" / ".gitkeep",
+                team / "_kb-operations" / "incidents" / "2026" / ".gitkeep",
             ):
                 self.assertTrue(path.exists(), path)
 
@@ -90,7 +99,7 @@ class AcceptanceFixtureTests(unittest.TestCase):
             self.assertIn("scope: org-unit", layers)
             self.assertIn("scope: company", layers)
             self.assertIn("role: consumer", layers)
-            self.assertIn("features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes]", layers)
+            self.assertIn("features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes, delivery, operations]", layers)
             self.assertIn("connections:", layers)
             self.assertIn("trackers:", layers)
             self.assertIn("marketplace:", layers)

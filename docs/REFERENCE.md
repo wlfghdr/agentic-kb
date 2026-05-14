@@ -36,7 +36,7 @@ Core rules:
 - `role: contributor | consumer` governs shared mutation rights. Consumer layers may receive digests and expose read-down guidance, but promotion or publish targeting a consumer-only layer must refuse with a clear message.
 - `features:` opt a layer into primitives: `inputs`, `findings`, `topics`, `ideas`, `decisions`, `tasks`, `notes`, `workstreams`, `foundation`, `reports`, `delivery`, `operations`, `marketplace`, `roadmaps`, `journeys`.
 - `marketplace` is **cross-cutting**, not a numbered layer. Any layer may publish to or consume from its own marketplace repo.
-- Product-management draft features (`roadmaps`, `journeys`) are enabled per layer, not globally. `/kb setup` proposes them when the user's role, goals, sources, or desired outputs imply product-direction work, and asks which layer should own them before writing config.
+- Product-management features (`roadmaps`, `journeys`) are enabled per layer, not globally. `/kb setup` proposes them when the user's role, goals, sources, or desired outputs imply product-direction work, and asks which layer should own them before writing config.
 
 ### Contributor-scoped vs shared primitives
 
@@ -554,7 +554,7 @@ Field contract:
 - `contributor-mode`: optional overrides for primitives that can be shared or contributor-scoped.
 - `marketplace`: marketplace repo and install mode for that layer's published skills.
 - `connections`: product repos, trackers, reference mode, and write-back policy for that layer.
-- `roadmap` / `journeys`: product-management draft-skill configuration blocks nested under the layer that enabled those features. Setup derives and confirms the owning layer; hand-edits must keep the block beside the layer whose `features` include `roadmaps` or `journeys`.
+- `roadmap` / `journeys`: product-management configuration blocks nested under the layer that enabled those features. Setup derives and confirms the owning layer; hand-edits must keep the block beside the layer whose `features` include `roadmaps` or `journeys`.
 
 ### Product-management primitives
 
@@ -636,7 +636,7 @@ journeys-template:
 
 Recommended lean roadmap baseline: start with exported tracker markdown bound through `connections.trackers[]`, prove the artifact flow locally, then opt into live tracker adapters and write-back later.
 
-Current draft-helper reality: the repo ships neutral renderer helpers for roadmap and journey artifacts under `plugins/kb/skills/*/scripts/`. They are sufficient for local validation and artifact generation, but they do not yet implement the full interactive `/kb roadmap` and `/kb journeys` command surface described by the behavioral specs.
+Reference helper coverage: the repo ships neutral renderer helpers for roadmap and journey artifacts under `plugins/kb/skills/*/scripts/`. They cover local validation and artifact generation; apply-capable command paths stay behind the explicit confirmation gates defined in the roadmap and journey skill specs.
 
 ### Migration helpers
 
@@ -760,7 +760,7 @@ Everything is Git + Markdown + local agent. No external service required. Offlin
 
 | Stage | Posture | Typical scaffold | Typical automation level |
 |-------|---------|------------------|--------------------------|
-| **1 — Capture discipline** | Humans author every artifact by hand into the directory contract; no `/kb` invocation in the loop. | One contributor anchor layer; `findings`, `topics`, `decisions`, `notes`, `tasks`, `foundation`; no draft features; no `connections:` write-back. | 1 (manual only) |
+| **1 — Capture discipline** | Humans author every artifact by hand into the directory contract; no `/kb` invocation in the loop. | One contributor anchor layer; `findings`, `topics`, `decisions`, `notes`, `tasks`, `foundation`; no roadmap/journey features unless explicitly needed; no `connections:` write-back. | 1 (manual only) |
 | **2 — Agent-assisted triage** | The `/kb` evaluation gate fires on capture; agent proposes routing; humans confirm before persistence. | Stage 1 baseline plus `/kb` slash command and feature-keyword triggers wired into the harness; optional read-only `connections:` for tracker exports. | 1 (manual only); the agent is in the loop, but every persistence still waits on a human. |
 | **3 — Bounded autonomous knowledge ops** | Scheduled rituals/digests; guarded auto-promote on confidence threshold; humans review only flagged exceptions. | Stage 2 baseline plus `auto-promote` config, declared exception channel, live-overview regeneration as part of every mutation. | 2 (scheduled rituals/digests) or 3 (scheduled flows plus guarded auto-promote). |
 
@@ -849,8 +849,6 @@ For skills that encode safety rules, policy checks, scoring, or routing logic, t
 | Installer-supported native command path | Gemini CLI | n/a | n/a | `.gemini/commands/<name>.toml` for `/kb` |
 | Installer-supported native skill path | Kiro IDE | `.kiro/skills/<name>/SKILL.md` | n/a | skills appear in the slash menu |
 | Compatible skill workflow | Codex CLI | `.agents/skills/<name>/SKILL.md` | n/a | `AGENTS.md` + skill picker / `$kb`; no custom `/kb` slash command |
-| Rules-only harness (not yet supported) | Cursor, Windsurf | adopter-defined | adopter-defined | No slot for a custom `/kb` slash command — adopters reuse the scaffolded KB files as context but wire invocation manually. |
-| Not feasible (not a supported tier) | Aider, raw Claude / Inflection Pi | n/a | n/a | No user-custom command hook, or not a developer harness. Listed for completeness. |
 | Partial/manual path | Other CLIs / IDEs | adopter-defined | adopter-defined | Can use the KB file model, but command wiring and automation may need manual setup. |
 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for marketplace-backed and installer-supported harnesses. Compatible Codex workflows reuse the same workspace contract through `AGENTS.md` plus repo/user skill directories.
@@ -863,6 +861,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-15 | Release-readiness audit: removed active draft-feature wording for roadmap and journey flows, clarified stable helper coverage and apply-capable confirmation gates, trimmed unsupported harness rows from the public support matrix, and aligned the reference with the 6.1.0 release surface |
 | 2026-05-14 | Added the retro variant to §4 Note formats (`type: retro` with cadence/facilitator/period frontmatter and a structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts section set) so sprint, project, post-launch, post-incident, and quarterly retros have a canonical shape. Retros stay inside the existing `notes` feature — no new directory or feature flag. Added a navigation pointer to the new role-handbook companion doc |
 | 2026-05-10 | Version aligned to 6.0.0 after the v5 adoption-arc closeout. Updated the §4 brief, spec, release, and incident file formats so they match the templates the skill actually instantiates: brief gains "Why now", "Success signals", "Dependencies and handoffs", and an inline changelog and moves stakeholders into the frontmatter; spec gains "Requirements", "Proposed shape", "Rollout and migration", "Verification", "Open questions", and an inline changelog and links to the originating brief in the frontmatter; release gains "Audience" and "Linked spec" frontmatter and switches to the rollout/rollback/communications/follow-up section set; incident gains "Owners", "Services", and the precise "Opened" timestamp. The four artifacts are now the same shape across REFERENCE, templates, and the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs in `command-reference.md` |
 | 2026-05-10 | Added shared collaboration artifact guidance for status, delivery, and roadmap-change report sources |

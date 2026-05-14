@@ -124,16 +124,16 @@ Canonical shared-report contract:
 - `roadmap-change` may be opened automatically when roadmap scope, sequencing, dates, ownership, or committed phase changes, but it is only approved by the accountable roadmap owner or PM.
 - In other words, roadmap-change may be opened automatically, but never auto-approved.
 
-## Product-management draft-skill subcommands
+## Product-management subcommands
 
-The plugin ships two product-management draft skills that own their own subcommand surface. `/kb` routes to them after the stable subcommands above, and only when setup has proposed or the user has manually declared the matching config block on the confirmed owning layer.
+The plugin ships two product-management skills that own their own subcommand surface. `/kb` routes to them after the core subcommands above, and only when setup has proposed or the user has manually declared the matching config block on the confirmed owning layer.
 
 | Subcommand | Skill | Activated by |
 |-----------|-------|--------------|
 | `/kb roadmap [...]` | [`kb-roadmap`](../../kb-roadmap/SKILL.md) | `roadmap:` block on the active layer in `.kb-config/layers.yaml` (+ `html-template:` in `.kb-config/artifacts.yaml`) |
 | `/kb journeys [...]` (alias `/kb journey`) | [`kb-journeys`](../../kb-journeys/SKILL.md) | `journeys:` block on the active layer in `.kb-config/layers.yaml` (+ `journeys-template:` in `.kb-config/artifacts.yaml`) |
 
-When a user invokes `/kb roadmap` or `/kb journeys` and the matching block is missing, refuse with a message that names the missing block and points at the draft skill's `references/config-schema.md`. Also offer `/kb setup` as the normal path for deciding which layer should own roadmap and journey artifacts. Never silently scaffold the config — the placement decision is the point. Full subcommand surface for each draft skill lives in its own `references/command-reference.md`.
+When a user invokes `/kb roadmap` or `/kb journeys` and the matching block is missing, refuse with a message that names the missing block and points at the skill's `references/config-schema.md`. Also offer `/kb setup` as the normal path for deciding which layer should own roadmap and journey artifacts. Never silently scaffold the config — the placement decision is the point. Full subcommand surface for each skill lives in its own `references/command-reference.md`.
 
 ## Publish flow (detail)
 
@@ -212,6 +212,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Renamed the active roadmap/journey section from draft-skill subcommands to product-management subcommands and clarified that these stable skills are enabled by explicit owning-layer config | Release-readiness audit |
 | 2026-05-14 | Added `/kb note retro [topic]` as a third note variant alongside general and meeting notes. Retros use the structured template at `plugins/kb/skills/kb-management/templates/retro.md`, must produce tracked commitments at close time, and surface a "false convergence" Gate note if they close without any. No new feature flag or directory — retros live inside the existing `notes` feature | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Added a dedicated Delivery & Operations subcommand section (`/kb brief`, `/kb spec`, `/kb release`, `/kb incident`) so the four operating-model artifacts have canonical command verbs that match the file paths in `docs/REFERENCE.md` §3 and the templates in `plugins/kb/skills/kb-management/templates/`. Each verb requires the matching `delivery` or `operations` feature on the target layer and refuses cleanly when the feature is not enabled. They were already wired as feature-keyword triggers in the kb-management skill but had no discoverable verb, which forced users to rely on natural-language intent matching | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
