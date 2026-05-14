@@ -222,6 +222,8 @@ Question references in this table use the global numbering: phase 1 covers Q1–
 
 The layer-graph scaffold uses these placeholders directly:
 
+{% raw %}
+
 | Placeholder | Source |
 |-------------|--------|
 | `{{USER_NAME}}` | Q1 |
@@ -262,6 +264,8 @@ The `notes` feature always includes general notes, meeting notes, and retros. Se
 
 After writing the scaffold, scan the workspace for any remaining `{{...}}` sequences outside the deliberate presentation-template placeholders. If any remain:
 
+{% endraw %}
+
 1. stop,
 2. list the file and placeholder,
 3. ask for the missing value,
@@ -280,6 +284,7 @@ After writing the scaffold, scan the workspace for any remaining `{{...}}` seque
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-15 | Escaped placeholder examples with Liquid raw guards so GitHub Pages can build the released docs while preserving the literal `{{...}}` setup-token contract for agents | Pages release fix |
 | 2026-05-15 | Skill version aligned to 6.1.0. Setup now documents that notes include general, meeting, and retro variants under one feature; delivery/operations scaffold directories are explicit; roadmap/journey blocks are stable setup-proposed features instead of draft-feature blocks; and placeholder substitution examples show confirmed and deliberately deferred values | Release-readiness audit |
 | 2026-05-10 | Skill version aligned to 6.0.0 for the v5 adoption-arc closeout. No behavioral changes to the four-phase interview, scaffold output, or migration flow. The setup output contract picks up the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs because the kb-management plugin it composes ships them as canonical flows; the templated `kb.prompt.md` was patched in lock-step to enumerate those subcommands and to drop the retired `SKILL.md rule #10c` cross-reference in favor of rule 8 | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-05 | v5.5.1: closed the placeholder-mapping gap that had been silently broken since the goal-oriented + adoption-stage extensions. Documented the global Q-numbering convention, listed the previously-undocumented placeholders the templates emit (`{{THEMES}}`, `{{WORKSTREAMS}}`, `{{TEAM_NAME}}`, `{{ORG_UNIT_NAME}}`, `{{REPO_INDEX}}`, `{{ALIAS_INDEX}}`, `{{KEYWORD_LOOKUP}}`, `{{VMG_VISION}}`, `{{VMG_MISSION}}`, `{{VMG_GOALS}}`, `{{AUTOMATION_LEVEL}}`), and replaced the stale "Q12" wording with phase-3-question-1 wording so the table no longer reads as off-by-one | Onboarding consistency review |
