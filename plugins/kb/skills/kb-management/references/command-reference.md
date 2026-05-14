@@ -15,9 +15,12 @@
 |-----------|--------|
 | `/kb note [text]` | Create a general note under `_kb-notes/YYYY/MM-DD-slug.md` |
 | `/kb note meeting [topic]` | Start a meeting note and prompt for attendees |
+| `/kb note retro [topic]` | Start a retrospective note using `templates/retro.md`; prompts for cadence (sprint / project / post-launch / post-incident / quarterly), facilitator, attendees, the period under review, and linked artifacts (incidents, releases, briefs, specs) |
 | `/kb note end` | Close the current note, propose decisions/tasks/topic updates, and log the result |
 
 Notes use a lighter gate than findings. They are cheap capture surfaces that feed decisions, tasks, roadmap updates, and later findings without pretending to be immutable evidence.
+
+Retro variants have one additional contract: `/kb note end` on a retro must surface every action item from *What we will change* as a proposed task on the layer's `_kb-tasks/backlog.md`, or as a new decision if the item is a fork rather than a commitment. A retro that closes without any tracked commitments is flagged in the response under Gate notes as a likely "false convergence" (see [`docs/collaboration.md`](../../../../../docs/collaboration.md)); the agent does not silently fix this — the user is asked to confirm whether the retro really had no follow-ups.
 
 ## Decisions & Tasks
 
@@ -209,6 +212,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-14 | Added `/kb note retro [topic]` as a third note variant alongside general and meeting notes. Retros use the structured template at `plugins/kb/skills/kb-management/templates/retro.md`, must produce tracked commitments at close time, and surface a "false convergence" Gate note if they close without any. No new feature flag or directory — retros live inside the existing `notes` feature | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Added a dedicated Delivery & Operations subcommand section (`/kb brief`, `/kb spec`, `/kb release`, `/kb incident`) so the four operating-model artifacts have canonical command verbs that match the file paths in `docs/REFERENCE.md` §3 and the templates in `plugins/kb/skills/kb-management/templates/`. Each verb requires the matching `delivery` or `operations` feature on the target layer and refuses cleanly when the feature is not enabled. They were already wired as feature-keyword triggers in the kb-management skill but had no discoverable verb, which forced users to rely on natural-language intent matching | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
 | 2026-05-06 | Clarified that `/kb promote` must keep decisions and tasks canonical to one owning layer instead of leaving parallel active source and target records | Decision/task ownership follow-up |

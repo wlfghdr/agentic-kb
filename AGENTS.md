@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.9 | **Last updated:** 2026-05-10
+> **Version:** 0.10 | **Last updated:** 2026-05-14
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -89,6 +89,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-14 | Bumped AGENTS version to 0.10 to track the daily-reality role-coverage extension landing under `[Unreleased]`: new `docs/role-handbook.md`, new retro note variant (template + `/kb note retro` verb + REFERENCE §4 Note-format extension), workstream template enriched with status/owner/cadence/linked-delivery and shipment/milestone tables, and three new day-in-the-life scenes (PM/EM/on-call SRE). AGENTS rules unchanged in semantics | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | v6.0.0 release alignment — bumped AGENTS version to 0.9 to track the v5 adoption-arc closeout (canonical `/kb brief`, `/kb spec`, `/kb release`, `/kb incident` verbs; REFERENCE ↔ template format alignment for the four delivery/operations artifacts; removal of residual fixed-ladder L1/L2/L3/L4 vocabulary; year-nested archive and weekly-summary path corrections; five missing changelog sections added). AGENTS rules unchanged in semantics | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-30 | v5.5.1 release alignment — bumped AGENTS version to 0.8 to track the HTML landing-page value-prop correction. AGENTS rules unchanged in semantics | HTML value-prop correction |
 | 2026-04-30 | v5.5.0 release alignment — bumped AGENTS version to 0.7 to track the product-management roadmap/journey surface integration. AGENTS rules unchanged in semantics | Product-management surface integration |

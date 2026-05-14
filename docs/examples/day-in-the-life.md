@@ -79,6 +79,90 @@ Suggested next steps:
   2. Use /kb report progress team-observability before the weekly sync
 ```
 
+## Three other roles, same primitives
+
+The same shapes serve very different days. These compact scenes show how a product manager, an engineering manager, and an on-call engineer use the same `/kb` surface that Alex used above.
+
+### Product manager — Priya
+
+```text
+09:00  Priya: /kb start-day
+       Agent: surfaces 2 open decisions waiting on her, 1 customer-feedback
+              finding captured overnight, and a stale roadmap-change report
+              from last week.
+
+10:30  Priya: /kb https://transcript/customer-mid-market-call
+       Agent: 4/5 — captured as finding, updated the onboarding journey's
+              step 3 readiness from "ready" to "needs evidence", proposed
+              a new brief on activation friction.
+
+13:00  Priya: /kb brief activation-friction
+       Agent: scaffolds _kb-delivery/briefs/2026-05-14-activation-friction.md
+              with problem, why-now, scope, non-goals, and success signals;
+              prompts for the outcome window.
+
+16:00  Priya: /kb report roadmap-change platform
+       Agent: opens roadmap-change source at
+              _kb-references/reports/sources/platform/roadmap-change-platform-2026-05-14.md,
+              renders the HTML, names the accountable roadmap owner for approval.
+```
+
+### Engineering manager — Eun-ji
+
+```text
+08:30  Eun-ji: /kb start-day
+       Agent: 3 reports with open blockers, 1 decision overdue (D-2026-05-08
+              missing RACI), incident I-2026-05-13-payment-latency resolved
+              overnight with 2 follow-up tasks unowned.
+
+11:00  Eun-ji: /kb decide hire-vs-internal-rotation
+       Agent: opens the decision with explicit stakeholders, due date Friday,
+              status gathering-evidence.
+
+14:30  Eun-ji: /kb note meeting weekly-product-sync
+       Agent: meeting note opens; attendees prompted; agent suggests linking
+              to the active brief and the open decision.
+
+15:30  Eun-ji: /kb report status engineering-org
+       Agent: status source written under
+              _kb-references/reports/sources/engineering-org/status-engineering-org-2026-05-14.md;
+              flags 1 workstream with last-reviewed > 14 days as stale.
+
+17:30  Eun-ji: /kb end-day
+       Agent: 1 decision moved to under-discussion, 2 follow-up tasks
+              archived after explicit confirmation, day summary committed.
+```
+
+### On-call SRE — Marek
+
+```text
+03:14  Pager fires.
+       Marek: /kb incident payment-latency
+       Agent: opens _kb-operations/incidents/2026/2026-05-13-payment-latency.md
+              with severity prompt, owners, services. Marek picks sev-2,
+              services=[payments, checkout].
+
+03:18–05:42  Marek appends timeline entries as mitigations land.
+             Agent keeps the record append-only after each update.
+
+05:50  Marek: /kb incident resolve
+       Agent: status moves to resolved; prompts for the post-incident retro
+              window (recommended within 48 hours).
+
+Next day:
+14:00  Marek: /kb note retro payment-latency
+       Agent: opens a retro note using the retro template;
+              cadence=post-incident, period=2026-05-13 03:14–05:50;
+              prompts to link the incident record.
+
+14:45  Marek: /kb note end
+       Agent: 3 action items in "What we will change" surfaced as proposed
+              tasks; 1 promoted as a decision (vendor SLA escalation);
+              no false-convergence flag since commitments are tracked.
+```
+
+The point of these three scenes is not that PMs, EMs, and SREs do the same things — they don't. The point is that the same primitives (`brief`, `decide`, `note meeting`, `note retro`, `incident`, `report status`, `report roadmap-change`) compose into very different daily shapes without forcing role-specific commands.
+
 ## Shared artifact rhythm behind the scenes
 
 In a team using roadmap and journeys seriously, Alex would usually keep three recurring shared artifacts in motion:
@@ -99,6 +183,7 @@ Alex never had to manually maintain a wiki hierarchy. The agent handled the book
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-14 | Added compact PM, EM, and on-call SRE scenes so the example covers the three non-engineer roles the operating model names alongside engineers. Introduced the post-incident retro flow in the SRE scene to exercise the new `/kb note retro [topic]` variant | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Added the shared artifact rhythm connecting status, delivery, and roadmap-change reports | Adoption-oriented engineering pass |
 | 2026-04-25 | Reworked the example for 5.0.0: anchor layer, named team layers, year-based finding paths, and explicit cross-layer promotion replaced the old fixed-ladder example | v5.0.0 flexible layer model |
 | 2026-04-18 | Initial version | Extracted from source spec §13 |
