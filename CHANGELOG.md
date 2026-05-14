@@ -19,7 +19,19 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-- Post-6.0.0 follow-ups only.
+### Added
+
+- **Role handbook** — `docs/role-handbook.md` is the new role-by-role companion to `docs/operating-model.md`. It maps PM, EM, staff/principal engineer, tech lead, engineer, designer, QA, SRE/on-call, security, and data/analytics each to their daily reality, primary operating-model loop, top `/kb` commands, primary artifacts read and written, and one realistic chain through the artifact graph. The operating model stays the analytical view; the handbook is the usable view. Referenced from `README.md` "Where to start" and from the top of `docs/operating-model.md`.
+- **Retro note variant** — `/kb note retro [topic]` opens a structured retrospective using a new `plugins/kb/skills/kb-management/templates/retro.md` template (sections: Context, What went well, What didn't, What we changed already, What we will change, Open questions, Linked artifacts). Retros live inside the existing `notes` feature under `_kb-notes/YYYY/` with `type: retro` and adds `cadence`, `facilitator`, `period` frontmatter — no new feature flag or directory. `docs/REFERENCE.md` §4 carries the file format; `command-reference.md` carries the verb and the false-convergence flag rule (a retro that closes without any tracked commitment surfaces a Gate-note warning instead of silently filing).
+- **Three additional day-in-the-life scenes** — `docs/examples/day-in-the-life.md` now shows compact PM (Priya), EM (Eun-ji), and on-call SRE (Marek) days alongside the existing principal-engineer (Alex) walkthrough, exercising `/kb brief`, `/kb decide`, `/kb note meeting`, `/kb note retro`, `/kb incident`, `/kb report roadmap-change`, and `/kb report status` end-to-end.
+- **Retro/retrospective/post-mortem trigger phrases** added to `kb-management/SKILL.md` so natural-language invocations route to the retro variant without requiring the literal `/kb` prefix.
+
+### Changed
+
+- **`workstream.md` template enriched** — added Owner, Status, Cadence, Last reviewed, Linked briefs/specs, a "Recent shipments" table, and an "Upcoming milestones" table. Workstreams are long-running primary org units and the previous 17-line template was too thin to support that role.
+- **Operating model v0.3.0** — named Gap F (no canonical shape for team reflection — closed by the retro variant) and Gap G (no user-facing role view — closed by the role handbook). Retros added to the §1 Learning-loop artifact list, the §6 artifact table, and the §7 modeling rule of thumb.
+- **Reference v6.1.0** — §4 Note format now declares the retro variant: `type` accepts `meeting | note | retro`, with the structured section set and the `cadence`/`facilitator`/`period` frontmatter documented inline.
+- **kb-management SKILL v6.1.0** — description mentions retros, template list now includes `retro.md`, and the Note flow row covers the three variants.
 
 ## [6.0.0] — 2026-05-10
 

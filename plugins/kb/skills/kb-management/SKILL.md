@@ -1,7 +1,7 @@
 ---
 name: kb-management
-description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes, decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 6.0.0
+description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes (including retros), decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
+version: 6.1.0
 triggers:
   # Command surface
   - "/kb"
@@ -45,6 +45,12 @@ triggers:
   # Note / idea / task verbs
   - "note"
   - "meeting note"
+  - "retro"
+  - "retrospective"
+  - "post-mortem"
+  - "postmortem"
+  - "sprint retro"
+  - "post-incident retro"
   - "idea"
   - "develop idea"
   - "sparring session"
@@ -158,7 +164,7 @@ Full command reference: `references/command-reference.md`.
 | Diff | `/kb diff [layer]` | Show new material per contributor or connection |
 | Migrate | `/kb migrate archives` / `/kb migrate layer-model` | Preview or apply legacy archive and layer-model migrations |
 | Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog |
-| Note | `/kb note [text]` / `/kb note meeting [topic]` / `/kb note end` | Capture general or meeting notes and surface follow-on changes |
+| Note | `/kb note [text]` / `/kb note meeting [topic]` / `/kb note retro [topic]` / `/kb note end` | Capture general, meeting, or retro notes and surface follow-on changes. The retro variant uses the structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts shape and must produce tracked commitments (tasks or decisions) before it is considered closed |
 | Idea | `/kb idea [text]` | Create a seed idea |
 | Develop | `/kb develop [idea]` | Spar on assumptions, contradictions, and convergence |
 | Decide | `/kb decide [desc]` / `/kb decide resolve [D-id]` | Open or resolve a decision |
@@ -223,7 +229,7 @@ When the selected target is `role: consumer`, refuse and point to the next valid
 
 The templates this skill instantiates live in `templates/`:
 
-- `finding.md`, `topic.md`, `decision.md`, `idea.md`, `note.md`, `workstream.md`
+- `finding.md`, `topic.md`, `decision.md`, `idea.md`, `note.md`, `retro.md`, `workstream.md`
 - `brief.md`, `spec.md`, `release.md`, `incident.md`
 - `focus.md`, `backlog.md`
 - `index.html`, `artifact-base.html`, `report.html`
@@ -246,6 +252,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-14 | v6.1.0: added the retro note variant. `/kb note retro [topic]` now opens a structured retrospective using the new `templates/retro.md` shape (sprint, project/launch, post-incident, quarterly cadences). Retros stay inside the `notes` feature — no new directory or feature flag — and must produce tracked commitments (tasks or decisions) before they are considered closed. Added retro/retrospective/post-mortem trigger phrases so natural-language invocations route here. Workstream template enriched with Owner, Status, Cadence, Last reviewed, Linked briefs/specs, Recent shipments, and Upcoming milestones | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | v6.0.0: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical flow primitives in the layer-aware flow table so the four operating-model artifacts have discoverable command verbs (the trigger keywords were already declared, but the verb path was implicit). Each verb requires the matching `delivery` or `operations` feature on the target layer; the skill refuses cleanly if it is not enabled. No changes to gate scoring, promote/publish/digest semantics, the layer-graph rules, or any other behavioral contract | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now get one canonical owning layer, and source-layer records are closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |
 | 2026-04-30 | Version aligned to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface. Added natural-language product roadmap/journey triggers and clarified that missing config should route to setup/placement rather than silent scaffolding | Product-management surface integration |

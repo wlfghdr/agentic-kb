@@ -311,12 +311,13 @@ agentic-kb/
 
 1. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
 2. [`docs/operating-model.md`](docs/operating-model.md) — the software-engineering role model, artifact chain, and the delivery/operations gaps this workspace now names explicitly.
-3. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
-4. [`docs/examples/first-hour.md`](docs/examples/first-hour.md) — the fastest end-to-end walkthrough from install to the first useful cross-layer proof.
-5. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
-6. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
-7. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice.
-8. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+3. [`docs/role-handbook.md`](docs/role-handbook.md) — the role-by-role companion to the operating model: which commands each role reaches for first, which artifacts they read and write, and one realistic chain per role.
+4. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
+5. [`docs/examples/first-hour.md`](docs/examples/first-hour.md) — the fastest end-to-end walkthrough from install to the first useful cross-layer proof.
+6. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
+7. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
+8. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice for an engineer, a PM, an EM, and an on-call SRE.
+9. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
 
 ## Status
 
@@ -340,6 +341,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes. No version-status row change yet — the retro/role-handbook bundle accumulates under `[Unreleased]` in `CHANGELOG.md` | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Rolled the public framework status to 6.0.0 after the v5 adoption-arc closeout: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical command verbs (matching the operating-model artifact chain and the templates the skill instantiates), surfaced the previously undocumented `/kb publish`, `/kb sync`, `/kb diff`, `/kb start-week`, `/kb end-day`, `/kb audit`, and `/kb report [scope]` flows in the public command list, removed the residual fixed-ladder `L1`/`L2/L3`/`L4` drift from the routing prompt and operator agent, aligned the four delivery/operations file formats in `docs/REFERENCE.md` §4 with the templates, and corrected the year-nested archive and weekly-summary paths so daily and weekly rituals write where the spec says they should | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-06 | Rolled the public framework status to 5.6.0 after adding canonical ownership semantics for promoted decisions and tasks, so adopters do not leave parallel active source and target records behind | Decision/task ownership follow-up |
 | 2026-04-30 | Rolled the public framework status to 5.5.1 after correcting the HTML landing-page value proposition so product direction, roadmaps, journeys, delivery, and operations are visible in the top-level story and first-class building blocks | HTML value-prop correction |

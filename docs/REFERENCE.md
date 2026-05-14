@@ -1,8 +1,8 @@
 # Reference
 
-> **Version:** 6.0.0
+> **Version:** 6.1.0
 
-Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
+Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the role-by-role daily companion to the operating model, see [docs/role-handbook.md](./role-handbook.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
 ---
 
@@ -275,7 +275,7 @@ Archived ideas live under `_kb-ideas/archive/YYYY/`.
 
 ```markdown
 ---
-type: meeting | note
+type: meeting | note | retro
 date: YYYY-MM-DD
 attendees: [@alice, @bob]
 workstream: <name>
@@ -293,6 +293,36 @@ authors: [@alice]
 ```
 
 Meeting notes should be shared at multi-user layers unless the adopter intentionally configures otherwise.
+
+#### Retro variant
+
+When `type: retro`, use the retro section shape instead of the meeting shape. Retros are notes with a known structure used for sprint, project/launch, post-incident, and quarterly reflection. The retro frontmatter adds `cadence`, `facilitator`, and `period`; the body uses the sections below.
+
+```markdown
+---
+type: retro
+date: YYYY-MM-DD
+cadence: sprint | bi-weekly | project | post-launch | post-incident | quarterly
+facilitator: @name
+attendees: [@names]
+workstream: <name>
+period: <window or event the retro reflects on>
+source: <optional link>
+authors: [@names]
+---
+
+# Retro: <title>
+
+## Context
+## What went well
+## What didn't
+## What we changed already
+## What we will change
+## Open questions
+## Linked artifacts
+```
+
+Retros live under `_kb-notes/YYYY/` next to meeting notes. They do not require a new feature flag — `notes` is already the enabling feature. The template the skill instantiates is `plugins/kb/skills/kb-management/templates/retro.md`. Action items from *What we will change* must be promoted into the layer's `_kb-tasks/backlog.md` or `_kb-decisions/` before the retro is considered closed, so the session produces tracked commitments instead of dissolving into "false convergence" (see [`docs/collaboration.md`](./collaboration.md)).
 
 ### Brief (`_kb-delivery/briefs/YYYY-MM-DD-slug.md`)
 
@@ -833,6 +863,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-14 | Added the retro variant to §4 Note formats (`type: retro` with cadence/facilitator/period frontmatter and a structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts section set) so sprint, project, post-launch, post-incident, and quarterly retros have a canonical shape. Retros stay inside the existing `notes` feature — no new directory or feature flag. Added a navigation pointer to the new role-handbook companion doc |
 | 2026-05-10 | Version aligned to 6.0.0 after the v5 adoption-arc closeout. Updated the §4 brief, spec, release, and incident file formats so they match the templates the skill actually instantiates: brief gains "Why now", "Success signals", "Dependencies and handoffs", and an inline changelog and moves stakeholders into the frontmatter; spec gains "Requirements", "Proposed shape", "Rollout and migration", "Verification", "Open questions", and an inline changelog and links to the originating brief in the frontmatter; release gains "Audience" and "Linked spec" frontmatter and switches to the rollout/rollback/communications/follow-up section set; incident gains "Owners", "Services", and the precise "Opened" timestamp. The four artifacts are now the same shape across REFERENCE, templates, and the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs in `command-reference.md` |
 | 2026-05-10 | Added shared collaboration artifact guidance for status, delivery, and roadmap-change report sources |
 | 2026-05-08 | Clarified the shipped role of the draft roadmap/journey helper scripts and bumped the reference patch version |

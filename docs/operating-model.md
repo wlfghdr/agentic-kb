@@ -1,8 +1,10 @@
 # Software Engineering Operating Model
 
-> **Version:** 0.2.0 | **Last updated:** 2026-04-30
+> **Version:** 0.3.0 | **Last updated:** 2026-05-14
 
 This document describes what day-to-day software engineering work looks like across the main roles in a software company, which artifacts make that work legible, and which parts of that operating model `agentic-kb` did not model explicitly before this operating-model extension.
+
+For the role-by-role companion (which commands each role reaches for first, which artifacts they read most, which they author most, and one realistic chain through the artifact graph per role), see [`docs/role-handbook.md`](./role-handbook.md).
 
 It is partly analytical and partly prescriptive:
 
@@ -19,7 +21,7 @@ In a software company, "daily work" is a mesh of five loops that happen in paral
 | Design | What should we build and how should it work? | tech lead, staff engineer, senior engineer, designer, security, QA | daily to weekly | specs, decisions, notes, linked findings |
 | Delivery | What is being built, by whom, and what is blocked? | engineers, tech leads, QA, program managers, EMs | daily | tasks, backlog, focus, release records, progress reports |
 | Operations | Is the system healthy in production, and what do we do when it is not? | SRE, on-call engineers, EMs, support, security | continuous | incidents, release records, findings, runbooks, follow-up decisions |
-| Learning | What did we learn, and how does it change future work? | everyone | continuous | findings, topics, post-incident notes, reports, updated briefs/specs |
+| Learning | What did we learn, and how does it change future work? | everyone | continuous | findings, topics, retros, post-incident notes, reports, updated briefs/specs |
 
 The important point is that knowledge systems fail when they model only the learning loop. Real engineering organizations also need the design, delivery, and operations loops to stay visible.
 
@@ -114,6 +116,18 @@ The spec described layers and collaboration, but not the concrete artifact hando
 
 Missing concept: **software engineering operating model** as a named layer above the primitive list.
 
+### Gap F: No canonical shape for team reflection
+
+The original primitive list could capture incidents and findings, but the most common learning ritual — the team retrospective, in sprint, project, post-launch, and post-incident flavors — had no structured carrier. Meeting notes were too loose for the went-well / didn't / will-change shape, and findings were the wrong granularity for a session-bounded reflection.
+
+Missing artifact: **retro** (added in v0.3.0 as a structured note variant; see [`docs/role-handbook.md`](./role-handbook.md) and §6 below).
+
+### Gap G: No user-facing role view
+
+The role table in §2 above is analytical: it lists roles, daily realities, and artifact reading/authoring patterns. Real adopters needed a usable companion that maps each role to concrete `/kb` commands they should reach for first, in a single document.
+
+Missing document: **role handbook** (added in v0.3.0 as [`docs/role-handbook.md`](./role-handbook.md)).
+
 ## 6. What This Extension Adds
 
 This extension closes those gaps with four optional feature families and six standard artifacts.
@@ -133,6 +147,7 @@ This extension closes those gaps with four optional feature families and six sta
 | Spec | Defines requirements, design shape, risks, rollout, and verification | tech lead, staff engineer, engineers | engineers, QA, security, release owners |
 | Release record | Makes rollout, verification, rollback, and communications explicit | tech lead, release owner, QA | support, on-call, EM, stakeholders |
 | Incident record | Makes impact, timeline, mitigations, and follow-up explicit | on-call, SRE, engineers | EM, support, security, leadership |
+| Retro (note variant) | Makes session-bounded team learning explicit — sprint, project, post-launch, post-incident, quarterly | facilitator (often TL, EM, SRE, designer, or PM depending on cadence) | the team, plus EM and stakeholders for cross-team or post-incident retros |
 
 These additions do not replace findings, notes, decisions, or reports. They bridge them.
 
@@ -147,6 +162,7 @@ Use the artifact that matches the question being answered:
 - use a **decision** when choosing between explicit options,
 - use a **release record** when shipping or rolling back a change,
 - use an **incident record** when runtime behavior degrades or breaks,
+- use a **retro** (note variant) when running a session-bounded reflection that should produce tracked commitments,
 - use a **finding** when preserving dated evidence,
 - use a **topic** when updating the living team position after learning.
 
@@ -169,6 +185,7 @@ Those surfaces may still feed findings, briefs, specs, releases, or incidents th
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-14 | v0.3.0: named Gap F (no canonical shape for team reflection — closed by the retro note variant) and Gap G (no user-facing role view — closed by the new `docs/role-handbook.md`). Added retros to the §1 Learning-loop artifact list and to §6's artifact table; extended the §7 modeling rule of thumb with retros. Added the top-of-doc pointer to the role handbook | Daily-reality gap audit across software-company roles |
 | 2026-04-30 | Added roadmap and journey artifacts to the role-loop model so product-management direction work is explicit alongside delivery and operations handoffs | Product-management surface integration |
 | 2026-04-26 | Initial operating-model analysis and artifact-gap definition for company-wide software engineering work; introduced the delivery/operations gap narrative for briefs, specs, releases, and incidents | Gap analysis for software-engineering daily work |
 | 2026-04-27 | Appended missing trailing newline to satisfy `markdownlint` MD047; no semantic change | CI fix |
