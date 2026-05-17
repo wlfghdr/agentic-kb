@@ -1,0 +1,28 @@
+"area/docs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "documentation/**"
+          - "**/*.md"
+
+"area/kb":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "_kb-*/**"
+          - ".kb-config/**"
+
+"area/github":
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+
+"area/skills":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "agent-skills/**"
+          - "skills/**"
+
+"area/templates":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "templates/**"

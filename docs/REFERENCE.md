@@ -533,6 +533,16 @@ layers:
       writeback:
         enabled: false
         capabilities: []
+    primitive-storage:
+      decisions:
+        mode: files
+        file-dir: _kb-decisions
+      tasks:
+        mode: files
+        file-dir: _kb-tasks
+      ideas:
+        mode: files
+        file-dir: _kb-ideas
 
   - name: team-observability
     scope: team
@@ -577,7 +587,68 @@ Field contract:
 - `contributor-mode`: optional overrides for primitives that can be shared or contributor-scoped.
 - `marketplace`: marketplace repo and install mode for that layer's published skills.
 - `connections`: product repos, trackers, reference mode, and write-back policy for that layer.
+- `primitive-storage`: per-primitive ownership map declaring whether decisions, tasks, ideas, feature intake, and roadmap items are canonical in KB files, in a configured tracker, or in a hybrid file-to-tracker promotion flow.
 - `roadmap` / `journeys`: product-management configuration blocks nested under the layer that enabled those features. Setup derives and confirms the owning layer; hand-edits must keep the block beside the layer whose `features` include `roadmaps` or `journeys`.
+
+### Primitive storage and tracker backbones
+
+First-class primitives do not all need to use the same operational backbone. A layer may keep private or early-stage work in Markdown files while using an issue tracker as the canonical operational home for shared decisions, tasks, feature intake, or roadmap items.
+
+`primitive-storage` is the ownership map. It complements `connections.trackers[]`: the tracker connection says how to reach the external system, while `primitive-storage` says which primitive family the external system owns.
+
+```yaml
+layers:
+  - name: team-kb
+    features: [findings, topics, decisions, tasks, notes, reports, roadmaps]
+    connections:
+      trackers:
+        - name: team-work
+          kind: github-issues
+          repo: org/team-work
+          project: Team Planning
+          scope: is:issue
+          issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
+          status-values: [Todo, In Progress, In Review, Done]
+      writeback:
+        enabled: false
+        capabilities: []
+    primitive-storage:
+      decisions:
+        mode: tracker
+        tracker: team-work
+        kind: Decision
+        summary-dir: _kb-decisions
+      tasks:
+        mode: tracker
+        tracker: team-work
+        kind: Task
+        summary-dir: _kb-tasks
+      ideas:
+        mode: hybrid
+        tracker: team-work
+        kind: Idea
+        file-dir: _kb-ideas
+      feature-intake:
+        mode: tracker
+        tracker: team-work
+        kind: Feature
+      roadmap-items:
+        mode: tracker
+        tracker: team-work
+        kind: Roadmap Item
+```
+
+Valid modes:
+
+| Mode | Canonical operational home | Required setup behavior |
+|------|----------------------------|-------------------------|
+| `files` | KB Markdown files | Create the matching KB directories and templates |
+| `tracker` | Configured tracker items | Create supporting summary/backlink directories when requested and generate tracker setup artifacts |
+| `hybrid` | KB files until promotion, then tracker items | Create file directories plus promotion rules to create/link tracker items when the sharing boundary is crossed |
+
+For GitHub-backed layers, setup should generate or guide creation of the GitHub governance profile: native issue types, issue forms, project/status guidance, labels that do not duplicate native metadata, pull request templates, governance CI, a path labeler, manual branch-protection/CODEOWNERS/project setup checklist, and a repo-local tracker workflow skill. For Jira-backed layers, setup should record project key/URL, issue type mapping, status mapping, query/JQL, link policy, and confirmation-gated write-back capabilities. Other trackers follow the same contract through adapter-specific fields under `connections.trackers[]`.
+
+If a primitive family is omitted from `primitive-storage`, readers assume `files` for built-in KB primitives and no write-back for tracker-native intake families. Skills must refuse ambiguous writes when both a KB file and tracker item appear to be canonical for the same item.
 
 ### Product-management primitives
 
@@ -933,6 +1004,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 |------|-------------|
 | 2026-05-18 | §5 layers.yaml example annotated `writeback:` as RESERVED in v6.1.0 (no-op); §6 added the "`auto-promote.confidence-threshold` — what it is" subsection with the 0–5 gate-score definition, the auto-promote eligibility filter, the promote target rule, the conflict-escalation rule, and a worked example; §10 added the "Task ownership — KB vs. external tracker" subsection codifying split ownership (KB owns knowledge work, tracker owns engineering work, read-only links, no parallel status reconciliation) and added a corresponding row to the mapping table. Closes audit findings #102, #103, #105 |
 | 2026-05-18 | §1 split "Contributor-scoped vs shared primitives" into two clearly orthogonal subsections — Axis 1 "Layer role" (`contributor` vs `consumer`, mutation rights) and Axis 2 "Artifact visibility" (`contributor-scoped` vs shared, per-primitive). Added a do-not-conflate callout. Closes the data-leak risk where multi-user team layers ship with everything shared by default because adopters never see the visibility axis. `kb-setup` phase 3 now must surface the default visibility per primitive in the proposed plan before scaffold. Updated the §10 repo-as-OS phrasing to match the kb-setup phase-1/phase-2 swap. Closes audit findings #98 and #104 |
+| 2026-05-17 | Added `primitive-storage` to the layer config contract so onboarding can choose file-backed, tracker-backed, or hybrid ownership per primitive family and can generate generic GitHub/Jira tracker setup outcomes without duplicating canonical records; GitHub setup now points at a fuller governance profile with issue/project/PR rules, CI, labeler, checklist, and repo-local skill |
 | 2026-05-15 | Release-readiness audit: removed active draft-feature wording for roadmap and journey flows, clarified stable helper coverage and apply-capable confirmation gates, trimmed unsupported harness rows from the public support matrix, and aligned the reference with the 6.1.0 release surface |
 | 2026-05-14 | Added the retro variant to §4 Note formats (`type: retro` with cadence/facilitator/period frontmatter and a structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts section set) so sprint, project, post-launch, post-incident, and quarterly retros have a canonical shape. Retros stay inside the existing `notes` feature — no new directory or feature flag. Added a navigation pointer to the new role-handbook companion doc |
 | 2026-05-10 | Version aligned to 6.0.0 after the v5 adoption-arc closeout. Updated the §4 brief, spec, release, and incident file formats so they match the templates the skill actually instantiates: brief gains "Why now", "Success signals", "Dependencies and handoffs", and an inline changelog and moves stakeholders into the frontmatter; spec gains "Requirements", "Proposed shape", "Rollout and migration", "Verification", "Open questions", and an inline changelog and links to the originating brief in the frontmatter; release gains "Audience" and "Linked spec" frontmatter and switches to the rollout/rollback/communications/follow-up section set; incident gains "Owners", "Services", and the precise "Opened" timestamp. The four artifacts are now the same shape across REFERENCE, templates, and the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs in `command-reference.md` |

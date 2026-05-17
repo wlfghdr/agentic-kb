@@ -1,0 +1,40 @@
+name: Bug
+description: Track a defect, regression, or broken expected behavior.
+title: "[Bug] "
+type: Bug
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who or what is affected? Include severity if your project uses one.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Logs, screenshots, traces, reproduction notes, linked reports, or safe source references.
+    validations:
+      required: false
+  - type: textarea
+    id: fix_signal
+    attributes:
+      label: Done when
+      description: How will reviewers know the bug is fixed?
+    validations:
+      required: false

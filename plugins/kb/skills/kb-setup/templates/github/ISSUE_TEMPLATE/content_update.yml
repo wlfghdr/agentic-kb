@@ -1,0 +1,33 @@
+name: Content Update
+description: Track documentation, content, template, or knowledge-base changes.
+title: "[Content] "
+type: Task
+body:
+  - type: textarea
+    id: target
+    attributes:
+      label: Target content
+      description: Which document, template, report, or knowledge artifact should change?
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason
+      description: What is inaccurate, missing, stale, or newly needed?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source of truth
+      description: Link the issue, decision, finding, spec, report, or approved source behind the change.
+    validations:
+      required: false
+  - type: textarea
+    id: governance
+    attributes:
+      label: Governance notes
+      description: Changelog, approval, ownership, or publication requirements.
+    validations:
+      required: false

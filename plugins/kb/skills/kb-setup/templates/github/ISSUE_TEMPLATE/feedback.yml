@@ -1,0 +1,33 @@
+name: Feedback
+description: Capture observed user, customer, market, or internal signal.
+title: "[Feedback] "
+type: Feedback
+body:
+  - type: textarea
+    id: signal
+    attributes:
+      label: Observed signal
+      description: What was observed? Keep sensitive details out of the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and source
+      description: Segment, situation, source link, or sanitized quote/paraphrase.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Why might this matter?
+    validations:
+      required: false
+  - type: textarea
+    id: route
+    attributes:
+      label: Proposed route
+      description: Link an idea, decision, task, feature, roadmap item, or close reason when known.
+    validations:
+      required: false

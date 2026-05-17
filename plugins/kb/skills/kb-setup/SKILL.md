@@ -1,6 +1,6 @@
 ---
 name: kb-setup
-description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, and HTML style references.
+description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including tracker-backed primitive ownership and product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, tracker setup artifacts, and HTML style references.
 version: 6.1.0
 triggers:
   - "/kb setup"
@@ -77,7 +77,7 @@ Question count continues from phase 1 (Q4–Q11 global numbering, as listed in t
 2. **What you're trying to track or decide** — open prose. The wizard extracts themes (3–5 keywords) and workstream candidates from this answer; do not ask for keywords or workstream names directly.
 3. **Why now** — what triggered this setup? "Too many directions to keep track of", "leadership keeps asking for status", "starting a new quarter", "team is drifting", etc. Used to bias which artifacts (briefings, weekly status, progress reports, roadmaps) the proposed plan emphasizes.
 4. **Who else needs to see what** — describe the audience in plain words: "just me", "me and one team", "two teams plus an org-unit lead", "a whole company". Used to derive layer count, scopes, and role boundaries (which higher layers should be `consumer` rather than `contributor`).
-5. **Where information feeds in** — describe the sources the user already reads from: product repos, issue trackers, dashboards, recurring meetings, stakeholder reports, exports. Used to derive `connections:` per layer and to decide whether the lean export-backed roadmap path applies.
+5. **Where information feeds in** — describe the sources the user already reads from: product repos, issue trackers, dashboards, recurring meetings, stakeholder reports, exports. Also listen for whether any issue tracker is already the operational backbone for decisions, tasks, feature intake, roadmap items, or team commitments. Used to derive `connections:` and `primitive-storage:` per layer and to decide whether the lean export-backed roadmap path applies.
 6. **What you want out** — describe the artifacts that would actually save time: morning briefing, weekly status to share with a boss, presentations, progress reports, roadmap reconciliation, journey specs, customer-value roadmaps, phase/lane plans, journey maps, or mock-backed flow specs. Used to derive enabled features (`reports`, `roadmaps`, `journeys`) and dashboard panels.
 7. **How autonomous** — describe how hands-on or hands-off the user wants the agent: "I want to confirm everything", "process the obvious stuff and ask me on edge cases", "run on its own and tell me what changed". Mapped to automation levels 1 (manual only), 2 (scheduled rituals/digests), or 3 (scheduled flows plus guarded auto-promote); see `references/automation-levels.md` for the full contract. Note: `agentic-kb` does not ship a scheduler — at level 2/3 the user wires OS cron, CI, or their harness's native automation to invoke `/kb`.
 8. **Operating context today, and target in 6 months** — pick one bucket for *today* and (optionally) one for *6 months out*: (a) **human-only / capture discipline first** — no agents in the workflow yet; goal is to get the artifact chain steady before adding any automation; (b) **repo-as-OS framework already in use** — the team already runs signals/missions/PRs or similar git-as-source-of-truth governance; agentic-kb slots in as the knowledge-ops layer; (c) **already running AI agents in daily work** — agents draft, triage, or act; goal is to ground them in shared context. This is mapped to **adoption stages 1 / 2 / 3** (see `references/adoption-stages.md`); answers steer the proposed scaffold scope and automation level so the user does not get a Stage-3 setup when they are starting at Stage 1, and does not get a Stage-1 setup when they are already past it.
@@ -87,13 +87,13 @@ Question count continues from phase 1 (Q4–Q11 global numbering, as listed in t
 The wizard presents a single concrete proposal derived from phase 1 + 2. The user reviews, adjusts inline if needed, and confirms. Do not ask the user to author the plan from scratch.
 
 1. **Proposed layer graph and adoption stage** — show the derived layers as a single block: name, scope, role, parent, path, and enabled features per layer. Highlight which layer will be the anchor and label the proposed **adoption stage** (1 / 2 / 3) derived from Q11 + Q10 so the user can see at a glance whether the wizard is suggesting a capture-only scaffold, an agent-assisted scaffold, or a bounded-autonomous scaffold. Default for a new solo user starting at Stage 1: one contributor anchor layer (scope `personal`), no roadmap/journey features unless Q4/Q5/Q9 explicitly call for them, automation level 1, no `connections:` write-back. If Q4/Q5/Q9 mention product management, sequencing, customer journeys, launch planning, portfolio status, or stakeholder roadmap communication, propose `roadmaps` and/or `journeys` on the layer whose audience owns that work and label the placement as adjustable. Default for a team already on a repo-as-OS framework: one shared contributor layer plus a `connections.product-repos[]` entry pointing at the existing governance repo. Ask only one yes-or-adjust question on this block; route deeper edits through targeted follow-ups (rename, add/remove a layer, flip role, change parent, change stage, move roadmaps/journeys to another layer).
-2. **Proposed connections, artifacts, and automation** — show the derived `connections:` per layer (sources from Q8, plus any repo-as-OS product-repo detected in Q3), the dashboard panels and report types that match Q9 outputs, the automation level from Q10 (1 / 2 / 3 per `references/automation-levels.md`), and any product-management feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. For each roadmap/journey block, show the chosen owning layer, source inputs, output directories, and whether the first proof path is export-backed or live-adapter-backed. For every multi-user layer, also surface the **default artifact visibility** per enabled primitive (e.g. "findings, ideas, topics → contributor-scoped; decisions, tasks, foundation, reports → shared") per `docs/REFERENCE.md` §1 "Two orthogonal axes", so the user can flip visibility before scaffold rather than discovering the default by surprise. Same single yes-or-adjust prompt.
+2. **Proposed connections, primitive storage, artifacts, and automation** — show the derived `connections:` per layer (sources from Q8, plus any repo-as-OS product-repo detected in Q3), the `primitive-storage:` decision for decisions/tasks/ideas/feature intake/roadmap items (`files`, `tracker`, or `hybrid`), the dashboard panels and report types that match Q9 outputs, the automation level from Q10 (1 / 2 / 3 per `references/automation-levels.md`), and any product-management feature blocks (`roadmaps`, `journeys`) that the requested artifacts imply. For each tracker-backed primitive, show the tracker provider, repo/project/key/query parameters known so far, the configured kind/type, the supporting KB summary directory, write-back mode, and the setup artifacts to generate. For each roadmap/journey block, show the chosen owning layer, source inputs, output directories, and whether the first proof path is export-backed or live-adapter-backed. For every multi-user layer, also surface the **default artifact visibility** per enabled primitive (e.g. "findings, ideas, topics → contributor-scoped; decisions, tasks, foundation, reports → shared") per `docs/REFERENCE.md` §1 "Two orthogonal axes", so the user can flip visibility before scaffold rather than discovering the default by surprise. Same single yes-or-adjust prompt; collect provider-specific missing values through targeted follow-ups instead of adding a new global interview phase.
 3. **Proposed graduation criteria for the next stage** — name the 2–3 concrete things the user would need before safely advancing to the next adoption stage (e.g. "≥ 4 weeks of clean `.kb-log/` entries, one cross-layer promote completed, foundation/vmg.md confirmed by stakeholders" before turning on automation level 2). The user can accept, edit, or skip this block; it is informational and does not block scaffold.
 4. **HTML artifact styling** — builtin, website-derived, or template-based corporate design. Default to `builtin` when Q3 does not mention external branding constraints.
 
 ### Phase 4 — Confirm and scaffold
 
-1. **Final confirmation** — restate the chosen plan in one short summary: number of layers, anchor, audiences, adoption stage, automation level, IDE targets, where files will land. Proceed to "What setup does after confirmation" only after explicit yes.
+1. **Final confirmation** — restate the chosen plan in one short summary: number of layers, anchor, audiences, adoption stage, automation level, IDE targets, which primitives are file-backed vs tracker-backed, where files will land, and which tracker setup package will be generated. Proceed to "What setup does after confirmation" only after explicit yes.
 
 If the user wants to skip phase 2 entirely and author the plan directly, accept that and route to a compact expert path: ask the layer list with name/scope/role/parent/features/marketplace per layer, anchor, workstreams, automation, styling, IDE targets. Phase 1 (workspace root, IDE targets) is never skipped — the wizard needs both before it can write anything. Document this as the legacy entry point; the goal-oriented flow is the default.
 
@@ -153,6 +153,8 @@ Feature directories:
 - `roadmaps` → `_kb-roadmaps/`
 - `journeys` → `_kb-journeys/`
 
+When a primitive family is configured as `mode: tracker`, setup still creates the supporting KB directory only for summaries, reports, backlinks, or archived context. It must not seed a competing canonical backlog or decision list that would make the file and tracker both look authoritative.
+
 For multi-user layers, shared primitives live at the repo root and contributor-scoped primitives are created under contributor or team directories.
 
 ### Step 4 — Write the anchor-layer config
@@ -167,8 +169,39 @@ The anchor config must include:
 - `workspace.aliases`
 - one `layers:` entry per declared layer
 - optional `connections`, `marketplace`, `roadmap`, and `journeys` blocks per layer
+- optional `primitive-storage` blocks per layer, mapping decisions, tasks, ideas, feature intake, and roadmap items to `files`, `tracker`, or `hybrid` ownership
 
 When Q4/Q5/Q9 indicate product-management work, setup should propose these blocks rather than waiting for the user to know the feature names. The user still confirms placement. The conservative default is to co-locate a roadmap scope with the journeys it cites in the same contributor-capable layer. Layered roadmaps and journeys are allowed by the layer graph, but setup should mark cross-layer roll-ups/inheritance as a later enhancement unless the user explicitly asks for an expert configuration.
+
+When Q5 or discovery indicates an existing tracker backbone, setup should propose `primitive-storage` instead of assuming file-backed decisions and tasks. Conservative defaults:
+
+- personal or private layers: `files` for decisions, tasks, and ideas,
+- shared layers without an existing tracker process: `files`, with a note that tracker backing can be added later,
+- shared layers with an existing tracker process: `tracker` for tasks and feature intake, `tracker` or `hybrid` for decisions and ideas depending on whether the user wants early deliberation in files,
+- roadmap items: `tracker` only when the roadmap source is already tracker-scoped; otherwise keep roadmap artifacts file-backed and read tracker data as evidence.
+
+### Step 4b — Configure tracker backbone setup artifacts
+
+If any `primitive-storage` entry uses `mode: tracker` or `mode: hybrid`, setup must generate or guide the selected tracker setup package.
+
+For GitHub-backed trackers, setup writes or proposes the GitHub governance profile described in `references/github-governance-profile.md`:
+
+- `.github/ISSUE_TEMPLATE/config.yml`,
+- one issue form per configured kind/type,
+- `.github/PULL_REQUEST_TEMPLATE.md`,
+- `.github/labeler.yml`,
+- `.github/workflows/kb-github-governance.yml`,
+- a repo-local `agent-skills/kb-tracker-workflow/SKILL.md` (or the harness-equivalent skill location),
+- `GITHUB_GOVERNANCE_SETUP.md` with the manual checklist for native issue types, project/status fields, milestones, labels, branch protection, CODEOWNERS, parent/sub-issues, and required checks that cannot be represented fully as files.
+
+For Jira-backed trackers, setup writes or proposes:
+
+- the `connections.trackers[]` project/query/type/status mapping,
+- the `primitive-storage` mapping,
+- a repo-local tracker workflow skill,
+- a manual checklist for project fields, workflow states, issue types, and link policy.
+
+For any tracker provider, setup refuses to perform write-back unless `writeback.enabled` and the provider capabilities are explicitly confirmed. Missing CLI authentication should downgrade to file generation plus manual setup instructions, not a half-configured tracker.
 
 ### Step 5 — Configure harnesses
 
@@ -192,7 +225,8 @@ Minimum verification sequence:
 3. run `/kb status` in the anchor layer,
 4. run `/kb start-day` in the anchor layer,
 5. if a team or org layer exists, prove one promote or digest path,
-6. if `roadmaps` or `journeys` are enabled, render their dry-run outputs.
+6. if `roadmaps` or `journeys` are enabled, render their dry-run outputs,
+7. if any tracker-backed primitive is configured, validate that each `primitive-storage.*.tracker` points to a declared tracker, that required issue forms or type-mapping instructions exist for GitHub/Jira selections, and that no write-back capability is enabled without the matching confirmation gate.
 
 ### Step 7 — First win + next-steps shortlist
 
@@ -308,6 +342,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 ## References
 
 - `references/setup-flow.md` — full step-by-step walkthrough with example output, including VMG sourcing and update guidance.
+- `references/github-governance-profile.md` — generic GitHub issue/project/PR governance profile generated when GitHub is the tracker or repo workflow backbone.
 - `references/automation-levels.md` — meaning of setup levels 1/2/3 and how they map into `automation.yaml`.
 - `references/adoption-stages.md` — the human → agentic curve: Stage 1 (capture discipline) → Stage 2 (agent-assisted triage) → Stage 3 (bounded autonomous). Names what each stage scaffolds, the graduation criteria between stages, and how adoption stage and automation level relate.
 - `references/migration-guide.md` — how to migrate an existing KB.
@@ -321,6 +356,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 |------|-------------|--------|
 | 2026-05-18 | Added Step 7 "First win + next-steps shortlist" — closing step after verification. Optional bootstrap capture (default yes) writes a first finding through the full evaluation gate and surfaces the artifact path back to the user; curated 3–5 command shortlist derived from adoption stage + audience replaces the implicit "you have 33 commands, gl hf" feeling at setup end. References section now names `docs/examples/first-hour.md` as the user-facing companion and reframes `docs/first-run-acceptance.md` as the maintainer/QA baseline. Closes audit findings #99, #100, #101 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap: phase 1 is now "Workspace and harness facts" (Q1–Q3 — workspace root, IDE targets, discovery pass), phase 2 is now "Context and goals" (Q4–Q11). Frontloads the admin block so the user knows where files will land and which harness will host `/kb` before investing in long answers. All cross-references and the placeholder-mapping table renumbered. Q10 ("How autonomous") now states explicitly that `agentic-kb` does not ship a scheduler. Phase 3 block 2 must now surface default artifact visibility per primitive per `docs/REFERENCE.md` §1 "Two orthogonal axes". Closes audit findings #98 and #104 | Concept/onboarding/process audit |
+| 2026-05-17 | Extended onboarding to decide per-layer primitive storage (`files`, `tracker`, `hybrid`) for decisions, tasks, ideas, feature intake, and roadmap items; setup now treats generic GitHub/Jira type mapping, issue templates, governance CI, labeler/PR templates, manual branch-protection/project setup, and repo-local tracker workflow skills as first-class outcomes when a tracker backbone is selected | Tracker-backed onboarding design |
 | 2026-05-15 | Removed literal double-curly placeholder examples from the published setup skill so GitHub Pages can build the released docs while preserving the setup-token contract for agents | Pages release fix |
 | 2026-05-15 | Skill version aligned to 6.1.0. Setup now documents that notes include general, meeting, and retro variants under one feature; delivery/operations scaffold directories are explicit; roadmap/journey blocks are stable setup-proposed features instead of draft-feature blocks; and placeholder substitution examples show confirmed and deliberately deferred values | Release-readiness audit |
 | 2026-05-10 | Skill version aligned to 6.0.0 for the v5 adoption-arc closeout. No behavioral changes to the four-phase interview, scaffold output, or migration flow. The setup output contract picks up the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs because the kb-management plugin it composes ships them as canonical flows; the templated `kb.prompt.md` was patched in lock-step to enumerate those subcommands and to drop the retired `SKILL.md rule #10c` cross-reference in favor of rule 8 | v6.0.0 adoption + daily-usage gap audit |

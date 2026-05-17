@@ -1,0 +1,85 @@
+name: KB GitHub governance
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  REQUIRE_LINKED_ISSUE: "true"
+  ISSUE_EXCEPTION_MARKER: "Small exception: no issue needed"
+  REQUIRE_VERSION_IMPACT_LABEL: "false"
+  VERSION_LABEL_PREFIX: "version/"
+
+jobs:
+  github-governance:
+    name: github-governance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate issue template YAML
+        run: |
+          ruby -ryaml -e 'ARGV.each { |file| YAML.load_file(file); puts "ok #{file}" }' .github/ISSUE_TEMPLATE/*.yml
+
+      - name: Check unresolved setup placeholders
+        run: |
+          if grep -R "{{" .github/ISSUE_TEMPLATE .github/PULL_REQUEST_TEMPLATE.md .github/labeler.yml .kb-config agent-skills 2>/dev/null; then
+            echo "Unresolved setup placeholder found"
+            exit 1
+          fi
+
+      - name: Verify repo-local workflow skill exists
+        run: |
+          test -f agent-skills/kb-tracker-workflow/SKILL.md
+
+      - name: Validate PR governance
+        if: github.event_name == 'pull_request'
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+          REQUIRE_LINKED_ISSUE: ${{ env.REQUIRE_LINKED_ISSUE }}
+          ISSUE_EXCEPTION_MARKER: ${{ env.ISSUE_EXCEPTION_MARKER }}
+          REQUIRE_VERSION_IMPACT_LABEL: ${{ env.REQUIRE_VERSION_IMPACT_LABEL }}
+          VERSION_LABEL_PREFIX: ${{ env.VERSION_LABEL_PREFIX }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import sys
+
+          with open(os.environ["EVENT_PATH"], encoding="utf-8") as handle:
+              event = json.load(handle)
+          pr = event.get("pull_request", {})
+          body = pr.get("body") or ""
+          labels = [label.get("name", "") for label in pr.get("labels", [])]
+          errors = []
+
+          closing_or_reference = re.compile(
+              r"(?i)\b(close[sd]?|fix(e[sd])?|resolve[sd]?|refs?|references)\s+#\d+\b"
+          )
+          exception_marker = os.environ.get("ISSUE_EXCEPTION_MARKER", "")
+          if os.environ.get("REQUIRE_LINKED_ISSUE", "true").lower() == "true":
+              if not closing_or_reference.search(body) and exception_marker not in body:
+                  errors.append(
+                      "PR body must reference/close an issue or keep the configured small-exception marker."
+                  )
+
+          if os.environ.get("REQUIRE_VERSION_IMPACT_LABEL", "false").lower() == "true":
+              prefix = os.environ.get("VERSION_LABEL_PREFIX", "version/")
+              version_labels = [label for label in labels if label.startswith(prefix)]
+              if len(version_labels) != 1:
+                  errors.append(
+                      f"Expected exactly one version-impact label with prefix {prefix!r}; got {version_labels}."
+                  )
+
+          if errors:
+              for error in errors:
+                  print(f"::error::{error}")
+              sys.exit(1)
+          print("PR governance checks passed.")
+          PY

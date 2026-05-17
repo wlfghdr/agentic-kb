@@ -1,0 +1,33 @@
+name: Governance Change
+description: Track changes to repository rules, CI, templates, branch protection, labels, or agent instructions.
+title: "[Governance] "
+type: Task
+body:
+  - type: textarea
+    id: rule
+    attributes:
+      label: Rule or workflow to change
+      description: What repository rule, automation, template, or agent instruction is changing?
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why
+      description: What failure mode or adoption need does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: ci_parity
+    attributes:
+      label: CI and local-agent parity
+      description: Which CI check enforces this, and where will the agent-readable rule live?
+    validations:
+      required: false
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout and migration
+      description: Any branch protection, label, project, CODEOWNERS, or contributor communication steps.
+    validations:
+      required: false

@@ -28,6 +28,8 @@ It is intentionally narrow:
 - builtin HTML styling,
 - no live tracker write-back.
 
+Tracker-backed primitives are optional in the baseline. The default proof keeps decisions, tasks, and ideas file-backed, even when issue trackers are configured as read-only sources. When the user says an issue tracker is the operational backbone, setup must propose `primitive-storage` and the provider setup outcome before scaffold.
+
 Product-management roadmap and journey artifacts are optional in the baseline. When the user's role/goals imply them, setup must propose the owning layer and source/output placement in the same confirmation pass as the core KB graph.
 
 That narrowness is deliberate. A team rollout needs one deterministic baseline before it branches into single-layer, team-only, or multi-org variants.
@@ -64,6 +66,7 @@ Use this baseline unless a test explicitly covers another variant.
 | Extra org/company layers | skipped |
 | Marketplace repo | skipped |
 | Connections | skipped |
+| Primitive storage | file-backed decisions, tasks, and ideas |
 | Automation | level 1 |
 | HTML styling | builtin |
 
@@ -246,6 +249,7 @@ The wizard must derive and propose:
 - **adoption-stage label**: `Stage 1 — capture discipline (human-only baseline)`, derived from Q11 + Q10 per `references/adoption-stages.md`. The proposal must show the stage explicitly so the user can see the wizard is suggesting a capture-only scaffold rather than an agent-assisted or bounded-autonomous one,
 - workstream `platform-signals` extracted from Q5,
 - connections containing the product repo and GitHub issues from Q8,
+- `primitive-storage` set to file-backed decisions, tasks, and ideas for the baseline, because Q10 says all writes should be confirmed and the baseline does not ask to make GitHub Issues canonical,
 - dashboard and report panels matching Q9 (morning briefing + weekly status),
 - automation level `1` (manual only) — mapped from Q10's "confirm everything" answer and consistent with the Stage-1 label (a Stage-1 team must not be configured at automation level 2 or 3). Q9's regular outputs are run by the user, not on a schedule, at this baseline,
 - **graduation criteria for Stage 1 → Stage 2** surfaced as informational defaults (e.g. "≥ 4 weeks of clean `.kb-log/`", "≥ 1 cross-layer promote completed by hand", "`foundation/vmg.md` confirmed by ≥ 1 stakeholder"); the user can accept, edit, or skip this block — it does not block scaffold,
@@ -326,6 +330,7 @@ Acceptance checks:
 
 - no literal `{{PLACEHOLDER}}` tokens remain, except inside deliberate presentation or brand templates that are filled later by artifact commands,
 - `.kb-config/layers.yaml` exists in the anchor layer and names both layers,
+- `.kb-config/layers.yaml` records `primitive-storage` for decisions, tasks, and ideas,
 - `workspace.anchor-layer` points to `alice-personal`,
 - `_kb-tasks/focus.md` exists,
 - `_kb-delivery/briefs/` and `_kb-delivery/specs/` exist when `delivery` is enabled,
@@ -513,6 +518,27 @@ Acceptance checks:
 - `/kb roadmap --dry-run` and `/kb journeys --dry-run` produce read-only validation output and name missing sources without writing to external trackers,
 - the roadmap presentation rules are visible in generated guidance: value headlines, implementation/detail second lines, explicit commitment status, and no checkmarks for proposed work.
 
+## Optional Step 15 — Tracker-backed primitive proof
+
+If the Phase 2 answers say that an issue tracker is the operational backbone for team decisions, tasks, feature intake, or roadmap items, setup must propose a tracker-backed or hybrid primitive-storage plan.
+
+Use a minimal variant of Q8 such as:
+
+```text
+our product repo, GitHub issues as the team decision/task backbone, and a weekly planning sync
+```
+
+Acceptance checks:
+
+- the Phase 3 proposal names which primitive families are `files`, `tracker`, or `hybrid`,
+- every tracker-backed primitive points to a declared `connections.trackers[]` entry,
+- the proposal names the target repository or project, issue types/kinds, status values, and write-back mode,
+- GitHub-backed setup generates the full governance profile: issue forms, PR template, labeler, governance workflow, manual setup checklist, and repo-local tracker workflow skill; if the target repo is not writable, setup stages those files and prints the manual apply steps,
+- Jira-backed setup records project/query/type/status mappings and prints the manual project setup checklist,
+- `/kb decide` and `/kb task` in the tracker-backed layer show proposed tracker mutations and wait for confirmation,
+- no live tracker write-back happens in the proof unless the user explicitly enables and confirms it,
+- KB directories for tracker-backed primitives are summaries/backlinks only and do not look like a competing canonical backlog.
+
 ## Team lead verification checklist
 
 A team lead can treat onboarding as accepted only if all of these are true:
@@ -555,6 +581,7 @@ Create or reopen an issue if any of these occur:
 | 2026-05-18 | Preamble now explicitly tags the doc as a maintainer/QA baseline and points adopters at `docs/examples/first-hour.md` for the actual first-install walkthrough. Closes audit finding #100 (acceptance.md was being referenced from README "Where to start" as if it were user onboarding) | Concept/onboarding/process audit |
 | 2026-05-18 | VS Code Copilot Chat install path now accepts either the Preview marketplace path (user-level `chat.plugins.marketplaces`) or the stable installer fallback (`scripts/install --target vscode`); the acceptance criteria allow either. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap propagated: Phase 1 baseline now covers workspace and harness facts (Q1–Q3); Phase 2 covers the open-ended context block (Q4–Q11). Phase 3 expected-output Q-references shifted to Q11/Q10/Q5/Q8/Q9 accordingly. Step 14 product-management proof references the new question numbering. Closes audit finding #98 | Concept/onboarding/process audit |
+| 2026-05-17 | Added first-run acceptance coverage for tracker-backed primitives: baseline keeps files canonical, optional proof verifies `primitive-storage`, the full GitHub governance profile or Jira setup outcomes, confirmation-gated tracker mutations, and absence of competing canonical KB files | Tracker-backed onboarding design |
 | 2026-05-15 | v6.1.0: updated the deterministic first-run path for the release-ready surface. The baseline now enables delivery and operations on the starter layers, calls out the operating model and role handbook as pre-acceptance reading, verifies delivery/operations directories, and adds optional proofs for `/kb brief`, `/kb spec`, `/kb release`, `/kb incident`, and `/kb note retro` | Release-readiness audit |
 | 2026-05-05 | v5.5.1: closed the v5.4.0 numbering drift. Phase 1 now baselines Q1–Q8 (Q8 = operating context / adoption stage, which had been silently dropped from this doc since v5.4.0). Phase 2 questions are renumbered Q9/Q10/Q11 to match `kb-setup/SKILL.md`. Phase 3 expected output now requires the adoption-stage label, explicit Stage↔automation-level consistency, and the graduation-criteria block, so the acceptance baseline actually proves the soft-transition flow it advertises. Added an explicit acceptance bullet that the chosen stage must be durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
 | 2026-04-30 | v5.5.0: added the optional product-management proof path so first-run acceptance covers setup-derived roadmap/journey ownership, source/output placement, and read-only dry-run validation when role/goals imply those artifacts | Product-management surface integration |

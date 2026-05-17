@@ -1,0 +1,38 @@
+name: Idea
+description: Track an early idea that needs validation or shaping.
+title: "[Idea] "
+type: Idea
+body:
+  - type: textarea
+    id: seed
+    attributes:
+      label: Seed
+      description: What is the idea?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or trigger
+      description: What prompted it? Link findings, notes, feedback, or examples.
+    validations:
+      required: false
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage
+      options:
+        - seed
+        - growing
+        - ready
+        - shipped
+        - archived
+    validations:
+      required: true
+  - type: textarea
+    id: next_step
+    attributes:
+      label: Next step
+      description: Validation, decision, task, spec, or close reason.
+    validations:
+      required: false

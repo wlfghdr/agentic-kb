@@ -1,0 +1,33 @@
+name: Task
+description: Track follow-up work with owner, status, and links.
+title: "[Task] "
+type: Task
+body:
+  - type: textarea
+    id: work
+    attributes:
+      label: Work to do
+      description: What needs to be done?
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: Owner
+      description: Who is responsible?
+    validations:
+      required: false
+  - type: textarea
+    id: source
+    attributes:
+      label: Source and links
+      description: Link the decision, feedback, finding, note, spec, or roadmap item that created this task.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Completion signal or acceptance criteria.
+    validations:
+      required: false

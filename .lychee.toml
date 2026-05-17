@@ -13,8 +13,9 @@ retry_wait_time = 2
 # Maximum concurrent requests
 max_concurrency = 16
 
-# Cache results between runs
-cache = true
+# Cache results between runs. Keep disabled so local validation does not leave
+# generated .lycheecache artifacts in adopter worktrees.
+cache = false
 max_cache_age = "1d"
 
 # Follow these protocols
@@ -43,7 +44,5 @@ exclude_path = [
   ".git",
   "dist",
   "build",
+  "plugins/kb/skills/kb-management/templates/index.html",
 ]
-
-# Don't check fragments against local files (we have a separate consistency check)
-include_fragments = false

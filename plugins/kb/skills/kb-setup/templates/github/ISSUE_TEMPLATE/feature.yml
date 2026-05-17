@@ -1,0 +1,33 @@
+name: Feature
+description: Track product, service, process, or capability intake that may route to roadmap or delivery work.
+title: "[Feature] "
+type: Feature
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What user, customer, team, or business outcome should change?
+    validations:
+      required: true
+  - type: textarea
+    id: audience
+    attributes:
+      label: Audience
+      description: Who is this for?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Link feedback, findings, journeys, decisions, or supporting material.
+    validations:
+      required: false
+  - type: textarea
+    id: routing
+    attributes:
+      label: Routing
+      description: Roadmap item, spec, delivery backlog item, follow-up decision, or close reason.
+    validations:
+      required: false

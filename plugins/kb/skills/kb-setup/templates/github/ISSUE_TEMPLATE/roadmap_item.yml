@@ -1,0 +1,33 @@
+name: Roadmap Item
+description: Track a roadmap item with value, phase, evidence, and delivery links.
+title: "[Roadmap] "
+type: Roadmap Item
+body:
+  - type: textarea
+    id: value
+    attributes:
+      label: Value statement
+      description: Phrase as the user, customer, team, or business value to create.
+    validations:
+      required: true
+  - type: input
+    id: timeframe
+    attributes:
+      label: Timeframe or phase
+      description: Now, Next, Later, quarter, milestone, release, or other configured bucket.
+    validations:
+      required: false
+  - type: textarea
+    id: linked_journeys
+    attributes:
+      label: Linked journeys or specs
+      description: Link journey steps, briefs, specs, or other artifacts this item moves forward.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and dependencies
+      description: Link decisions, findings, delivery work, risks, or dependencies.
+    validations:
+      required: false

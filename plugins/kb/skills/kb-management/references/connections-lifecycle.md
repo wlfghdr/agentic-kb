@@ -11,7 +11,7 @@ A connection is an external source of truth that the layer tracks but does not o
 | `product-repos` | Git repos the layer reads from | Product code repos, shared config repos, governance repos from a repo-as-OS framework, open-source dependencies |
 | `trackers` | Issue or planning systems | GitHub Issues, Jira, Linear, exported CSV |
 
-Connections live under a layer's `connections:` block in `.kb-config/layers.yaml`. They are layer-specific: each layer tracks the external sources relevant to its scope.
+Connections live under a layer's `connections:` block in `.kb-config/layers.yaml`. They are layer-specific: each layer tracks the external sources relevant to its scope. When a tracker is also the canonical operational home for a primitive family, the layer declares that ownership separately in `primitive-storage`; the connection only describes how to reach the tracker.
 
 Repo-as-OS bridge defaults still materialize as `connections.product-repos[]` entries. From `agentic-kb`'s perspective, an external governance repo is still a watched repo connection with optional path filters and ticket-pattern extraction.
 
@@ -46,6 +46,13 @@ layers:
       writeback:
         enabled: false
         capabilities: []              # comment | status | label
+
+    primitive-storage:
+      decisions:
+        mode: tracker
+        tracker: backend-work
+        kind: Decision
+        summary-dir: _kb-decisions
 ```
 
 ### Field contract
@@ -62,6 +69,7 @@ layers:
 | `reference-mode` | `link` cites the source, `inline` embeds a summary, `none` records only the watermark |
 | `writeback.enabled` | Whether the skill may post comments, status updates, or labels back to the tracker |
 | `writeback.capabilities` | Which write operations are permitted; omit or leave empty when `enabled: false` |
+| `primitive-storage.*.tracker` | Name of the tracker connection that owns the primitive family when the mode is `tracker` or `hybrid` |
 
 ### Tracker kinds
 
@@ -175,6 +183,7 @@ To stop tracking a connection:
 
 - [`../SKILL.md`](../SKILL.md)
 - [`command-reference.md`](./command-reference.md)
+- [`tracker-backed-primitives.md`](./tracker-backed-primitives.md)
 - [`../../../../../docs/REFERENCE.md`](../../../../../docs/REFERENCE.md) §5 — `layers.yaml` field contract
 - [`../../kb-setup/SKILL.md`](../../kb-setup/SKILL.md) — setup interview and proposal flow
 
@@ -183,4 +192,5 @@ To stop tracking a connection:
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-05-18 | Relabeled the Write-back section as RESERVED (not implemented in v6.1.0): `writeback.enabled: true` is a no-op today; the planned contract is preserved as the future spec; open questions (which trackers, auth model, source-of-truth rule, concurrent-write semantics) are now explicit. `kb-setup` must not propose `writeback.enabled: true` in v6.1.0. Closes audit finding #102 | Concept/onboarding/process audit |
+| 2026-05-17 | Clarified that tracker connections and tracker-backed primitive ownership are separate config concerns: `connections.trackers[]` describes access, while `primitive-storage` declares canonical ownership | Tracker-backed onboarding design |
 | 2026-04-27 | Added a dedicated reference for connection kinds, config shape, setup flow, digest lifecycle, watermark format, triage drift checks, write-back, and disconnect behavior; aligned repo-as-OS bridge wording to the current `connections.product-repos[]` schema | Documentation gap follow-up |

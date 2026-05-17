@@ -1,0 +1,54 @@
+name: Decision
+description: Track a decision with options, evidence, owner, and outcome.
+title: "[Decision] "
+type: Decision
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Decision question
+      description: What choice needs to be made?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why is this decision needed now?
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options
+      description: List the meaningful options and trade-offs.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Link findings, notes, specs, reports, tracker items, or external anchors.
+    validations:
+      required: false
+  - type: input
+    id: owner
+    attributes:
+      label: Accountable owner
+      description: Who is accountable for the outcome?
+    validations:
+      required: true
+  - type: input
+    id: due
+    attributes:
+      label: Target date
+      placeholder: YYYY-MM-DD
+    validations:
+      required: false
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Fill when decided. Include rationale and date.
+    validations:
+      required: false

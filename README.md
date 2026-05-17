@@ -167,6 +167,21 @@ In practice that means:
 
 For roadmap adoption, keep the first proof path lean: start with exported tracker markdown bound through `ticket-export-markdown`, prove the artifact flow locally, then add live tracker adapters and write-back only after the export-backed path is trusted. For journey adoption, start with one end-to-end journey owned by the same layer that owns the roadmap scope, then split across layers only after the ownership boundary is clear.
 
+### GitHub as an operating backbone
+
+If a team already uses GitHub Issues, GitHub Projects, and pull requests as its operating loop, `/kb setup` can generate a generic GitHub governance profile instead of leaving the adopter to invent one.
+
+That profile includes:
+
+- issue forms for feedback, ideas, decisions, tasks, bugs, features, roadmap items, content updates, and governance changes,
+- a PR template that ties changes back to tracker items, KB artifacts, validation, changelog/version impact, and safe review,
+- a governance workflow that checks issue-template syntax, unresolved placeholders, linked issues or explicit exceptions, optional version-impact labels, and repo-local skill presence,
+- a generic path labeler,
+- a repo-local tracker workflow skill that teaches agents the same issue/project/PR rules CI enforces,
+- a manual checklist for native issue types, project/status fields, labels, milestones, branch protection, CODEOWNERS, parent/sub-issues, and required checks.
+
+The profile stays generic: no organization names, no product-specific labels, no hardcoded project IDs. Setup fills or stages the adopter-specific values and keeps write-back confirmation-gated.
+
 ### The evaluation gate
 
 | Matches | Outcome |
@@ -368,6 +383,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 | 2026-05-18 | Added a "Most used (start here)" five-command shortlist above the full 33-command Stable core flows block so new readers see what to try first without learning the whole surface. "Where to start" regrouped by audience — adopters, model-readers, team-rollout-decision-makers, and maintainers/QA each get a focused subsection instead of one flat list. Closes audit findings #100 and #101 | Concept/onboarding/process audit |
 | 2026-05-18 | VS Code Copilot Chat section now labels the install path as **Preview** (VS Code Agent plugins are a Microsoft Preview feature), notes the user-level-only scope constraint, and surfaces `scripts/install --target vscode` as the stable fallback. README "rip it out in five" sentence now links to the new `docs/uninstall.md`. Closes audit findings #95 and #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Honest "autonomous knowledge ops" wording: the Stage 3 row in the adoption-curve table no longer reads as if a scheduler shipped — it now says the cadence is one the adopter wires (OS cron, CI, or harness-native automation), and the Status row drops "Stable reference implementation" in favor of "Stable behavioral spec (executed by the harness's agent; no runtime ships)". "Lean by construction" updated in lock-step. Closes audit findings #94 and #96 | Concept/onboarding/process audit |
+| 2026-05-17 | Added the generic GitHub operating-backbone story: setup can now generate issue forms, PR template, governance workflow, labeler, manual setup checklist, and repo-local tracker workflow skill when adopters choose GitHub as the issue/project/PR backbone | Tracker-backed onboarding hardening |
 | 2026-05-15 | Rolled the public framework status to 6.1.0 after the release-readiness audit: the role-handbook/retro bundle moved from `[Unreleased]` into a real release, roadmap/journey skill language now presents them as stable setup-proposed product-management flows, and the README compatibility model now lists supported tiers without foregrounding unsupported buckets | Release-readiness audit |
 | 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Rolled the public framework status to 6.0.0 after the v5 adoption-arc closeout: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical command verbs (matching the operating-model artifact chain and the templates the skill instantiates), surfaced the previously undocumented `/kb publish`, `/kb sync`, `/kb diff`, `/kb start-week`, `/kb end-day`, `/kb audit`, and `/kb report [scope]` flows in the public command list, removed the residual fixed-ladder `L1`/`L2/L3`/`L4` drift from the routing prompt and operator agent, aligned the four delivery/operations file formats in `docs/REFERENCE.md` §4 with the templates, and corrected the year-nested archive and weekly-summary paths so daily and weekly rituals write where the spec says they should | v6.0.0 adoption + daily-usage gap audit |

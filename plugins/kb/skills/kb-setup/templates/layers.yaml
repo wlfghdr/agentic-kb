@@ -34,6 +34,48 @@ layers:
       writeback:
         enabled: false
         capabilities: []
+    # Primitive storage declares the canonical operational home per primitive.
+    # mode: files | tracker | hybrid
+    primitive-storage:
+      decisions:
+        mode: files
+        file-dir: _kb-decisions
+      tasks:
+        mode: files
+        file-dir: _kb-tasks
+      ideas:
+        mode: files
+        file-dir: _kb-ideas
+    # When /kb setup detects that a shared tracker is the operational backbone,
+    # it can render tracker-backed mappings like the example below.
+    # connections:
+    #   trackers:
+    #     - name: team-work
+    #       kind: github-issues
+    #       repo: org/repo
+    #       project: Team Planning
+    #       scope: is:issue
+    #       issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
+    #       status-values: [Todo, In Progress, In Review, Done]
+    # primitive-storage:
+    #   decisions:
+    #     mode: tracker
+    #     tracker: team-work
+    #     kind: Decision
+    #     summary-dir: _kb-decisions
+    #   tasks:
+    #     mode: tracker
+    #     tracker: team-work
+    #     kind: Task
+    #     summary-dir: _kb-tasks
+    #   feature-intake:
+    #     mode: tracker
+    #     tracker: team-work
+    #     kind: Feature
+    #   roadmap-items:
+    #     mode: tracker
+    #     tracker: team-work
+    #     kind: Roadmap Item
     # When /kb setup derives product-management artifacts from role/goals,
     # it adds roadmaps/journeys to this layer's features and renders blocks
     # like the examples below under the selected owning layer.

@@ -1,6 +1,6 @@
 # Glossary
 
-> **Version:** 0.7 | **Last updated:** 2026-05-15
+> **Version:** 0.8 | **Last updated:** 2026-05-17
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
@@ -24,6 +24,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Focus** | The max-6 active tasks in `_kb-tasks/focus.md`. Always loaded into agent context. |
 | **Foundation** | The rarely-changing identity files in `_kb-references/foundation/` — who you are, your context, stakeholders, sources, and VMG. |
 | **Goal** | A measurable target declared in `_kb-references/foundation/vmg.md`. Lifecycle: `active → achieved \| deferred \| dropped`. Goals steer prioritization after the evaluation gate. Also called **MCG** (Mission-Critical Goal). |
+| **GitHub governance profile** | The optional `/kb setup` package for adopters using GitHub as an operating backbone: issue forms, PR template, path labeler, governance workflow, manual setup checklist, and repo-local tracker workflow skill. |
 | **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/`. |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **Incident record** | A dated operations artifact under `_kb-operations/incidents/YYYY/` that captures impact, timeline, mitigations, and follow-up work for a production interruption. |
@@ -49,6 +50,8 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Task** | An actionable **knowledge-work** item tracked in `_kb-tasks/focus.md` or `_kb-tasks/backlog.md`. The canonical term; `todo` and `TODO` are recognized synonyms. KB tasks and tracker tickets are **split-ownership** — KB tasks own knowledge work ("review", "decide", "develop", "draft brief"), tracker tickets own engineering work ("implement", "fix", "ship"). They are not two views of the same thing; see `docs/REFERENCE.md` §10 "Task ownership". |
 | **Topic** | A living document representing the current position on a theme. Updated in place. Path: `_kb-references/topics/<slug>.md`. |
 | **Tracker** | An external issue or planning system declared in a layer `connections:` block, such as GitHub issues, Jira exports, or Linear exports. |
+| **Tracker-backed primitive** | A decision, task, idea, feedback item, or intake item whose operational state lives in a configured tracker while the KB keeps synthesis, evidence, reports, and backlinks. The canonical owner must be explicit so KB files and tracker items do not both claim active ownership of the same item. |
+| **Primitive storage** | The per-layer `primitive-storage` config block that declares whether a primitive family is canonical in KB files, in a tracker, or in a hybrid file-to-tracker promotion flow. |
 | **Watermark** | The subtle `v{version} · {date}` marker added to generated HTML artifacts or the timestamp file that marks the last processed external digest window. |
 | **VMG** | Vision, Mission & Goals — the strategic steering model. Lives in `_kb-references/foundation/vmg.md`. Vision (years), Mission (quarters), Goals (weeks–quarters). Goals are synonymous with MCGs (Mission-Critical Goals). |
 | **Workstream** | A parallel track inside a layer with its own themes, active decisions, and status. Path: `_kb-workstreams/<name>.md`. |
@@ -83,6 +86,9 @@ The following terms are **not** used in this spec; use the term on the right ins
 |------|-------------|--------|
 | 2026-05-18 | `Task` entry expanded with split-ownership rule against external trackers (KB tasks own knowledge work; tracker tickets own engineering work; not two views of the same thing). Closes audit finding #103 | Concept/onboarding/process audit |
 | 2026-05-18 | Disambiguated `Contributor-scoped` (artifact visibility) and `Role` (layer mutation rights) so adopters cannot conflate the two axes. Both entries now point at the new "Two orthogonal axes" callout in `docs/REFERENCE.md` §1. Updated the `Adoption stage` entry to reference phase 2 question 11 after the kb-setup phase swap. Closes audit findings #98 and #104 | Concept/onboarding/process audit |
+| 2026-05-17 | Added `GitHub governance profile` as the canonical term for the generated adopter setup package that carries generic issue/project/PR rules, CI, checklist, and local workflow skill | Tracker-backed onboarding hardening |
+| 2026-05-17 | Added `primitive storage` as the canonical term for the per-layer file/tracker/hybrid ownership map used by tracker-backed primitives | Tracker-backed onboarding design |
+| 2026-05-17 | Added `tracker-backed primitive` as the generic term for decisions, tasks, ideas, feedback, and intake items whose operational state lives in a configured tracker while the KB keeps synthesis and backlinks | Cross-repo tracker-backbone review |
 | 2026-05-15 | Removed the active Draft term and reframed roadmap/journey glossary entries as stable setup-proposed product-management primitives; simplified Harness to the supported tiers documented in the README and reference | Release-readiness audit |
 | 2026-04-30 | Reframed roadmap and journey terms as setup-proposed product-management primitives, widened Journey beyond product-only flows, and updated the Draft definition so setup-proposed draft features are allowed when confirmed per layer | Product-management surface integration |
 | 2026-04-27 | Added soft-transition vocabulary: `adoption stage`, `capture-only mode`, `repo-as-OS framework`. Non-term mappings now steer `maturity level (for adoption)` and `AI maturity model / agentic curve` to `adoption stage`, and `pre-agent mode / manual mode` to `capture-only mode` | Soft-transition extension |

@@ -17,7 +17,7 @@ Run the four-phase, goal-oriented interview defined in `SKILL.md` ("Interactive 
 
 1. **Phase 1 — Workspace and harness facts**: workspace root, IDE targets, discovery pass against existing KB material. Frontloaded so the user knows where files land and which harness will host `/kb` before they invest in open-ended answers.
 2. **Phase 2 — Context and goals**: identity, what the user tracks/decides, why now, audience, sources, desired outputs, autonomy preference, and operating context. All open-ended; never asks the user to enumerate features, scopes, or layer counts.
-3. **Phase 3 — Proposed plan**: the wizard derives a layer graph, connections, artifacts, automation level, product-management roadmap/journey placement, and HTML styling from phases 1 + 2 and presents them as one block. The user adjusts inline or confirms; deeper edits are routed through targeted follow-ups (rename, add/remove a layer, flip role, change parent, move roadmap/journey ownership).
+3. **Phase 3 — Proposed plan**: the wizard derives a layer graph, connections, primitive storage, artifacts, automation level, product-management roadmap/journey placement, tracker setup outcomes, and HTML styling from phases 1 + 2 and presents them as one block. The user adjusts inline or confirms; deeper edits are routed through targeted follow-ups (rename, add/remove a layer, flip role, change parent, move roadmap/journey ownership, choose file-backed vs tracker-backed primitives, fill tracker repo/project/query details).
 4. **Phase 4 — Final confirmation**: one summary, one yes.
 
 Validate each answer block before advancing. Never derive layer features from a feature list dictated to the user; always derive them from the user's own answers and let the user adjust the proposal in phase 3. A compact expert path (the legacy "author the plan directly" mode) is available on request for users who already know the framework; phase 1 (workspace root + IDE targets) is never skipped because the wizard needs both before it can write anything.
@@ -78,6 +78,52 @@ Instantiate these files from `templates/`:
 - `index.html`, `dashboard.html`, `.nojekyll`
 
 When `roadmaps` or `journeys` are enabled, render their config blocks into `.kb-config/layers.yaml` under the owning layer and their template blocks into `.kb-config/artifacts.yaml`. The first-run default is one owning layer for both artifacts unless the user explicitly selects different owners.
+
+When tracker-backed primitives are enabled, render `primitive-storage:` under the owning layer. Use file-backed defaults for private layers unless the user explicitly selects a tracker. For shared layers with an existing tracker process, render the tracker as the canonical home only for the primitive families the user confirms. Do not create a competing canonical decision or task file when the tracker is canonical; use supporting directories for summaries and backlinks.
+
+## Tracker backbone setup
+
+If any primitive is `mode: tracker` or `mode: hybrid`, setup generates or proposes the provider-specific scaffold after writing `.kb-config/layers.yaml`.
+
+### GitHub-backed tracker
+
+Generate from `templates/github/` into the target tracker repository or into a staging directory when the target repo is not locally available:
+
+```text
+.github/ISSUE_TEMPLATE/config.yml
+.github/ISSUE_TEMPLATE/feedback.yml
+.github/ISSUE_TEMPLATE/idea.yml
+.github/ISSUE_TEMPLATE/decision.yml
+.github/ISSUE_TEMPLATE/task.yml
+.github/ISSUE_TEMPLATE/bug.yml
+.github/ISSUE_TEMPLATE/feature.yml
+.github/ISSUE_TEMPLATE/roadmap_item.yml
+.github/ISSUE_TEMPLATE/content_update.yml
+.github/ISSUE_TEMPLATE/governance_change.yml
+.github/PULL_REQUEST_TEMPLATE.md
+.github/labeler.yml
+.github/workflows/kb-github-governance.yml
+GITHUB_GOVERNANCE_SETUP.md
+agent-skills/kb-tracker-workflow/SKILL.md
+```
+
+This is the GitHub governance profile described in `github-governance-profile.md`. It gives adopters issue-driven work, native metadata discipline, PR closing-link rules, validation/changelog prompts, labeler defaults, CI/local-agent parity, and a repo-local skill that agents can load after onboarding.
+
+Also print a manual setup checklist for GitHub-native settings that files cannot fully create: issue types, project/status fields, milestones, required labels, branch protection, CODEOWNERS owners, parent/sub-issue policy, and required checks. Use `gh` only when available and authenticated; otherwise leave the checklist and generated files as the outcome.
+
+### Jira-backed tracker
+
+Write the Jira mapping into `connections.trackers[]` and `primitive-storage`, then generate the generic tracker workflow skill. Print a manual setup checklist for project key/URL, issue types, workflow statuses, required fields, link policy, and token/auth environment names. Do not assume a specific Jira hierarchy or workflow. Export-backed Jira setups are valid: they use read-only queries/files first and leave write-back disabled.
+
+### Verification
+
+Tracker-backed setup passes only when:
+
+- every `primitive-storage.*.tracker` points at a declared `connections.trackers[].name`,
+- every configured kind/type has either a generated GitHub issue form or documented Jira type mapping,
+- `writeback.enabled: true` appears only after explicit confirmation,
+- generated templates have no unresolved setup placeholders,
+- the repo-local tracker workflow skill says that issue creation, comments, labels, links, status changes, and transitions require confirmation.
 
 ## Scaffold — additional shared contributor layer
 
@@ -256,5 +302,6 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 |------|-------------|--------|
 | 2026-05-18 | VS Code IDE-configuration note rewritten: the `chat.plugins.marketplaces` setting belongs to user-level `settings.json` (workspace settings not honored per the official docs), the surrounding feature is Microsoft Preview, and `scripts/install --target vscode` is recommended as the stable path. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order flipped to match `kb-setup` SKILL: phase 1 is now "Workspace and harness facts" (frontloaded), phase 2 is the open-ended "Context and goals" block. Expert-mode skip path made explicit — phase 1 is never skipped because the wizard needs workspace root + IDE targets before it writes anything. Closes audit finding #98 | Concept/onboarding/process audit |
+| 2026-05-17 | Added tracker-backbone setup flow: `primitive-storage` rendering, GitHub governance profile scaffold (issue templates, PR template, labeler, CI, checklist, repo-local skill), Jira mapping checklist, and verification rules for tracker-backed primitives | Tracker-backed onboarding design |
 | 2026-04-30 | Added setup guidance for deriving, placing, scaffolding, and verifying roadmap/journey product-management artifacts from role/goals instead of requiring users to know feature names upfront | Product-management surface integration |
 | 2026-04-27 | Added explicit VMG sourcing and update guidance for setup, including URL/file/direct-text population modes, parent-digest updates, manual edits, and conflict handling. Also removed the stale question-number reference from the `vmg.md` scaffold bullet | Documentation gap follow-up |

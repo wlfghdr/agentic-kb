@@ -142,7 +142,7 @@ Full command reference: `references/command-reference.md`.
 2. **Set and preserve maturity.** New findings and topics must carry `**Maturity**:`. `raw` means weak or single-signal, `emerging` means accepted and worth revisiting, `durable` means ready to promote or cite broadly.
 3. **Respect the layer graph.** `promote` walks upward through `parent`; `digest` walks downward from parent or from `connections`. A `role: consumer` layer is read-down only: it may receive digests, but it is never a `promote` or `publish` target.
 4. **Keep contributor-scoped and shared artifacts distinct.** Inputs, findings, ideas, and strategy digests stay contributor-scoped by default on multi-user layers. Decisions, tasks, workstreams, foundation files, reports, delivery artifacts, operations artifacts, and meeting notes are shared unless the layer config says otherwise. This visibility rule is separate from the layer `role`.
-5. **Keep decisions and tasks canonical to one owning layer.** When promoting a decision or task, determine whether the target layer now owns the same scope and accountable decider/owner. If yes, close, archive, or replace the source item with a backlink; keep two active records only when their scopes, recommendations, accountable owners, or sub-task responsibilities differ.
+5. **Keep decisions and tasks canonical to one owning layer and one storage backbone.** When promoting a decision or task, determine whether the target layer now owns the same scope and accountable decider/owner. If yes, close, archive, or replace the source item with a backlink; keep two active records only when their scopes, recommendations, accountable owners, or sub-task responsibilities differ. When the target layer declares `primitive-storage` with `mode: tracker`, propose or update the configured tracker item instead of creating a competing canonical KB file.
 6. **Log every operation.** Write to `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` in the canonical `HH:MM:SSZ | operation | scope | target | details` format.
 7. **Regenerate live overviews after mutation.** `dashboard.html` and the root `index.html` are part of the same mutation as capture, review, promote, publish, digest, decide, note-end, present, report, and ritual flows.
 8. **Never mutate silently.** The response must make the action mode obvious: read-only analysis, proposed mutation, or applied mutation.
@@ -182,6 +182,14 @@ Full command reference: `references/command-reference.md`.
 | Journeys | `/kb journeys [...]` (alias `/kb journey`) | Hand off to `kb-journeys` for journey authoring + render; refuse if the active layer has no `journeys:` block |
 
 Roadmaps and journeys are product-management primitives, but they stay layer-owned. If a user asks for roadmap or journey work and the current layer has no matching block, route them to `/kb setup` or the expert config path so they can choose whether the artifact belongs in a personal, team, org, or other contributor layer. Do not silently choose a layer for them.
+
+When a flow creates or updates a primitive covered by `primitive-storage`, resolve the storage mode before writing:
+
+- `files`: write the normal KB artifact or task file.
+- `tracker`: propose a tracker item/comment/link/status update using the configured tracker kind/type; after confirmation, write only summaries, backlinks, reports, or archive context to the KB.
+- `hybrid`: write the early KB artifact first, then offer promotion to the configured tracker when the item crosses the layer's sharing boundary.
+
+If the config is ambiguous or both a KB file and tracker item claim canonical ownership, stop and propose an audit/cleanup step before mutation.
 
 ## Output contract
 
@@ -241,6 +249,7 @@ The templates this skill instantiates live in `templates/`:
 - `references/spec-summary.md` — condensed architecture and workspace layout.
 - `references/command-reference.md` — full subcommand details.
 - `references/connections-lifecycle.md` — connection declaration, watermarks, drift checks, and write-back.
+- `references/tracker-backed-primitives.md` — generic tracker-backed decisions, tasks, ideas, feedback, intake, routing, and audit pattern.
 - `references/promote-contract.md` — staged-review semantics for `/kb promote`.
 - `references/publish-contract.md` — marketplace packaging, safety validation, and publish response contract.
 - `references/rituals.md` — the four rituals in detail.
@@ -252,6 +261,8 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-17 | Tightened primitive creation behavior to respect `primitive-storage`: tracker-backed decisions, tasks, ideas, feature intake, and roadmap items use the configured tracker as canonical operational home while KB files keep summaries/backlinks only | Tracker-backed onboarding design |
+| 2026-05-17 | Added a load-on-demand reference for tracker-backed primitives so teams can use issue trackers as the operational backbone for shared decisions, tasks, ideas, feedback, and feature intake without duplicating KB ownership | Cross-repo tracker-backbone review |
 | 2026-05-15 | Reframed roadmap and journey rows as stable setup-proposed product-management flow primitives. They remain explicitly gated by `roadmap:` / `journeys:` config on the confirmed owning layer, but are no longer described as unfinished draft-skill handoffs | Release-readiness audit |
 | 2026-05-14 | v6.1.0: added the retro note variant. `/kb note retro [topic]` now opens a structured retrospective using the new `templates/retro.md` shape (sprint, project/launch, post-incident, quarterly cadences). Retros stay inside the `notes` feature — no new directory or feature flag — and must produce tracked commitments (tasks or decisions) before they are considered closed. Added retro/retrospective/post-mortem trigger phrases so natural-language invocations route here. Workstream template enriched with Owner, Status, Cadence, Last reviewed, Linked briefs/specs, Recent shipments, and Upcoming milestones | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | v6.0.0: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical flow primitives in the layer-aware flow table so the four operating-model artifacts have discoverable command verbs (the trigger keywords were already declared, but the verb path was implicit). Each verb requires the matching `delivery` or `operations` feature on the target layer; the skill refuses cleanly if it is not enabled. No changes to gate scoring, promote/publish/digest semantics, the layer-graph rules, or any other behavioral contract | v6.0.0 adoption + daily-usage gap audit |

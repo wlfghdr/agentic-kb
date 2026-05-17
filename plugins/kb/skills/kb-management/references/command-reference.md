@@ -35,6 +35,8 @@ Retro variants have one additional contract: `/kb note end` on a retro must surf
 
 Tasks follow the same canonical-ownership rule as decisions: if a team, org, or company layer owns the same work item and accountable owner, keep the task there and close/archive the source-layer duplicate. A contributor-owned layer may keep a separate task only for a narrower personal sub-task or owner-specific slice that links back to the canonical shared task.
 
+If the active layer declares `primitive-storage` with `mode: tracker` for `decisions` or `tasks`, these commands create a proposed tracker mutation instead of a canonical KB file mutation. The agent must show the issue/ticket body, type/kind, target tracker, links, and write-back action, then wait for confirmation. KB files in the supporting summary directory may be written only as backlinks, reports, or archived context.
+
 ## Ideas
 
 | Subcommand | Action |
@@ -66,6 +68,7 @@ If the target layer is `role: consumer`, `promote` and `publish` must refuse and
 For the staged-review contract behind `/kb promote`, see [`promote-contract.md`](./promote-contract.md).
 When promoting decisions or tasks, keep one canonical path for the owning scope; close or archive the source as `superseded` unless it still has a genuinely different scope, accountable owner, or sub-task responsibility.
 For connection declaration, watermarks, drift checks, and write-back, see [`connections-lifecycle.md`](./connections-lifecycle.md).
+For tracker-backed primitive ownership, see [`tracker-backed-primitives.md`](./tracker-backed-primitives.md).
 
 ## Migration
 
@@ -212,6 +215,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-17 | Added command behavior for tracker-backed decisions and tasks: commands propose confirmed tracker mutations when `primitive-storage` says the tracker is canonical, and KB files become summaries/backlinks rather than competing records | Tracker-backed onboarding design |
 | 2026-05-15 | Renamed the active roadmap/journey section from draft-skill subcommands to product-management subcommands and clarified that these stable skills are enabled by explicit owning-layer config | Release-readiness audit |
 | 2026-05-14 | Added `/kb note retro [topic]` as a third note variant alongside general and meeting notes. Retros use the structured template at `plugins/kb/skills/kb-management/templates/retro.md`, must produce tracked commitments at close time, and surface a "false convergence" Gate note if they close without any. No new feature flag or directory — retros live inside the existing `notes` feature | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Added a dedicated Delivery & Operations subcommand section (`/kb brief`, `/kb spec`, `/kb release`, `/kb incident`) so the four operating-model artifacts have canonical command verbs that match the file paths in `docs/REFERENCE.md` §3 and the templates in `plugins/kb/skills/kb-management/templates/`. Each verb requires the matching `delivery` or `operations` feature on the target layer and refuses cleanly when the feature is not enabled. They were already wired as feature-keyword triggers in the kb-management skill but had no discoverable verb, which forced users to rely on natural-language intent matching | v6.0.0 adoption + daily-usage gap audit |
