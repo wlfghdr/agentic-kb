@@ -29,8 +29,12 @@ Paths per harness (as of late 2025 / early 2026):
                     .github/agents/<name>.agent.md (custom agent persona).
     - User:         ~/.copilot/skills/, ~/.copilot/agents/,
                     ~/.copilot/prompts/, ~/.copilot/instructions/.
-        - Easiest for users: add this repo to chat.plugins.marketplaces in
-            settings.json and install via the Extensions view (reads plugin.json).
+        - Easiest for users (Preview): add this repo to chat.plugins.marketplaces
+            in **user-level** settings.json (workspace settings are not honored
+            for this key) and install via the Extensions view (reads plugin.json).
+            VS Code Agent plugins are a Microsoft Preview feature; this installer
+            target writes the stable .github/prompts/ + .github/instructions/
+            surface directly so adopters don't depend on the Preview API.
 
     codex
         - Repository / local authoring: .agents/skills/<name>/SKILL.md
@@ -467,13 +471,86 @@ def install_vscode(base: Path, skills: list[str], agents: list[str],
         if src.is_file():
             link_or_copy(src, base / "instructions" / f"{name}.instructions.md", force)
     print(
-        "\n  Tip: for one-click install, add this repo to chat.plugins.marketplaces\n"
-        "       in your VS Code settings.json and use the Extensions view."
+        "\n  Tip: for one-click install (Preview), add this repo to\n"
+        "       chat.plugins.marketplaces in your USER-level VS Code\n"
+        "       settings.json (workspace settings are not honored) and use\n"
+        "       the Extensions view. VS Code Agent plugins are currently in\n"
+        "       Microsoft Preview; the install above writes the stable\n"
+        "       .github/prompts/ + .github/instructions/ surface that does\n"
+        "       not depend on the Preview API."
     )
 
 
+def _remove_path(p: Path) -> bool:
+    """Remove a file, symlink, or directory if present. Returns True if removed."""
+    if p.is_symlink() or p.is_file():
+        try:
+            p.unlink()
+            print(f"  removed: {p}")
+            return True
+        except OSError as e:
+            print(f"  WARN: could not remove {p}: {e}")
+            return False
+    if p.is_dir():
+        try:
+            shutil.rmtree(p)
+            print(f"  removed: {p}/")
+            return True
+        except OSError as e:
+            print(f"  WARN: could not remove {p}/: {e}")
+            return False
+    return False
+
+
+def uninstall_target(target: str, base: Path, skills: list[str], agents: list[str],
+                     prompts: list[tuple[str, Path]],
+                     instructions: list[tuple[str, Path]]) -> None:
+    """Remove the harness-side install for one target. Workspace data (anchor
+    layer scaffold, .kb-config/, _kb-* directories) is never touched here —
+    see docs/uninstall.md for the manual workspace cleanup."""
+    print(f"\nUninstalling from {base} ({target})")
+    if not base.exists():
+        print("  (nothing installed)")
+        return
+
+    if target == "vscode":
+        for s in skills:
+            _remove_path(base / "skills" / s)
+        for a in agents:
+            _remove_path(base / "agents" / f"{a}.agent.md")
+        for name, _ in prompts:
+            _remove_path(base / "prompts" / f"{name}.prompt.md")
+        for name, _ in instructions:
+            _remove_path(base / "instructions" / f"{name}.instructions.md")
+    elif target == "codex":
+        for name, _ in prompts:
+            _remove_path(base / "skills" / name / "SKILL.md")
+            parent = base / "skills" / name
+            if parent.is_dir() and not any(parent.iterdir()):
+                parent.rmdir()
+                print(f"  removed: {parent}/ (empty)")
+    elif target == "gemini":
+        for name, _ in prompts:
+            _remove_path(base / "commands" / f"{name}.toml")
+    elif target == "kiro":
+        for name, _ in prompts:
+            _remove_path(base / "skills" / name / "SKILL.md")
+            parent = base / "skills" / name
+            if parent.is_dir() and not any(parent.iterdir()):
+                parent.rmdir()
+                print(f"  removed: {parent}/ (empty)")
+    else:
+        # claude / opencode
+        for s in skills:
+            _remove_path(base / "skills" / s)
+        for a in agents:
+            _remove_path(base / "agents" / f"{a}.md")
+        for name, _ in prompts:
+            _remove_path(base / "commands" / f"{name}.md")
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Install agentic-kb artifacts into a harness.")
+    parser = argparse.ArgumentParser(description="Install or uninstall agentic-kb artifacts in a harness.")
     parser.add_argument(
         "--target",
         choices=["claude", "opencode", "vscode", "codex", "gemini", "kiro", "all", "auto"],
@@ -483,6 +560,10 @@ def main() -> int:
     parser.add_argument("--global", dest="globally", action="store_true",
                         help="Install into the user-global harness directory.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing installs.")
+    parser.add_argument("--uninstall", action="store_true",
+                        help="Remove the harness-side install instead of writing it. "
+                             "Workspace data (anchor layer scaffold) is never touched; "
+                             "see docs/uninstall.md for the manual workspace cleanup.")
     parser.add_argument("items", nargs="*",
                         help="Specific skills/agents to install (default: everything in plugin.json).")
     args = parser.parse_args()
@@ -535,6 +616,9 @@ def main() -> int:
     cfg = workspace_targets()
     for t in targets:
         base = cfg[t]["base_global"] if args.globally else cfg[t]["base_local"]
+        if args.uninstall:
+            uninstall_target(t, base, skills, agents, prompts, instructions)
+            continue
         if t == "vscode":
             install_vscode(base, skills, agents, skill_paths, agent_paths, prompts, instructions, args.force)
         elif t == "codex":
@@ -548,7 +632,13 @@ def main() -> int:
             # For claude/opencode, each prompt becomes a "command" (slash command).
             install_claude_or_opencode(t, base, layout, skills, agents, skill_paths, agent_paths, prompts, args.force)
 
-    print("\nDone.")
+    if args.uninstall:
+        print("\nHarness-side uninstall done.")
+        print("Workspace data (anchor layer scaffold, .kb-config/, _kb-*/, etc.)")
+        print("was intentionally left untouched. See docs/uninstall.md for the")
+        print("manual workspace cleanup if you want to fully remove agentic-kb.")
+    else:
+        print("\nDone.")
     return 0
 
 

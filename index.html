@@ -349,7 +349,7 @@
   <section>
     <h2>Support tiers</h2>
     <div class="grid">
-      <div class="card"><h3>Marketplace/native plugin</h3><p>Claude Code and VS Code Copilot Chat expose a native <code>/kb</code> install path today.</p></div>
+      <div class="card"><h3>Marketplace/native plugin</h3><p>Claude Code exposes a stable native <code>/kb</code> install path. VS Code Copilot Chat exposes a Preview path (<code>chat.plugins.marketplaces</code>) plus a stable installer fallback.</p></div>
       <div class="card"><h3>Installer-backed native surface</h3><p>OpenCode, Gemini CLI, and Kiro IDE get their documented command or skill entrypoint from <code>scripts/install</code>.</p></div>
       <div class="card"><h3>Compatible skill workflow</h3><p>Codex CLI uses the same workspace contract through <code>AGENTS.md</code> plus the installed <code>kb</code> skill.</p></div>
     </div>
@@ -366,13 +366,16 @@
 /kb setup</code></pre>
       </div>
       <div class="card">
-        <h3>VS Code Copilot Chat</h3>
-        <pre><code>// settings.json
+        <h3>VS Code Copilot Chat <small style="font-weight:normal;opacity:0.7">(Preview)</small></h3>
+        <pre><code>// user-level settings.json
+// (VS Code Agent plugins are a Microsoft Preview feature)
 "chat.plugins.marketplaces": [
   "wlfghdr/agentic-kb"
 ]
 // install from Extensions view, then:
-/kb setup</code></pre>
+/kb setup
+// Stable alternative:
+// scripts/install --target vscode</code></pre>
       </div>
       <div class="card">
         <h3>OpenCode / Gemini / Kiro / Codex</h3>

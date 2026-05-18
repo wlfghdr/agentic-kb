@@ -160,7 +160,7 @@ Alias generation rules:
 
 Per selected IDE:
 
-- **VS Code**: merge into `.vscode/settings.json` → `chat.plugins.marketplaces`.
+- **VS Code**: VS Code Agent plugins are a Microsoft Preview feature; the per-user `settings.json` `chat.plugins.marketplaces` key is the canonical install path (workspace `.vscode/settings.json` is not honored for this key per the official docs). For the stable path today, prefer `scripts/install --target vscode`, which writes `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md` directly without depending on the Preview surface.
 - **Claude Code**: preferred path — inside Claude Code run `/plugin marketplace add <repo-url>` + `/plugin install kb@agentic-kb`. Alternative: `<marketplace>/scripts/install --target claude`.
 - **OpenCode**: no official marketplace. Run `<marketplace>/scripts/install --target opencode` (workspace) or `--global` (user). OpenCode also reads `.claude/skills/` for cross-agent compatibility.
 - **Codex CLI**: run `<marketplace>/scripts/install --target codex` (workspace) or `--global`. Codex reads `AGENTS.md` plus `.agents/skills/kb/SKILL.md`; invoke the workflow through the skill picker or `$kb`, not a custom `/kb` slash command.
@@ -254,6 +254,7 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | VS Code IDE-configuration note rewritten: the `chat.plugins.marketplaces` setting belongs to user-level `settings.json` (workspace settings not honored per the official docs), the surrounding feature is Microsoft Preview, and `scripts/install --target vscode` is recommended as the stable path. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order flipped to match `kb-setup` SKILL: phase 1 is now "Workspace and harness facts" (frontloaded), phase 2 is the open-ended "Context and goals" block. Expert-mode skip path made explicit — phase 1 is never skipped because the wizard needs workspace root + IDE targets before it writes anything. Closes audit finding #98 | Concept/onboarding/process audit |
 | 2026-04-30 | Added setup guidance for deriving, placing, scaffolding, and verifying roadmap/journey product-management artifacts from role/goals instead of requiring users to know feature names upfront | Product-management surface integration |
 | 2026-04-27 | Added explicit VMG sourcing and update guidance for setup, including URL/file/direct-text population modes, parent-digest updates, manual edits, and conflict handling. Also removed the stale question-number reference from the `vmg.md` scaffold bullet | Documentation gap follow-up |

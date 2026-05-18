@@ -84,15 +84,21 @@ Install phase is accepted when:
 
 ### VS Code Copilot Chat
 
-Install path:
+VS Code Agent plugins are a Microsoft **Preview** feature. The acceptance baseline accepts either path:
 
-- add `wlfghdr/agentic-kb` to `chat.plugins.marketplaces`,
+**Preview-marketplace path** (depends on the Preview API):
+
+- add `wlfghdr/agentic-kb` to **user-level** `chat.plugins.marketplaces` (workspace settings are not honored for this key per the official docs),
 - install the plugin from the Extensions view.
+
+**Stable installer path** (does not depend on the Preview API):
+
+- run `scripts/install --target vscode` from the workspace root, which writes `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md`.
 
 Install phase is accepted when:
 
 - `/kb setup` is available in Copilot Chat,
-- the plugin is visible as installed,
+- the plugin (Preview path) or the generated prompt/instructions files (stable path) are visible as installed,
 - the same command surface is available after reopening the workspace.
 
 ### OpenCode
@@ -544,6 +550,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | VS Code Copilot Chat install path now accepts either the Preview marketplace path (user-level `chat.plugins.marketplaces`) or the stable installer fallback (`scripts/install --target vscode`); the acceptance criteria allow either. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap propagated: Phase 1 baseline now covers workspace and harness facts (Q1–Q3); Phase 2 covers the open-ended context block (Q4–Q11). Phase 3 expected-output Q-references shifted to Q11/Q10/Q5/Q8/Q9 accordingly. Step 14 product-management proof references the new question numbering. Closes audit finding #98 | Concept/onboarding/process audit |
 | 2026-05-15 | v6.1.0: updated the deterministic first-run path for the release-ready surface. The baseline now enables delivery and operations on the starter layers, calls out the operating model and role handbook as pre-acceptance reading, verifies delivery/operations directories, and adds optional proofs for `/kb brief`, `/kb spec`, `/kb release`, `/kb incident`, and `/kb note retro` | Release-readiness audit |
 | 2026-05-05 | v5.5.1: closed the v5.4.0 numbering drift. Phase 1 now baselines Q1–Q8 (Q8 = operating context / adoption stage, which had been silently dropped from this doc since v5.4.0). Phase 2 questions are renumbered Q9/Q10/Q11 to match `kb-setup/SKILL.md`. Phase 3 expected output now requires the adoption-stage label, explicit Stage↔automation-level consistency, and the graduation-criteria block, so the acceptance baseline actually proves the soft-transition flow it advertises. Added an explicit acceptance bullet that the chosen stage must be durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |

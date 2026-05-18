@@ -46,7 +46,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Scope** | A descriptive layer type such as `personal`, `team`, `org-unit`, or `company`. It is a routing hint, not a fixed enum or ladder position. |
 | **Skill** | A reusable instruction unit in a directory with `SKILL.md` at its root. Path in this repo: `plugins/<plugin>/skills/<name>/SKILL.md`. Portable across first-class supported harnesses and reusable from compatible CLI workflows that honor the same repo-local contract. |
 | **Spec** | A living delivery design-contract artifact under `_kb-delivery/specs/`. It records requirements, proposed shape, rollout constraints, verification, and open questions around a body of work. |
-| **Task** | An actionable work item tracked in `_kb-tasks/focus.md` or `_kb-tasks/backlog.md`. The canonical term; `todo` and `TODO` are recognized synonyms. |
+| **Task** | An actionable **knowledge-work** item tracked in `_kb-tasks/focus.md` or `_kb-tasks/backlog.md`. The canonical term; `todo` and `TODO` are recognized synonyms. KB tasks and tracker tickets are **split-ownership** — KB tasks own knowledge work ("review", "decide", "develop", "draft brief"), tracker tickets own engineering work ("implement", "fix", "ship"). They are not two views of the same thing; see `docs/REFERENCE.md` §10 "Task ownership". |
 | **Topic** | A living document representing the current position on a theme. Updated in place. Path: `_kb-references/topics/<slug>.md`. |
 | **Tracker** | An external issue or planning system declared in a layer `connections:` block, such as GitHub issues, Jira exports, or Linear exports. |
 | **Watermark** | The subtle `v{version} · {date}` marker added to generated HTML artifacts or the timestamp file that marks the last processed external digest window. |
@@ -81,6 +81,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | `Task` entry expanded with split-ownership rule against external trackers (KB tasks own knowledge work; tracker tickets own engineering work; not two views of the same thing). Closes audit finding #103 | Concept/onboarding/process audit |
 | 2026-05-18 | Disambiguated `Contributor-scoped` (artifact visibility) and `Role` (layer mutation rights) so adopters cannot conflate the two axes. Both entries now point at the new "Two orthogonal axes" callout in `docs/REFERENCE.md` §1. Updated the `Adoption stage` entry to reference phase 2 question 11 after the kb-setup phase swap. Closes audit findings #98 and #104 | Concept/onboarding/process audit |
 | 2026-05-15 | Removed the active Draft term and reframed roadmap/journey glossary entries as stable setup-proposed product-management primitives; simplified Harness to the supported tiers documented in the README and reference | Release-readiness audit |
 | 2026-04-30 | Reframed roadmap and journey terms as setup-proposed product-management primitives, widened Journey beyond product-only flows, and updated the Draft definition so setup-proposed draft features are allowed when confirmed per layer | Product-management surface integration |

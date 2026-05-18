@@ -26,6 +26,11 @@ layers:
       product-repos: []
       trackers: []
       reference-mode: link
+      # writeback is RESERVED in v6.1.0 — the field is recognized by the schema
+      # but has no effect. Setting `enabled: true` is a no-op today. The block
+      # stays so future versions can add real write-back support without a
+      # config migration. See plugins/kb/skills/kb-management/references/
+      # connections-lifecycle.md "Write-back (RESERVED)" for the planned contract.
       writeback:
         enabled: false
         capabilities: []

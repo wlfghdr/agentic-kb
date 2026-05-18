@@ -135,11 +135,15 @@ When `/kb` runs without arguments, it compares each declared connection's curren
 
 This is a read-only check. It does not fetch or mutate.
 
-## Write-back
+## Write-back (RESERVED — not implemented in v6.1.0)
 
-Write-back allows the skill to post updates back to a tracker on the user's behalf. It is off by default.
+> **Status:** the `writeback:` block is a reserved schema slot. The intended contract is described below, but **v6.1.0 ships only `reference-mode: link` (read-only digests)**. Setting `writeback.enabled: true` is a no-op today; the skill must not post comments, status updates, or labels to any external tracker. Adopters depending on write-back must wait for a future release that explicitly ships the implementation. `kb-setup` must not propose `writeback.enabled: true` in v6.1.0; if a user manually sets it, the skill warns at next `/kb status` that the value is ignored.
 
-To enable:
+### Planned contract (for future implementation)
+
+Write-back would allow the skill to post updates back to a tracker on the user's behalf. It would be off by default.
+
+To enable (planned syntax):
 
 ```yaml
 writeback:
@@ -147,15 +151,17 @@ writeback:
   capabilities: [comment, status]
 ```
 
-Write-back actions require explicit user confirmation before any update is posted. The skill never posts silently, even at automation level 3. Every write-back is logged with `digest-connections-writeback` plus the target identifier and action taken.
+Write-back actions would require explicit user confirmation before any update is posted. The skill would never post silently, even at automation level 3. Every write-back would be logged with `digest-connections-writeback` plus the target identifier and action taken.
 
-Supported capabilities:
+Planned capabilities:
 
-| Capability | What it does |
-|------------|-------------|
-| `comment` | Posts a comment to the issue or ticket citing the related KB finding |
-| `status` | Transitions an issue status when a linked KB decision is resolved |
-| `label` | Applies or removes labels based on KB finding maturity or workstream |
+| Capability | What it would do |
+|------------|------------------|
+| `comment` | Post a comment to the issue or ticket citing the related KB finding |
+| `status` | Transition an issue status when a linked KB decision is resolved |
+| `label` | Apply or remove labels based on KB finding maturity or workstream |
+
+Open questions before this can ship: which trackers (GitHub Issues, GitLab Issues, Jira, Linear, …), auth model per tracker, source-of-truth rule (when KB and tracker disagree, who wins), and merge semantics for cross-contributor concurrent write-backs. None of these are settled yet, which is why the block stays reserved.
 
 ## Disconnect and cleanup
 
@@ -176,4 +182,5 @@ To stop tracking a connection:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Relabeled the Write-back section as RESERVED (not implemented in v6.1.0): `writeback.enabled: true` is a no-op today; the planned contract is preserved as the future spec; open questions (which trackers, auth model, source-of-truth rule, concurrent-write semantics) are now explicit. `kb-setup` must not propose `writeback.enabled: true` in v6.1.0. Closes audit finding #102 | Concept/onboarding/process audit |
 | 2026-04-27 | Added a dedicated reference for connection kinds, config shape, setup flow, digest lifecycle, watermark format, triage drift checks, write-back, and disconnect behavior; aligned repo-as-OS bridge wording to the current `connections.product-repos[]` schema | Documentation gap follow-up |

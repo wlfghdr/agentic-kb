@@ -525,6 +525,11 @@ layers:
           repo: wlfghdr/agentic-kb
           scope: is:issue is:open
       reference-mode: link
+      # writeback.enabled is RESERVED for a future version. In v6.1.0 the
+      # only supported reference-mode is `link` (read-only digests); the
+      # writeback block is recognized by the schema but has no effect.
+      # Setting `enabled: true` is a no-op today. See "Connections
+      # write-back (reserved)" in the spec for the planned contract.
       writeback:
         enabled: false
         capabilities: []
@@ -618,6 +623,29 @@ Automation level contract:
 - `level: 3` — scheduled flows plus guarded auto-promote. Auto-promote may run only when enabled, above the configured confidence threshold, and outside excluded workstreams.
 
 Setup interview guidance for these three levels lives in [`plugins/kb/skills/kb-setup/references/automation-levels.md`](../plugins/kb/skills/kb-setup/references/automation-levels.md).
+
+### `auto-promote.confidence-threshold` — what it is
+
+`confidence-threshold` is the **integer 0–5 evaluation-gate score** an artifact must reach before it becomes eligible for auto-promote. It is the same scale as the gate score documented in §2 (one point per `yes` answer across the five questions), not a separate probability or learned metric. The field is named `confidence-threshold` rather than `gate-score-threshold` because adopters configuring it are conceptually saying "how confident must the agent be in this artifact before it ships upward without me looking".
+
+Default: `4`. That is one notch above the "Finding + topic update + possibly a new decision or idea" line at score `3`, intentionally — at `3` material is filed but not yet promoted; at `4` the material has been corroborated against existing topics and is a candidate to leave the contributor scope.
+
+Auto-promote algorithm at `level: 3`:
+
+1. **Trigger:** scheduled `digest-parent` run (or an explicit `/kb sync`), not on every capture.
+2. **Eligibility filter** (all conditions must hold per candidate artifact):
+   - the artifact has a recorded gate score, and that score is `>= confidence-threshold`,
+   - the artifact's workstream (if any) is not in `auto-promote.excluded-workstreams`,
+   - the artifact has no `manual-review-required: true` frontmatter flag,
+   - the artifact is in a state that allows promotion per its primitive's lifecycle (e.g. a decision must not be in `under-discussion`),
+   - the user is not the only contributor at the source layer and the target layer has the same scope owner, OR the layer model is single-user (no staging needed).
+3. **Promote target:** the layer named by the source layer's `parent` edge, per §1. If `parent` is `null`, no auto-promote happens — the artifact stays in place and is logged for the next manual review.
+4. **Action:** for multi-user target layers, stage in the destination contributor scope and write a `_kb-log/auto-promote-staged.md` entry. For single-user targets, write the canonical record directly and apply the backlink contract in §1.
+5. **Conflict / failure:** anything the algorithm cannot decide (title collision, divergent active record at the target, broken `canonical` link, missing parent layer) is **escalated** to `_kb-log/exceptions.md` and surfaced at the next `/kb status` triage scan. Nothing is silently overwritten.
+
+Worked example: at the personal anchor layer, a finding with gate score 4, no `manual-review-required` flag, in workstream `caching` (not excluded), with `parent: team-observability` set — at the next `digest-parent` tick the agent stages it as `team-observability/.contributors/alice/_kb-references/findings/...` and logs the action. The contributor still reviews staged content during the next `/kb sync`; nothing is mass-published to layer truth without that step.
+
+`auto-promote.confidence-threshold` is meaningless when `auto-promote.enabled: false` — the field stays in the schema so a future opt-in does not need a config migration.
 
 ### `.kb-config/artifacts.yaml`
 
@@ -805,8 +833,32 @@ The two layers compose cleanly when both are present, and either side is usable 
 | `release record` | release / ship event | A release record is the durable description; the framework typically owns the release execution and gate. |
 | `incident record` | postmortem / production event | An incident record is the durable timeline; the framework typically owns the on-call routing. |
 | `report progress` | status / readout | The progress report is composable across both surfaces. |
+| `task` (knowledge-task) | engineering issue / tracker ticket | **Split ownership**, not the same artifact. See "Task ownership" below. |
 
 This mapping is intentionally generic. `agentic-kb` does not depend on any specific repo-as-OS framework, is not packaged with one, and reviewers should reject any attempt to name a specific vendor framework as canonical. Adopters running such a framework get bridge defaults (`connections.product-repos[]` with watch globs and ticket patterns) when `kb-setup` phase 1 detects the structure; adopters who do not still get a fully usable knowledge-ops scaffold.
+
+### Task ownership — KB vs. external tracker
+
+This is the most common point where adopters drift: are tasks first-class in `_kb-tasks/` or in GitHub Issues / Jira / Linear?
+
+**Canonical rule: split ownership.** KB tasks and tracker tasks are *different artifacts*, not two views of the same thing.
+
+| Domain | Lives in | Examples |
+|--------|----------|----------|
+| **Knowledge work** | `_kb-tasks/` in the owning KB layer | "review the findings from yesterday's customer call", "decide between caching strategies A and B", "develop idea I-2026-05-15-foo", "draft the brief for the new pricing tier", "follow up on retro commitment X" |
+| **Engineering work** | the external tracker (when one exists) | "implement endpoint /v2/users", "fix the deploy script", "land the cache invalidation refactor" |
+
+The split has three rules:
+
+1. **A knowledge-task never duplicates a tracker-task.** If an engineering issue exists in the tracker, the KB-side reference to it lives as a *link*, not a parallel task record. Use a `<!-- ref: <tracker-url> -->` line in the related decision/brief/spec, not a row in `_kb-tasks/backlog.md`.
+2. **A tracker-task never duplicates a knowledge-task.** A retro commitment "decide caching strategy" does not become a GitHub Issue — it stays in the KB until it produces a decision artifact that can spawn engineering work.
+3. **Status reconciliation does not exist** because there are no parallel records to reconcile. `/kb digest connections` may surface tracker movement that informs KB work (e.g. "the cache-invalidation ticket closed; is the related decision still relevant?"), but it does not flip KB-task state from tracker state, and the reverse.
+
+`/kb task` lists KB tasks only. To see tracker tasks, the adopter uses the tracker's own UI; the tracker is the source of truth there. `/kb start-day` and `/kb start-week` may surface stale tracker links via `digest connections`, but the tracker remains canonical for its own domain.
+
+If a workflow needs a single combined view (e.g. for a status report), `/kb report status [scope]` composes both surfaces — it cites KB tasks from `_kb-tasks/` and tracker tickets from `connections.product-repos[]` side by side, naming each source.
+
+Adopters who *want* tracker write-back (so closing a tracker ticket auto-resolves a linked KB task) must wait for the reserved `writeback:` block to ship — see [`plugins/kb/skills/kb-management/references/connections-lifecycle.md`](../plugins/kb/skills/kb-management/references/connections-lifecycle.md) "Write-back (RESERVED)". Until then, the link is read-only and divergence is impossible by construction.
 
 ### Out of scope for `agentic-kb`
 
@@ -879,6 +931,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-18 | §5 layers.yaml example annotated `writeback:` as RESERVED in v6.1.0 (no-op); §6 added the "`auto-promote.confidence-threshold` — what it is" subsection with the 0–5 gate-score definition, the auto-promote eligibility filter, the promote target rule, the conflict-escalation rule, and a worked example; §10 added the "Task ownership — KB vs. external tracker" subsection codifying split ownership (KB owns knowledge work, tracker owns engineering work, read-only links, no parallel status reconciliation) and added a corresponding row to the mapping table. Closes audit findings #102, #103, #105 |
 | 2026-05-18 | §1 split "Contributor-scoped vs shared primitives" into two clearly orthogonal subsections — Axis 1 "Layer role" (`contributor` vs `consumer`, mutation rights) and Axis 2 "Artifact visibility" (`contributor-scoped` vs shared, per-primitive). Added a do-not-conflate callout. Closes the data-leak risk where multi-user team layers ship with everything shared by default because adopters never see the visibility axis. `kb-setup` phase 3 now must surface the default visibility per primitive in the proposed plan before scaffold. Updated the §10 repo-as-OS phrasing to match the kb-setup phase-1/phase-2 swap. Closes audit findings #98 and #104 |
 | 2026-05-15 | Release-readiness audit: removed active draft-feature wording for roadmap and journey flows, clarified stable helper coverage and apply-capable confirmation gates, trimmed unsupported harness rows from the public support matrix, and aligned the reference with the 6.1.0 release surface |
 | 2026-05-14 | Added the retro variant to §4 Note formats (`type: retro` with cadence/facilitator/period frontmatter and a structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts section set) so sprint, project, post-launch, post-incident, and quarterly retros have a canonical shape. Retros stay inside the existing `notes` feature — no new directory or feature flag. Added a navigation pointer to the new role-handbook companion doc |

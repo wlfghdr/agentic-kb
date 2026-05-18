@@ -73,7 +73,7 @@ That is the claim surface. Architecture matters, but adoption only gets real onc
 
 **No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
 
-**Lean by construction.** One spec. Reference behavioral specs that any compatible harness runs. One reference agent persona. One cross-harness installer. No SaaS. No auth. No infra. Plugin install in about a minute. Full workspace setup and first scaffold in about 15–20. Rip it out in five if it's not for you.
+**Lean by construction.** One spec. Reference behavioral specs that any compatible harness runs. One reference agent persona. One cross-harness installer. No SaaS. No auth. No infra. Plugin install in about a minute. Full workspace setup and first scaffold in about 15–20. [Rip it out in five](docs/uninstall.md) if it's not for you.
 
 **Human + agent at the same speed.** This is the real claim: the system is designed so that a single human — an IC, a lead, or an exec — can stay in the loop with a swarm of agents *and* a team of other humans each running their own swarms, without becoming the bottleneck themselves.
 
@@ -181,7 +181,9 @@ Marketplace install gives you the core plugin (`kb-management`, `kb-setup`, `kb-
 
 ### VS Code Copilot Chat
 
-Add to `settings.json`:
+> **VS Code Agent plugins are a Microsoft Preview feature.** The `chat.plugins.marketplaces` setting and the plugins surface around it are documented at [code.visualstudio.com/docs/copilot/customization/agent-plugins](https://code.visualstudio.com/docs/copilot/customization/agent-plugins). API and behaviour may change before VS Code declares it stable. If you want a stable path today, use `scripts/install --target vscode` (writes `.github/prompts/kb.prompt.md` and `.github/instructions/kb.instructions.md` directly).
+
+Add to **user-level** `settings.json` (workspace settings are not honored for this key):
 
 ```json
 {
@@ -334,6 +336,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | VS Code Copilot Chat section now labels the install path as **Preview** (VS Code Agent plugins are a Microsoft Preview feature), notes the user-level-only scope constraint, and surfaces `scripts/install --target vscode` as the stable fallback. README "rip it out in five" sentence now links to the new `docs/uninstall.md`. Closes audit findings #95 and #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Honest "autonomous knowledge ops" wording: the Stage 3 row in the adoption-curve table no longer reads as if a scheduler shipped — it now says the cadence is one the adopter wires (OS cron, CI, or harness-native automation), and the Status row drops "Stable reference implementation" in favor of "Stable behavioral spec (executed by the harness's agent; no runtime ships)". "Lean by construction" updated in lock-step. Closes audit findings #94 and #96 | Concept/onboarding/process audit |
 | 2026-05-15 | Rolled the public framework status to 6.1.0 after the release-readiness audit: the role-handbook/retro bundle moved from `[Unreleased]` into a real release, roadmap/journey skill language now presents them as stable setup-proposed product-management flows, and the README compatibility model now lists supported tiers without foregrounding unsupported buckets | Release-readiness audit |
 | 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes | Daily-reality gap audit across software-company roles |
