@@ -97,6 +97,18 @@ At least one **contributor-capable layer** is required. A personal layer is reco
 
 There is exactly one user-facing command: **`/kb`**. The core plugin ships stable knowledge-ops flows. Product-management flows use the same command surface: `/kb setup` proposes roadmap and journey configuration when the user's role, goals, sources, or desired outputs call for them, and the adopter decides which layer owns those artifacts.
 
+**Most used (start here).** New adopters do not need to learn the full surface to get value. After `/kb setup`, the wizard emits a curated 3–5 command shortlist tailored to your adoption stage. The five you'll use first in almost every setup:
+
+```
+/kb capture [text/URL/path]   → file something into the KB through the evaluation gate
+/kb note meeting [topic]      → start a meeting note (also: /kb note retro [topic])
+/kb decide [description]      → open a decision
+/kb start-day                 → morning briefing
+/kb status                    → triage scan / where do I stand right now?
+```
+
+The full surface follows; you can come back to it as your workflow asks for it.
+
 ```
 # Stable core flows
 /kb                        → status / triage scan
@@ -304,15 +316,32 @@ agentic-kb/
 
 ## Where to start
 
-1. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts.
-2. [`docs/operating-model.md`](docs/operating-model.md) — the software-engineering role model, artifact chain, and the delivery/operations gaps this workspace now names explicitly.
-3. [`docs/role-handbook.md`](docs/role-handbook.md) — the role-by-role companion to the operating model: which commands each role reaches for first, which artifacts they read and write, and one realistic chain per role.
-4. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — the deterministic first-run acceptance path for onboarding and rollout checks.
-5. [`docs/examples/first-hour.md`](docs/examples/first-hour.md) — the fastest end-to-end walkthrough from install to the first useful cross-layer proof.
-6. [`docs/collaboration.md`](docs/collaboration.md) — the human collaboration contract for shared KB workspaces.
-7. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — the collaboration-safe response contract for auditability and handoffs.
-8. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice for an engineer, a PM, an EM, and an on-call SRE.
-9. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — the full behavioral spec (this IS the spec).
+The reading list is grouped by audience. Pick the row that matches what you are trying to do.
+
+### If you just installed agentic-kb and want to use it
+
+1. [`docs/examples/first-hour.md`](docs/examples/first-hour.md) — fastest end-to-end walkthrough: install → `/kb setup` → first capture → first promote.
+2. [`docs/examples/day-in-the-life.md`](docs/examples/day-in-the-life.md) — what it feels like in practice for an engineer, a PM, an EM, and an on-call SRE.
+3. [`docs/uninstall.md`](docs/uninstall.md) — clean exit door if it turns out not to be for you.
+
+### If you want to understand the model before you commit
+
+1. [`docs/REFERENCE.md`](docs/REFERENCE.md) — architecture, layout, formats, and contracts. The implementation-critical reference.
+2. [`docs/operating-model.md`](docs/operating-model.md) — the software-engineering role model, artifact chain, and the delivery/operations gaps this workspace names explicitly.
+3. [`docs/role-handbook.md`](docs/role-handbook.md) — role-by-role companion to the operating model.
+4. [`docs/glossary.md`](docs/glossary.md) — authoritative term list. Read first if the spec uses a word you're not sure about.
+
+### If you are deciding whether to roll it out to a team
+
+1. [`docs/collaboration.md`](docs/collaboration.md) — human collaboration contract for shared KB workspaces.
+2. [`plugins/kb/skills/kb-management/references/output-contract.md`](plugins/kb/skills/kb-management/references/output-contract.md) — collaboration-safe response contract for auditability and handoffs.
+3. [`plugins/kb/skills/kb-management/SKILL.md`](plugins/kb/skills/kb-management/SKILL.md) — full behavioral spec. **This IS the spec.**
+
+### If you are a maintainer or QA verifying a release
+
+1. [`docs/first-run-acceptance.md`](docs/first-run-acceptance.md) — deterministic first-run acceptance path. Maintainer/QA checklist, not an onboarding doc — adopters use first-hour.md instead.
+2. [`AGENTS.md`](AGENTS.md) — rules of engagement for both humans and agents working in this repo.
+3. [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR checklist, local CI commands, vendor-neutrality guard.
 
 ## Status
 
@@ -336,6 +365,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Added a "Most used (start here)" five-command shortlist above the full 33-command Stable core flows block so new readers see what to try first without learning the whole surface. "Where to start" regrouped by audience — adopters, model-readers, team-rollout-decision-makers, and maintainers/QA each get a focused subsection instead of one flat list. Closes audit findings #100 and #101 | Concept/onboarding/process audit |
 | 2026-05-18 | VS Code Copilot Chat section now labels the install path as **Preview** (VS Code Agent plugins are a Microsoft Preview feature), notes the user-level-only scope constraint, and surfaces `scripts/install --target vscode` as the stable fallback. README "rip it out in five" sentence now links to the new `docs/uninstall.md`. Closes audit findings #95 and #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Honest "autonomous knowledge ops" wording: the Stage 3 row in the adoption-curve table no longer reads as if a scheduler shipped — it now says the cadence is one the adopter wires (OS cron, CI, or harness-native automation), and the Status row drops "Stable reference implementation" in favor of "Stable behavioral spec (executed by the harness's agent; no runtime ships)". "Lean by construction" updated in lock-step. Closes audit findings #94 and #96 | Concept/onboarding/process audit |
 | 2026-05-15 | Rolled the public framework status to 6.1.0 after the release-readiness audit: the role-handbook/retro bundle moved from `[Unreleased]` into a real release, roadmap/journey skill language now presents them as stable setup-proposed product-management flows, and the README compatibility model now lists supported tiers without foregrounding unsupported buckets | Release-readiness audit |

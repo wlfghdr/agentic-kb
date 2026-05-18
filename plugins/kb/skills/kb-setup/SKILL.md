@@ -194,6 +194,40 @@ Minimum verification sequence:
 5. if a team or org layer exists, prove one promote or digest path,
 6. if `roadmaps` or `journeys` are enabled, render their dry-run outputs.
 
+### Step 7 — First win + next-steps shortlist
+
+Verification proves the scaffold is correct. It does not prove the workspace *does anything yet*. Step 7 closes that gap so the user leaves setup with a visible artifact and a curated 3–5 command shortlist, not with a read-only "Setup: OK" message and a 33-command flatlist.
+
+**7a — Optional bootstrap capture (default yes).** Ask one question:
+
+> *"Want to capture a first piece of material right now? Paste a URL, a file path, or short text. Skip with `no` if you'd rather start clean."*
+
+If the user answers with content, route it through the full `kb-management` flow (evaluation gate → finding under `_kb-references/findings/YYYY/` or skip with logged reason → topic update if score ≥ 3 → `.kb-log/` entry → regenerate `index.html` and `dashboard.html`). Emit the resulting artifact path back to the user explicitly:
+
+> *"Wrote `alice-personal/_kb-references/findings/2026-05-18-caches-and-invalidation.md` (gate score 3/5). `alice-personal/index.html` updated. Open it in your browser to see your first KB artifact live."*
+
+If the user answers `no` or skips, write a `_kb-log/setup-skipped-bootstrap.md` line and continue. The capture is optional, not required for setup to count as complete.
+
+**7b — Curated next-steps shortlist.** Emit a priorized 3–5 command list, derived from the chosen adoption stage (Q11) and audience (Q7). Do not paste the full 33-command surface; pick what this user should actually try first. Suggested patterns:
+
+| Stage × audience | Shortlist (in this order) |
+|------------------|---------------------------|
+| Stage 1, solo | `/kb capture <text-or-URL>` · `/kb note meeting <topic>` · `/kb review` · `/kb start-day` |
+| Stage 1, multi-user | `/kb capture …` · `/kb note meeting …` · `/kb decide …` · `/kb promote <file> <layer>` · `/kb end-week` |
+| Stage 2, solo | `/kb capture …` · `/kb review` · `/kb decide …` · `/kb digest <layer>` · `/kb start-day` |
+| Stage 2, multi-user | `/kb capture …` · `/kb review` · `/kb promote …` · `/kb digest …` · `/kb end-week` |
+| Stage 3 (any) | `/kb status` · `/kb digest <layer>` · `/kb audit` · `/kb end-week` (the user owns the scheduler trigger that fires the rest, per `automation-levels.md`) |
+
+Adjust if Q9 ("what you want out") names roadmaps or journeys — insert `/kb roadmap` and/or `/kb journeys` after capture. Adjust if Q9 names release/incident artifacts — insert `/kb release` and/or `/kb incident`.
+
+The shortlist is informational, not blocking. The user can always invoke any of the 33 commands; the full surface is documented in [`plugins/kb/commands/kb.md`](../../commands/kb.md) and [`plugins/kb/skills/kb-management/references/command-reference.md`](../kb-management/references/command-reference.md).
+
+**7c — Closing message.** Emit one short summary, in plain language, naming exactly what was produced and what the user should do next. Example for Stage 1 solo with a bootstrap capture:
+
+> *"Setup complete. `alice-personal` is your anchor layer; `team-observability` is the contributor target for promotions. You wrote your first finding (`_kb-references/findings/2026-05-18-...md`), and `index.html` reflects it. Try these next: `/kb capture <text>` to file more material, `/kb start-day` for a morning briefing, `/kb note meeting <topic>` before your next sync. Run `/kb status` any time to see where you stand."*
+
+Adapt the wording to the actual scaffold, but keep three properties: (a) one short paragraph, not a wall of text; (b) name the actual artifact paths the user can open; (c) name 3 commands max in the closing, even if the full shortlist is longer.
+
 ## Migration mode
 
 If the user points setup at an older fixed-ladder KB:
@@ -278,12 +312,14 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 - `references/adoption-stages.md` — the human → agentic curve: Stage 1 (capture discipline) → Stage 2 (agent-assisted triage) → Stage 3 (bounded autonomous). Names what each stage scaffolds, the graduation criteria between stages, and how adoption stage and automation level relate.
 - `references/migration-guide.md` — how to migrate an existing KB.
 - `references/troubleshooting.md` — common setup issues.
-- `../../../docs/first-run-acceptance.md` — deterministic onboarding acceptance path.
+- `../../../docs/examples/first-hour.md` — narrative onboarding walkthrough for new adopters (the user-facing companion to this skill).
+- `../../../docs/first-run-acceptance.md` — deterministic acceptance baseline used by maintainers and team leads to verify rollout quality. **Not** the doc adopters read after first install — see `first-hour.md` for that.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Added Step 7 "First win + next-steps shortlist" — closing step after verification. Optional bootstrap capture (default yes) writes a first finding through the full evaluation gate and surfaces the artifact path back to the user; curated 3–5 command shortlist derived from adoption stage + audience replaces the implicit "you have 33 commands, gl hf" feeling at setup end. References section now names `docs/examples/first-hour.md` as the user-facing companion and reframes `docs/first-run-acceptance.md` as the maintainer/QA baseline. Closes audit findings #99, #100, #101 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap: phase 1 is now "Workspace and harness facts" (Q1–Q3 — workspace root, IDE targets, discovery pass), phase 2 is now "Context and goals" (Q4–Q11). Frontloads the admin block so the user knows where files will land and which harness will host `/kb` before investing in long answers. All cross-references and the placeholder-mapping table renumbered. Q10 ("How autonomous") now states explicitly that `agentic-kb` does not ship a scheduler. Phase 3 block 2 must now surface default artifact visibility per primitive per `docs/REFERENCE.md` §1 "Two orthogonal axes". Closes audit findings #98 and #104 | Concept/onboarding/process audit |
 | 2026-05-15 | Removed literal double-curly placeholder examples from the published setup skill so GitHub Pages can build the released docs while preserving the setup-token contract for agents | Pages release fix |
 | 2026-05-15 | Skill version aligned to 6.1.0. Setup now documents that notes include general, meeting, and retro variants under one feature; delivery/operations scaffold directories are explicit; roadmap/journey blocks are stable setup-proposed features instead of draft-feature blocks; and placeholder substitution examples show confirmed and deliberately deferred values | Release-readiness audit |

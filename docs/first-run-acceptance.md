@@ -1,6 +1,8 @@
 # First-Run Acceptance Path
 
-> **Version:** 6.1.0 | **Last updated:** 2026-05-15
+> **Version:** 6.1.0 | **Last updated:** 2026-05-18
+>
+> **Audience: maintainers and QA.** This is the deterministic baseline a release lead or team lead runs to verify that onboarding still produces the same working contract for every fresh adopter. **It is not the doc to read after you first install agentic-kb.** For that, use [`docs/examples/first-hour.md`](./examples/first-hour.md) — it walks the same install → setup → first capture path in narrative form, takes ~1 hour, and ends with a visible artifact you can open in a browser.
 
 This document defines the canonical first-run acceptance path for `agentic-kb`.
 
@@ -550,6 +552,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Preamble now explicitly tags the doc as a maintainer/QA baseline and points adopters at `docs/examples/first-hour.md` for the actual first-install walkthrough. Closes audit finding #100 (acceptance.md was being referenced from README "Where to start" as if it were user onboarding) | Concept/onboarding/process audit |
 | 2026-05-18 | VS Code Copilot Chat install path now accepts either the Preview marketplace path (user-level `chat.plugins.marketplaces`) or the stable installer fallback (`scripts/install --target vscode`); the acceptance criteria allow either. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap propagated: Phase 1 baseline now covers workspace and harness facts (Q1–Q3); Phase 2 covers the open-ended context block (Q4–Q11). Phase 3 expected-output Q-references shifted to Q11/Q10/Q5/Q8/Q9 accordingly. Step 14 product-management proof references the new question numbering. Closes audit finding #98 | Concept/onboarding/process audit |
 | 2026-05-15 | v6.1.0: updated the deterministic first-run path for the release-ready surface. The baseline now enables delivery and operations on the starter layers, calls out the operating model and role handbook as pre-acceptance reading, verifies delivery/operations directories, and adds optional proofs for `/kb brief`, `/kb spec`, `/kb release`, `/kb incident`, and `/kb note retro` | Release-readiness audit |

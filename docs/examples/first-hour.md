@@ -29,28 +29,28 @@ Run:
 
 The wizard runs the four-phase, goal-oriented interview. You never enumerate layers, features, or contributor-mode flags yourself — the wizard derives them from your prose and shows the proposal back in phase 3.
 
-**Phase 1 — context and goals (open prose, Q1–Q8):**
+**Phase 1 — workspace and harness facts (frontloaded admin, Q1–Q3):**
 
 | Question | Suggested first-run answer |
 |----------|----------------------------|
-| Q1 — Who you are | `alice — engineer on distributed systems; caching, reliability, observability` |
-| Q2 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues` |
-| Q3 — Why now | `too many parallel investigations; my lead keeps asking for status` |
-| Q4 — Who else needs to see what | `me and one team — observability` |
-| Q5 — Where information feeds in | `our product repo, GitHub issues, weekly observability sync` |
-| Q6 — What you want out | `morning briefing and a Friday status I can share with my lead` |
-| Q7 — How autonomous | `confirm everything before anything is written` |
-| Q8 — Operating context today, target in 6 months | `human-only / capture discipline today; agent-assisted triage in 6 months` |
+| Q1 — Workspace root | current directory |
+| Q2 — IDE targets | current harness only |
+| Q3 — Discovery pass | accept the empty baseline |
 
-**Phase 2 — workspace and harness facts (Q9–Q11):**
+**Phase 2 — context and goals (open prose, Q4–Q11):**
 
 | Question | Suggested first-run answer |
 |----------|----------------------------|
-| Q9 — Workspace root | current directory |
-| Q10 — IDE targets | current harness only |
-| Q11 — Discovery pass | accept the empty baseline |
+| Q4 — Who you are | `alice — engineer on distributed systems; caching, reliability, observability` |
+| Q5 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues` |
+| Q6 — Why now | `too many parallel investigations; my lead keeps asking for status` |
+| Q7 — Who else needs to see what | `me and one team — observability` |
+| Q8 — Where information feeds in | `our product repo, GitHub issues, weekly observability sync` |
+| Q9 — What you want out | `morning briefing and a Friday status I can share with my lead` |
+| Q10 — How autonomous | `confirm everything before anything is written` |
+| Q11 — Operating context today, target in 6 months | `human-only / capture discipline today; agent-assisted triage in 6 months` |
 
-**Phase 3 — confirm the wizard's derived plan (Q12–Q15):** the wizard shows a single block with the proposed layer graph (`alice-personal` + `team-observability`), the adoption-stage label (`Stage 1 — capture discipline`), the connections derived from Q5, the dashboard panels matching Q6, automation level `1` (manual only — consistent with Stage 1), the graduation criteria for moving to Stage 2, and HTML styling `builtin`. Accept as proposed.
+**Phase 3 — confirm the wizard's derived plan (Q12–Q15):** the wizard shows a single block with the proposed layer graph (`alice-personal` + `team-observability`), the adoption-stage label (`Stage 1 — capture discipline`), the connections derived from Q8, the dashboard panels matching Q9, automation level `1` (manual only — consistent with Stage 1), the graduation criteria for moving to Stage 2, and HTML styling `builtin`. Accept as proposed.
 
 **Phase 4 (Q16):** one yes.
 
@@ -62,6 +62,12 @@ Check for success:
 - year-based archive directories exist,
 - `index.html` and `dashboard.html` exist in both layers,
 - no unresolved placeholders remain outside deliberate presentation templates.
+
+### Setup closing — the first win
+
+Setup ends with Step 7 (`SKILL.md` "Step 7 — First win + next-steps shortlist"), not with Step 6 verification. The wizard offers one optional bootstrap capture and emits a curated 3–5 command shortlist tailored to your adoption stage. Take the bootstrap capture if you have any URL, file, or short text ready — say "no" otherwise. Either way, the wizard closes with a short, named summary like *"Setup complete. Try `/kb capture <text>`, `/kb start-day`, `/kb note meeting <topic>` next."*
+
+This is the moment you have a visible artifact. If you captured something, open the anchor layer's `index.html` in a browser — your first finding is there.
 
 ## Phase 3 — First four commands (20 min)
 
@@ -126,6 +132,7 @@ If the command targets a `role: consumer` layer, it must refuse clearly.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Phase 1 / Phase 2 question table renumbered to match the Sweep-1 phase swap: Q1–Q3 is now workspace + harness facts (frontloaded), Q4–Q11 is the open-ended context block. Added a "Setup closing — the first win" subsection that documents Step 7 of `kb-setup/SKILL.md` so adopters know to expect the optional bootstrap capture and the curated next-steps shortlist instead of a read-only "Setup: OK". Closes audit findings #99 and #101; corrects pre-existing drift left by Sweep 1 | Concept/onboarding/process audit |
 | 2026-05-15 | v6.1.0: bumped doc version to match the release-readiness baseline. The first-hour walkthrough remains compatible with the goal-oriented setup flow while the canonical acceptance path now carries the expanded delivery/operations and retro proofs | Release-readiness audit |
 | 2026-05-10 | v6.0.0: bumped doc version for the v5 adoption-arc closeout. The walkthrough body did not need rework — phase 1 / phase 2 / phase 3 / phase 4 already match the goal-oriented interview shipped in v5.5.1; it now sits under the v6 baseline together with the rest of the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-05 | v5.5.1: replaced the legacy block-and-answer table that asked the user to enumerate layers, features, and contributor-mode flags with the goal-oriented four-phase interview (Q1–Q8 prose, Q9–Q11 admin, Q12–Q15 confirm-the-derived-plan, Q16 final yes), matching `kb-setup/SKILL.md` since v5.4.0. Success checks now also assert that the chosen adoption stage is durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
