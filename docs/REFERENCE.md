@@ -38,12 +38,28 @@ Core rules:
 - `marketplace` is **cross-cutting**, not a numbered layer. Any layer may publish to or consume from its own marketplace repo.
 - Product-management features (`roadmaps`, `journeys`) are enabled per layer, not globally. `/kb setup` proposes them when the user's role, goals, sources, or desired outputs imply product-direction work, and asks which layer should own them before writing config.
 
-### Contributor-scoped vs shared primitives
+### Two orthogonal axes: layer role and artifact visibility
 
-At multi-user layers, keep two separate ideas straight: layer role (`contributor` vs `consumer`) and artifact visibility (`contributor-scoped` vs shared). The primitive decides whether content stays contributor-scoped or becomes shared state.
+> **Do not conflate these.** Layer role and artifact visibility are independent. A `contributor` layer can hold `contributor-scoped` artifacts (private to one author until promoted) **or** `shared` artifacts (one canonical record per layer) — both at the same time, on different primitives. Getting this wrong is how a contributor's private finding ends up visible to the whole team before they meant to share it.
 
-| Primitive | Default mode at multi-user layers | Why |
-|-----------|-----------------------------------|-----|
+#### Axis 1 — Layer role (mutation rights)
+
+- `role: contributor` — the layer may originate shared mutations. `promote` and `publish` can target it.
+- `role: consumer` — the layer may receive digests and be read, but it must refuse `promote` and `publish` as a target.
+
+Layer role is a property of the layer.
+
+#### Axis 2 — Artifact visibility (who reads it inside a multi-user layer)
+
+- `contributor-scoped` — the file belongs to one contributor, lives under a contributor directory, is not other contributors' canonical state. Visible to the author and (depending on git permissions) to others as a peer's draft, not as layer truth.
+- `shared` — one canonical record per layer, visible as layer truth to every reader. Edits are layer mutations.
+
+Artifact visibility is a property of the primitive **on that layer**. At a single-user layer the distinction collapses and `contributor-scoped` flattens to the layer root.
+
+#### Default visibility per primitive at multi-user layers
+
+| Primitive | Default at multi-user contributor layers | Why |
+|-----------|------------------------------------------|-----|
 | `inputs` | contributor-scoped | Pre-gate raw material is not shared truth |
 | `findings` | contributor-scoped | Immutable evidence keeps provenance |
 | `ideas` | contributor-scoped | Ownership-bearing incubation object |
@@ -59,6 +75,8 @@ At multi-user layers, keep two separate ideas straight: layer role (`contributor
 | `journeys` | shared by default; configurable for contributor-scoped research drafts | Shared journeys define the product, service, or process experience that roadmap items should move forward |
 
 Single-user layers flatten contributor-scoped primitives to the layer root.
+
+`kb-setup` phase 3 must surface these defaults in the proposed plan before the user confirms — adopters should never have to read this table to discover that `findings` and `ideas` default to contributor-scoped on a team layer.
 
 Decision and task promotion have an additional ownership rule: the layer that owns the scope and accountable decider/owner owns the canonical record. If a decision or task is promoted and the target layer now owns the same question or work item, the source-layer record must be closed, archived, or replaced with a backlink to the canonical target record. Keep separate source-layer items only when the source and target layers have genuinely different scopes, recommendations, accountable owners, or sub-task responsibilities.
 
@@ -788,7 +806,7 @@ The two layers compose cleanly when both are present, and either side is usable 
 | `incident record` | postmortem / production event | An incident record is the durable timeline; the framework typically owns the on-call routing. |
 | `report progress` | status / readout | The progress report is composable across both surfaces. |
 
-This mapping is intentionally generic. `agentic-kb` does not depend on any specific repo-as-OS framework, is not packaged with one, and reviewers should reject any attempt to name a specific vendor framework as canonical. Adopters running such a framework get bridge defaults (`connections.product-repos[]` with watch globs and ticket patterns) when `kb-setup` phase 2 detects the structure; adopters who do not still get a fully usable knowledge-ops scaffold.
+This mapping is intentionally generic. `agentic-kb` does not depend on any specific repo-as-OS framework, is not packaged with one, and reviewers should reject any attempt to name a specific vendor framework as canonical. Adopters running such a framework get bridge defaults (`connections.product-repos[]` with watch globs and ticket patterns) when `kb-setup` phase 1 detects the structure; adopters who do not still get a fully usable knowledge-ops scaffold.
 
 ### Out of scope for `agentic-kb`
 
@@ -861,6 +879,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-18 | §1 split "Contributor-scoped vs shared primitives" into two clearly orthogonal subsections — Axis 1 "Layer role" (`contributor` vs `consumer`, mutation rights) and Axis 2 "Artifact visibility" (`contributor-scoped` vs shared, per-primitive). Added a do-not-conflate callout. Closes the data-leak risk where multi-user team layers ship with everything shared by default because adopters never see the visibility axis. `kb-setup` phase 3 now must surface the default visibility per primitive in the proposed plan before scaffold. Updated the §10 repo-as-OS phrasing to match the kb-setup phase-1/phase-2 swap. Closes audit findings #98 and #104 |
 | 2026-05-15 | Release-readiness audit: removed active draft-feature wording for roadmap and journey flows, clarified stable helper coverage and apply-capable confirmation gates, trimmed unsupported harness rows from the public support matrix, and aligned the reference with the 6.1.0 release surface |
 | 2026-05-14 | Added the retro variant to §4 Note formats (`type: retro` with cadence/facilitator/period frontmatter and a structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts section set) so sprint, project, post-launch, post-incident, and quarterly retros have a canonical shape. Retros stay inside the existing `notes` feature — no new directory or feature flag. Added a navigation pointer to the new role-handbook companion doc |
 | 2026-05-10 | Version aligned to 6.0.0 after the v5 adoption-arc closeout. Updated the §4 brief, spec, release, and incident file formats so they match the templates the skill actually instantiates: brief gains "Why now", "Success signals", "Dependencies and handoffs", and an inline changelog and moves stakeholders into the frontmatter; spec gains "Requirements", "Proposed shape", "Rollout and migration", "Verification", "Open questions", and an inline changelog and links to the originating brief in the frontmatter; release gains "Audience" and "Linked spec" frontmatter and switches to the rollout/rollback/communications/follow-up section set; incident gains "Owners", "Services", and the precise "Opened" timestamp. The four artifacts are now the same shape across REFERENCE, templates, and the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs in `command-reference.md` |

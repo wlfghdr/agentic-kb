@@ -46,7 +46,7 @@ You don't have to be "fully agentic" for `agentic-kb` to pay off. The contract i
 |-------|-------------|-----------|------------------------------------|
 | **1 — Capture discipline** (human-only baseline) | humans, every step | humans, by hand | git + markdown + the `agentic-kb` directory contract; no agents required. You get audit trail, decision lifecycle, and cross-role handoffs (briefs, specs, releases, incidents) for free, just by writing into the right files. |
 | **2 — Agent-assisted triage** | humans, at every gate | agent proposes, human confirms | the `/kb` evaluation gate fires on capture; the agent suggests where things belong; humans approve before anything persists. Maps to **automation level 1**. |
-| **3 — Bounded autonomous knowledge ops** | humans, at exception gates | agent files, promotes, digests on a schedule | scheduled rituals (`start-day`, `digest`, `end-week`), guarded auto-promote on confidence threshold, exception escalation. Maps to **automation levels 2–3**. |
+| **3 — Bounded autonomous knowledge ops** | humans, at exception gates | agent files, promotes, digests on a cadence you wire | scheduled rituals (`start-day`, `digest`, `end-week`), guarded auto-promote on confidence threshold, exception escalation. Maps to **automation levels 2–3**. `agentic-kb` does not ship a scheduler — you wire OS cron, CI, or your harness's native automation to invoke `/kb`; the skill defines what runs, you own the trigger. |
 
 `agentic-kb` is the **knowledge-ops layer** of an agentic enterprise: it owns Strategy, Product Direction, Design, and Learning artifacts (foundation, roadmaps, journeys, briefs, specs, decisions, findings, topics, reports) and pairs cleanly with any **repo-as-OS framework** that owns the work-flow side (signals, missions, PRs, releases). It works standalone too — capture-discipline-only is a valid stop, not a half-installed product.
 
@@ -73,7 +73,7 @@ That is the claim surface. Architecture matters, but adoption only gets real onc
 
 **No database. No cloud backend.** Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If GitHub, GitLab, or a local folder can read it, agentic-kb works. If the vendor disappears tomorrow, your knowledge is still on disk.
 
-**Lean by construction.** One spec. Two reference skills. One reference agent. One cross-harness installer. No SaaS. No auth. No infra. Plugin install in about a minute. Full workspace setup and first scaffold in about 15–20. Rip it out in five if it's not for you.
+**Lean by construction.** One spec. Reference behavioral specs that any compatible harness runs. One reference agent persona. One cross-harness installer. No SaaS. No auth. No infra. Plugin install in about a minute. Full workspace setup and first scaffold in about 15–20. Rip it out in five if it's not for you.
 
 **Human + agent at the same speed.** This is the real claim: the system is designed so that a single human — an IC, a lead, or an exec — can stay in the loop with a swarm of agents *and* a team of other humans each running their own swarms, without becoming the bottleneck themselves.
 
@@ -317,7 +317,7 @@ agentic-kb/
 | Area | Status |
 |------|--------|
 | Framework spec | Stable (v6.1.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
-| Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable reference implementation |
+| Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable behavioral spec (executed by the harness's agent; no runtime ships) |
 | Product-management skills | `kb-roadmap`, `kb-journeys` (stable setup-proposed skills, enabled per owning layer) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
@@ -334,6 +334,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Honest "autonomous knowledge ops" wording: the Stage 3 row in the adoption-curve table no longer reads as if a scheduler shipped — it now says the cadence is one the adopter wires (OS cron, CI, or harness-native automation), and the Status row drops "Stable reference implementation" in favor of "Stable behavioral spec (executed by the harness's agent; no runtime ships)". "Lean by construction" updated in lock-step. Closes audit findings #94 and #96 | Concept/onboarding/process audit |
 | 2026-05-15 | Rolled the public framework status to 6.1.0 after the release-readiness audit: the role-handbook/retro bundle moved from `[Unreleased]` into a real release, roadmap/journey skill language now presents them as stable setup-proposed product-management flows, and the README compatibility model now lists supported tiers without foregrounding unsupported buckets | Release-readiness audit |
 | 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Rolled the public framework status to 6.0.0 after the v5 adoption-arc closeout: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical command verbs (matching the operating-model artifact chain and the templates the skill instantiates), surfaced the previously undocumented `/kb publish`, `/kb sync`, `/kb diff`, `/kb start-week`, `/kb end-day`, `/kb audit`, and `/kb report [scope]` flows in the public command list, removed the residual fixed-ladder `L1`/`L2/L3`/`L4` drift from the routing prompt and operator agent, aligned the four delivery/operations file formats in `docs/REFERENCE.md` §4 with the templates, and corrected the year-nested archive and weekly-summary paths so daily and weekly rituals write where the spec says they should | v6.0.0 adoption + daily-usage gap audit |

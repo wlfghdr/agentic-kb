@@ -4,7 +4,7 @@
 
 This reference defines the three adoption stages `agentic-kb` is designed for, the graduation criteria between them, and how the stages relate to automation levels.
 
-It is normative for `kb-setup`: phase 1 question 8 ("operating context today") asks the user which stage they are at, and phase 3 question 12 labels the proposed scaffold with the matching stage so the user can see what the wizard inferred.
+It is normative for `kb-setup`: phase 2 question 11 ("operating context today") asks the user which stage they are at, and phase 3 question 12 labels the proposed scaffold with the matching stage so the user can see what the wizard inferred.
 
 ## Why staged adoption
 
@@ -118,7 +118,7 @@ A Stage 1 team should never be configured at automation level 2 or 3, because th
 
 `agentic-kb` is the knowledge-ops layer of an agentic enterprise. It owns Strategy, Design, and Learning artifacts (foundation, briefs, specs, decisions, findings, topics, reports). The work-flow primitives that surround it — signals, missions, pull requests, releases — belong to a separate, complementary framework that owns the Build / Ship / Operate side of the operating model.
 
-When a repo-as-OS structure is detected during phase 2 question 11 (typical signals: `work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` plus a policy directory), the wizard:
+When a repo-as-OS structure is detected during phase 1 question 3 (typical signals: `work/signals/`, `work/missions/`, `org/<layer>/`, `CONFIG.yaml`, `CODEOWNERS` plus a policy directory), the wizard:
 
 - proposes a `connections.product-repos[]` entry rather than scaffolding a parallel structure,
 - biases artifact suggestions toward the bridge: a finding becomes a candidate signal; an open decision references the originating mission; a release record cross-references the framework's release artifact rather than duplicating it,
@@ -139,5 +139,6 @@ This mapping is intentionally generic. `agentic-kb` does not depend on any speci
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Updated cross-references to match the kb-setup phase order swap (phase 2 question 11 owns "operating context today"; phase 1 question 3 owns the repo-as-OS discovery pass). No semantic change to the staged-adoption contract | Concept/onboarding/process audit |
 | 2026-05-15 | Reframed Stage 1 exclusions without draft-feature wording and renamed "not yet" capability sections to "stays off at this stage" so staged adoption reads as intentional scope, not unfinished behavior | Release-readiness audit |
 | 2026-04-27 | Initial reference: three-stage adoption ladder, graduation criteria, mapping to automation levels and to repo-as-OS frameworks | Soft-transition extension |

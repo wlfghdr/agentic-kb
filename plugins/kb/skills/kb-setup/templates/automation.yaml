@@ -1,4 +1,11 @@
 # Automation configuration for the anchor layer.
+#
+# IMPORTANT: agentic-kb does not ship a scheduler. The fields below
+# describe intended cadence; the trigger is yours to wire (OS cron,
+# CI, or your harness's native automation, invoking `/kb` on each tick).
+# At level 1 nothing scheduled is expected; at level 2+ you must wire
+# the trigger yourself before anything fires.
+#
 # Levels (see plugins/kb/skills/kb-setup/references/automation-levels.md):
 #   1 — Manual only. `schedules:` MUST stay omitted or inactive.
 #       `auto-promote.enabled: false`.

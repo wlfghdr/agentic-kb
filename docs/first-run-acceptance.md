@@ -208,26 +208,26 @@ Expected result:
 
 The setup wizard runs the four-phase, goal-oriented interview defined in `plugins/kb/skills/kb-setup/SKILL.md`. Use these answers; the wizard derives the proposed layer graph and feature set from them and presents it back in phase 3 for confirmation.
 
-### Phase 1 — Context and goals (open-ended)
+### Phase 1 — Workspace and harness facts (frontloaded)
 
 | Question | Baseline answer |
 |----------|-----------------|
-| Q1 — Who you are | `alice — engineer on distributed systems; I spend most of my week on caching, reliability, and observability work` |
-| Q2 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues, plus the open architecture decisions for our caching layer` |
-| Q3 — Why now | `too many parallel investigations to keep in my head; my lead keeps asking for status` |
-| Q4 — Who else needs to see what | `me and one team — the observability folks` |
-| Q5 — Where information feeds in | `our product repo, GitHub issues, and the weekly observability sync` |
-| Q6 — What you want out | `a morning briefing and a Friday status I can share with my lead` |
-| Q7 — How autonomous | `I want to confirm everything before anything is written` |
-| Q8 — Operating context today, and target in 6 months | `human-only / capture discipline first today; agent-assisted triage in 6 months` (maps to **adoption stage 1** today, stage 2 as the next graduation target per `plugins/kb/skills/kb-setup/references/adoption-stages.md`) |
+| Q1 — Workspace root | current directory / `<workspace>/demo-agentic-kb` |
+| Q2 — IDE targets | current harness only |
+| Q3 — Discovery pass | accept the reported empty baseline (no repo-as-OS structure detected) |
 
-### Phase 2 — Workspace and harness facts
+### Phase 2 — Context and goals (open-ended)
 
 | Question | Baseline answer |
 |----------|-----------------|
-| Q9 — Workspace root | current directory / `<workspace>/demo-agentic-kb` |
-| Q10 — IDE targets | current harness only |
-| Q11 — Discovery pass | accept the reported empty baseline (no repo-as-OS structure detected) |
+| Q4 — Who you are | `alice — engineer on distributed systems; I spend most of my week on caching, reliability, and observability work` |
+| Q5 — What you're trying to track or decide | `incidents and slow queries that hint at deeper reliability issues, plus the open architecture decisions for our caching layer` |
+| Q6 — Why now | `too many parallel investigations to keep in my head; my lead keeps asking for status` |
+| Q7 — Who else needs to see what | `me and one team — the observability folks` |
+| Q8 — Where information feeds in | `our product repo, GitHub issues, and the weekly observability sync` |
+| Q9 — What you want out | `a morning briefing and a Friday status I can share with my lead` |
+| Q10 — How autonomous | `I want to confirm everything before anything is written` |
+| Q11 — Operating context today, and target in 6 months | `human-only / capture discipline first today; agent-assisted triage in 6 months` (maps to **adoption stage 1** today, stage 2 as the next graduation target per `plugins/kb/skills/kb-setup/references/adoption-stages.md`) |
 
 ### Phase 3 — Proposed plan (the wizard shows, you confirm)
 
@@ -235,11 +235,11 @@ The wizard must derive and propose:
 
 - two layers — `alice-personal` (scope `personal`, role `contributor`, parent `team-observability`, features `inputs, findings, topics, ideas, decisions, tasks, notes, workstreams, foundation, reports, delivery, operations`) and `team-observability` (scope `team`, role `contributor`, parent `null`, features `findings, topics, decisions, tasks, notes, foundation, reports, delivery, operations`, contributor-mode `notes: shared`),
 - anchor layer `alice-personal`,
-- **adoption-stage label**: `Stage 1 — capture discipline (human-only baseline)`, derived from Q8 + Q7 per `references/adoption-stages.md`. The proposal must show the stage explicitly so the user can see the wizard is suggesting a capture-only scaffold rather than an agent-assisted or bounded-autonomous one,
-- workstream `platform-signals` extracted from Q2,
-- connections containing the product repo and GitHub issues from Q5,
-- dashboard and report panels matching Q6 (morning briefing + weekly status),
-- automation level `1` (manual only) — mapped from Q7's "confirm everything" answer and consistent with the Stage-1 label (a Stage-1 team must not be configured at automation level 2 or 3). Q6's regular outputs are run by the user, not on a schedule, at this baseline,
+- **adoption-stage label**: `Stage 1 — capture discipline (human-only baseline)`, derived from Q11 + Q10 per `references/adoption-stages.md`. The proposal must show the stage explicitly so the user can see the wizard is suggesting a capture-only scaffold rather than an agent-assisted or bounded-autonomous one,
+- workstream `platform-signals` extracted from Q5,
+- connections containing the product repo and GitHub issues from Q8,
+- dashboard and report panels matching Q9 (morning briefing + weekly status),
+- automation level `1` (manual only) — mapped from Q10's "confirm everything" answer and consistent with the Stage-1 label (a Stage-1 team must not be configured at automation level 2 or 3). Q9's regular outputs are run by the user, not on a schedule, at this baseline,
 - **graduation criteria for Stage 1 → Stage 2** surfaced as informational defaults (e.g. "≥ 4 weeks of clean `.kb-log/`", "≥ 1 cross-layer promote completed by hand", "`foundation/vmg.md` confirmed by ≥ 1 stakeholder"); the user can accept, edit, or skip this block — it does not block scaffold,
 - HTML styling `builtin`.
 
@@ -252,8 +252,8 @@ Confirm with a single yes.
 Expected result:
 
 - the user never had to enumerate features, scopes, or contributor-mode flags themselves,
-- every phase 1 answer maps to at least one concrete artifact or config effect in the proposal,
-- the proposed adoption stage matches the Q8 answer (Stage-1 today does not produce a Stage-3 scaffold and vice versa),
+- every phase 2 answer maps to at least one concrete artifact or config effect in the proposal,
+- the proposed adoption stage matches the Q11 answer (Stage-1 today does not produce a Stage-3 scaffold and vice versa),
 - the chosen adoption stage is durable in the scaffold — it appears in `automation.yaml` and in `_kb-references/foundation/me.md`, not only in conversation,
 - the skill does not ask hidden prerequisite questions later,
 - the user can complete setup without already knowing the internal file model.
@@ -488,9 +488,9 @@ Acceptance checks:
 
 ## Optional Step 14 — Product-management proof
 
-If the Phase 1 answers mention customer journeys, launch planning, phase/lane roadmaps, product sequencing, or stakeholder roadmap presentations, setup must propose `journeys` and/or `roadmaps` on a concrete owning layer.
+If the Phase 2 answers mention customer journeys, launch planning, phase/lane roadmaps, product sequencing, or stakeholder roadmap presentations, setup must propose `journeys` and/or `roadmaps` on a concrete owning layer.
 
-Use a minimal variant of Q6 such as:
+Use a minimal variant of Q9 such as:
 
 ```text
 a customer-value roadmap and journey map I can share with stakeholders
@@ -544,6 +544,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Phase order swap propagated: Phase 1 baseline now covers workspace and harness facts (Q1–Q3); Phase 2 covers the open-ended context block (Q4–Q11). Phase 3 expected-output Q-references shifted to Q11/Q10/Q5/Q8/Q9 accordingly. Step 14 product-management proof references the new question numbering. Closes audit finding #98 | Concept/onboarding/process audit |
 | 2026-05-15 | v6.1.0: updated the deterministic first-run path for the release-ready surface. The baseline now enables delivery and operations on the starter layers, calls out the operating model and role handbook as pre-acceptance reading, verifies delivery/operations directories, and adds optional proofs for `/kb brief`, `/kb spec`, `/kb release`, `/kb incident`, and `/kb note retro` | Release-readiness audit |
 | 2026-05-05 | v5.5.1: closed the v5.4.0 numbering drift. Phase 1 now baselines Q1–Q8 (Q8 = operating context / adoption stage, which had been silently dropped from this doc since v5.4.0). Phase 2 questions are renumbered Q9/Q10/Q11 to match `kb-setup/SKILL.md`. Phase 3 expected output now requires the adoption-stage label, explicit Stage↔automation-level consistency, and the graduation-criteria block, so the acceptance baseline actually proves the soft-transition flow it advertises. Added an explicit acceptance bullet that the chosen stage must be durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
 | 2026-04-30 | v5.5.0: added the optional product-management proof path so first-run acceptance covers setup-derived roadmap/journey ownership, source/output placement, and read-only dry-run validation when role/goals imply those artifacts | Product-management surface integration |

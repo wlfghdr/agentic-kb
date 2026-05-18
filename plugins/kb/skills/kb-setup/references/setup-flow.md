@@ -15,12 +15,12 @@ For the deterministic acceptance baseline used to verify real onboarding and tea
 
 Run the four-phase, goal-oriented interview defined in `SKILL.md` ("Interactive question flow"):
 
-1. **Phase 1 — Context and goals**: identity, what the user tracks/decides, why now, audience, sources, desired outputs, autonomy preference, and operating context. All open-ended; never asks the user to enumerate features, scopes, or layer counts.
-2. **Phase 2 — Workspace and harness facts**: workspace root, IDE targets, discovery pass against existing KB material.
+1. **Phase 1 — Workspace and harness facts**: workspace root, IDE targets, discovery pass against existing KB material. Frontloaded so the user knows where files land and which harness will host `/kb` before they invest in open-ended answers.
+2. **Phase 2 — Context and goals**: identity, what the user tracks/decides, why now, audience, sources, desired outputs, autonomy preference, and operating context. All open-ended; never asks the user to enumerate features, scopes, or layer counts.
 3. **Phase 3 — Proposed plan**: the wizard derives a layer graph, connections, artifacts, automation level, product-management roadmap/journey placement, and HTML styling from phases 1 + 2 and presents them as one block. The user adjusts inline or confirms; deeper edits are routed through targeted follow-ups (rename, add/remove a layer, flip role, change parent, move roadmap/journey ownership).
 4. **Phase 4 — Final confirmation**: one summary, one yes.
 
-Validate each answer block before advancing. Never derive layer features from a feature list dictated to the user; always derive them from the user's own answers and let the user adjust the proposal in phase 3. A compact expert path (the legacy "author the plan directly" mode) is available on request for users who already know the framework.
+Validate each answer block before advancing. Never derive layer features from a feature list dictated to the user; always derive them from the user's own answers and let the user adjust the proposal in phase 3. A compact expert path (the legacy "author the plan directly" mode) is available on request for users who already know the framework; phase 1 (workspace root + IDE targets) is never skipped because the wizard needs both before it can write anything.
 
 ## Repo creation / onboarding
 
@@ -254,5 +254,6 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-18 | Phase order flipped to match `kb-setup` SKILL: phase 1 is now "Workspace and harness facts" (frontloaded), phase 2 is the open-ended "Context and goals" block. Expert-mode skip path made explicit — phase 1 is never skipped because the wizard needs workspace root + IDE targets before it writes anything. Closes audit finding #98 | Concept/onboarding/process audit |
 | 2026-04-30 | Added setup guidance for deriving, placing, scaffolding, and verifying roadmap/journey product-management artifacts from role/goals instead of requiring users to know feature names upfront | Product-management surface integration |
 | 2026-04-27 | Added explicit VMG sourcing and update guidance for setup, including URL/file/direct-text population modes, parent-digest updates, manual edits, and conflict handling. Also removed the stale question-number reference from the `vmg.md` scaffold bullet | Documentation gap follow-up |
