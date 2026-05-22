@@ -8,6 +8,7 @@ workstream: {{WORKSTREAM}}
 period: {{PERIOD}}
 source: {{SOURCE}}
 authors: {{AUTHORS}}
+status: open
 ---
 
 # Retro: {{TITLE}}

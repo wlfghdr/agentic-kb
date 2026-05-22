@@ -249,6 +249,17 @@ If `github-pages.enabled: true`:
 2. The root `index.html` serves as the GitHub Pages landing page — auto-regenerated on every artifact publish.
 3. If branch protection on Pages branch: open a PR instead of pushing.
 
+## Commit policy, hosting, and merge strategy
+
+The full lifecycle contract for which HTML artifacts get committed, how the layer hosts them, and what merge strategy applies to live overviews lives in [`docs/REFERENCE.md`](../../../../../docs/REFERENCE.md) §6 "HTML artifact lifecycle (commit, host, merge)". Short version for this skill:
+
+- **Anchor-layer live overviews are tracked.** `/kb setup` writes `index.html` and `dashboard.html` to git on the anchor layer. They use `merge=ours` via `.gitattributes` so the next regeneration always supersedes a merge conflict.
+- **Non-anchor live overviews are ignored by default.** The scaffolded `.gitignore` excludes `/index.html` and `/dashboard.html` on non-anchor layers. Adopters can opt in per layer.
+- **Historical artifacts are always tracked.** Dated/versioned files (`reports/<scope>/<slug>-v<X.Y>.html`, daily/weekly digests, journey maps, roadmap renders, snapshot copies) belong in git so the historical record is durable.
+- **Repair path.** When a merge or manual edit leaves a stale live overview, `/kb status --refresh-overviews` regenerates from current KB state — KB state, not the HTML, is the source of truth.
+
+Generators in this skill must keep the live overview output deterministic for `merge=ours` to work cleanly. Same inputs → byte-identical output (see "Family 1" rules above).
+
 ## CI validation
 
 Artifacts are validated by `scripts/check_html_artifacts.py` in consumer repos. Keep the artifact format compatible with that validator.
@@ -283,6 +294,7 @@ Every `/kb present` MUST use this file (as customized by the phase-3 HTML-stylin
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Added "Commit policy, hosting, and merge strategy" subsection pointing at the new `docs/REFERENCE.md` §6 lifecycle contract: anchor-layer live overviews are tracked (+ `merge=ours` via `.gitattributes`); non-anchor live overviews are ignored by default; historical artifacts are always tracked; `/kb status --refresh-overviews` is the repair path. Generators must keep live overview output deterministic so `merge=ours` converges cleanly on the next regen. Closes audit finding #107 | Concept/spec gap audit |
 | 2026-05-15 | Reframed external-read examples to refer to stable roadmap/journey skills instead of optional draft skills | Release-readiness audit |
 | 2026-05-10 | Corrected the daily-summary and weekly-summary finding paths in the historical-artifacts table from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |

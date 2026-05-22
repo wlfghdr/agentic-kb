@@ -262,6 +262,19 @@ The shortlist is informational, not blocking. The user can always invoke any of 
 
 Adapt the wording to the actual scaffold, but keep three properties: (a) one short paragraph, not a wall of text; (b) name the actual artifact paths the user can open; (c) name 3 commands max in the closing, even if the full shortlist is longer.
 
+**7d — Ritual cadence reminder (level 1 only).** If automation level is `1`, append a second short paragraph naming the rituals that the user must trigger themselves and the recommended cadence. `agentic-kb` does not ship a scheduler (see `references/automation-levels.md` "Scheduler ownership") — at level 1 there is no scheduler at all, so the user is the only thing that pulls the trigger.
+
+The closing message includes:
+
+> *"Rituals are manual at level 1. Suggested cadence: `/kb start-day` each morning, `/kb end-day` before you stop, `/kb end-week` on Friday afternoon. `/kb status` is safe to run any time. If a ritual gets forgotten, the next `/kb start-day` reconciles missing days from `.kb-log/` and git diff — but the more consistent you are early on, the cleaner the daily/weekly summaries get."*
+
+Setup also offers two optional artifacts to make the cadence stick:
+
+1. **Calendar reminder snippet** — on user opt-in, write `_kb-references/rituals.ics` with `start-day`, `end-day` (M–F), and `end-week` (Fri 15:00) events the user can drop into their calendar.
+2. **Repeat hint in `/kb status`** — `kb-management` already surfaces "missing today's `start-day`" under the "Rituals" triage signal (see [`plugins/kb/skills/kb-management/references/command-reference.md`](../../skills/kb-management/references/command-reference.md) "Triage scan"). At level 1, the closing message points the user at `/kb status` as the explicit nudge channel.
+
+When automation level is `2` or `3`, this block is replaced by the scheduler-ownership reminder (already covered in `references/automation-levels.md` "Scheduler ownership"): the user owns the cron/CI/harness-native trigger that fires the scheduled rituals.
+
 ## Migration mode
 
 If the user points setup at an older fixed-ladder KB:
@@ -354,6 +367,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Added Step 7d "Ritual cadence reminder (level 1 only)" — when automation level is `1`, the closing message names the manual ritual cadence (`/kb start-day` each morning, `/kb end-day` before stop, `/kb end-week` Friday afternoon) explicitly, points at `/kb status` as the in-tool nudge channel, and offers an optional `_kb-references/rituals.ics` calendar snippet. At level 2/3 the existing scheduler-ownership reminder fires instead. Closes audit finding #108 | Concept/spec gap audit |
 | 2026-05-18 | Added Step 7 "First win + next-steps shortlist" — closing step after verification. Optional bootstrap capture (default yes) writes a first finding through the full evaluation gate and surfaces the artifact path back to the user; curated 3–5 command shortlist derived from adoption stage + audience replaces the implicit "you have 33 commands, gl hf" feeling at setup end. References section now names `docs/examples/first-hour.md` as the user-facing companion and reframes `docs/first-run-acceptance.md` as the maintainer/QA baseline. Closes audit findings #99, #100, #101 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap: phase 1 is now "Workspace and harness facts" (Q1–Q3 — workspace root, IDE targets, discovery pass), phase 2 is now "Context and goals" (Q4–Q11). Frontloads the admin block so the user knows where files will land and which harness will host `/kb` before investing in long answers. All cross-references and the placeholder-mapping table renumbered. Q10 ("How autonomous") now states explicitly that `agentic-kb` does not ship a scheduler. Phase 3 block 2 must now surface default artifact visibility per primitive per `docs/REFERENCE.md` §1 "Two orthogonal axes". Closes audit findings #98 and #104 | Concept/onboarding/process audit |
 | 2026-05-17 | Extended onboarding to decide per-layer primitive storage (`files`, `tracker`, `hybrid`) for decisions, tasks, ideas, feature intake, and roadmap items; setup now treats generic GitHub/Jira type mapping, issue templates, governance CI, labeler/PR templates, manual branch-protection/project setup, and repo-local tracker workflow skills as first-class outcomes when a tracker backbone is selected | Tracker-backed onboarding design |
