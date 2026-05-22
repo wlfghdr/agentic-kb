@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.12 | **Last updated:** 2026-05-22
+> **Version:** 0.13 | **Last updated:** 2026-05-22
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -22,9 +22,25 @@ The spec must remain IDE-agnostic, harness-agnostic, and vendor-neutral. Example
 
 Any edit to a spec/concept doc MUST:
 
-- append a row to that file's own `## Changelog` section,
+- append a row to that file's own `## Changelog` section (when the file has one — see "Which files have a per-file changelog" below),
 - add a line under `## [Unreleased]` in the root `CHANGELOG.md`,
 - bump the relevant version field if the change alters semantics (see [CHANGELOG.md](CHANGELOG.md) for PATCH/MINOR/MAJOR rules).
+
+**Which files have a per-file changelog (and which do not):**
+
+| File category | Per-file `## Changelog`? | Why |
+|---------------|--------------------------|-----|
+| Skill specs (`plugins/kb/skills/*/SKILL.md`) and skill references (`plugins/kb/skills/*/references/*.md`) | yes | They are standalone behavioral spec docs that adopters version-pin |
+| Agent specs (`plugins/kb/agents/*.md`) | yes | Same reason |
+| `docs/REFERENCE.md`, `docs/collaboration.md`, `docs/concurrency.md`, `docs/operating-model.md`, `docs/role-handbook.md`, `docs/glossary.md`, `docs/first-run-acceptance.md` | yes | Each is a standalone normative doc |
+| `docs/roadmap.md`, `docs/examples/*.md` | yes (recommended) | Tracks how the example or roadmap drifted |
+| `AGENTS.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md` | yes | Long-lived governance docs |
+| `README.md` | **no** | The root `CHANGELOG.md` is the single source of truth for the release narrative the README points at. A per-file changelog block on the README duplicates `CHANGELOG.md` and ages badly. The README footer links to `CHANGELOG.md` instead |
+| Inline format examples inside fenced ``` ```markdown ``` ``` blocks (e.g. the `## Changelog` lines inside Topic / Brief / Spec format examples in `docs/REFERENCE.md` §4) | **no** | Those `## Changelog` lines document that *the file format* requires an inline changelog. They are spec content, not changelogs of the enclosing doc |
+| Templates under `plugins/**/templates/` | **no** | Templates are scaffolded into adopter KBs; they carry their own inline changelog placeholders for the artifact they instantiate, not for the template |
+| Generated artifacts (`index.html`, `dashboard.html`, plugin manifests under `plugins/*/plugin.json`) | **no** | Generated; the source they regenerate from carries the changelog |
+
+When in doubt: if a reader would version-pin or audit the file directly, it gets a per-file changelog. If it is a derived view, a scaffolded copy, or a marketing entry point that links to the canonical changelog, it does not.
 
 ### 4. Cross-references stay live
 
@@ -89,6 +105,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Bumped AGENTS version to 0.13 to track the audit-tracker closeout sweep (#106, #109, #110) and Rule 3 refinement: Rule 3 now carries an explicit "which files have a per-file changelog" table (skill/agent specs, long-lived docs/*, governance docs = yes; README, templates, generated artifacts, and inline `## Changelog` lines inside fenced format examples = no); concurrency contract added (`docs/concurrency.md`); README command list trimmed to the canonical reference; `scripts/check_consistency.py` extended with a command-list drift check; pre-v5.0 release history split into `CHANGELOG.archive.md`. AGENTS rules unchanged in semantics — Rule 3 just made explicit | Audit-tracker closeout |
 | 2026-05-22 | Bumped AGENTS version to 0.12 to track the concept/spec-gap audit sweep #4 closeout (#107, #108, #111, #112, #113): backlink format codified in `docs/REFERENCE.md` §4 + promote-contract.md + new K11 audit rule; retro `status: open \| tracked \| closed` lifecycle codified in §4 + template + command-reference.md + new K12 audit rule; HTML artifact lifecycle (commit/host/merge) codified in §6 + html-artifacts.md; marketplace versioning/dependencies/install-mode/priority codified in §11 + publish-contract.md; level-1 ritual UX codified in kb-setup Step 7d + command-reference.md triage scan. AGENTS rules unchanged in semantics | Concept/spec-gap audit |
 | 2026-05-15 | Bumped AGENTS version to 0.11 to track the v6.1.0 release-readiness closeout: `[Unreleased]` content moved into the v6.1.0 release, current roadmap/journey surfaces are documented as stable setup-proposed product-management flows, first-run acceptance covers delivery/operations and retros, and CI now guards manifest version drift. AGENTS rules unchanged in semantics | Release-readiness audit |
 | 2026-05-14 | Bumped AGENTS version to 0.10 to track the daily-reality role-coverage extension landing under `[Unreleased]`: new `docs/role-handbook.md`, new retro note variant (template + `/kb note retro` verb + REFERENCE §4 Note-format extension), workstream template enriched with status/owner/cadence/linked-delivery and shipment/milestone tables, and three new day-in-the-life scenes (PM/EM/on-call SRE). AGENTS rules unchanged in semantics | Daily-reality gap audit across software-company roles |

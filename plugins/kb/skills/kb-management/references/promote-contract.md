@@ -72,17 +72,27 @@ For decision/task promotions, also state whether the source item stayed active w
 
 That lets another human audit the movement without inferring what happened from a git diff alone.
 
+## Concurrency
+
+Concurrent promotes (two contributors promoting the same artifact, or revising a source file after a promote) follow the deterministic rules in [`docs/concurrency.md`](../../../../../docs/concurrency.md):
+
+- **Promote collisions** (same target path on the same day) write the second promote with an author-id suffix and append to `_kb-log/promote-conflicts.md`. Reconciliation is via `/kb sync`.
+- **Backlink mutation** (editing a `status: promoted` source after promote) is refused by `/kb` and surfaces as a diverged-backlink warning at the next `/kb sync` or `/kb audit` (audit rule K14).
+- These are application-level rules; they short-circuit Git conflicts that would otherwise surface as raw merge markers in finding bodies or decision frontmatter.
+
 ## Related
 
 - [`../SKILL.md`](../SKILL.md)
 - [`command-reference.md`](./command-reference.md)
 - [`output-contract.md`](./output-contract.md)
 - [`../../../../../docs/collaboration.md`](../../../../../docs/collaboration.md)
+- [`../../../../../docs/concurrency.md`](../../../../../docs/concurrency.md)
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Added "Concurrency" subsection pointing at [`docs/concurrency.md`](../../../../../docs/concurrency.md): promote collisions resolve via author-id suffix + `_kb-log/promote-conflicts.md` entry; backlink mutation after promote refuses `/kb` writes and surfaces a diverged-backlink warning. Closes audit finding #106 | Audit-tracker closeout |
 | 2026-05-22 | Added "Backlink stub format" subsection codifying the `status: promoted` + `canonical:` + `promoted-at` frontmatter and the standardized banner body that replaces a source-layer record when canonical ownership shifts upward, with rules for path resolution, evidence migration, audit detection (K11), and migration-helper rewrites. Closes audit finding #111 | Concept/spec gap audit |
 | 2026-05-06 | Added decision/task ownership semantics for promotion: one canonical record per scope, with source-layer decisions/tasks closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |
 | 2026-04-25 | Initial reference clarifying when `/kb promote` stages intake, when it skips staging, and what the destination-layer review must leave behind | Deep spec-audit follow-up |
