@@ -112,11 +112,16 @@ Scenario: Two contributors regenerate `dashboard.html` or append to `.kb-log/YYY
 - **`.kb-log/YYYY-MM-DD.log`** is append-only. Two authors appending to the same daily log produce a Git merge conflict only if their entries land on the same line — which the canonical `HH:MM:SSZ | operation | scope | target | details` format prevents in practice (entries are line-separated with timestamps). When a conflict does occur (clock skew, manual edits), standard Git resolution applies; both entries are kept.
 - **Conflict-log files** (`_kb-log/promote-conflicts.md`, `_kb-log/exceptions.md`, `_kb-log/auto-promote-staged.md`) are also append-only and follow the same rule.
 
-## Test fixtures
+## Test fixtures (planned)
 
-The parallel-promote and topic-merge cases have regression fixtures under `tests/fixtures/concurrency/` that exercise the suffix rule, the diverged-backlink detection, and the author-section topic merge. CI runs them via `scripts/test_concurrency.py`. Adopters writing their own adapters or migration helpers should re-run these fixtures against their changes; they are the executable contract for the rules above.
+The rules in this guide are the normative contract — the parallel-promote, backlink-mutation, and topic-merge cases above stand on their own as executable spec language for adopters and tool builders.
 
-> **Status of the fixtures:** the rules in this guide are the normative contract. The fixtures are recommended; they are added as the audit closes out and are not gating CI yet. The fixtures path is reserved so the rules and the executable contract stay aligned as adopters land.
+Regression fixtures that exercise the same cases are **planned**, not shipped in this release:
+
+- `tests/fixtures/concurrency/` will carry the input KB state and expected outcome for each case (suffix rule, diverged-backlink detection, author-sectioned topic merge).
+- `scripts/test_concurrency.py` will run them and gate CI once the fixtures land.
+
+Until those exist, the rules above are the only contract; CI does not currently exercise the concurrency cases. Adopters writing their own adapters or migration helpers should validate manually against the rules; the path names are reserved so the future fixtures land where this doc already points.
 
 ## Related
 
