@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.11 | **Last updated:** 2026-05-15
+> **Version:** 0.12 | **Last updated:** 2026-05-22
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -89,6 +89,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Bumped AGENTS version to 0.12 to track the concept/spec-gap audit sweep #4 closeout (#107, #108, #111, #112, #113): backlink format codified in `docs/REFERENCE.md` §4 + promote-contract.md + new K11 audit rule; retro `status: open \| tracked \| closed` lifecycle codified in §4 + template + command-reference.md + new K12 audit rule; HTML artifact lifecycle (commit/host/merge) codified in §6 + html-artifacts.md; marketplace versioning/dependencies/install-mode/priority codified in §11 + publish-contract.md; level-1 ritual UX codified in kb-setup Step 7d + command-reference.md triage scan. AGENTS rules unchanged in semantics | Concept/spec-gap audit |
 | 2026-05-15 | Bumped AGENTS version to 0.11 to track the v6.1.0 release-readiness closeout: `[Unreleased]` content moved into the v6.1.0 release, current roadmap/journey surfaces are documented as stable setup-proposed product-management flows, first-run acceptance covers delivery/operations and retros, and CI now guards manifest version drift. AGENTS rules unchanged in semantics | Release-readiness audit |
 | 2026-05-14 | Bumped AGENTS version to 0.10 to track the daily-reality role-coverage extension landing under `[Unreleased]`: new `docs/role-handbook.md`, new retro note variant (template + `/kb note retro` verb + REFERENCE §4 Note-format extension), workstream template enriched with status/owner/cadence/linked-delivery and shipment/milestone tables, and three new day-in-the-life scenes (PM/EM/on-call SRE). AGENTS rules unchanged in semantics | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | v6.0.0 release alignment — bumped AGENTS version to 0.9 to track the v5 adoption-arc closeout (canonical `/kb brief`, `/kb spec`, `/kb release`, `/kb incident` verbs; REFERENCE ↔ template format alignment for the four delivery/operations artifacts; removal of residual fixed-ladder L1/L2/L3/L4 vocabulary; year-nested archive and weekly-summary path corrections; five missing changelog sections added). AGENTS rules unchanged in semantics | v6.0.0 adoption + daily-usage gap audit |

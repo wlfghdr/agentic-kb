@@ -84,6 +84,29 @@ plugins/<plugin>/skills/<name>/
 
 For skills that encode safety rules, policy checks, scoring, or routing logic, the marketplace repo should also ship deterministic regression fixtures under `tests/fixtures/`.
 
+## Versioning, dependencies, install-mode, priority
+
+Skill frontmatter must declare these fields whenever the skill is published to a marketplace. They are normative for installers and adopters; the full contract lives in [`docs/REFERENCE.md`](../../../../../docs/REFERENCE.md) §11 "Skill versioning, dependencies, and conflict resolution".
+
+| Field | Required? | What it does |
+|-------|-----------|--------------|
+| `version: X.Y.Z` | yes | SemVer. `PATCH` for prose edits; `MINOR` for non-breaking additions; `MAJOR` for renamed verbs, removed triggers, or any breaking change to behavior |
+| `dependencies:` | no (defaults to `[]`) | List of `{name, version}` entries naming other skills that must be installed for this one to work. Installer refuses with a clear message when a dependency is unsatisfiable |
+| `incompatible_with:` | no | List of skills/plugins that must NOT be installed alongside this one (existing field) |
+| `install-mode:` | declared by the marketplace repo, not the skill | `open` (anyone with write access publishes directly) or `review-required` (PR + maintainer approval). Public marketplaces MUST be `review-required` |
+| `priority:` | declared per-layer on the marketplace block, not the skill | Integer; higher wins when two marketplaces publish a skill with the same `name`. Defaults to `50` |
+
+`/kb publish` writes these fields into the generated `SKILL.md` and the marketplace PR body must list:
+
+- the proposed `version:` bump (PATCH/MINOR/MAJOR) with one-line justification,
+- the resolved `dependencies:` (with versions),
+- the marketplace's declared `install-mode:` (so reviewers know whether merge is fast-path or maintainer-gated),
+- any skill the new package shadows (same `name`, lower `priority:` in another configured marketplace) so the reviewer can decide whether the shadow is intentional.
+
+When `/kb publish` runs against a marketplace whose `install-mode:` is `review-required`, the response must say so explicitly — the author is not done at PR open; they wait for the marketplace maintainer.
+
+Conflict resolution during install (multiple marketplaces, same skill name) follows the `priority:` rules in `docs/REFERENCE.md` §11 "Conflict resolution across marketplaces". The installer emits a shadow warning rather than silently swapping winners.
+
 ## Response expectations
 
 A `/kb publish` response must make all three stages visible:
@@ -129,4 +152,5 @@ Suggested next steps:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Added "Versioning, dependencies, install-mode, priority" subsection: skills MUST declare SemVer `version:`; `dependencies:` is resolved before install; marketplace repos declare `install-mode: open \| review-required` (public marketplaces MUST be `review-required`); cross-marketplace conflicts resolve via `priority:` with shadow warnings. PR body must list the proposed version bump, resolved dependencies, marketplace install-mode, and any shadowed skills. Full normative contract lives in `docs/REFERENCE.md` §11. Closes audit finding #113 | Concept/spec gap audit |
 | 2026-04-27 | Added a dedicated publish reference covering the transformation boundary of `/kb publish`, the generalizability gate, safety validation, package layout, and response contract; aligned package paths to the current marketplace layout in `docs/REFERENCE.md` §11 | Documentation gap follow-up |

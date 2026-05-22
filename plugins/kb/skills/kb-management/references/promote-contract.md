@@ -34,6 +34,32 @@ Decision and task records are not copied upward as parallel active items. Before
 
 The response must name the canonical path whenever a promoted decision or task is created, resolved, or superseded.
 
+### Backlink stub format
+
+When a source-layer decision/task is replaced by a backlink (because the target layer now owns the canonical scope), the source file is **rewritten in place** using the standard backlink format defined in [`docs/REFERENCE.md`](../../../../../docs/REFERENCE.md) §4 "Backlink (promoted-record stub)". The minimum shape:
+
+```markdown
+---
+status: promoted
+canonical: <repo-relative path to the canonical target>
+promoted-at: YYYY-MM-DD
+promoted-by: @author          # optional at single-user layers, recommended at multi-user layers
+---
+
+# <original id-and-title line>
+
+> **This record has been promoted.** The canonical version lives at
+> `<canonical path>`. Edit there, not here.
+```
+
+Concrete rules during `/kb promote`:
+
+1. The source file path stays stable; only its frontmatter and body are rewritten.
+2. The `canonical:` path is repo-relative POSIX (e.g. `../../../team-observability-kb/_kb-decisions/D-2026-05-18-pricing-tier.md`) so migration helpers can rewrite it deterministically when layer paths change.
+3. The original evidence trail, options, RACI, or development log content moves into the canonical target before the source body is replaced — nothing material stays behind.
+4. The promote operation emits a log entry citing both the source and the canonical paths, so the diff is auditable from `.kb-log/` alone.
+5. `/kb audit` rule K11 detects backlinks whose `canonical:` no longer resolves and offers a rewrite (or removal if the canonical record was deleted).
+
 ## Response expectations
 
 The applied response should make all three locations visible when they exist:
@@ -57,5 +83,6 @@ That lets another human audit the movement without inferring what happened from 
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Added "Backlink stub format" subsection codifying the `status: promoted` + `canonical:` + `promoted-at` frontmatter and the standardized banner body that replaces a source-layer record when canonical ownership shifts upward, with rules for path resolution, evidence migration, audit detection (K11), and migration-helper rewrites. Closes audit finding #111 | Concept/spec gap audit |
 | 2026-05-06 | Added decision/task ownership semantics for promotion: one canonical record per scope, with source-layer decisions/tasks closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |
 | 2026-04-25 | Initial reference clarifying when `/kb promote` stages intake, when it skips staging, and what the destination-layer review must leave behind | Deep spec-audit follow-up |

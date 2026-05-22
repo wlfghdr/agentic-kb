@@ -327,6 +327,7 @@ workstream: <name>
 period: <window or event the retro reflects on>
 source: <optional link>
 authors: [@names]
+status: open | tracked | closed
 ---
 
 # Retro: <title>
@@ -341,6 +342,25 @@ authors: [@names]
 ```
 
 Retros live under `_kb-notes/YYYY/` next to meeting notes. They do not require a new feature flag — `notes` is already the enabling feature. The template the skill instantiates is `plugins/kb/skills/kb-management/templates/retro.md`. Action items from *What we will change* must be promoted into the layer's `_kb-tasks/backlog.md` or `_kb-decisions/` before the retro is considered closed, so the session produces tracked commitments instead of dissolving into "false convergence" (see [`docs/collaboration.md`](./collaboration.md)).
+
+#### Retro closure lifecycle
+
+The `status:` frontmatter declares where a retro is in its lifecycle. It is not just a label — `/kb start-day`, `/kb start-week`, and `/kb audit` all read it.
+
+| Status | Meaning | Transition trigger |
+|--------|---------|---------------------|
+| `open` | Retro was written; commitments from *What we will change* have not yet been tracked as tasks or decisions | Set automatically when `/kb note retro` first creates the file |
+| `tracked` | Every action item under *What we will change* is linked to a task in `_kb-tasks/` (or a decision in `_kb-decisions/`); no untracked commitments remain | Set by `/kb note end` on a retro once `## Linked artifacts` cites a backlog item or decision for each `## What we will change` bullet, or by the user on confirmation |
+| `closed` | Every linked task is `done`/archived and every linked decision is `resolved`; the retro's commitments are fully discharged | Set by `/kb audit`, by the user, or automatically by the next-cadence retro that supersedes this one |
+
+Rules:
+
+- A retro is **never silently closed**. The status moves only on an explicit signal (user confirmation, `/kb note end`, `/kb audit`, or the supersession rule below).
+- A retro that closes (via `/kb note end`) without any commitments is held at `status: open` and surfaces the "false convergence" Gate note, not at `status: closed`. `closed` requires evidence of discharged commitments, not absence of them.
+- `/kb audit` rule K12 (see [`plugins/kb/skills/kb-management/references/audit.md`](../plugins/kb/skills/kb-management/references/audit.md)) reports `open` retros older than 7 days with no `status: tracked` move, and `tracked` retros whose linked tasks/decisions have been done/resolved (eligible for `closed`).
+- `/kb start-week` surfaces unfinished retro commitments (any retro in `status: tracked` with at least one open linked task/decision) as part of its weekly briefing.
+- Supersession: when a new retro for the same cadence and workstream is written, the previous one's status auto-advances from `tracked` to `closed` if its linked commitments are resolved. Untracked commitments stay `open` regardless of supersession — the new retro inherits the open items in `## Context`.
+- Retros do not move to `_kb-notes/archive/`. They stay in their `YYYY/` directory; the `status:` field is the index used by audits.
 
 ### Brief (`_kb-delivery/briefs/YYYY-MM-DD-slug.md`)
 
@@ -437,6 +457,37 @@ Release records make delivery state auditable across engineering, QA, release co
 ```
 
 Incident records are operational interruption artifacts. They may be updated while active, but once resolved they should remain append-only apart from clearly marked corrections.
+
+### Backlink (promoted-record stub)
+
+When a decision, task, or other shared artifact is promoted upward and the target layer now owns the same scope (see §1 ownership rule), the source-layer record is **not** deleted. Its path stays stable so existing references keep resolving. The body is replaced with a standardized backlink stub so that humans, audits, and migration helpers can all detect it with one pattern.
+
+```markdown
+---
+status: promoted
+canonical: ../../../team-observability-kb/_kb-decisions/D-2026-05-18-pricing-tier.md
+promoted-at: 2026-05-18
+promoted-by: @alice
+---
+
+# D-2026-05-15: <original title>
+
+> **This record has been promoted.** The canonical version lives at
+> `../../../team-observability-kb/_kb-decisions/D-2026-05-18-pricing-tier.md`.
+> Edit there, not here.
+```
+
+Field contract:
+
+- `status: promoted` is the only stable status value used for the backlink stub. It replaces the original primitive-specific status (`decided`, `doing`, etc.) once the canonical record moves.
+- `canonical:` is a repo-relative POSIX path to the target file. Cross-layer links use the path the contributor would type from this file (`../../<other-layer-kb>/...`). Absolute paths from the workspace root are also accepted.
+- `promoted-at:` is the ISO date of the promote operation.
+- `promoted-by:` is optional but recommended at multi-user layers so audits can trace who moved the record.
+- The body keeps the original `# <id-or-title>` line so historical links still resolve, then a single block-quoted banner pointing at the canonical record. Any further prose, evidence trail, or development log content moves to the canonical record before the backlink is written; nothing duplicative stays behind.
+
+The same shape applies to promoted tasks (whose stub may live in `_kb-tasks/archive/YYYY/MM.md` as a one-line table entry citing `canonical:`) and to ideas/findings that are promoted as part of a decision/task ownership move. Findings remain immutable on the source layer when only their *evidence* is cited upward — the backlink stub is for records whose *canonical ownership* shifted.
+
+`/kb audit` rule K11 (see [`plugins/kb/skills/kb-management/references/audit.md`](../plugins/kb/skills/kb-management/references/audit.md)) checks that every `status: promoted` record has a resolvable `canonical:` target. Migration helpers (`/kb migrate layer-model`, `/kb migrate archives`) rewrite the relative path in the stub when a layer moves, using this format as the canonical anchor.
 
 ### Workstream (`_kb-workstreams/<name>.md`)
 
@@ -832,6 +883,66 @@ These are shared-memory artifacts, not just pretty HTML outputs. The markdown so
 | `/kb end-day` | Daily Digest HTML |
 | `/kb end-week` | Weekly Status HTML |
 
+### HTML artifact lifecycle (commit, host, merge)
+
+HTML artifacts are **generated**, not authored. They are regenerated from KB state, can grow to multi-megabyte size for long-lived layers, and conflict trivially in git because every regeneration touches almost every line. The lifecycle below makes the commit/host/merge decision explicit so adopters do not have to invent one per layer.
+
+#### Default commit policy
+
+Anchor-layer live overviews are committable; everything else is generated locally by default.
+
+| Artifact family | Filename pattern | Default `.gitignore` posture | Committable? | Why |
+|-----------------|------------------|------------------------------|--------------|-----|
+| Anchor-layer live overview | `index.html`, `dashboard.html` at the anchor-layer repo root | tracked | yes — the anchor layer's overview is the public/shared entry point | The anchor layer is the source of truth for the user's workspace; the overview belongs in version control so collaborators (and GitHub Pages) see it |
+| Other-layer live overview | `index.html`, `dashboard.html` at a non-anchor layer | ignored | no by default; opt in per layer | Non-anchor layers usually have one contributor or one team viewing locally; committing every regeneration spam-bloats the layer repo |
+| Historical artifacts | `<scope>/<slug>-v<X.Y>.html`, `reports/daily-YYYY-MM-DD.html`, `reports/weekly-YYYY-WW.html`, `_kb-journeys/html/`, `_kb-roadmaps/html/` | tracked | yes | These are dated/versioned and immutable, so they merge cleanly and form historical memory |
+| Snapshot copies (cross-repo) | banner-tagged HTML imported from another repo | tracked | yes, with the snapshot banner from `html-artifacts.md` §"Snapshot artifacts" | They are point-in-time references; ignoring them would lose the snapshot |
+
+Concrete default `.gitignore` entries scaffolded by `/kb setup` on a non-anchor layer:
+
+```gitignore
+# Generated live overviews — regenerated on every mutation
+/index.html
+/dashboard.html
+```
+
+The scaffold writes those lines only on non-anchor layers. On the anchor layer, `index.html` and `dashboard.html` are tracked.
+
+#### Merge strategy
+
+When live overviews are committed (anchor layer, or any layer that opted in), two contributors regenerating on the same hour will produce conflicting diffs in the HTML body. The conflict is mechanical, not semantic — the next regeneration always supersedes both branches. The recommended `.gitattributes` line:
+
+```gitattributes
+# Live overviews are regenerated artifacts — accept ours on merge,
+# then regenerate from KB state to converge.
+index.html       merge=ours
+dashboard.html   merge=ours
+```
+
+`/kb setup` writes these `.gitattributes` lines on any layer where the live overviews are committed. After a merge that hits one of these, `/kb status --refresh-overviews` is the canonical recover step — it regenerates from current KB state, which is the actual source of truth.
+
+Historical artifacts do **not** get `merge=ours` — they are dated and immutable, so two contributors should not be touching the same file. If they did, the conflict surfaces a real disagreement and needs human resolution.
+
+#### Hosting modes
+
+`/kb setup` Q9 asks how the user expects to view artifacts. Three modes are supported; the choice writes into `.kb-config/artifacts.yaml`:
+
+| Mode | What it means | Setup writes |
+|------|---------------|--------------|
+| `local` (default) | Open `file://` paths in a browser; no hosting | `hosting.mode: local`; no Pages config |
+| `github-pages` | The anchor layer publishes via GitHub Pages from the default branch root | `hosting.mode: github-pages`; ensures `.nojekyll` and tracks `index.html`, `dashboard.html` on the anchor layer |
+| `external` | Some other static host pulls the anchor-layer repo | `hosting.mode: external`; tracks anchor-layer artifacts the same as `github-pages` but leaves deploy config to the adopter |
+
+Hosting is a property of the anchor layer. Non-anchor layers stay `local` unless the adopter explicitly enables hosting on them; doing so just flips their live overviews from ignored to tracked (and adds the `merge=ours` lines).
+
+#### Regeneration trigger
+
+Regeneration of the affected layer's live overviews fires as part of the same mutation that triggered it — see [`plugins/kb/skills/kb-management/references/html-artifacts.md`](../plugins/kb/skills/kb-management/references/html-artifacts.md) "Auto-regeneration contract" for the full list of triggering operations. Adopters never need to run a separate "regenerate everything" command unless they hit a stale state (merge fallout, manual file edit, branch switch); `/kb status --refresh-overviews` is the repair path.
+
+#### Size and bloat
+
+Live overviews stay bounded because they index *current* state. Historical artifacts grow over time but are dated and small individually. For layers with thousands of historical artifacts, the `index.html` generator deduplicates versioned entries (see [`plugins/kb/skills/kb-management/references/html-artifacts.md`](../plugins/kb/skills/kb-management/references/html-artifacts.md) "Index rules"); the older versions stay on disk but do not load when the page renders. No spec-level pruning rule is required.
+
 ---
 
 ## 7. Security & Privacy
@@ -975,8 +1086,92 @@ Optional frontmatter fields with generic cross-harness value:
 
 - `utils` — plugin-local reusable helpers the skill depends on (wrapper scripts, validators, exporters, sanitizers).
 - `incompatible_with` — other skills or plugins that must not be installed together because their trigger phrases or command surfaces overlap.
+- `dependencies` — other skills (by `name`) that must be installed for this one to work. Each entry is a `name` plus an optional SemVer range (`>=1.2, <2`). The installer refuses to install a skill whose declared dependencies are not satisfied in the target harness.
 
 For skills that encode safety rules, policy checks, scoring, or routing logic, the marketplace repo should also ship deterministic regression fixtures under `tests/fixtures/` so prompt or model changes can be checked against known clean, violating, and ambiguous cases.
+
+### Skill versioning, dependencies, and conflict resolution
+
+A layer marketplace is multi-tenant by definition: it can host skills authored by different contributors across many adoption cycles. The fields below make publish, install, and upgrade decisions deterministic.
+
+#### SemVer for skills
+
+Every published skill MUST declare `version: <X>.<Y>.<Z>` in its frontmatter. The version follows the same SemVer contract as the framework itself:
+
+| Bump | When |
+|------|------|
+| `PATCH` | Prose-only edits, fix-typo, documentation clarification |
+| `MINOR` | New trigger phrases, new optional template fields, new reference docs — non-breaking additions |
+| `MAJOR` | Renamed canonical command verb, removed trigger phrase, changed required template fields, changed safety-validation rules, or any change that would break an installer who pinned the previous major |
+
+Installers default to `latest` within the same major. Adopters who want a fixed version pin the skill in their `.kb-config/layers.yaml` `marketplace:` block:
+
+```yaml
+marketplace:
+  repo: ../team-skills
+  install-mode: marketplace
+  pin:
+    kb-our-onboarding: ">=1.0, <2"
+```
+
+When a new major releases, the installer flags the pin and asks the adopter before upgrading — major upgrades are never silent.
+
+#### Dependencies
+
+`dependencies:` in skill frontmatter is a list of other skills this one needs:
+
+```yaml
+dependencies:
+  - name: kb-management
+    version: ">=6.0, <7"
+  - name: kb-tracker-workflow
+    version: ">=1.0"
+```
+
+Resolution rules:
+
+1. The installer walks the dependency tree before writing any file. If a dependency is missing or out of range, the install is refused with a message naming the missing skill, the required range, and the marketplace it would come from.
+2. Diamond dependencies (two skills require different ranges of the same third skill) resolve to the highest version that satisfies all ranges. If no such version exists, the install is refused.
+3. A skill MAY declare `dependencies: []` (the default) to assert no cross-skill requirement.
+
+`dependencies:` is independent of `incompatible_with:`. The first declares what MUST be installed; the second declares what MUST NOT be installed alongside.
+
+#### Approval gating
+
+Marketplace publishing has two modes, declared by the marketplace repo and surfaced in `layers.yaml`:
+
+| Mode | Who can publish | Where the review happens |
+|------|----------------|---------------------------|
+| `install-mode: open` | Anyone with write access to the marketplace repo | None — publish lands on `main` directly |
+| `install-mode: review-required` | Anyone with PR-open access; merges require maintainer approval per the marketplace repo's branch protection / CODEOWNERS | The marketplace PR is the review boundary |
+
+`/kb publish` honors the configured mode:
+
+- For `open`, the publish operation opens a branch and pushes a PR per the standard publish flow, then offers to fast-merge if the author has write rights.
+- For `review-required`, the publish operation opens a PR and stops — the author waits for marketplace maintainer approval before the skill becomes installable.
+
+Public layer marketplaces (a marketplace targeted at adopters the author does not personally know) MUST use `install-mode: review-required`. Private internal marketplaces (a single team's shared skills) MAY use `install-mode: open`. `/kb setup` proposes `review-required` whenever the configured marketplace repo's visibility is public.
+
+#### Conflict resolution across marketplaces
+
+A layer may reference multiple marketplaces (a team marketplace plus an org marketplace, say). If two marketplaces publish a skill with the same `name`, the installer resolves the conflict deterministically using the `priority:` field declared on the layer's marketplace block:
+
+```yaml
+marketplace:
+  - repo: ../team-skills
+    priority: 100
+  - repo: ../org-skills
+    priority: 50
+```
+
+Resolution rules:
+
+1. **Higher `priority:` wins.** The skill from the higher-priority marketplace is installed; the lower-priority one is shadowed.
+2. **Shadowed skills are visible to the adopter.** The installer emits a one-line warning naming the shadowed skill and its source marketplace; `/kb digest connections` includes a "shadowed skill" panel.
+3. **No tie-breaker on equal priorities.** Equal `priority:` values across marketplaces are a configuration error and the installer refuses until the adopter resolves them.
+4. **No `priority:` declared** defaults to `priority: 50`; the first marketplace listed wins on equal defaults only if it is the **only** marketplace declaring that skill.
+
+Cross-marketplace upgrades respect the same dependency and version-pin rules as single-marketplace upgrades — a higher-priority marketplace cannot silently install a major upgrade past a declared pin.
 
 ---
 
@@ -1002,6 +1197,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-22 | §4 added "Backlink (promoted-record stub)" subsection defining the concrete `status: promoted` + `canonical:` + `promoted-at` frontmatter and the standardized banner body that replaces a source-layer record when canonical ownership shifts upward; §4 retro variant added `status: open \| tracked \| closed` frontmatter plus a "Retro closure lifecycle" subsection covering transition triggers, the no-silent-close rule, and supersession; §6 added "HTML artifact lifecycle (commit, host, merge)" subsection covering default `.gitignore` posture per artifact family, `.gitattributes` `merge=ours` for committed live overviews, three hosting modes (`local` / `github-pages` / `external`), and the regeneration repair path; §11 added "Skill versioning, dependencies, and conflict resolution" subsection covering SemVer per skill, `dependencies:` resolution rules, `install-mode: open \| review-required` approval gating, and `priority:`-based conflict resolution across marketplaces. Closes audit findings #107, #111, #112, #113 |
 | 2026-05-18 | §5 layers.yaml example annotated `writeback:` as RESERVED in v6.1.0 (no-op); §6 added the "`auto-promote.confidence-threshold` — what it is" subsection with the 0–5 gate-score definition, the auto-promote eligibility filter, the promote target rule, the conflict-escalation rule, and a worked example; §10 added the "Task ownership — KB vs. external tracker" subsection codifying split ownership (KB owns knowledge work, tracker owns engineering work, read-only links, no parallel status reconciliation) and added a corresponding row to the mapping table. Closes audit findings #102, #103, #105 |
 | 2026-05-18 | §1 split "Contributor-scoped vs shared primitives" into two clearly orthogonal subsections — Axis 1 "Layer role" (`contributor` vs `consumer`, mutation rights) and Axis 2 "Artifact visibility" (`contributor-scoped` vs shared, per-primitive). Added a do-not-conflate callout. Closes the data-leak risk where multi-user team layers ship with everything shared by default because adopters never see the visibility axis. `kb-setup` phase 3 now must surface the default visibility per primitive in the proposed plan before scaffold. Updated the §10 repo-as-OS phrasing to match the kb-setup phase-1/phase-2 swap. Closes audit findings #98 and #104 |
 | 2026-05-17 | Added `primitive-storage` to the layer config contract so onboarding can choose file-backed, tracker-backed, or hybrid ownership per primitive family and can generate generic GitHub/Jira tracker setup outcomes without duplicating canonical records; GitHub setup now points at a fuller governance profile with issue/project/PR rules, CI, labeler, checklist, and repo-local skill |

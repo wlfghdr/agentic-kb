@@ -23,6 +23,8 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 | K8 | Topics last updated more than `freshness.topic-days` days ago that are still cited by recent findings | `stale-cited-topic` | Offer `/kb develop <topic>` |
 | K9 | Workstream files have current status blocks (not "TBD" or empty) | `workstream-status-missing` | Offer digest pull |
 | K10 | HTML artifacts in `_kb-references/reports/` are not older than their source topics | `stale-html-artifact` | Offer regeneration |
+| K11 | Every record with `status: promoted` resolves its `canonical:` target (file exists; relative path resolves; target is not itself another `status: promoted` stub) | `backlink-broken` | Offer to rewrite the relative path (when the canonical target has moved) or to remove the promoted stub if the canonical record was deleted |
+| K12 | Every retro (`_kb-notes/YYYY/*.md` with `type: retro`) carries `status: open` / `tracked` / `closed`; `open` retros older than 7 days without a `tracked` move are flagged; `tracked` retros whose linked tasks/decisions are all done/resolved are flagged as eligible for `closed` | `retro-status-stale` | Offer to (a) link each `## What we will change` item to a backlog task or decision and move to `tracked`, or (b) move to `closed` when all linked commitments are discharged |
 
 ## Delegated audits
 
@@ -100,4 +102,5 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Added K11 (`backlink-broken` — every `status: promoted` record's `canonical:` target must resolve) and K12 (`retro-status-stale` — `open` retros older than 7 days without `tracked` move, or `tracked` retros eligible for `closed`). Closes audit findings #111 and #112 | Concept/spec gap audit |
 | 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3 (every long-lived spec/concept doc carries an inline changelog). No semantic changes to the audit rules, delegated audits, or exit codes | v6.0.0 adoption + daily-usage gap audit |

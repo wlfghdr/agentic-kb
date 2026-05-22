@@ -22,6 +22,8 @@ Notes use a lighter gate than findings. They are cheap capture surfaces that fee
 
 Retro variants have one additional contract: `/kb note end` on a retro must surface every action item from *What we will change* as a proposed task on the layer's `_kb-tasks/backlog.md`, or as a new decision if the item is a fork rather than a commitment. A retro that closes without any tracked commitments is flagged in the response under Gate notes as a likely "false convergence" (see [`docs/collaboration.md`](../../../../../docs/collaboration.md)); the agent does not silently fix this — the user is asked to confirm whether the retro really had no follow-ups.
 
+Retros also carry an explicit closure lifecycle (`status: open | tracked | closed` in the frontmatter — see `docs/REFERENCE.md` §4 "Retro closure lifecycle"). `/kb note end` on a retro moves it to `status: tracked` when every *What we will change* item is linked to a backlog task or decision; otherwise the retro stays `open` and the false-convergence Gate note fires. `/kb audit` rule K12 reports `open` retros older than 7 days and `tracked` retros eligible for `closed`. `/kb start-week` surfaces unfinished retro commitments (any retro at `status: tracked` whose linked tasks/decisions are still open).
+
 ## Decisions & Tasks
 
 | Subcommand | Action |
@@ -177,7 +179,7 @@ When `/kb` is invoked with no argument, report a read-only consolidated status. 
 | Open decisions | `_kb-decisions/*.md` (not in `archive/`) whose `**Status**:` is not `resolved` / `superseded` / `dropped` |
 | Overdue focus | Bullets in `_kb-tasks/focus.md` with `status: doing` held > 7 days (`focus-overdue-days`) |
 | Stale backlog | Bullets in `_kb-tasks/backlog.md` untouched > 14 days (`backlog-stale-days`) — annotated `stale: true`, never removed |
-| Rituals | Today's `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week` |
+| Rituals | Today's `.kb-log/YYYY-MM-DD.log` or `.kb-log/YYYY/YYYY-MM-DD.log` missing `start-day`; current week missing `start-week`. At automation level 1 (manual only), surface a nudge — *"No `start-day` today. Run `/kb start-day`?"* — because nothing else fires the ritual; at levels 2/3 the scheduler is the source of truth and this signal only warns when the scheduler itself appears stuck (no log entry past the configured cadence + 1 hour) |
 | Upstream digest drift | Declared parent layers whose HEAD commit differs from the latest strategy-digest watermark |
 | Connection drift | `connections` sources changed since the last connection digest watermark |
 | Promotions due | Findings/topics declaring `**Maturity**: durable` not yet referenced in a higher contributor layer |
@@ -215,6 +217,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | Documented the retro closure lifecycle (`status: open \| tracked \| closed`, `/kb note end` transition to `tracked`, `/kb audit` K12 rule, `/kb start-week` surfacing unfinished commitments) under the Notes section. Expanded the triage scan "Rituals" signal to make the level-1 manual-nudge contract explicit (no scheduler at level 1, so the user is the only thing that triggers rituals; signal turns into an active nudge instead of just an observation). Closes audit findings #108 and #112 | Concept/spec gap audit |
 | 2026-05-17 | Added command behavior for tracker-backed decisions and tasks: commands propose confirmed tracker mutations when `primitive-storage` says the tracker is canonical, and KB files become summaries/backlinks rather than competing records | Tracker-backed onboarding design |
 | 2026-05-15 | Renamed the active roadmap/journey section from draft-skill subcommands to product-management subcommands and clarified that these stable skills are enabled by explicit owning-layer config | Release-readiness audit |
 | 2026-05-14 | Added `/kb note retro [topic]` as a third note variant alongside general and meeting notes. Retros use the structured template at `plugins/kb/skills/kb-management/templates/retro.md`, must produce tracked commitments at close time, and surface a "false convergence" Gate note if they close without any. No new feature flag or directory — retros live inside the existing `notes` feature | Daily-reality gap audit across software-company roles |
