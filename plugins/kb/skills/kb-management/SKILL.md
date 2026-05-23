@@ -149,12 +149,13 @@ Full command reference: `references/command-reference.md`.
 9. **Task creation and closure are explicit.** Propose task lines when material is actionable; do not add or archive them silently. External completion signals can reconcile tasks, but archival still needs confirmation.
 10. **Next steps are mandatory.** End every response with 1–3 concrete follow-ups.
 11. **Offer commit/push/PR after substantive change.** Respect branch protection and never force-push silently.
+12. **Capture target is the active layer unless explicit or confirmed.** Every `/kb [text/URL/path]` invocation picks one of three routing modes: (a) **default** — capture into the active layer (the anchor unless context already selected a different contributor-capable layer); (b) **explicit** — the user named a target layer in the invocation, or a `capture-routing:` rule in `.kb-config/layers.yaml` matches the input; (c) **reflection-driven** — the agent inferred a non-default target from the input's content/source/context. Mode (c) requires explicit human confirmation **before** the mutation; no soft-write to a staging area as a fallback. A previous confirmation does not give the agent standing permission for future captures — the supported way to make a target sticky is a `capture-routing:` rule, not implicit memory. The response must name the routing mode and, for mode (c), present the proposed target with a one-line reason and offer the default as a fallback. Direct routing is parallel to `/kb promote`, not a substitute: promote moves material that matured upward; direct capture skips a private→shared hop when the destination was clear from the start. Full contract: `references/capture-routing.md`.
 
 ## Layer-aware flow primitives
 
 | Flow | Command | What it does |
 |------|---------|--------------|
-| Capture | `/kb [input]` | Assess via gate; write finding or note; update topic/decision; route to workstream |
+| Capture | `/kb [input]` | Assess via gate; write finding or note; update topic/decision; route to workstream. Destination follows rule 12: default = active layer; explicit when the user names a target or a `capture-routing:` rule matches; reflection-driven targets require human confirmation before mutation |
 | Review | `/kb review` | Process all pending items in `_kb-inputs/` |
 | Promote | `/kb promote [file] [layer]` | Promote to a named contributor-capable layer, or the next contributor-capable parent layer |
 | Publish | `/kb publish [file] [layer]` | Package reusable knowledge as a skill and publish it to the target layer marketplace |
@@ -250,6 +251,7 @@ The templates this skill instantiates live in `templates/`:
 - `references/command-reference.md` — full subcommand details.
 - `references/connections-lifecycle.md` — connection declaration, watermarks, drift checks, and write-back.
 - `references/tracker-backed-primitives.md` — generic tracker-backed decisions, tasks, ideas, feedback, intake, routing, and audit pattern.
+- `references/capture-routing.md` — destination-layer routing modes for `/kb` capture: default / explicit / reflection-driven, the human-confirmation gate, and the `capture-routing:` config schema.
 - `references/promote-contract.md` — staged-review semantics for `/kb promote`.
 - `references/publish-contract.md` — marketplace packaging, safety validation, and publish response contract.
 - `references/rituals.md` — the four rituals in detail.
@@ -261,6 +263,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Added core rule 12 "Capture target is the active layer unless explicit or confirmed" codifying the three capture-routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate for agent-inferred non-default targets. Capture flow row in the layer-aware flow table now names the routing modes. Added `references/capture-routing.md` to the load-on-demand references list. Direct cross-layer capture becomes a first-class flow parallel to `/kb promote`, not an implicit consequence of "context selects another contributor-capable layer" | Artifact layer routing |
 | 2026-05-17 | Tightened primitive creation behavior to respect `primitive-storage`: tracker-backed decisions, tasks, ideas, feature intake, and roadmap items use the configured tracker as canonical operational home while KB files keep summaries/backlinks only | Tracker-backed onboarding design |
 | 2026-05-17 | Added a load-on-demand reference for tracker-backed primitives so teams can use issue trackers as the operational backbone for shared decisions, tasks, ideas, feedback, and feature intake without duplicating KB ownership | Cross-repo tracker-backbone review |
 | 2026-05-15 | Reframed roadmap and journey rows as stable setup-proposed product-management flow primitives. They remain explicitly gated by `roadmap:` / `journeys:` config on the confirmed owning layer, but are no longer described as unfinished draft-skill handoffs | Release-readiness audit |

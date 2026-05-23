@@ -4,7 +4,8 @@
 
 | Subcommand | Action |
 |-----------|--------|
-| `/kb [text/URL/path]` | Capture: assess + persist via the gate; route to the active layer and workstream |
+| `/kb [text/URL/path]` | Capture: assess + persist via the gate; routes per the three capture-routing modes (default → active layer; explicit → user-named target or `capture-routing:` rule match; reflection-driven → propose target + wait for human confirmation). See [`capture-routing.md`](./capture-routing.md) |
+| `/kb <layer> [text/URL/path]` | Explicit-mode capture: route directly to the named contributor-capable layer (skips the default active-layer destination; no extra confirmation since routing was user-declared) |
 | `/kb review` | Process all pending items in `_kb-inputs/` for the current layer or contributor scope |
 | `/kb promote [file] [layer]` | Promote to the named target layer, or to the next contributor-capable parent layer if omitted |
 | `/kb publish [file] [layer]` | Package knowledge as a skill and publish it to the marketplace attached to the target layer |
@@ -217,6 +218,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Expanded the Capture & Process section: the `/kb [text/URL/path]` row now names the three capture-routing modes and links to the new `capture-routing.md`; added a `/kb <layer> [input]` row for explicit-mode direct routing to a non-default layer | Artifact layer routing |
 | 2026-05-22 | Documented the retro closure lifecycle (`status: open \| tracked \| closed`, `/kb note end` transition to `tracked`, `/kb audit` K12 rule, `/kb start-week` surfacing unfinished commitments) under the Notes section. Expanded the triage scan "Rituals" signal to make the level-1 manual-nudge contract explicit (no scheduler at level 1, so the user is the only thing that triggers rituals; signal turns into an active nudge instead of just an observation). Closes audit findings #108 and #112 | Concept/spec gap audit |
 | 2026-05-17 | Added command behavior for tracker-backed decisions and tasks: commands propose confirmed tracker mutations when `primitive-storage` says the tracker is canonical, and KB files become summaries/backlinks rather than competing records | Tracker-backed onboarding design |
 | 2026-05-15 | Renamed the active roadmap/journey section from draft-skill subcommands to product-management subcommands and clarified that these stable skills are enabled by explicit owning-layer config | Release-readiness audit |

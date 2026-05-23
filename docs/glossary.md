@@ -1,6 +1,6 @@
 # Glossary
 
-> **Version:** 0.8 | **Last updated:** 2026-05-17
+> **Version:** 0.9 | **Last updated:** 2026-05-23
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
@@ -9,7 +9,8 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Agent** | A persona that composes one or more skills for autonomous or semi-autonomous operation. Path in this repo: `plugins/<plugin>/agents/<name>.md`. |
 | **Adoption stage** | The team's posture toward the agent: **Stage 1** (capture discipline, no `/kb` invocation in the loop), **Stage 2** (agent-assisted triage, evaluation gate fires but humans confirm before persistence), **Stage 3** (bounded autonomous knowledge ops, scheduled rituals plus guarded auto-promote). Set by `kb-setup` phase 2 question 11 and surfaced in phase 3 question 12. Full contract: `plugins/kb/skills/kb-setup/references/adoption-stages.md`. |
 | **Anchor layer** | The contributor-capable layer whose `.kb-config/` directory is the source of truth for the workspace graph, automation, and artifact settings. |
-| **Capture** | The flow that turns raw input into a finding, note, or skipped material. Command: `/kb [text/URL/path]`. |
+| **Capture** | The flow that turns raw input into a finding, note, or skipped material. Command: `/kb [text/URL/path]`. The destination layer follows the capture-routing modes (default / explicit / reflection-driven); see `Capture routing` below. |
+| **Capture routing** | The rule that picks which layer a `/kb` capture lands in. Three modes: **default** (no target named → active layer), **explicit** (user named a target layer in the invocation, or a `capture-routing:` rule in `.kb-config/layers.yaml` matches), **reflection-driven** (agent inferred a non-default target from content/source/context — requires human confirmation before mutation). Parallel to `promote`: direct routing covers the first-write destination, promote covers the upward-after-maturation flow. Full contract: `plugins/kb/skills/kb-management/references/capture-routing.md`. |
 | **Capture-only mode** | Synonym for **Adoption stage 1**. The team uses the `agentic-kb` directory contract, evaluation-gate scoring patterns, and audit trail by hand, without invoking the `/kb` agent in the loop. A valid stop, not a half-installed product. |
 | **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and other living shared docs. |
 | **Brief** | A living delivery-intent artifact under `_kb-delivery/briefs/`. It frames the problem, scope, non-goals, success signals, and handoffs before detailed design starts. |
@@ -84,6 +85,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Added `Capture routing` as a canonical term covering the default / explicit / reflection-driven modes and the human-confirmation gate. Extended the `Capture` entry with a pointer to the new term. Version bumped to 0.9 | Artifact layer routing |
 | 2026-05-18 | `Task` entry expanded with split-ownership rule against external trackers (KB tasks own knowledge work; tracker tickets own engineering work; not two views of the same thing). Closes audit finding #103 | Concept/onboarding/process audit |
 | 2026-05-18 | Disambiguated `Contributor-scoped` (artifact visibility) and `Role` (layer mutation rights) so adopters cannot conflate the two axes. Both entries now point at the new "Two orthogonal axes" callout in `docs/REFERENCE.md` §1. Updated the `Adoption stage` entry to reference phase 2 question 11 after the kb-setup phase swap. Closes audit findings #98 and #104 | Concept/onboarding/process audit |
 | 2026-05-17 | Added `GitHub governance profile` as the canonical term for the generated adopter setup package that carries generic issue/project/PR rules, CI, checklist, and local workflow skill | Tracker-backed onboarding hardening |

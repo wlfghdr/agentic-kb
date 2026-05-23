@@ -45,14 +45,15 @@ Rituals are idempotent within a day/week.
 For each new item in `_kb-inputs/`:
 
 1. Read the content.
-2. Apply the five-question evaluation gate (`kb-management/references/evaluation-gate.md`).
-3. Write outcome: finding, topic update, decision, or `skipped`.
-4. Route to the matching workstream.
-5. Log the operation.
-6. Add tasks if any concrete follow-ups are implied.
-7. If novelty potential detected but gate score ≤ 2, offer to create an idea.
-8. Check goal alignment when VMG is declared.
-9. Suggest next steps to the user.
+2. **Pick the destination layer per kb-management SKILL.md rule 12 + `kb-management/references/capture-routing.md`.** Default is the active layer (the anchor unless context already selected a different contributor-capable layer). If the user instruction or a `capture-routing:` rule in `.kb-config/layers.yaml` named a different target, use it (explicit mode). If the input's content/source clearly implies a non-default target and no rule matches, **propose** the target and **wait for the human to confirm** before persisting (reflection-driven mode). Never silently route a self-reflected capture to a non-default layer.
+3. Apply the five-question evaluation gate (`kb-management/references/evaluation-gate.md`).
+4. Write outcome: finding, topic update, decision, or `skipped`.
+5. Route to the matching workstream.
+6. Log the operation, including the routing mode (`default` / `explicit` / `reflection-driven (confirmed)`) and, for explicit mode, the matching rule reference.
+7. Add tasks if any concrete follow-ups are implied.
+8. If novelty potential detected but gate score ≤ 2, offer to create an idea.
+9. Check goal alignment when VMG is declared.
+10. Suggest next steps to the user.
 
 ### 3. Decision lifecycle
 
@@ -80,6 +81,7 @@ Monitor `_kb-ideas/`:
 - Digests run automatically when a parent layer is ahead of the local watermark (automation level 2 or 3).
 - Publication to a layer marketplace is always manual — never auto-publishes a skill, even at level 3.
 - Cross-layer promotions check mission alignment when VMG is declared.
+- **Direct cross-layer capture** is a separate path from promotion (see capture loop step 2 and `kb-management/references/capture-routing.md`): explicit-mode routing skips the private-first hop when the destination was clear from the start; reflection-driven routing requires human confirmation before the agent writes to a non-default layer. The agent never escalates a "I think this belongs in the team layer" hunch into an applied mutation without that confirmation, even at automation level 3 — auto-promote at level 3 walks the parent edge per `auto-promote.confidence-threshold`, it does not pick a non-parent target.
 
 ### 6. Artifact generation
 
@@ -179,6 +181,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Capture loop §2 now picks the destination layer per kb-management SKILL.md rule 12 (default / explicit / reflection-driven), and reflection-driven non-default targets require human confirmation before persistence. Cross-layer flow §5 names direct routing as parallel to promotion and confirms that automation level 3's auto-promote does not pick non-parent targets | Artifact layer routing |
 | 2026-05-10 | Version aligned to 6.0.0 for the v5 adoption-arc closeout. Removed the residual fixed-ladder `L4` references from the cross-layer-flow section ("Publication (L4) is always manual" → "Publication to a layer marketplace is always manual") and the autonomous-loop section ("Never publish to L4 automatically" → "Never publish to any layer marketplace automatically"). Tightened the digest-automation note from the ambiguous "Level 2+" to the explicit "automation level 2 or 3" wording. Corrected the daily-summary and weekly-summary finding paths from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec. No behavioral changes — the publish path was already manual at every automation level | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-30 | Version aligned to 5.5.0 after setup began proposing product-management roadmap/journey ownership from role, goals, sources, and outputs. The operator inherits status and artifact handoffs through kb-management + kb-setup | Product-management surface integration |
 | 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix in kb-management + kb-setup's packaged `kb.prompt.md`. The composed operator now inherits the new `/kb roadmap` and `/kb journeys` handoffs without any change to its own contract | v5.4.2 draft-skill discoverability fix |
