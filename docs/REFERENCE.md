@@ -80,6 +80,24 @@ Single-user layers flatten contributor-scoped primitives to the layer root.
 
 Decision and task promotion have an additional ownership rule: the layer that owns the scope and accountable decider/owner owns the canonical record. If a decision or task is promoted and the target layer now owns the same question or work item, the source-layer record must be closed, archived, or replaced with a backlink to the canonical target record. Keep separate source-layer items only when the source and target layers have genuinely different scopes, recommendations, accountable owners, or sub-task responsibilities.
 
+### Capture-time layer routing
+
+> **Direct cross-layer capture is allowed and sometimes correct. Agent-inferred cross-layer capture requires confirmation.** Captures do not have to land in the private/anchor layer first and propagate upward through `/kb promote`. Direct routing is parallel to promotion, not a substitute — it answers where an artifact should live the **first time it is written**, when the destination is already clear.
+
+Every `/kb [text/URL/path]` invocation picks one of three routing modes:
+
+1. **Default (active layer)** — no explicit target and no strong reflection signal. Capture lands in the active layer (the anchor unless context already selected a different contributor-capable layer). No extra confirmation; the standard mutation transparency rules apply.
+2. **Explicit** — the user named a target layer in the invocation, **or** a `capture-routing:` rule in `.kb-config/layers.yaml` matches the input source/pattern/workstream. Capture lands directly in the named layer. No extra confirmation; the routing was user-declared. The agent cites the matching rule (path + line or rule index) in the response and in `.kb-log/`.
+3. **Reflection-driven** — no explicit target was named, but the input's content, source, or context clearly implies a non-default layer (paste names another team's workstream, URL is from a connected team-layer source, etc.). The agent **proposes** the target, names the reason, and **waits for human confirmation** before mutating. Do not write to a non-default target on inferred intent alone, and do not "soft-write" to a staging area as a fallback.
+
+The default mode is the floor: when neither (2) nor a configured rule fires, captures land in the active layer and the agent proceeds without an extra prompt. A previous confirmation for the same target does not give the agent standing permission — the supported way to make a target sticky is a `capture-routing:` rule (mode 2), not implicit memory.
+
+Direct routing is wrong (fall back to default + later promote) when material may need redaction before it is layer-visible, when the artifact will likely be reshaped substantially as the author thinks it through, when the target layer is `role: consumer`, when the target layer has not enabled the relevant feature, or when the target's `primitive-storage` resolves to `tracker` for the primitive type.
+
+Direct routing is an interactive flow gated on the user. It does **not** apply to automation level 3's scheduled auto-promote, which remains scoped to the parent-edge walk per §6. Teams that want recurring inputs to land in a non-default layer on a schedule should declare a `capture-routing:` rule.
+
+Full contract, schema, audit rule K16 (`capture-routing-unconfirmed`), and response shapes: [`plugins/kb/skills/kb-management/references/capture-routing.md`](../plugins/kb/skills/kb-management/references/capture-routing.md).
+
 ---
 
 ## 2. The Evaluation Gate
@@ -1197,6 +1215,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-05-23 | §1 added "Capture-time layer routing" subsection codifying the three routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate for agent-inferred non-default capture targets. Direct cross-layer capture is now a named first-class flow parallel to `/kb promote`, not an implicit consequence of "context selects another contributor-capable layer". Full schema, audit rule K16, and response shapes live in `plugins/kb/skills/kb-management/references/capture-routing.md`. Closes the spec gap where artifacts could only flow private → shared via promote, and the agent had no codified obligation to confirm a self-chosen non-default destination |
 | 2026-05-22 | Added pointer to `docs/concurrency.md` in the navigation preamble so adopters can find the parallel-promote / backlink-mutation / topic-merge resolution rules without grepping. No structural change in §1–§12. Closes audit finding #106 |
 | 2026-05-22 | §4 added "Backlink (promoted-record stub)" subsection defining the concrete `status: promoted` + `canonical:` + `promoted-at` frontmatter and the standardized banner body that replaces a source-layer record when canonical ownership shifts upward; §4 retro variant added `status: open \| tracked \| closed` frontmatter plus a "Retro closure lifecycle" subsection covering transition triggers, the no-silent-close rule, and supersession; §6 added "HTML artifact lifecycle (commit, host, merge)" subsection covering default `.gitignore` posture per artifact family, `.gitattributes` `merge=ours` for committed live overviews, three hosting modes (`local` / `github-pages` / `external`), and the regeneration repair path; §11 added "Skill versioning, dependencies, and conflict resolution" subsection covering SemVer per skill, `dependencies:` resolution rules, `install-mode: open \| review-required` approval gating, and `priority:`-based conflict resolution across marketplaces. Closes audit findings #107, #111, #112, #113 |
 | 2026-05-18 | §5 layers.yaml example annotated `writeback:` as RESERVED in v6.1.0 (no-op); §6 added the "`auto-promote.confidence-threshold` — what it is" subsection with the 0–5 gate-score definition, the auto-promote eligibility filter, the promote target rule, the conflict-escalation rule, and a worked example; §10 added the "Task ownership — KB vs. external tracker" subsection codifying split ownership (KB owns knowledge work, tracker owns engineering work, read-only links, no parallel status reconciliation) and added a corresponding row to the mapping table. Closes audit findings #102, #103, #105 |

@@ -2,6 +2,8 @@
 
 This reference defines what `/kb promote` means once a source artifact is judged mature enough to move upward.
 
+`/kb promote` is the **upward-after-maturation** path. It is parallel to (not a substitute for) [`capture-routing.md`](./capture-routing.md), which covers the **first-write destination** for new artifacts. If a capture's correct destination was clear from the start — pre-instructed by the user, matched by a configured rule, or confirmed when the agent reflected on the input — direct routing writes the artifact in the target layer without ever needing this promote flow.
+
 ## Canonical flow
 
 Promotion is an applied mutation with immediate destination-layer review. It is not a mailbox drop that waits for a second command before the destination layer becomes coherent.
@@ -92,6 +94,7 @@ Concurrent promotes (two contributors promoting the same artifact, or revising a
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Added the preamble that names this as the upward-after-maturation flow and points at [`capture-routing.md`](./capture-routing.md) as the parallel first-write-destination flow. Stops adopters from reading promote as the *only* way artifacts cross layers | Artifact layer routing |
 | 2026-05-22 | Added "Concurrency" subsection pointing at [`docs/concurrency.md`](../../../../../docs/concurrency.md): promote collisions resolve via author-id suffix + `_kb-log/promote-conflicts.md` entry; backlink mutation after promote refuses `/kb` writes and surfaces a diverged-backlink warning. Closes audit finding #106 | Audit-tracker closeout |
 | 2026-05-22 | Added "Backlink stub format" subsection codifying the `status: promoted` + `canonical:` + `promoted-at` frontmatter and the standardized banner body that replaces a source-layer record when canonical ownership shifts upward, with rules for path resolution, evidence migration, audit detection (K11), and migration-helper rewrites. Closes audit finding #111 | Concept/spec gap audit |
 | 2026-05-06 | Added decision/task ownership semantics for promotion: one canonical record per scope, with source-layer decisions/tasks closed or archived unless their scope genuinely differs | Decision/task ownership follow-up |

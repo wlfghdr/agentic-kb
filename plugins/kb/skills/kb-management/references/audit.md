@@ -28,6 +28,7 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 | K13 | Every entry in `_kb-log/promote-conflicts.md` older than 7 days has a matching dedup or rename mutation in `.kb-log/` (per [`docs/concurrency.md`](../../../../../docs/concurrency.md) case 1) | `promote-conflict-unresolved` | Offer `/kb sync <layer>` so the human picks between dedup (drop the suffixed file) and rename (keep both with distinct slugs) |
 | K14 | Every `status: promoted` source file's mtime is not newer than its `promoted-at:` frontmatter date (per [`docs/concurrency.md`](../../../../../docs/concurrency.md) case 2) | `backlink-diverged` | Offer to (a) revert the source edit (canonical wins) or (b) copy the source edit upward to the canonical record and resync the backlink on the next promote |
 | K15 | Every topic that has carried more than one `## Position — @<author>` heading for longer than `freshness.topic-days` (default 60) is flagged (per [`docs/concurrency.md`](../../../../../docs/concurrency.md) case 3) | `topic-author-sections-unconverged` | Offer to open a convergence decision (`D-YYYY-MM-DD-<topic-slug>.md`) that cites both author sections and propose the rewrite to a single `## Position` heading |
+| K16 | Every capture log entry whose `routing-mode` is `reflection-driven` has a paired confirmation entry in `.kb-log/` before the mutation entry (per [`capture-routing.md`](./capture-routing.md)) | `capture-routing-unconfirmed` | Offer to (a) revert the artifact to the default active-layer location, or (b) declare a `capture-routing:` rule in `.kb-config/layers.yaml` so future captures of this shape route explicitly. A failed confirmation that landed in the default layer is **not** flagged — only writes to a non-default target without a recorded confirmation |
 
 ## Delegated audits
 
@@ -74,7 +75,7 @@ If `.kb-config/layers.yaml` has a `journeys:` block, run `/kb journeys audit` to
 Single triple artifact at `_kb-references/reports/audit-<YYYY-MM-DD>.{md,html,json}`:
 
 1. **Summary chip strip** — total violations per primitive (KB-wide / roadmap / journeys / cross-primitive).
-2. **KB-wide violations** — K1-K10 with corrections.
+2. **KB-wide violations** — K1-K16 with corrections.
 3. **Delegated audits** — embedded summaries from `/kb roadmap audit` and `/kb journeys audit`, with links to their full artifacts.
 4. **Cross-primitive violations** — X1-X4 with corrections.
 5. **Offered next actions** — top 5 corrections across all dimensions, ranked by impact × ease.
@@ -105,6 +106,7 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Added K16 (`capture-routing-unconfirmed` — every reflection-driven capture has a paired confirmation entry in `.kb-log/` before the mutation) for the capture-routing contract in [`capture-routing.md`](./capture-routing.md). Updated the output-shape line to reference K1-K16 | Artifact layer routing |
 | 2026-05-22 | Added K13 (`promote-conflict-unresolved`), K14 (`backlink-diverged`), K15 (`topic-author-sections-unconverged`) for the concurrency contract in [`docs/concurrency.md`](../../../../../docs/concurrency.md). Closes audit finding #106 | Audit-tracker closeout |
 | 2026-05-22 | Added K11 (`backlink-broken` — every `status: promoted` record's `canonical:` target must resolve) and K12 (`retro-status-stale` — `open` retros older than 7 days without `tracked` move, or `tracked` retros eligible for `closed`). Closes audit findings #111 and #112 | Concept/spec gap audit |
 | 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3 (every long-lived spec/concept doc carries an inline changelog). No semantic changes to the audit rules, delegated audits, or exit codes | v6.0.0 adoption + daily-usage gap audit |

@@ -150,6 +150,18 @@ Before promotion, the human or agent should confirm:
 
 Decision and task promotion have one extra check: determine whether the target layer now owns the same decision question or work item and accountable decider/owner. If yes, the target record becomes canonical and the source-layer record is closed, archived, or replaced with a backlink. Keep two active records only when their scopes, recommendations, accountable owners, or sub-task responsibilities genuinely differ.
 
+### 2a. Direct cross-layer capture: explicit OR confirmed
+
+Captures do not have to land in the private/anchor layer first and propagate upward through `/kb promote`. Some material is shared-layer truth from the moment it is written (a meeting note about a team decision, a task that belongs on the team backlog by definition, a retro commitment). The framework supports three routing modes per capture: **default** (active layer), **explicit** (user named a target layer or a `capture-routing:` rule in `.kb-config/layers.yaml` matches), and **reflection-driven** (agent inferred a non-default target from content/source/context).
+
+The shared-workspace contract is the same on every mode: the human stays accountable for the placement decision. Concretely:
+
+- **Default mode** proceeds without an extra prompt — the active layer is the standing destination.
+- **Explicit mode** proceeds without an extra prompt — the user already declared the routing in the invocation or in config. The agent cites the matching instruction in the response.
+- **Reflection-driven mode** is **proposed mutation**, never applied. The agent presents the target with a one-line reason and offers the default as a one-word fallback. The mutation is gated on an explicit confirmation; no soft-write to a staging area as a fallback. A previous confirmation does not give the agent standing permission for future captures — the supported way to make a target sticky is a `capture-routing:` rule.
+
+This protects two failure modes: (a) a contributor's private finding being silently written into a team-visible location because the agent over-interpreted the input, and (b) routine team intake being framed as private sense-making and then needing a redundant promote hop. Full contract: `plugins/kb/skills/kb-management/references/capture-routing.md`.
+
 ### 3. Digests are summaries, not overrides
 
 A digest should inform the receiving layer. It should not silently rewrite the receiving layer's priorities or positions.
@@ -314,6 +326,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-23 | Added shared-workspace rule 2a "Direct cross-layer capture: explicit OR confirmed" covering the three capture-routing modes (default / explicit / reflection-driven) and the human-confirmation contract that protects against (a) silent agent-inferred shared writes and (b) routine team intake being misframed as private sense-making | Artifact layer routing |
 | 2026-05-22 | "Failure modes and recovery" now includes "Parallel mutations on shared layers" pointing at the new `docs/concurrency.md` (promote collisions, backlink mutation, topic merges). Collaboration semantics unchanged; the parallel-mutation failure mode is named explicitly instead of left as the implicit Git-conflict assumption. Closes audit finding #106 | Audit-tracker closeout |
 | 2026-05-15 | Version aligned to 6.1.0 after the release-readiness audit. Collaboration semantics unchanged; this guide now tracks the released retro/role-handbook/delivery-operations surface carried by the rest of the spec | Release-readiness audit |
 | 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
