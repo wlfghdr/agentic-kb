@@ -247,6 +247,59 @@ def check_internal_links() -> list[str]:
     return errors
 
 
+def check_command_list_drift() -> list[str]:
+    """Verify the /kb subcommand list does not drift between the dispatcher
+    (`plugins/kb/commands/kb.md`) and the canonical command reference
+    (`plugins/kb/skills/kb-management/references/command-reference.md`).
+
+    Single source of truth: command-reference.md. The dispatcher's routing
+    precedence list of explicit subcommands MUST be a subset of the verbs
+    declared as subcommand rows in command-reference.md.
+    """
+    errors: list[str] = []
+    dispatcher = REPO / "plugins" / "kb" / "commands" / "kb.md"
+    reference = REPO / "plugins" / "kb" / "skills" / "kb-management" / "references" / "command-reference.md"
+    if not dispatcher.is_file() or not reference.is_file():
+        return errors
+
+    # Extract from the dispatcher: the routing-precedence item 2 lists
+    # explicit subcommands as a backtick-quoted comma-separated list inside
+    # parentheses, e.g. (`review`, `promote`, `publish`, ...).
+    dispatcher_text = dispatcher.read_text(encoding="utf-8")
+    routing_match = re.search(
+        r"Explicit subcommand[^\n]*\(([^)]+)\)",
+        dispatcher_text,
+    )
+    if not routing_match:
+        errors.append(
+            "command-list drift: could not find the explicit-subcommand list "
+            "in plugins/kb/commands/kb.md routing precedence"
+        )
+        return errors
+    dispatcher_verbs = set(re.findall(r"`([a-z][a-z0-9-]*)`", routing_match.group(1)))
+
+    # Extract from command-reference.md: every table row whose first cell
+    # is a `/kb <verb>` or `/kb <verb> <subverb>` backtick-quoted command.
+    reference_text = reference.read_text(encoding="utf-8")
+    reference_verbs: set[str] = set()
+    for m in re.finditer(r"^\|\s*`/kb\s+([a-z][a-z0-9-]*)", reference_text, re.MULTILINE):
+        reference_verbs.add(m.group(1))
+    # Also accept aliases declared in plain prose, e.g. "`/kb todo` and
+    # `/kb tasks` are accepted aliases of `/kb task`."
+    for m in re.finditer(r"`/kb\s+([a-z][a-z0-9-]*)`\s+(?:and|or)\s+`/kb\s+([a-z][a-z0-9-]*)`\s+(?:are\s+accepted\s+aliases|is\s+an?\s+alias)", reference_text):
+        reference_verbs.add(m.group(1))
+        reference_verbs.add(m.group(2))
+
+    missing = sorted(dispatcher_verbs - reference_verbs)
+    if missing:
+        errors.append(
+            "command-list drift: the dispatcher (plugins/kb/commands/kb.md) "
+            f"routes verbs that are not documented in command-reference.md: {missing}. "
+            "Either add them to command-reference.md or remove them from the dispatcher."
+        )
+    return errors
+
+
 def main() -> int:
     all_errors: list[str] = []
     all_errors += check_root_version()
@@ -255,6 +308,7 @@ def main() -> int:
     all_errors += check_versions_and_changelogs()
     all_errors += check_forbidden_terms()
     all_errors += check_internal_links()
+    all_errors += check_command_list_drift()
 
     if all_errors:
         print("Consistency check failed:\n")

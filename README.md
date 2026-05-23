@@ -107,45 +107,7 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 /kb status                    → triage scan / where do I stand right now?
 ```
 
-The full surface follows; you can come back to it as your workflow asks for it.
-
-```
-# Stable core flows
-/kb                        → status / triage scan
-/kb [text/URL/path]        → capture + evaluate
-/kb review                 → process inputs/
-/kb promote [file] [layer] → promote to the next or named contributor layer
-/kb publish [file] [layer] → package as a skill and publish to a layer marketplace
-/kb digest [layer]         → pull parent-layer changes
-/kb digest connections     → pull linked repo / tracker deltas
-/kb sync [layer]           → cross-reference contributor-scoped artifacts
-/kb diff [layer]           → show what's new per contributor or connection
-/kb migrate archives       → preview or apply year-based archive moves
-/kb migrate layer-model    → preview or apply fixed-ladder to layer-graph migration
-/kb note [text]            → create a working note
-/kb note meeting [topic]   → start a meeting note
-/kb idea [text]            → create an idea (seed)
-/kb develop [idea]         → sparring session on an idea
-/kb decide [description]   → open a decision
-/kb brief [title]          → open a delivery-intent artifact
-/kb spec [title]           → open a design-contract artifact
-/kb release [title]        → open a release record
-/kb incident [title]       → open an incident record
-/kb task                   → show focus items
-/kb start-day              → morning briefing
-/kb end-day                → wrap, archive done items, offer commit
-/kb start-week             → Monday planning briefing
-/kb end-week               → Friday 15:00 summary
-/kb audit                  → contradictions, staleness, layer-shape drift
-/kb present [topic]        → versioned HTML presentation (light + dark)
-/kb report [scope]         → topic, layer, or ritual report
-/kb report progress [scope]→ cross-source progress report
-/kb setup                  → interactive onboarding
-
-# Product-management flows (installed with the plugin, scaffolded when setup derives them)
-/kb roadmap                → reconcile plan truth vs delivery reality
-/kb journeys               → author and render journey specs + mocks
-```
+The full subcommand surface (capture, promote, publish, digest, sync, decide, brief/spec/release/incident, rituals, audit, present/report, plus the product-management `/kb roadmap` and `/kb journeys` handoffs) lives in one canonical reference: [`plugins/kb/skills/kb-management/references/command-reference.md`](plugins/kb/skills/kb-management/references/command-reference.md). The README intentionally does not duplicate the full list — `command-reference.md` is the single source of truth, and CI checks that the dispatcher and reference stay in sync.
 
 ### Roadmap and journeys as one operating system
 
@@ -378,24 +340,4 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 ## Changelog
 
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-05-18 | Added a "Most used (start here)" five-command shortlist above the full 33-command Stable core flows block so new readers see what to try first without learning the whole surface. "Where to start" regrouped by audience — adopters, model-readers, team-rollout-decision-makers, and maintainers/QA each get a focused subsection instead of one flat list. Closes audit findings #100 and #101 | Concept/onboarding/process audit |
-| 2026-05-18 | VS Code Copilot Chat section now labels the install path as **Preview** (VS Code Agent plugins are a Microsoft Preview feature), notes the user-level-only scope constraint, and surfaces `scripts/install --target vscode` as the stable fallback. README "rip it out in five" sentence now links to the new `docs/uninstall.md`. Closes audit findings #95 and #97 | Concept/onboarding/process audit |
-| 2026-05-18 | Honest "autonomous knowledge ops" wording: the Stage 3 row in the adoption-curve table no longer reads as if a scheduler shipped — it now says the cadence is one the adopter wires (OS cron, CI, or harness-native automation), and the Status row drops "Stable reference implementation" in favor of "Stable behavioral spec (executed by the harness's agent; no runtime ships)". "Lean by construction" updated in lock-step. Closes audit findings #94 and #96 | Concept/onboarding/process audit |
-| 2026-05-17 | Added the generic GitHub operating-backbone story: setup can now generate issue forms, PR template, governance workflow, labeler, manual setup checklist, and repo-local tracker workflow skill when adopters choose GitHub as the issue/project/PR backbone | Tracker-backed onboarding hardening |
-| 2026-05-15 | Rolled the public framework status to 6.1.0 after the release-readiness audit: the role-handbook/retro bundle moved from `[Unreleased]` into a real release, roadmap/journey skill language now presents them as stable setup-proposed product-management flows, and the README compatibility model now lists supported tiers without foregrounding unsupported buckets | Release-readiness audit |
-| 2026-05-14 | Added `docs/role-handbook.md` to "Where to start" as the role-by-role companion to the operating model, and updated the `day-in-the-life` pointer to mention the new PM, EM, and on-call SRE scenes | Daily-reality gap audit across software-company roles |
-| 2026-05-10 | Rolled the public framework status to 6.0.0 after the v5 adoption-arc closeout: promoted `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` to canonical command verbs (matching the operating-model artifact chain and the templates the skill instantiates), surfaced the previously undocumented `/kb publish`, `/kb sync`, `/kb diff`, `/kb start-week`, `/kb end-day`, `/kb audit`, and `/kb report [scope]` flows in the public command list, removed the residual fixed-ladder `L1`/`L2/L3`/`L4` drift from the routing prompt and operator agent, aligned the four delivery/operations file formats in `docs/REFERENCE.md` §4 with the templates, and corrected the year-nested archive and weekly-summary paths so daily and weekly rituals write where the spec says they should | v6.0.0 adoption + daily-usage gap audit |
-| 2026-05-06 | Rolled the public framework status to 5.6.0 after adding canonical ownership semantics for promoted decisions and tasks, so adopters do not leave parallel active source and target records behind | Decision/task ownership follow-up |
-| 2026-04-30 | Rolled the public framework status to 5.5.1 after correcting the HTML landing-page value proposition so product direction, roadmaps, journeys, delivery, and operations are visible in the top-level story and first-class building blocks | HTML value-prop correction |
-| 2026-04-30 | Rolled the public framework status to 5.5.0 after making roadmap and journey work a setup-proposed product-management surface: `/kb setup` now derives ownership/config from role, goals, sources, and desired outputs instead of leaving the draft skills hidden behind manual config | Product-management surface integration |
-| 2026-04-29 | Rolled the public framework status to 5.4.2 after the draft-skill discoverability fix: the packaged `/kb` dispatcher now routes `/kb roadmap` and `/kb journeys` to the matching draft skills, the kb-management trigger surface picks up roadmap/journey keywords, and the visual landing page advertises the two opt-in subcommands so marketplace adopters can find them | v5.4.2 draft-skill discoverability fix |
-| 2026-04-27 | Rolled the public framework status to 5.4.1 after the documentation-gap follow-up: added dedicated connection lifecycle and publish contract references, clarified the repo-as-OS bridge field name to `connections.product-repos[]`, and documented VMG sourcing/update behavior in setup flow | 5.4.1 patch release |
-| 2026-04-27 | Added the "Where this meets you on the agentic curve" section with the three-stage adoption ladder (capture discipline → agent-assisted triage → bounded autonomous), positioned `agentic-kb` as the knowledge-ops layer that pairs with any repo-as-OS framework, and rolled the public framework status to 5.4.0 | Soft-transition extension |
-| 2026-04-26 | Added the operating-model entry point, surfaced the new delivery/operations handoff artifacts in the main value proposition, and rolled the public framework status to 5.3.0 | Software-engineering operating-model gap closure |
-| 2026-04-25 | v5.2.0 release alignment — bumped the spec badge and Status row to match the new framework version that ships the kb-management trigger expansion and the kb-setup goal-oriented question flow | v5.2.0 trigger + setup rework |
-| 2026-04-25 | Clarified the setup proof strip by separating the quick plugin install from the longer guided workspace scaffold and added the `first-hour` walkthrough to "Where to start" | Deep spec-audit follow-up |
-| 2026-04-25 | Removed the "One-page visual overview → index.html" pointer from the header and the `index.html` entry from "Where to start" so the README is the canonical narrative entry point and the visual landing page stands on its own | Index marketing trim |
-| 2026-04-25 | Concept-audit follow-up: relabeled the compatibility model so the "three setup tiers" wording matches the table (rules-only and not-feasible moved into a separate "not yet covered" block) | Concept-audit drift correction |
-| 2026-04-25 | Updated the public command summary and release status for 5.1.0, including the new migration helper flows that close the remaining 5.0 follow-up gaps | v5.1.0 follow-up closeout |
+Release history lives in [`CHANGELOG.md`](CHANGELOG.md). Pre-v5.0 history is archived in [`CHANGELOG.archive.md`](CHANGELOG.archive.md).

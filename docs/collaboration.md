@@ -265,6 +265,18 @@ Recovery:
 - assign a human owner,
 - do not resolve by summary wording alone.
 
+### Parallel mutations on shared layers
+
+Symptom: two contributors promote the same artifact, edit the same topic, or revise a source after promote — all on the same day.
+
+These are concurrency cases, not collaboration habits, and they have deterministic resolution rules in [`docs/concurrency.md`](./concurrency.md):
+
+- **Promote collisions** resolve via author-id suffix on the second promote plus a `_kb-log/promote-conflicts.md` entry. The human reconciles via `/kb sync`.
+- **Backlink mutation** (editing a `status: promoted` source after promote) is refused by `/kb` and surfaced as a diverged-backlink warning on the next `/kb sync` or `/kb audit`.
+- **Topic merges** use the author-sectioned format (`## Position — @<author> <date>`) so concurrent edits land as coexisting sections; convergence is an explicit operation that opens a decision.
+
+The collaboration goal is the same as for the other failure modes: surface disagreement, do not flatten it.
+
 ### Automation surprise
 
 Symptom: a human cannot tell what the agent changed or why.
@@ -302,6 +314,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-22 | "Failure modes and recovery" now includes "Parallel mutations on shared layers" pointing at the new `docs/concurrency.md` (promote collisions, backlink mutation, topic merges). Collaboration semantics unchanged; the parallel-mutation failure mode is named explicitly instead of left as the implicit Git-conflict assumption. Closes audit finding #106 | Audit-tracker closeout |
 | 2026-05-15 | Version aligned to 6.1.0 after the release-readiness audit. Collaboration semantics unchanged; this guide now tracks the released retro/role-handbook/delivery-operations surface carried by the rest of the spec | Release-readiness audit |
 | 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
 | 2026-05-06 | Added the decision/task promotion ownership rule so shared promotions create one canonical record instead of parallel active source and target decisions/tasks | Decision/task ownership follow-up |
