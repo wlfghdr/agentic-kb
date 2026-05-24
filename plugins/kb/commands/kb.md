@@ -33,7 +33,7 @@ Evaluate in order and stop at the first match:
 4. **URL or pasted text** → capture per the routing-mode rule (kb-management SKILL.md rule 12 + `references/capture-routing.md`):
    - **Default**: no target named and no strong reflection signal → capture into the active layer (the anchor unless context already selected a different contributor-capable layer). Apply the five-question evaluation gate.
    - **Explicit**: the user named a target layer in the invocation (e.g. `/kb team-observability <input>`), OR a `capture-routing:` rule in `.kb-config/layers.yaml` matches the input. Capture lands directly in the named layer; cite the matching rule (path + line or rule index) in the response.
-   - **Reflection-driven**: no explicit target was named, but the input's content/source/context clearly implies a non-default layer. **Propose** the target, name the reason, and **wait for human confirmation** before mutating. Do not soft-write to a staging area as a fallback; always offer the default as a one-word fallback.
+   - **Reflection-driven**: no explicit target was named, but the input's content/source/context matches the strong-signal rubric in `references/capture-routing.md` for a non-default contributor-capable layer. **Propose** the target, name the reason, and **wait for human confirmation** before mutating. Weak or ambiguous signals fall through to default. Do not soft-write to a staging area as a fallback; always offer the default as a one-word fallback.
 5. **File path inside a known KB layer** → layer-appropriate operation (review/update-topic/decide) on that file.
 6. **Bare `/kb` (no input)** → run the **triage scan** below and present the result.
 
@@ -91,6 +91,7 @@ Follow the rules in the `kb-management` skill's SKILL.md. Always:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Routing precedence now points reflection-driven capture at the strong-signal rubric in `references/capture-routing.md` and says weak or ambiguous signals fall through to default, matching the issue #126 operational definition | Issue #126 |
 | 2026-05-23 | Expanded routing-precedence step 4 (URL or pasted text) into the three capture-routing modes (default / explicit / reflection-driven) and the human-confirmation gate for the reflection-driven mode. Mirrors kb-management SKILL.md rule 12 and the `capture-routing.md` contract | Artifact layer routing |
 | 2026-05-22 | Removed two dead verbs (`browse`, `install`) from the explicit-subcommand routing list. They had no implementation, no documentation, and no description anywhere — caught by the new command-list drift guard in `scripts/check_consistency.py`. Closes audit finding #109 | Audit-tracker closeout |
 | 2026-05-15 | Reframed the `/kb roadmap` and `/kb journeys` routing row as stable product-management subcommands gated by explicit owning-layer config, removing the old draft-skill wording from the active command-generation surface | Release-readiness audit |
