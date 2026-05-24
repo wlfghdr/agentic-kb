@@ -59,6 +59,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **README first command (#117)** — replaced the non-canonical `/kb capture [text/URL/path]` shortlist entry with the canonical `/kb [text/URL/path]`, matching `command-reference.md` and the dispatcher routing surface.
 - **Lychee local compatibility** — adjusted the dead-link config so local Lychee versions that do not accept `include_fragments = false` can parse it, disabled local cache artifacts, and excluded the generated workspace `index.html` template whose relative links are valid only after setup renders it into an adopter KB.
 
 ## [6.1.0] — 2026-05-15

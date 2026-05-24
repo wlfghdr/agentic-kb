@@ -100,7 +100,7 @@ There is exactly one user-facing command: **`/kb`**. The core plugin ships stabl
 **Most used (start here).** New adopters do not need to learn the full surface to get value. After `/kb setup`, the wizard emits a curated 3–5 command shortlist tailored to your adoption stage. The five you'll use first in almost every setup:
 
 ```
-/kb capture [text/URL/path]   → file something into the KB through the evaluation gate
+/kb [text/URL/path]           → file something into the KB through the evaluation gate
 /kb note meeting [topic]      → start a meeting note (also: /kb note retro [topic])
 /kb decide [description]      → open a decision
 /kb start-day                 → morning briefing
