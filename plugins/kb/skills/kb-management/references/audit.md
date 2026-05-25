@@ -36,7 +36,7 @@ When the listed skills are installed, `/kb audit` delegates their domain-specifi
 
 ### Delegated to `kb-roadmap`
 
-If `.kb-config/layers.yaml` has a `roadmap:` block, run `/kb roadmap audit --scope <each>` for every configured scope. Pulls in the 15 rules from `kb-roadmap/references/audit.md`:
+If `.kb-config/layers.yaml` has a `roadmap:` block, run `/kb roadmap audit --scope <each>` for every configured scope. Pulls in the 15 rules from [`kb-roadmap/references/audit.md`](../../kb-roadmap/references/audit.md):
 
 - R1 — every non-infra item cites a journey step
 - R2 — every citation resolves
@@ -51,15 +51,15 @@ If `.kb-config/layers.yaml` has a `roadmap:` block, run `/kb roadmap audit --sco
 
 ### Delegated to `kb-journeys`
 
-If `.kb-config/layers.yaml` has a `journeys:` block, run `/kb journeys audit` to check:
+If `.kb-config/layers.yaml` has a `journeys:` block, run `/kb journeys audit`. Pulls in the 19 rules from [`kb-journeys/references/audit.md`](../../kb-journeys/references/audit.md):
 
-- Metadata block present and parseable per journey
-- Required sections in order
-- Step ids match pattern + unique
-- Mock envelopes balanced + unique slugs
-- Every interface table row references an existing journey
-- Cross-reference links resolve
-- Readiness coverage (warn)
+- J1/J2 — metadata and required section integrity
+- J3/J4/J5 — step id format, collisions, and rename safety
+- J6/J7/J8 — readiness and configured actor coverage
+- J9/J10/J11/J12 — mock envelope and standalone mock integrity
+- J13/J14 — interface and cross-reference resolution
+- J15/J16 — roadmap citation and coverage checks when roadmap links are configured
+- J17/J18/J19 — overview drift, ownership metadata, and unused configured actors
 
 ### Cross-primitive checks (run by kb-management directly)
 
@@ -106,6 +106,7 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Linked delegated roadmap and journeys audits to their canonical audit references and replaced the inline journeys checklist with the J1-J19 delegated rule summary from `kb-journeys/references/audit.md` | Issue #125 |
 | 2026-05-23 | Tightened K16 wording so it is mechanically checkable: it now cites the required `routing-mode` / `correlation-id` log keys, the propose → confirm → capture line ordering, and the supported-fallback exemption. Aligned with the "Log format" subsection added to [`capture-routing.md`](./capture-routing.md) | Copilot review #116 |
 | 2026-05-23 | Added K16 (`capture-routing-unconfirmed` — every reflection-driven capture has a paired confirmation entry in `.kb-log/` before the mutation) for the capture-routing contract in [`capture-routing.md`](./capture-routing.md). Updated the output-shape line to reference K1-K16 | Artifact layer routing |
 | 2026-05-22 | Added K13 (`promote-conflict-unresolved`), K14 (`backlink-diverged`), K15 (`topic-author-sections-unconverged`) for the concurrency contract in [`docs/concurrency.md`](../../../../../docs/concurrency.md). Closes audit finding #106 | Audit-tracker closeout |
