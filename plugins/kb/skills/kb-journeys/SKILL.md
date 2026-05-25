@@ -148,6 +148,8 @@ Every journey file opens with a metadata block and required sections. See `refer
 
 Full reference: `references/command-reference.md`.
 
+Concurrency contract: [`docs/concurrency.md`](../../../../docs/concurrency.md) governs shared-layer promote collisions, diverged backlinks, topic merges, and append-only logs. Journey flows that read or write shared KB artifacts must honor the same `/kb sync` and `/kb audit` reconciliation rules.
+
 | Command | Purpose |
 |---|---|
 | `/kb journeys` | Scan state; surface next action (unrendered journey, stale mock, missing readiness) |
@@ -229,6 +231,7 @@ The shipped helper scripts cover artifact rendering and standalone-mock extracti
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Added a concurrency-contract pointer so journey adopters can find the shared-layer `/kb sync` and `/kb audit` reconciliation rules from the skill spec. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-15 | Promoted the journeys skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified helper coverage without presenting authoring/audit as unfinished | Release-readiness audit |
 | 2026-05-08 | Bumped to v0.2.0, removed the stale `overview.html.hbs` template claim, and clarified current helper-script coverage plus optional dependency fallbacks | Integration pass |
 | 2026-04-30 | Promoted journey work into the product-management surface: setup-derived ownership, broader journey/flow triggers, and value-oriented step-title rules | Product-management surface integration |

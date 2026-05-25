@@ -111,6 +111,13 @@ def normalize_anchor(text: str) -> str:
     return value
 
 
+def github_anchor(text: str) -> str:
+    value = text.strip().lower()
+    value = re.sub(r"\s", "-", value)
+    value = re.sub(r"[`*_~\[\](){}.!?,:;\"'\\&]", "", value)
+    return value.strip("-")
+
+
 def is_external(target: str) -> bool:
     lower = target.lower()
     return any(
@@ -259,7 +266,9 @@ def check_internal_links() -> list[str]:
             else:
                 txt = p.read_text(encoding="utf-8", errors="ignore")
                 heading_cache[p] = {
-                    normalize_anchor(m.group(1)) for m in HEADING_RE.finditer(txt)
+                    anchor
+                    for m in HEADING_RE.finditer(txt)
+                    for anchor in (normalize_anchor(m.group(1)), github_anchor(m.group(1)))
                 }
         return heading_cache[p]
 
@@ -294,7 +303,7 @@ def check_internal_links() -> list[str]:
                 errors.append(f"{rel} -> {raw} (target missing)")
                 continue
             if anchor and target.suffix.lower() == ".md":
-                if normalize_anchor(anchor) not in headings_of(target):
+                if anchor not in headings_of(target) and normalize_anchor(anchor) not in headings_of(target):
                     errors.append(f"{rel} -> {raw} (anchor '{anchor}' missing)")
     return errors
 
