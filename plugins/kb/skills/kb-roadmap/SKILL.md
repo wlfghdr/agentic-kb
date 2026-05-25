@@ -54,6 +54,8 @@ One entry point — `/kb roadmap` — with context-driven subcommands:
 
 Full reference: `references/command-reference.md`.
 
+Concurrency contract: [`docs/concurrency.md`](../../../../docs/concurrency.md) governs shared-layer promote collisions, diverged backlinks, topic merges, and append-only logs. Roadmap flows that read or write shared KB artifacts must honor the same `/kb sync` and `/kb audit` reconciliation rules.
+
 ## Core rules (always apply)
 
 1. **Every run writes three artifacts** — Markdown, HTML, JSON — with the same base name and timestamp. The JSON is authoritative; MD + HTML render from it.
@@ -254,6 +256,7 @@ The shipped helper script covers config-driven generation and dry-run validation
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Added a concurrency-contract pointer so roadmap adopters can find the shared-layer `/kb sync` and `/kb audit` reconciliation rules from the skill spec. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-15 | Promoted the roadmap skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified that apply-capable flows are stable but gated by explicit commands and confirmations | Release-readiness audit |
 | 2026-05-08 | Bumped to v0.2.0 and clarified the current helper-script adapter/runtime coverage against the broader draft command surface | Integration pass |
 | 2026-04-30 | Promoted roadmap work into the product-management surface: added value-first presentation rules, draft/agreed/shipped commitment visibility, setup-proposed status, and broader natural-language triggers | Product-management surface integration |

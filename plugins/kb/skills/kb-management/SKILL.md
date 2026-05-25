@@ -136,6 +136,8 @@ There is **one** user-facing command: `/kb`. Infer layer and action from context
 
 Full command reference: `references/command-reference.md`.
 
+Concurrency contract: [`docs/concurrency.md`](../../../../docs/concurrency.md) defines the promote-collision, diverged-backlink, topic-merge, and append-only log cases that `/kb sync` and `/kb audit` reconcile.
+
 ## Core rules
 
 1. **Run the evaluation gate before persistence.** Score material against the five gate questions. The score is the count of yes answers. Q4 + Q2 form the lighter note gate.
@@ -161,7 +163,7 @@ Full command reference: `references/command-reference.md`.
 | Publish | `/kb publish [file] [layer]` | Package reusable knowledge as a skill and publish it to the target layer marketplace |
 | Digest layer | `/kb digest [layer]` | Pull changes from a parent or adjacent layer |
 | Digest connections | `/kb digest connections` | Pull deltas from configured product repos and trackers |
-| Sync | `/kb sync [layer]` | Cross-reference contributor-scoped topics or findings |
+| Sync | `/kb sync [layer]` | Cross-reference contributor-scoped topics or findings; reconcile promote conflicts, diverged backlinks, and unresolved topic author-sections per [`docs/concurrency.md`](../../../../docs/concurrency.md) |
 | Diff | `/kb diff [layer]` | Show new material per contributor or connection |
 | Migrate | `/kb migrate archives` / `/kb migrate layer-model` | Preview or apply legacy archive and layer-model migrations |
 | Task | `/kb task` / `/kb task done [item]` | Manage focus/backlog |
@@ -252,6 +254,7 @@ The templates this skill instantiates live in `templates/`:
 - `references/connections-lifecycle.md` — connection declaration, watermarks, drift checks, and write-back.
 - `references/tracker-backed-primitives.md` — generic tracker-backed decisions, tasks, ideas, feedback, intake, routing, and audit pattern.
 - `references/capture-routing.md` — destination-layer routing modes for `/kb` capture: default / explicit / reflection-driven, the human-confirmation gate, and the `capture-routing:` config schema.
+- [`docs/concurrency.md`](../../../../docs/concurrency.md) — shared-layer concurrency contract for promote collisions, backlink divergence, topic merges, and append-only logs.
 - `references/promote-contract.md` — staged-review semantics for `/kb promote`.
 - `references/publish-contract.md` — marketplace packaging, safety validation, and publish response contract.
 - `references/rituals.md` — the four rituals in detail.
@@ -263,6 +266,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Added a discoverability pointer to `docs/concurrency.md` and expanded the `/kb sync [layer]` flow row so the management skill exposes both responsibilities: contributor-scoped cross-reference reconciliation and concurrency reconciliation. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-23 | Added core rule 12 "Capture target is the active layer unless explicit or confirmed" codifying the three capture-routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate for agent-inferred non-default targets. Capture flow row in the layer-aware flow table now names the routing modes. Added `references/capture-routing.md` to the load-on-demand references list. Direct cross-layer capture becomes a first-class flow parallel to `/kb promote`, not an implicit consequence of "context selects another contributor-capable layer" | Artifact layer routing |
 | 2026-05-17 | Tightened primitive creation behavior to respect `primitive-storage`: tracker-backed decisions, tasks, ideas, feature intake, and roadmap items use the configured tracker as canonical operational home while KB files keep summaries/backlinks only | Tracker-backed onboarding design |
 | 2026-05-17 | Added a load-on-demand reference for tracker-backed primitives so teams can use issue trackers as the operational backbone for shared decisions, tasks, ideas, feedback, and feature intake without duplicating KB ownership | Cross-repo tracker-backbone review |

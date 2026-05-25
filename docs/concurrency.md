@@ -1,8 +1,10 @@
 # Concurrency
 
-> **Version:** 6.1.0 | **Last updated:** 2026-05-22
+> **Version:** 6.1.0 | **Last updated:** 2026-05-24
 
 This guide defines what `agentic-kb` does when two contributors mutate shared layer state at the same time. The structural spec ([`docs/REFERENCE.md`](./REFERENCE.md)) defines layout and formats; the collaboration guide ([`docs/collaboration.md`](./collaboration.md)) defines the human contract. This guide names the concrete conflict cases and the rules `/kb promote`, `/kb sync`, and Git itself follow when contributors collide.
+
+The user-facing `/kb sync [layer]` command contract is canonical in [`command-reference.md`](../plugins/kb/skills/kb-management/references/command-reference.md#digests-&-layer-flow): it covers both contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases in this guide.
 
 ## Why a separate guide
 
@@ -129,6 +131,7 @@ Until those exist, the rules above are the only contract; CI does not currently 
 - [`docs/REFERENCE.md`](./REFERENCE.md) §4 "Backlink (promoted-record stub)" — backlink format consumed by case 2.
 - [`docs/REFERENCE.md`](./REFERENCE.md) §6 "HTML artifact lifecycle" — `merge=ours` for live overviews referenced in case 4.
 - [`docs/collaboration.md`](./collaboration.md) "Failure modes and recovery" — human-facing summary of the same cases.
+- [`plugins/kb/skills/kb-management/references/command-reference.md`](../plugins/kb/skills/kb-management/references/command-reference.md#digests-&-layer-flow) — `/kb sync [layer]` user-facing command contract.
 - [`plugins/kb/skills/kb-management/references/promote-contract.md`](../plugins/kb/skills/kb-management/references/promote-contract.md) — promote semantics consumed by cases 1 and 2.
 - [`plugins/kb/skills/kb-management/references/audit.md`](../plugins/kb/skills/kb-management/references/audit.md) — K11 (broken backlink), K13 (unresolved promote conflict), K14 (diverged backlink), K15 (unconverged author-sectioned topic).
 
@@ -136,4 +139,5 @@ Until those exist, the rules above are the only contract; CI does not currently 
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Added the bidirectional command-reference link so adopters can see that `/kb sync [layer]` covers both contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases in this guide. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-22 | Initial concurrency guide closing audit finding #106 — promote collisions resolve via author-id suffix + `_kb-log/promote-conflicts.md` entry; backlink mutation after promote refuses `/kb` writes against `status: promoted` source files and surfaces a diverged-backlink warning at the next `/kb sync` / `/kb audit`; topic merges land as author-sectioned `## Position — @<author> <date>` blocks so concurrent edits coexist; `.kb-log/` and live overviews follow append-only and `merge=ours` rules already declared in REFERENCE.md §6. New `/kb audit` rules K13–K15 surface unresolved conflicts, diverged backlinks, and long-running author disagreement. Closes audit finding #106 | Concept/spec-gap audit closeout |

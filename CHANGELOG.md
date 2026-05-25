@@ -59,7 +59,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
-- **CODEOWNERS plugin paths (#119)** — replaced stale root `/skills/` and `/agents/` ownership globs with the current `plugins/kb/skills/` and `plugins/kb/agents/` layout, keeping those specific rules after the broad `/plugins/` rule so skill and agent edits route to `@skill-authors` when those teams exist.
+- **`/kb sync` contract reconciliation (#124)** — `command-reference.md` and `docs/concurrency.md` now cross-link so `/kb sync [layer]` has one discoverable meaning: cross-reference contributor-scoped topics/findings and reconcile promote conflicts, diverged backlinks, and unresolved topic author-sections. `kb-management`, `kb-roadmap`, and `kb-journeys` skill specs now point at the concurrency contract so adopters reading skill specs in isolation can find the shared-layer rules.
 - **README first command (#117)** — replaced the non-canonical `/kb capture [text/URL/path]` shortlist entry with the canonical `/kb [text/URL/path]`, matching `command-reference.md` and the dispatcher routing surface.
 - **Lychee local compatibility** — adjusted the dead-link config so local Lychee versions that do not accept `include_fragments = false` can parse it, disabled local cache artifacts, and excluded the generated workspace `index.html` template whose relative links are valid only after setup renders it into an adopter KB.
 
@@ -81,7 +81,6 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
-- **Day-in-the-life version drift (#122)** — `docs/examples/day-in-the-life.md` now carries the v6.1.0 header after a command-surface verification pass. The walkthrough makes the external-read preflight explicit and uses the canonical `/kb incident [title]` update flow instead of an undocumented incident-resolve shorthand. `scripts/check_consistency.py` now fails when a markdown file's version header is older than the current framework minor version unless the file is narrowly allowlisted as independently versioned or intentionally pinned.
 - **Release-readiness audit closeout** — version surfaces now agree on v6.1.0 across `VERSION`, manifests, README, and the visual landing page; first-run acceptance now covers delivery/operations and retro notes; and the product-management roadmap/journey command surface is documented as stable setup-proposed functionality rather than an unfinished add-on.
 - **Manifest version drift guard** — `scripts/check_consistency.py` now fails when the root marketplace manifest, Claude marketplace manifest, or generated per-plugin manifest drift from `VERSION`, keeping release metadata aligned in CI.
 - **GitHub Pages release build** — the repository now ships `.nojekyll` so the static landing page deploy does not interpret intentional skill/template tokens as Liquid expressions.
