@@ -70,6 +70,12 @@ VERSION_RE = re.compile(r"\*\*Version:\*\*\s*(\d+)\.(\d+)(?:\.(\d+))?")
 CHANGELOG_RE = re.compile(r"^##\s+Changelog\s*$", re.MULTILINE)
 HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 INLINE_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+COMMAND_COUNT_CLAIM_RE = re.compile(r"\b(\d+)[ -]command(?:s)?\b", re.IGNORECASE)
+COMMAND_SURFACE_CONTEXT_RE = re.compile(
+    r"\b(command[- ]surface|full\s+(?:`/kb`\s+)?surface|full\s+command|"
+    r"full\s+stable\s+core\s+flows|flat\s*list|flatlist)\b",
+    re.IGNORECASE,
+)
 
 
 def iter_long_lived_docs():
@@ -327,6 +333,9 @@ def check_command_list_drift() -> list[str]:
     # Extract from command-reference.md: every table row whose first cell
     # is a `/kb <verb>` or `/kb <verb> <subverb>` backtick-quoted command.
     reference_text = reference.read_text(encoding="utf-8")
+    reference_command_rows = list(
+        re.finditer(r"^\|\s*`/kb(?:\s+[^`|]+)?`", reference_text, re.MULTILINE)
+    )
     reference_verbs: set[str] = set()
     for m in re.finditer(r"^\|\s*`/kb\s+([a-z][a-z0-9-]*)", reference_text, re.MULTILINE):
         reference_verbs.add(m.group(1))
@@ -343,6 +352,27 @@ def check_command_list_drift() -> list[str]:
             f"routes verbs that are not documented in command-reference.md: {missing}. "
             "Either add them to command-reference.md or remove them from the dispatcher."
         )
+
+    live_command_count = len(reference_command_rows)
+    for doc in iter_all_docs():
+        rel = doc.relative_to(REPO)
+        text = doc.read_text(encoding="utf-8", errors="ignore")
+        for line_no, line in enumerate(text.splitlines(), start=1):
+            for sentence in re.split(r"(?<=[.!?])\s+", line):
+                if not COMMAND_SURFACE_CONTEXT_RE.search(sentence):
+                    continue
+                for match in COMMAND_COUNT_CLAIM_RE.finditer(sentence):
+                    claimed = int(match.group(1))
+                    if claimed <= 10 and "shortlist" in sentence.lower():
+                        continue
+                    if claimed == live_command_count:
+                        continue
+                    errors.append(
+                        "command-list drift: "
+                        f"{rel}:{line_no} claims {claimed} commands, but "
+                        f"command-reference.md lists {live_command_count} `/kb` rows. "
+                        "Use count-free phrasing or update the canonical reference."
+                    )
     return errors
 
 
