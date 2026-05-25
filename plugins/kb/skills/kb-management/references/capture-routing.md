@@ -12,9 +12,41 @@ Every `/kb [text/URL/path]` invocation picks exactly one of these modes. The age
 |------|---------|-------------------|
 | **Default (active layer)** | No explicit target named; agent has no strong reflection-based signal to prefer another layer | Capture into the active layer (the anchor unless context already selected a different contributor-capable layer). Apply the evaluation gate. Apply normally — no extra confirmation needed beyond the standard mutation transparency rules |
 | **Explicit** | The user named a target layer in the invocation (e.g. `/kb team-observability <input>`, `/kb note team:platform <text>`), **or** a configured rule in `.kb-config/layers.yaml` (`capture-routing:` block — see "Configured routing rules" below) matches the source | Capture directly into the named layer, contributor scope if applicable. No extra confirmation step — the user already declared the routing |
-| **Reflection-driven** | No explicit target was named, but the input's content, source, or context clearly implies a non-default layer (paste names another team's workstream, URL is from a connected team-layer source, etc.) | **Propose the target layer, name the reason, and wait for human confirmation before mutating.** Do not write to a non-default layer on inferred intent alone |
+| **Reflection-driven** | No explicit target was named, but the input's content, source, or context matches the strong-signal rubric below for a non-default contributor-capable layer | **Propose the target layer, name the reason, and wait for human confirmation before mutating.** Do not write to a non-default layer on inferred intent alone |
 
 Default mode is the floor: when neither **Explicit** (a user-named target or a configured `capture-routing:` rule) nor **Reflection-driven** (an agent-proposed target that the user confirmed) fires, captures land in the active layer and the agent proceeds without an extra prompt.
+
+## Reflection-driven inference heuristics
+
+Reflection-driven routing is intentionally narrower than "the agent has a hunch." The agent proposes a non-default target only when at least one strong signal points at a contributor-capable layer and no weak or ambiguous signal undermines that target. If the signal is weak, shared by multiple layers, or depends on private interpretation, fall through to **Default** and let the user promote later.
+
+Strong signals — propose:
+
+- The paste contains an exact-match workstream name declared by another contributor-capable layer, and the captured artifact is about that workstream's owned task, decision, meeting, or status.
+- The URL host and repository/path match a `connections.product-repos[].remote` or `trackers[].repo` entry declared on another contributor-capable layer.
+- The input prefix matches a stored `capture-routing:` pattern with a high-confidence partial match, such as a stable paste prefix where only the issue id, date, or meeting slug varies.
+
+Weak signals — do not propose:
+
+- Generic vocabulary overlaps with a workstream name but does not identify the owning layer or artifact scope.
+- The URL is from a shared organization repository, tracker, or document space referenced by multiple layers and no path segment or configured rule distinguishes the owner.
+- The input uses ambiguous abbreviations, aliases, project nicknames, or shorthand that could name more than one layer, workstream, or source.
+
+Concrete examples:
+
+Strong: a paste says, "Observability Pipeline standup: tracing-coverage is blocked until the ingress span owner accepts the schema update." If `tracing-coverage` is an exact workstream in the `team-observability` contributor layer and the action item belongs to that workstream, propose `team-observability` with that exact-match workstream reason.
+
+Strong: the user captures `https://git.example.invalid/platform/observability/issues/418` and the `team-observability` layer declares `connections.product-repos[].remote: https://git.example.invalid/platform/observability` or `trackers[].repo: platform/observability`. The source matches the layer's configured connection, so propose `team-observability` and cite the matching connection field.
+
+Strong: the paste begins `TEAM-PLATFORM: release readiness note` and a non-default contributor layer has a `capture-routing:` source pattern such as `paste-prefix:TEAM-PLATFORM:` that normally routes matching notes explicitly. If the configured rule is not an exact source match because the prefix is embedded in a forwarded message or lightly wrapped by another tool, treat the high-confidence partial prefix as reflection-driven: propose that layer, cite the stored pattern, and wait for confirmation.
+
+Weak: a note says, "We need better platform reliability before launch," and a layer has a `platform-reliability` workstream. The phrase is generic planning vocabulary, not an exact workstream declaration or source binding, so capture to the active layer by default.
+
+Weak: the user captures a URL from `https://git.example.invalid/company/shared-docs/...`, and both `team-observability` and `team-platform` reference that host in their connections. Without a more specific repository, path, tracker, or configured pattern, do not propose either layer; fall through to the active layer.
+
+Weak: a paste says, "IR follow-up is ready," but the layer graph contains `incident-response`, `identity-reliability`, and `integration-runtime` workstreams or aliases. The abbreviation is ambiguous, so do not propose a reflection-driven target.
+
+Tie-breaker: when multiple strong signals match, propose the most-specific layer, meaning the matching contributor-capable layer deepest in the layer graph from the anchor. The confirmation prompt must disclose the runner-up matches and their reasons so the user can choose a different target without re-explaining the input.
 
 ## Configured routing rules
 
@@ -148,5 +180,6 @@ For mode 3 the response **before** the mutation is the proposed-routing block ab
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Added the reflection-driven inference heuristics subsection defining strong signals, weak signals, concrete examples, and the deepest-layer tie-breaker so agents have an operational rubric for when to propose a non-default capture target. The routing-mode table now points at this rubric instead of relying on vague "clearly implies" wording | Issue #126 |
 | 2026-05-23 | Review-feedback follow-up on the initial reference: fixed the broken YAML in the `capture-routing:` example (the `source: paste-prefix: "TEAM-PLATFORM:"` line had two `:` tokens at the same indentation, restructured as a single quoted scalar `source: "paste-prefix:TEAM-PLATFORM:"`); rephrased the "Default mode is the floor" sentence to name the modes explicitly instead of referencing an `(b)` label that did not exist; added the "Log format" subsection declaring the three reserved operations (`capture-routing-propose`, `capture-routing-confirm`/`capture-routing-reject`, `capture`), their required `details` keys, the `correlation-id` rules, and a worked example so audit rule K16 is mechanically checkable. Audit K16 wording tightened accordingly | Copilot review #116 |
 | 2026-05-23 | Initial reference. Codifies the three capture-routing modes (default / explicit / reflection-driven), the `capture-routing:` config schema, the mandatory confirmation gate for agent-inferred non-default targets, the "do not write while waiting for confirmation" rule, the audit rule K16, and the relationship to `/kb promote` and `auto-promote`. Closes the spec gap where direct cross-layer capture was implicitly possible (via "context selects another contributor-capable layer") but never named as a deliberate alternative to the private→shared promote chain | Artifact layer routing |

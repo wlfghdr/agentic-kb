@@ -1,0 +1,73 @@
+fixture: capture-routing-reflection-heuristics
+source: issue-126
+description: Deterministic cases for the reflection-driven capture-routing rubric.
+layers:
+  - name: alice-personal
+    role: contributor
+    parent: team-platform
+  - name: team-platform
+    role: contributor
+    parent: engineering-org
+    workstreams:
+      - platform-reliability
+    capture-routing:
+      - source: "paste-prefix:TEAM-PLATFORM:"
+        primitive: note
+  - name: team-observability
+    role: contributor
+    parent: engineering-org
+    workstreams:
+      - tracing-coverage
+    connections:
+      product-repos:
+        - remote: https://git.example.invalid/platform/observability
+      trackers:
+        - repo: platform/observability
+  - name: engineering-org
+    role: contributor
+    parent: company
+    workstreams:
+      - observability-program
+    connections:
+      product-repos:
+        - remote: https://git.example.invalid/company/shared-docs
+  - name: company
+    role: consumer
+cases:
+  - id: strong-exact-workstream
+    input: "Observability Pipeline standup: tracing-coverage is blocked until the ingress span owner accepts the schema update."
+    expected_mode: reflection-driven
+    expected_target: team-observability
+    reason: Exact workstream name from another contributor-capable layer plus owned action-item scope.
+  - id: strong-connected-repo-url
+    input: "https://git.example.invalid/platform/observability/issues/418"
+    expected_mode: reflection-driven
+    expected_target: team-observability
+    reason: URL matches another layer's product repo or tracker repo connection.
+  - id: strong-partial-routing-prefix
+    input: "Forwarded note: TEAM-PLATFORM: release readiness follow-up for next week's handoff."
+    expected_mode: reflection-driven
+    expected_target: team-platform
+    reason: High-confidence partial match against a stored capture-routing paste prefix.
+  - id: weak-generic-overlap
+    input: "We need better platform reliability before launch."
+    expected_mode: default
+    expected_target: alice-personal
+    reason: Generic vocabulary overlaps with a workstream but does not identify a non-default layer.
+  - id: weak-shared-org-host
+    input: "https://git.example.invalid/company/shared-docs/launch-plan.md"
+    expected_mode: default
+    expected_target: alice-personal
+    reason: Shared org host is referenced by multiple layers without a distinguishing path or rule.
+  - id: weak-ambiguous-abbreviation
+    input: "IR follow-up is ready for review."
+    expected_mode: default
+    expected_target: alice-personal
+    reason: Abbreviation can name multiple workstreams or aliases.
+  - id: tiebreaker-deepest-layer
+    input: "observability-program follow-up from https://git.example.invalid/platform/observability/issues/418 should be captured with the observability team."
+    expected_mode: reflection-driven
+    expected_target: team-observability
+    runner_ups:
+      - engineering-org
+    reason: URL matches team-observability while the exact org workstream matches engineering-org; choose the deepest contributor-capable layer and disclose runner-ups.

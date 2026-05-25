@@ -33,7 +33,7 @@ Evaluate in order and stop at the first match:
 4. **URL or pasted text** → capture per the routing-mode rule (kb-management SKILL.md rule 12 + `references/capture-routing.md`):
    - **Default**: no target named and no strong reflection signal → capture into the active layer (the anchor unless context already selected a different contributor-capable layer). Apply the five-question evaluation gate.
    - **Explicit**: the user named a target layer in the invocation (e.g. `/kb team-observability <input>`), OR a `capture-routing:` rule in `.kb-config/layers.yaml` matches the input. Capture lands directly in the named layer; cite the matching rule (path + line or rule index) in the response.
-   - **Reflection-driven**: no explicit target was named, but the input's content/source/context clearly implies a non-default layer. **Propose** the target, name the reason, and **wait for human confirmation** before mutating. Do not soft-write to a staging area as a fallback; always offer the default as a one-word fallback.
+   - **Reflection-driven**: no explicit target was named, but the input's content/source/context matches the strong-signal rubric in `references/capture-routing.md` for a non-default contributor-capable layer. **Propose** the target, name the reason, and **wait for human confirmation** before mutating. Weak or ambiguous signals fall through to default. Do not soft-write to a staging area as a fallback; always offer the default as a one-word fallback.
 5. **File path inside a known KB layer** → layer-appropriate operation (review/update-topic/decide) on that file.
 6. **Bare `/kb` (no input)** → run the **triage scan** below and present the result.
 
