@@ -103,3 +103,6 @@ jobs:
         run: python3 scripts/test_kb_journeys.py
       - name: Regression test migration helpers
         run: python3 scripts/test_kb_migrations.py
+      - name: Regression test capture routing heuristics fixture
+        run: python3 scripts/test_capture_routing.py
+
