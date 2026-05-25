@@ -26,6 +26,8 @@ layers:
   - name: engineering-org
     role: contributor
     parent: company
+    workstreams:
+      - observability-program
     connections:
       product-repos:
         - remote: https://git.example.invalid/company/shared-docs
@@ -63,9 +65,9 @@ cases:
     expected_target: alice-personal
     reason: Abbreviation can name multiple workstreams or aliases.
   - id: tiebreaker-deepest-layer
-    input: "tracing-coverage follow-up from https://git.example.invalid/platform/observability/issues/418 should be captured with the observability team."
+    input: "observability-program follow-up from https://git.example.invalid/platform/observability/issues/418 should be captured with the observability team."
     expected_mode: reflection-driven
     expected_target: team-observability
     runner_ups:
       - engineering-org
-    reason: Multiple strong signals match; choose the deepest contributor-capable layer and disclose runner-ups.
+    reason: URL matches team-observability while the exact org workstream matches engineering-org; choose the deepest contributor-capable layer and disclose runner-ups.
