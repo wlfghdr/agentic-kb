@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes (including retros), decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 6.1.0
+version: 6.2.0
 triggers:
   # Command surface
   - "/kb"
@@ -266,6 +266,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-24 | Added a discoverability pointer to `docs/concurrency.md` and expanded the `/kb sync [layer]` flow row so the management skill exposes both responsibilities: contributor-scoped cross-reference reconciliation and concurrency reconciliation. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-23 | Added core rule 12 "Capture target is the active layer unless explicit or confirmed" codifying the three capture-routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate for agent-inferred non-default targets. Capture flow row in the layer-aware flow table now names the routing modes. Added `references/capture-routing.md` to the load-on-demand references list. Direct cross-layer capture becomes a first-class flow parallel to `/kb promote`, not an implicit consequence of "context selects another contributor-capable layer" | Artifact layer routing |
 | 2026-05-17 | Tightened primitive creation behavior to respect `primitive-storage`: tracker-backed decisions, tasks, ideas, feature intake, and roadmap items use the configured tracker as canonical operational home while KB files keep summaries/backlinks only | Tracker-backed onboarding design |

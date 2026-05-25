@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 6.0.0
+version: 6.2.0
 uses:
   - kb-management
   - kb-setup
@@ -181,6 +181,8 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
+| 2026-05-25 | Version aligned to 6.1.0 to track the capture-routing changes and framework release | Version alignment |
 | 2026-05-23 | Capture loop §2 now picks the destination layer per kb-management SKILL.md rule 12 (default / explicit / reflection-driven), and reflection-driven non-default targets require human confirmation before persistence. Cross-layer flow §5 names direct routing as parallel to promotion and confirms that automation level 3's auto-promote does not pick non-parent targets | Artifact layer routing |
 | 2026-05-10 | Version aligned to 6.0.0 for the v5 adoption-arc closeout. Removed the residual fixed-ladder `L4` references from the cross-layer-flow section ("Publication (L4) is always manual" → "Publication to a layer marketplace is always manual") and the autonomous-loop section ("Never publish to L4 automatically" → "Never publish to any layer marketplace automatically"). Tightened the digest-automation note from the ambiguous "Level 2+" to the explicit "automation level 2 or 3" wording. Corrected the daily-summary and weekly-summary finding paths from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec. No behavioral changes — the publish path was already manual at every automation level | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-30 | Version aligned to 5.5.0 after setup began proposing product-management roadmap/journey ownership from role, goals, sources, and outputs. The operator inherits status and artifact handoffs through kb-management + kb-setup | Product-management surface integration |
