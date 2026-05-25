@@ -4,7 +4,7 @@
 
 This guide defines what `agentic-kb` does when two contributors mutate shared layer state at the same time. The structural spec ([`docs/REFERENCE.md`](./REFERENCE.md)) defines layout and formats; the collaboration guide ([`docs/collaboration.md`](./collaboration.md)) defines the human contract. This guide names the concrete conflict cases and the rules `/kb promote`, `/kb sync`, and Git itself follow when contributors collide.
 
-The user-facing `/kb sync [layer]` command contract is canonical in [`command-reference.md`](../plugins/kb/skills/kb-management/references/command-reference.md#digests-&-layer-flow): it covers both contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases in this guide.
+The user-facing `/kb sync [layer]` command contract is canonical in [`command-reference.md`](../plugins/kb/skills/kb-management/references/command-reference.md#digests--layer-flow): it covers both contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases in this guide.
 
 ## Why a separate guide
 
@@ -131,7 +131,7 @@ Until those exist, the rules above are the only contract; CI does not currently 
 - [`docs/REFERENCE.md`](./REFERENCE.md) §4 "Backlink (promoted-record stub)" — backlink format consumed by case 2.
 - [`docs/REFERENCE.md`](./REFERENCE.md) §6 "HTML artifact lifecycle" — `merge=ours` for live overviews referenced in case 4.
 - [`docs/collaboration.md`](./collaboration.md) "Failure modes and recovery" — human-facing summary of the same cases.
-- [`plugins/kb/skills/kb-management/references/command-reference.md`](../plugins/kb/skills/kb-management/references/command-reference.md#digests-&-layer-flow) — `/kb sync [layer]` user-facing command contract.
+- [`plugins/kb/skills/kb-management/references/command-reference.md`](../plugins/kb/skills/kb-management/references/command-reference.md#digests--layer-flow) — `/kb sync [layer]` user-facing command contract.
 - [`plugins/kb/skills/kb-management/references/promote-contract.md`](../plugins/kb/skills/kb-management/references/promote-contract.md) — promote semantics consumed by cases 1 and 2.
 - [`plugins/kb/skills/kb-management/references/audit.md`](../plugins/kb/skills/kb-management/references/audit.md) — K11 (broken backlink), K13 (unresolved promote conflict), K14 (diverged backlink), K15 (unconverged author-sectioned topic).
 
