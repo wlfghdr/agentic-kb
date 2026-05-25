@@ -1,6 +1,6 @@
 # Example: Day in the Life
 
-> **Version:** 6.1.0 | **Last updated:** 2026-05-24
+> **Version:** 6.2.0 | **Last updated:** 2026-05-24
 
 An illustrative walkthrough of a single day for a user named Alex, a principal engineer working on an observability platform. Alex has one anchor layer, two shared team layers, and consumes company guidance from a consumer layer. The examples below are not normative; they show what the system feels like in practice.
 
@@ -184,6 +184,7 @@ Alex never had to manually maintain a wiki hierarchy. The agent handled the book
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-24 | Verified the walkthrough against the v6.1 command reference, bumped the example version to 6.1.0, made the external-read preflight explicit, and replaced the undocumented incident-resolve shorthand with the canonical `/kb incident [title]` update flow | Issue #122 |
 | 2026-05-14 | Added compact PM, EM, and on-call SRE scenes so the example covers the three non-engineer roles the operating model names alongside engineers. Introduced the post-incident retro flow in the SRE scene to exercise the new `/kb note retro [topic]` variant | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Added the shared artifact rhythm connecting status, delivery, and roadmap-change reports | Adoption-oriented engineering pass |

@@ -385,10 +385,59 @@ def check_command_list_drift() -> list[str]:
     return errors
 
 
+def check_changelog_release_hygiene() -> list[str]:
+    version_path = REPO / "VERSION"
+    changelog_path = REPO / "CHANGELOG.md"
+    if not version_path.is_file() or not changelog_path.is_file():
+        return []
+
+    current_version = parse_version(version_path.read_text(encoding="utf-8").strip())
+    if current_version is None:
+        return []
+
+    text = changelog_path.read_text(encoding="utf-8")
+    unreleased_match = re.search(
+        r"^## \[Unreleased\]\s*(.*?)(?=^## \[)",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if not unreleased_match:
+        return ["CHANGELOG.md must contain an '[Unreleased]' section header"]
+
+    unreleased_body = unreleased_match.group(1)
+    unreleased_has_entries = any(
+        re.match(r"^\s*-\s+\S", line) for line in unreleased_body.splitlines()
+    )
+    if not unreleased_has_entries:
+        return []
+
+    release_versions = [
+        parse_version(match.group(1))
+        for match in re.finditer(r"^## \[(\d+\.\d+\.\d+)\]", text, re.MULTILINE)
+    ]
+    release_versions = [version for version in release_versions if version is not None]
+    if not release_versions:
+        return [
+            "CHANGELOG.md [Unreleased] has entries but no release-tagged "
+            "version block exists"
+        ]
+
+    latest_release = max(release_versions)
+    if current_version <= latest_release:
+        latest = ".".join(str(part) for part in latest_release)
+        current = ".".join(str(part) for part in current_version)
+        return [
+            "CHANGELOG.md [Unreleased] has entries, but VERSION has not moved "
+            f"beyond the latest release block ({latest}); got VERSION {current}"
+        ]
+    return []
+
+
 def main() -> int:
     all_errors: list[str] = []
     all_errors += check_root_version()
     all_errors += check_changelog_exists()
+    all_errors += check_changelog_release_hygiene()
     all_errors += check_manifest_versions()
     all_errors += check_versions_and_changelogs()
     all_errors += check_forbidden_terms()

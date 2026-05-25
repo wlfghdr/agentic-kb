@@ -1,6 +1,6 @@
 # Collaboration Guide
 
-> **Version:** 6.1.0 | **Last updated:** 2026-05-15
+> **Version:** 6.2.0 | **Last updated:** 2026-05-24
 
 This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
@@ -326,6 +326,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-23 | Added shared-workspace rule 2a "Direct cross-layer capture: explicit OR confirmed" covering the three capture-routing modes (default / explicit / reflection-driven) and the human-confirmation contract that protects against (a) silent agent-inferred shared writes and (b) routine team intake being misframed as private sense-making | Artifact layer routing |
 | 2026-05-22 | "Failure modes and recovery" now includes "Parallel mutations on shared layers" pointing at the new `docs/concurrency.md` (promote collisions, backlink mutation, topic merges). Collaboration semantics unchanged; the parallel-mutation failure mode is named explicitly instead of left as the implicit Git-conflict assumption. Closes audit finding #106 | Audit-tracker closeout |
 | 2026-05-15 | Version aligned to 6.1.0 after the release-readiness audit. Collaboration semantics unchanged; this guide now tracks the released retro/role-handbook/delivery-operations surface carried by the rest of the spec | Release-readiness audit |
