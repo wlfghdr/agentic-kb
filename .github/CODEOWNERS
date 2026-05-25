@@ -10,9 +10,11 @@
 /docs/                     @spec-editors @maintainers
 
 # Reference implementation
-/skills/                   @skill-authors @maintainers
-/agents/                   @skill-authors @maintainers
 /plugins/                  @maintainers
+/plugins/kb/utils/         @maintainers
+/plugins/kb/commands/      @maintainers
+/plugins/kb/skills/        @skill-authors @maintainers
+/plugins/kb/agents/        @skill-authors @maintainers
 /scripts/                  @maintainers
 
 # CI / release plumbing
