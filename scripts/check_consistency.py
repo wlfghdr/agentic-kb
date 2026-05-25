@@ -23,11 +23,24 @@ IGNORED_PATH_PARTS = {".git", "node_modules", ".venv", "venv", "__pycache__"}
 LONG_LIVED_DIRS: list[Path] = []
 OPTIONAL_LONG_LIVED = [REPO / "docs" / "REFERENCE.md", REPO / "docs" / "glossary.md"]
 
-# Files that are allowed to not have a version header — narrative walkthroughs,
-# examples, and standalone index files.
+# Files that are allowed to not have a version header.
 EXEMPT_FROM_VERSION = {
-    REPO / "docs" / "examples" / "day-in-the-life.md",
     REPO / "docs" / "roadmap.md",
+}
+
+# Files whose version headers intentionally track a local document contract
+# instead of the aggregate framework VERSION. Narrative examples that teach
+# current behavior should not be added here unless they are deliberately
+# release-pinned and the pin is named in the file.
+VERSION_MINOR_DRIFT_ALLOWLIST = {
+    REPO / "AGENTS.md",
+    REPO / "CLAUDE.md",
+    REPO / "docs" / "glossary.md",
+    REPO / "docs" / "operating-model.md",
+    REPO / "docs" / "role-handbook.md",
+    REPO / "docs" / "uninstall.md",
+    REPO / "plugins" / "kb" / "skills" / "kb-setup" / "references" / "adoption-stages.md",
+    REPO / "plugins" / "kb" / "skills" / "kb-setup" / "references" / "github-governance-profile.md",
 }
 
 # Terms we forbid in the public spec.
@@ -53,7 +66,7 @@ def _load_external_blocklist() -> list[str]:
         terms.append(line.lower())
     return terms
 
-VERSION_RE = re.compile(r"\*\*Version:\*\*\s*(\d+)\.(\d+)")
+VERSION_RE = re.compile(r"\*\*Version:\*\*\s*(\d+)\.(\d+)(?:\.(\d+))?")
 CHANGELOG_RE = re.compile(r"^##\s+Changelog\s*$", re.MULTILINE)
 HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 INLINE_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -75,6 +88,13 @@ def iter_all_docs():
         if any(part in IGNORED_PATH_PARTS for part in p.parts):
             continue
         yield p
+
+
+def parse_version(value: str) -> tuple[int, int, int] | None:
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", value.strip())
+    if not match:
+        return None
+    return tuple(int(part) for part in match.groups())
 
 
 def normalize_anchor(text: str) -> str:
@@ -102,6 +122,32 @@ def check_versions_and_changelogs() -> list[str]:
             errors.append(f"MISSING **Version:** field: {rel}")
         if not CHANGELOG_RE.search(text):
             errors.append(f"MISSING '## Changelog' section: {rel}")
+
+    root_version_path = REPO / "VERSION"
+    if not root_version_path.is_file():
+        return errors
+    root_version = parse_version(root_version_path.read_text(encoding="utf-8"))
+    if root_version is None:
+        return errors
+    root_minor = root_version[:2]
+
+    for doc in iter_all_docs():
+        if doc in VERSION_MINOR_DRIFT_ALLOWLIST:
+            continue
+        text = doc.read_text(encoding="utf-8", errors="ignore")
+        match = VERSION_RE.search(text)
+        if not match:
+            continue
+        doc_minor = (int(match.group(1)), int(match.group(2)))
+        if doc_minor < root_minor:
+            rel = doc.relative_to(REPO)
+            doc_version = ".".join(part for part in match.groups() if part is not None)
+            errors.append(
+                f"VERSION header drift in {rel}: expected at least "
+                f"{root_minor[0]}.{root_minor[1]}.x, got {doc_version}. "
+                "Add a narrow allowlist entry only for intentionally pinned "
+                "or independently versioned docs."
+            )
     return errors
 
 

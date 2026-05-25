@@ -1,6 +1,6 @@
 # Example: Day in the Life
 
-> **Version:** 5.0.0 | **Last updated:** 2026-05-10
+> **Version:** 6.1.0 | **Last updated:** 2026-05-24
 
 An illustrative walkthrough of a single day for a user named Alex, a principal engineer working on an observability platform. Alex has one anchor layer, two shared team layers, and consumes company guidance from a consumer layer. The examples below are not normative; they show what the system feels like in practice.
 
@@ -25,7 +25,7 @@ Suggested next steps:
 Alex: /kb https://example.org/papers/coordination-patterns
 
 Agent:
-What I did: Captured the paper as an anchor-layer finding after fetching the external URL.
+What I did: Prepared an external-read preflight for the paper URL; after Alex confirmed the fetch, captured the paper as an anchor-layer finding.
 Where it went: wrote _kb-references/findings/2026/2026-04-18-coordination-patterns.md, updated the reliability topic, and refreshed index.html + dashboard.html.
 Gate notes: 4/5 — externally fetched, informs D-2026-04-18, actionable, durable signal.
 Suggested next steps:
@@ -145,9 +145,10 @@ The same shapes serve very different days. These compact scenes show how a produ
 03:18–05:42  Marek appends timeline entries as mitigations land.
              Agent keeps the record append-only after each update.
 
-05:50  Marek: /kb incident resolve
-       Agent: status moves to resolved; prompts for the post-incident retro
-              window (recommended within 48 hours).
+05:50  Marek: /kb incident payment-latency
+       Agent: appends the mitigation summary and moves status to resolved;
+              prompts for the post-incident retro window (recommended within
+              48 hours).
 
 Next day:
 14:00  Marek: /kb note retro payment-latency
@@ -183,6 +184,7 @@ Alex never had to manually maintain a wiki hierarchy. The agent handled the book
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-24 | Verified the walkthrough against the v6.1 command reference, bumped the example version to 6.1.0, made the external-read preflight explicit, and replaced the undocumented incident-resolve shorthand with the canonical `/kb incident [title]` update flow | Issue #122 |
 | 2026-05-14 | Added compact PM, EM, and on-call SRE scenes so the example covers the three non-engineer roles the operating model names alongside engineers. Introduced the post-incident retro flow in the SRE scene to exercise the new `/kb note retro [topic]` variant | Daily-reality gap audit across software-company roles |
 | 2026-05-10 | Added the shared artifact rhythm connecting status, delivery, and roadmap-change reports | Adoption-oriented engineering pass |
 | 2026-04-25 | Reworked the example for 5.0.0: anchor layer, named team layers, year-based finding paths, and explicit cross-layer promotion replaced the old fixed-ladder example | v5.0.0 flexible layer model |
