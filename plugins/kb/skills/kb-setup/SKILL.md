@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including tracker-backed primitive ownership and product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, tracker setup artifacts, and HTML style references.
-version: 6.1.0
+version: 6.2.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -367,6 +367,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-25 | Removed hard-coded command-surface counts from Step 7 so setup points at the canonical command reference instead of repeating a number that can drift | Issue #123 |
 | 2026-05-22 | Added Step 7d "Ritual cadence reminder (level 1 only)" — when automation level is `1`, the closing message names the manual ritual cadence (`/kb start-day` each morning, `/kb end-day` before stop, `/kb end-week` Friday afternoon) explicitly, points at `/kb status` as the in-tool nudge channel, and offers an optional `_kb-references/rituals.ics` calendar snippet. At level 2/3 the existing scheduler-ownership reminder fires instead. Closes audit finding #108 | Concept/spec gap audit |
 | 2026-05-18 | Added Step 7 "First win + next-steps shortlist" — closing step after verification. Optional bootstrap capture (default yes) writes a first finding through the full evaluation gate and surfaces the artifact path back to the user; curated 3–5 command shortlist derived from adoption stage + audience replaces the implicit full-surface dump at setup end. References section now names `docs/examples/first-hour.md` as the user-facing companion and reframes `docs/first-run-acceptance.md` as the maintainer/QA baseline. Closes audit findings #99, #100, #101 | Concept/onboarding/process audit |
