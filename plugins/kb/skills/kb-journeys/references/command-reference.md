@@ -56,20 +56,37 @@ Runs the extractor only. Useful when only mock envelopes changed and the surroun
 ### `audit`
 
 ```
-/kb journeys audit [--journey SLUG]
+/kb journeys audit [--journey SLUG] [--resolve VIOLATION-ID --action ACTION] [--apply]
 ```
 
-Validates without writing:
+Runs the canonical J1-J19 audit defined in [`references/audit.md`](./audit.md). Without `--resolve`, it scans journey sources, generated mocks, overview metadata, roadmap citations, ownership metadata, and configured actors, then emits the triple artifact:
 
-- Metadata block parseable
-- Required sections present and in order
-- Step ids match pattern + unique
-- Mock envelopes balanced + unique slugs
-- Readiness coverage (warn only)
-- Interface table rows reference existing journeys
-- Cross-refs resolve
+- `_kb-journeys/audit-<YYYY-MM-DD>.md`
+- `_kb-journeys/audit-<YYYY-MM-DD>.html`
+- `_kb-journeys/audit-<YYYY-MM-DD>.json`
 
-Exit code 0 on pass, 1 on fail. Useful as a CI gate.
+The audit covers:
+
+- J1/J2 — metadata and required section integrity
+- J3/J4/J5 — step id format, collisions, and rename safety
+- J6/J7/J8 — readiness and configured actor coverage
+- J9/J10/J11/J12 — mock envelope and standalone mock integrity
+- J13/J14 — interface and cross-reference resolution
+- J15/J16 — roadmap citation and coverage checks when roadmap links are configured
+- J17/J18/J19 — overview drift, ownership metadata, and unused configured actors
+
+Resolution mode applies one offered correction from the last audit report. Source edits, config edits, tracker writes, and id rewrites keep their normal safety gates; `rename-id` and tracker writes require `--apply`.
+
+Policy knobs live under `journeys.audit` in `.kb-config/layers.yaml`: `readiness-required`, `interface-resolution`, `orphan-mocks`, `max-violations-per-class`, and `severity-gate`.
+
+Exit codes:
+
+| Code | Meaning |
+|---|---|
+| 0 | No violations, or only warnings below `severity-gate` |
+| 1 | Config error or unreadable journey source |
+| 2 | Violations exceed `severity-gate` |
+| 3 | User deferred one or more resolutions without completing |
 
 ### `ideate | discuss | review | refine`
 
@@ -92,16 +109,19 @@ Rewrites every occurrence of a step id across journeys, overview, roadmap items,
 
 ## Exit codes
 
+Command-specific contracts above take precedence when they are narrower, such as `/kb journeys audit`.
+
 | Code | Meaning |
 |---|---|
 | 0 | Operation succeeded |
 | 1 | Configuration error |
-| 2 | Audit failure |
-| 3 | Render succeeded but warnings present (missing readiness, orphan mocks) |
+| 2 | Audit violations, source ingestion failure, or render failure |
+| 3 | Command completed with unresolved warnings, deferred resolutions, or generated-artifact drift |
 | 4 | User aborted an interactive prompt |
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-25 | Aligned `/kb journeys audit` with the canonical J1-J19 audit reference, including resolution flags, triple artifacts, policy knobs, and exit codes | PR #141 review |
 | 2026-05-08 | Clarified the shipped `render`/`extract-mocks` helper behavior, discovery rules, and optional dependency fallbacks | Integration pass |
