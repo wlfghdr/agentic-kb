@@ -128,12 +128,16 @@ See `templates/journey-overview.md.hbs` for the scaffold.
 
 ## Audit checks
 
-`kb-journeys audit` runs these checks and reports pass/fail:
+`kb-journeys audit` runs the canonical J1-J19 audit defined in [`audit.md`](./audit.md). That audit owns:
 
-1. File-level metadata block present and parseable
-2. All required sections present and in order
-3. All step ids match the pattern + are unique
-4. All mock envelopes balanced (every `begin` has matching `end`, unique slugs)
-5. Every visible step has a readiness chip (warn only)
-6. Every interface table row references an existing journey slug
-7. Every cross-reference link resolves
+- structure checks for metadata, required sections, overview shape, and configured directories
+- id integrity checks for step ids, duplicates, configured actors, and rename safety
+- readiness checks against the configured readiness taxonomy
+- mock integrity checks for source envelopes, generated standalone pages, and orphan pages
+- traceability checks for interfaces, cross-reference links, roadmap citations, and ownership metadata
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-05-25 | Replaced the obsolete inline audit checklist with a pointer to the canonical J1-J19 audit reference | PR #141 review |
