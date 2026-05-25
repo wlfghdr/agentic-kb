@@ -230,7 +230,7 @@ Minimum verification sequence:
 
 ### Step 7 — First win + next-steps shortlist
 
-Verification proves the scaffold is correct. It does not prove the workspace *does anything yet*. Step 7 closes that gap so the user leaves setup with a visible artifact and a curated 3–5 command shortlist, not with a read-only "Setup: OK" message and a 33-command flatlist.
+Verification proves the scaffold is correct. It does not prove the workspace *does anything yet*. Step 7 closes that gap so the user leaves setup with a visible artifact and a curated 3–5 command shortlist, not with a read-only "Setup: OK" message and a flat dump of the full command surface.
 
 **7a — Optional bootstrap capture (default yes).** Ask one question:
 
@@ -242,7 +242,7 @@ If the user answers with content, route it through the full `kb-management` flow
 
 If the user answers `no` or skips, write a `_kb-log/setup-skipped-bootstrap.md` line and continue. The capture is optional, not required for setup to count as complete.
 
-**7b — Curated next-steps shortlist.** Emit a priorized 3–5 command list, derived from the chosen adoption stage (Q11) and audience (Q7). Do not paste the full 33-command surface; pick what this user should actually try first. Suggested patterns:
+**7b — Curated next-steps shortlist.** Emit a priorized 3–5 command list, derived from the chosen adoption stage (Q11) and audience (Q7). Do not paste the full command surface; pick what this user should actually try first. Suggested patterns:
 
 | Stage × audience | Shortlist (in this order) |
 |------------------|---------------------------|
@@ -254,7 +254,7 @@ If the user answers `no` or skips, write a `_kb-log/setup-skipped-bootstrap.md` 
 
 Adjust if Q9 ("what you want out") names roadmaps or journeys — insert `/kb roadmap` and/or `/kb journeys` after capture. Adjust if Q9 names release/incident artifacts — insert `/kb release` and/or `/kb incident`.
 
-The shortlist is informational, not blocking. The user can always invoke any of the 33 commands; the full surface is documented in [`plugins/kb/commands/kb.md`](../../commands/kb.md) and [`plugins/kb/skills/kb-management/references/command-reference.md`](../kb-management/references/command-reference.md).
+The shortlist is informational, not blocking. The user can always invoke any documented verb; the full surface is documented in [`plugins/kb/commands/kb.md`](../../commands/kb.md) and [`plugins/kb/skills/kb-management/references/command-reference.md`](../kb-management/references/command-reference.md).
 
 **7c — Closing message.** Emit one short summary, in plain language, naming exactly what was produced and what the user should do next. Example for Stage 1 solo with a bootstrap capture:
 
@@ -367,8 +367,9 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-05-25 | Removed hard-coded command-surface counts from Step 7 so setup points at the canonical command reference instead of repeating a number that can drift | Issue #123 |
 | 2026-05-22 | Added Step 7d "Ritual cadence reminder (level 1 only)" — when automation level is `1`, the closing message names the manual ritual cadence (`/kb start-day` each morning, `/kb end-day` before stop, `/kb end-week` Friday afternoon) explicitly, points at `/kb status` as the in-tool nudge channel, and offers an optional `_kb-references/rituals.ics` calendar snippet. At level 2/3 the existing scheduler-ownership reminder fires instead. Closes audit finding #108 | Concept/spec gap audit |
-| 2026-05-18 | Added Step 7 "First win + next-steps shortlist" — closing step after verification. Optional bootstrap capture (default yes) writes a first finding through the full evaluation gate and surfaces the artifact path back to the user; curated 3–5 command shortlist derived from adoption stage + audience replaces the implicit "you have 33 commands, gl hf" feeling at setup end. References section now names `docs/examples/first-hour.md` as the user-facing companion and reframes `docs/first-run-acceptance.md` as the maintainer/QA baseline. Closes audit findings #99, #100, #101 | Concept/onboarding/process audit |
+| 2026-05-18 | Added Step 7 "First win + next-steps shortlist" — closing step after verification. Optional bootstrap capture (default yes) writes a first finding through the full evaluation gate and surfaces the artifact path back to the user; curated 3–5 command shortlist derived from adoption stage + audience replaces the implicit full-surface dump at setup end. References section now names `docs/examples/first-hour.md` as the user-facing companion and reframes `docs/first-run-acceptance.md` as the maintainer/QA baseline. Closes audit findings #99, #100, #101 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order swap: phase 1 is now "Workspace and harness facts" (Q1–Q3 — workspace root, IDE targets, discovery pass), phase 2 is now "Context and goals" (Q4–Q11). Frontloads the admin block so the user knows where files will land and which harness will host `/kb` before investing in long answers. All cross-references and the placeholder-mapping table renumbered. Q10 ("How autonomous") now states explicitly that `agentic-kb` does not ship a scheduler. Phase 3 block 2 must now surface default artifact visibility per primitive per `docs/REFERENCE.md` §1 "Two orthogonal axes". Closes audit findings #98 and #104 | Concept/onboarding/process audit |
 | 2026-05-17 | Extended onboarding to decide per-layer primitive storage (`files`, `tracker`, `hybrid`) for decisions, tasks, ideas, feature intake, and roadmap items; setup now treats generic GitHub/Jira type mapping, issue templates, governance CI, labeler/PR templates, manual branch-protection/project setup, and repo-local tracker workflow skills as first-class outcomes when a tracker backbone is selected | Tracker-backed onboarding design |
 | 2026-05-15 | Removed literal double-curly placeholder examples from the published setup skill so GitHub Pages can build the released docs while preserving the setup-token contract for agents | Pages release fix |
