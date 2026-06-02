@@ -35,6 +35,9 @@ layers:
         enabled: false
         capabilities: []
     # Primitive storage declares the canonical operational home per primitive.
+    # Personal/private layers default to files. Shared process and operational
+    # primitives default to a github-issues tracker unless setup records an
+    # explicit file-backed fallback.
     # mode: files | tracker | hybrid
     primitive-storage:
       decisions:
@@ -46,8 +49,9 @@ layers:
       ideas:
         mode: files
         file-dir: _kb-ideas
-    # When /kb setup detects that a shared tracker is the operational backbone,
-    # it can render tracker-backed mappings like the example below.
+    # Shared layers render tracker-backed mappings like the example below by
+    # default for decisions, tasks, feature intake, and tracker-scoped roadmap
+    # items.
     # connections:
     #   trackers:
     #     - name: team-work

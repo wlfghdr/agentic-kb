@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including tracker-backed primitive ownership and product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, tracker setup artifacts, and HTML style references.
-version: 6.2.0
+version: 6.3.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -173,11 +173,11 @@ The anchor config must include:
 
 When Q4/Q5/Q9 indicate product-management work, setup should propose these blocks rather than waiting for the user to know the feature names. The user still confirms placement. The conservative default is to co-locate a roadmap scope with the journeys it cites in the same contributor-capable layer. Layered roadmaps and journeys are allowed by the layer graph, but setup should mark cross-layer roll-ups/inheritance as a later enhancement unless the user explicitly asks for an expert configuration.
 
-When Q5 or discovery indicates an existing tracker backbone, setup should propose `primitive-storage` instead of assuming file-backed decisions and tasks. Conservative defaults:
+Setup must propose `primitive-storage` instead of assuming file-backed decisions and tasks. Conservative defaults:
 
 - personal or private layers: `files` for decisions, tasks, and ideas,
-- shared layers without an existing tracker process: `files`, with a note that tracker backing can be added later,
-- shared layers with an existing tracker process: `tracker` for tasks and feature intake, `tracker` or `hybrid` for decisions and ideas depending on whether the user wants early deliberation in files,
+- shared layers: GitHub Issues (`kind: github-issues`) as the default tracker for tasks, feature intake, and roadmap items; decisions default to `tracker` unless the user chooses `hybrid` for early deliberation in files,
+- shared layers where GitHub Issues is unavailable or rejected: render an explicit `files` fallback with the reason in the setup summary,
 - roadmap items: `tracker` only when the roadmap source is already tracker-scoped; otherwise keep roadmap artifacts file-backed and read tracker data as evidence.
 
 ### Step 4b — Configure tracker backbone setup artifacts
@@ -367,6 +367,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Version aligned to 6.3.0 and changed setup defaults so shared process/operational primitives default to GitHub Issues-backed `primitive-storage`, while personal/private layers stay file-backed and shared file-backed mode must be an explicit fallback | Issue #145 |
 | 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-25 | Removed hard-coded command-surface counts from Step 7 so setup points at the canonical command reference instead of repeating a number that can drift | Issue #123 |
 | 2026-05-22 | Added Step 7d "Ritual cadence reminder (level 1 only)" — when automation level is `1`, the closing message names the manual ritual cadence (`/kb start-day` each morning, `/kb end-day` before stop, `/kb end-week` Friday afternoon) explicitly, points at `/kb status` as the in-tool nudge channel, and offers an optional `_kb-references/rituals.ics` calendar snippet. At level 2/3 the existing scheduler-ownership reminder fires instead. Closes audit finding #108 | Concept/spec gap audit |

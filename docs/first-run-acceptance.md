@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 6.2.0 | **Last updated:** 2026-05-24
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
 >
 > **Audience: maintainers and QA.** This is the deterministic baseline a release lead or team lead runs to verify that onboarding still produces the same working contract for every fresh adopter. **It is not the doc to read after you first install agentic-kb.** For that, use [`docs/examples/first-hour.md`](./examples/first-hour.md) — it walks the same install → setup → first capture path in narrative form, takes ~1 hour, and ends with a visible artifact you can open in a browser.
 
@@ -28,7 +28,7 @@ It is intentionally narrow:
 - builtin HTML styling,
 - no live tracker write-back.
 
-Tracker-backed primitives are optional in the baseline. The default proof keeps decisions, tasks, and ideas file-backed, even when issue trackers are configured as read-only sources. When the user says an issue tracker is the operational backbone, setup must propose `primitive-storage` and the provider setup outcome before scaffold.
+Tracker-backed primitives are part of the shared-layer baseline. The default proof keeps the personal layer's decisions, tasks, and ideas file-backed, while the shared team layer uses GitHub Issues as the canonical home for shared decisions and tasks. Live write-back remains disabled until the user confirms it; setup still generates or stages the GitHub governance profile and records supporting KB summary/backlink directories.
 
 Product-management roadmap and journey artifacts are optional in the baseline. When the user's role/goals imply them, setup must propose the owning layer and source/output placement in the same confirmation pass as the core KB graph.
 
@@ -65,8 +65,8 @@ Use this baseline unless a test explicitly covers another variant.
 | Workstream count | 1 |
 | Extra org/company layers | skipped |
 | Marketplace repo | skipped |
-| Connections | skipped |
-| Primitive storage | file-backed decisions, tasks, and ideas |
+| Connections | product repo plus GitHub Issues tracker |
+| Primitive storage | personal layer file-backed; shared team decisions and tasks GitHub Issues-backed |
 | Automation | level 1 |
 | HTML styling | builtin |
 
@@ -249,7 +249,7 @@ The wizard must derive and propose:
 - **adoption-stage label**: `Stage 1 — capture discipline (human-only baseline)`, derived from Q11 + Q10 per `references/adoption-stages.md`. The proposal must show the stage explicitly so the user can see the wizard is suggesting a capture-only scaffold rather than an agent-assisted or bounded-autonomous one,
 - workstream `platform-signals` extracted from Q5,
 - connections containing the product repo and GitHub issues from Q8,
-- `primitive-storage` set to file-backed decisions, tasks, and ideas for the baseline, because Q10 says all writes should be confirmed and the baseline does not ask to make GitHub Issues canonical,
+- `primitive-storage` set to file-backed decisions, tasks, and ideas for `alice-personal`, plus GitHub Issues-backed decisions and tasks for `team-observability` because shared process artifacts default to the visible issue-backed backbone; Q10 keeps write-back confirmation-gated rather than changing the storage default,
 - dashboard and report panels matching Q9 (morning briefing + weekly status),
 - automation level `1` (manual only) — mapped from Q10's "confirm everything" answer and consistent with the Stage-1 label (a Stage-1 team must not be configured at automation level 2 or 3). Q9's regular outputs are run by the user, not on a schedule, at this baseline,
 - **graduation criteria for Stage 1 → Stage 2** surfaced as informational defaults (e.g. "≥ 4 weeks of clean `.kb-log/`", "≥ 1 cross-layer promote completed by hand", "`foundation/vmg.md` confirmed by ≥ 1 stakeholder"); the user can accept, edit, or skip this block — it does not block scaffold,
@@ -578,6 +578,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Version aligned to 6.3.0 and changed the deterministic baseline so the personal layer stays file-backed while the shared team layer defaults decisions and tasks to GitHub Issues-backed `primitive-storage` with write-back still confirmation-gated | Issue #145 |
 | 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-18 | Preamble now explicitly tags the doc as a maintainer/QA baseline and points adopters at `docs/examples/first-hour.md` for the actual first-install walkthrough. Closes audit finding #100 (acceptance.md was being referenced from README "Where to start" as if it were user onboarding) | Concept/onboarding/process audit |
 | 2026-05-18 | VS Code Copilot Chat install path now accepts either the Preview marketplace path (user-level `chat.plugins.marketplaces`) or the stable installer fallback (`scripts/install --target vscode`); the acceptance criteria allow either. Closes audit finding #97 | Concept/onboarding/process audit |

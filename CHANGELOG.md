@@ -19,7 +19,9 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
-*No changes yet.*
+### Changed
+
+- **Default work backend (#145)** — switched the shared process/operational primitive default from file-backed KB records to GitHub Issues. Personal/private layers still default to files, but shared decisions, tasks, feature intake, and roadmap items now use a generated `github-issues` tracker profile unless setup records an explicit file-backed fallback.
 
 ## [6.2.0] — 2026-05-24
 

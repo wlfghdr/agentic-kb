@@ -1,6 +1,6 @@
 # Concurrency
 
-> **Version:** 6.2.0 | **Last updated:** 2026-05-24
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
 
 This guide defines what `agentic-kb` does when two contributors mutate shared layer state at the same time. The structural spec ([`docs/REFERENCE.md`](./REFERENCE.md)) defines layout and formats; the collaboration guide ([`docs/collaboration.md`](./collaboration.md)) defines the human contract. This guide names the concrete conflict cases and the rules `/kb promote`, `/kb sync`, and Git itself follow when contributors collide.
 
@@ -139,6 +139,7 @@ Until those exist, the rules above are the only contract; CI does not currently 
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in the setup and reference specs. Concurrency semantics unchanged | Issue #145 |
 | 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-24 | Added the bidirectional command-reference link so adopters can see that `/kb sync [layer]` covers both contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases in this guide. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-22 | Initial concurrency guide closing audit finding #106 — promote collisions resolve via author-id suffix + `_kb-log/promote-conflicts.md` entry; backlink mutation after promote refuses `/kb` writes against `status: promoted` source files and surfaces a diverged-backlink warning at the next `/kb sync` / `/kb audit`; topic merges land as author-sectioned `## Position — @<author> <date>` blocks so concurrent edits coexist; `.kb-log/` and live overviews follow append-only and `merge=ours` rules already declared in REFERENCE.md §6. New `/kb audit` rules K13–K15 surface unresolved conflicts, diverged backlinks, and long-running author disagreement. Closes audit finding #106 | Concept/spec-gap audit closeout |

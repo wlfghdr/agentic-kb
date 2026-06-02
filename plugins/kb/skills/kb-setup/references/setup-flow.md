@@ -79,7 +79,7 @@ Instantiate these files from `templates/`:
 
 When `roadmaps` or `journeys` are enabled, render their config blocks into `.kb-config/layers.yaml` under the owning layer and their template blocks into `.kb-config/artifacts.yaml`. The first-run default is one owning layer for both artifacts unless the user explicitly selects different owners.
 
-When tracker-backed primitives are enabled, render `primitive-storage:` under the owning layer. Use file-backed defaults for private layers unless the user explicitly selects a tracker. For shared layers with an existing tracker process, render the tracker as the canonical home only for the primitive families the user confirms. Do not create a competing canonical decision or task file when the tracker is canonical; use supporting directories for summaries and backlinks.
+Render `primitive-storage:` under every owning layer. Use file-backed defaults for private layers unless the user explicitly selects a tracker. For shared layers, default process and operational primitives to a `github-issues` tracker: tasks, feature intake, and tracker-scoped roadmap items use `tracker`; decisions use `tracker` unless the user chooses `hybrid` for early deliberation in files. If GitHub Issues is unavailable or rejected, render an explicit `files` fallback and state the reason in the setup summary. Do not create a competing canonical decision or task file when the tracker is canonical; use supporting directories for summaries and backlinks.
 
 ## Tracker backbone setup
 
@@ -300,6 +300,7 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Changed the setup-flow default so shared process/operational primitives render GitHub Issues-backed `primitive-storage` by default, with explicit file-backed fallback only when GitHub Issues is unavailable or rejected | Issue #145 |
 | 2026-05-18 | VS Code IDE-configuration note rewritten: the `chat.plugins.marketplaces` setting belongs to user-level `settings.json` (workspace settings not honored per the official docs), the surrounding feature is Microsoft Preview, and `scripts/install --target vscode` is recommended as the stable path. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order flipped to match `kb-setup` SKILL: phase 1 is now "Workspace and harness facts" (frontloaded), phase 2 is the open-ended "Context and goals" block. Expert-mode skip path made explicit — phase 1 is never skipped because the wizard needs workspace root + IDE targets before it writes anything. Closes audit finding #98 | Concept/onboarding/process audit |
 | 2026-05-17 | Added tracker-backbone setup flow: `primitive-storage` rendering, GitHub governance profile scaffold (issue templates, PR template, labeler, CI, checklist, repo-local skill), Jira mapping checklist, and verification rules for tracker-backed primitives | Tracker-backed onboarding design |
