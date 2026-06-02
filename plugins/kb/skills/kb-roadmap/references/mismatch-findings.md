@@ -1,5 +1,7 @@
 # Reference: mismatch findings
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Mismatch findings are the primary value of the skill on imperfect datasets. Where correlation fails, the artifact surfaces *why* — not silently discard.
 
 ## Classes
@@ -75,3 +77,9 @@ The skill exposes two review commands:
 - `/kb roadmap --review-mismatches` — walks section-E entries; user can suppress a class per-source, or add a cross-reference to upgrade it to tier 2 on the next run
 
 Confirmed matches and suppressions persist in `.kb-scripts/roadmap-state.json` so future runs stay stable.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

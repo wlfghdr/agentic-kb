@@ -1,5 +1,7 @@
 # Reference: `/kb journeys` command reference
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Base command
 
 ```
@@ -123,5 +125,6 @@ Command-specific contracts above take precedence when they are narrower, such as
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-25 | Aligned `/kb journeys audit` with the canonical J1-J19 audit reference, including resolution flags, triple artifacts, policy knobs, and exit codes | PR #141 review |
 | 2026-05-08 | Clarified the shipped `render`/`extract-mocks` helper behavior, discovery rules, and optional dependency fallbacks | Integration pass |

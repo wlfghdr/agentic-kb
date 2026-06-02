@@ -1,5 +1,7 @@
 # Reference: `/kb roadmap` command reference
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Base command
 
 The behavioral spec below describes the intended `/kb roadmap` surface. The shipped helper script in this repo currently implements config-driven generation for detail/roll-up scopes plus `--dry-run`; interactive mutation flows remain draft-spec behavior.
@@ -143,4 +145,5 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Clarified which `/kb roadmap` behaviors are covered by the shipped helper script versus the broader draft command spec | Integration pass |

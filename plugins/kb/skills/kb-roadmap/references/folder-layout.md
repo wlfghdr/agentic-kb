@@ -1,5 +1,7 @@
 # Reference: folder layout and views
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 The skill emits into a dedicated `_kb-roadmaps/` folder at the adopter's KB root. This folder is a peer of `_kb-references/`, `_kb-decisions/`, `_kb-ideas/`, `_kb-tasks/` — not a subdirectory of reports — because roadmaps are a distinct primitive from strategic reports.
 
 ## Layout
@@ -76,4 +78,5 @@ The `archive/` directory is reserved for future retention handling. The shipped 
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Removed unimplemented `status-*` outputs and clarified the current helper-script behavior for roll-up scopes and root index generation | Integration pass |

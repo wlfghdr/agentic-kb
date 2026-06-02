@@ -1,5 +1,7 @@
 # Command Reference — kb-management
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Capture & Process
 
 | Subcommand | Action |
@@ -218,6 +220,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-24 | Expanded the `/kb sync [layer]` row so it carries both parts of the contract: contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases from `docs/concurrency.md` (promote conflicts, diverged backlinks, and unresolved topic author-sections). Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-23 | Expanded the Capture & Process section: the `/kb [text/URL/path]` row now names the three capture-routing modes and links to the new `capture-routing.md`; added a `/kb <layer> [input]` row for explicit-mode direct routing to a non-default layer | Artifact layer routing |
 | 2026-05-22 | Documented the retro closure lifecycle (`status: open \| tracked \| closed`, `/kb note end` transition to `tracked`, `/kb audit` K12 rule, `/kb start-week` surfacing unfinished commitments) under the Notes section. Expanded the triage scan "Rituals" signal to make the level-1 manual-nudge contract explicit (no scheduler at level 1, so the user is the only thing that triggers rituals; signal turns into an active nudge instead of just an observation). Closes audit findings #108 and #112 | Concept/spec gap audit |

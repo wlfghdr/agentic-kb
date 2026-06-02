@@ -1,5 +1,7 @@
 # Publish Contract — skill packaging and marketplace submission
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 This reference defines what `/kb publish` means once a source artifact contains a generalizable pattern worth sharing through a layer's marketplace.
 
 ## What publish is not
@@ -152,5 +154,6 @@ Suggested next steps:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-22 | Added "Versioning, dependencies, install-mode, priority" subsection: skills MUST declare SemVer `version:`; `dependencies:` is resolved before install; marketplace repos declare `install-mode: open \| review-required` (public marketplaces MUST be `review-required`); cross-marketplace conflicts resolve via `priority:` with shadow warnings. PR body must list the proposed version bump, resolved dependencies, marketplace install-mode, and any shadowed skills. Full normative contract lives in `docs/REFERENCE.md` §11. Closes audit finding #113 | Concept/spec gap audit |
 | 2026-04-27 | Added a dedicated publish reference covering the transformation boundary of `/kb publish`, the generalizability gate, safety validation, package layout, and response contract; aligned package paths to the current marketplace layout in `docs/REFERENCE.md` §11 | Documentation gap follow-up |

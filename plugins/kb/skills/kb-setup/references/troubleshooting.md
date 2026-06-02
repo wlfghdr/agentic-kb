@@ -1,5 +1,7 @@
 # Troubleshooting — kb-setup
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## No tools enabled in the VS Code chat session
 
 Symptom: `/kb` or `/kb setup` launches a chat session where the agent reports it has no tools available, or file operations (read / create / edit) fail.
@@ -57,3 +59,9 @@ Every topic and foundation file must end with a `## Changelog` section. The skil
 - Check that the marketplace repo is reachable (VPN / SSO if internal).
 - Re-run with `--force` to overwrite a partial install.
 - Check `scripts/install --help` for harness-specific options.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

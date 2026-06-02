@@ -23,6 +23,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 - **Default work backend (#145)** — switched the shared process/operational primitive default from file-backed KB records to GitHub Issues. Personal/private layers still default to files, but shared decisions, tasks, feature intake, and roadmap items now use a generated `github-issues` tracker profile unless setup records an explicit file-backed fallback.
 
+### Fixed
+
+- **Plugin spec consistency coverage (#144)** — `scripts/check_consistency.py` now scans `plugins/kb/agents/*.md`, skill `SKILL.md` files, and skill `references/*.md` recursively while skipping scaffold templates. Newly covered plugin references now carry required version/changelog metadata so missing long-lived spec metadata fails CI.
+
 ## [6.2.0] — 2026-05-24
 
 > **Why MINOR:** this release formalizes the v6.1-era audit closeout work that had already landed in the docs. It adds non-breaking contracts for capture routing, concurrency, promoted-record backlinks, retro closure, HTML artifact lifecycle, marketplace conflict handling, setup first-win behavior, and tracker-backed onboarding while keeping the v6 layer graph and existing command surface compatible.

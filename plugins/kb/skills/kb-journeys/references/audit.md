@@ -1,5 +1,7 @@
 # Reference: `/kb journeys audit`
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Full-sweep consistency audit for the journeys primitive. Runs every structural, traceability, readiness, and mock-integrity rule defined by `kb-journeys` and reports each violation with a proposed correction. Every violation is actionable: the user can accept, reject, or defer the offered correction through the follow-up command or authoring flow.
 
 ## When to run
@@ -127,4 +129,5 @@ Roadmap-specific checks that compare plan items to journey readiness remain owne
 
 | Date | What changed | Source |
 |------|--------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-24 | Added the canonical J1-J19 journeys audit rule set, output contract, resolution actions, and KB-wide delegation contract so `/kb journeys audit` has a version-pinnable reference | Issue #125 |

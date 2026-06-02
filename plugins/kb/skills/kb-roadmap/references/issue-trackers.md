@@ -1,5 +1,7 @@
 # Reference: issue trackers as first-class sources
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Why this exists
 
 Organizations track plans across heterogeneous systems — GitHub issues, Jira, Linear, a Notion board, a spreadsheet — and correlate delivery in a separate system. The skill treats *every* such system as an **issue tracker** with a common capability surface, not as a one-off "plan source".
@@ -99,6 +101,7 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-25 | Updated the tracker reference to prefer active-layer `connections.trackers[]` and recast `issue-trackers[]` as the legacy/override surface for the 5.1 closeout | v5.1.0 closeout release |
 
 Adopters can mix both in the same scope.

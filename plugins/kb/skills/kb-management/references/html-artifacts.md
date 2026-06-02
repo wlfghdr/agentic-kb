@@ -1,5 +1,7 @@
 # HTML Artifact Generation — kb-management
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Two families of artifacts:
 
 1. **Always-current overviews** — regenerated after any state-mutating operation. Overwritten in place. No version number; timestamp watermark.
@@ -294,6 +296,7 @@ Every `/kb present` MUST use this file (as customized by the phase-3 HTML-stylin
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-22 | Added "Commit policy, hosting, and merge strategy" subsection pointing at the new `docs/REFERENCE.md` §6 lifecycle contract: anchor-layer live overviews are tracked (+ `merge=ours` via `.gitattributes`); non-anchor live overviews are ignored by default; historical artifacts are always tracked; `/kb status --refresh-overviews` is the repair path. Generators must keep live overview output deterministic so `merge=ours` converges cleanly on the next regen. Closes audit finding #107 | Concept/spec gap audit |
 | 2026-05-15 | Reframed external-read examples to refer to stable roadmap/journey skills instead of optional draft skills | Release-readiness audit |
 | 2026-05-10 | Corrected the daily-summary and weekly-summary finding paths in the historical-artifacts table from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |

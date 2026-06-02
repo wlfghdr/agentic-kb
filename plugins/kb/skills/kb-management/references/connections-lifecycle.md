@@ -1,5 +1,7 @@
 # Connections — setup and lifecycle
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 This reference covers how to declare, configure, and maintain external connections for a layer. Connections give `/kb digest connections` its source list, and they appear in triage drift checks and `start-day` briefings.
 
 ## What a connection is
@@ -191,6 +193,7 @@ To stop tracking a connection:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-18 | Relabeled the Write-back section as RESERVED (not implemented in v6.1.0): `writeback.enabled: true` is a no-op today; the planned contract is preserved as the future spec; open questions (which trackers, auth model, source-of-truth rule, concurrent-write semantics) are now explicit. `kb-setup` must not propose `writeback.enabled: true` in v6.1.0. Closes audit finding #102 | Concept/onboarding/process audit |
 | 2026-05-17 | Clarified that tracker connections and tracker-backed primitive ownership are separate config concerns: `connections.trackers[]` describes access, while `primitive-storage` declares canonical ownership | Tracker-backed onboarding design |
 | 2026-04-27 | Added a dedicated reference for connection kinds, config shape, setup flow, digest lifecycle, watermark format, triage drift checks, write-back, and disconnect behavior; aligned repo-as-OS bridge wording to the current `connections.product-repos[]` schema | Documentation gap follow-up |

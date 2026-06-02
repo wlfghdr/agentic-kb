@@ -1,5 +1,7 @@
 # Reference: `/discuss` mode
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Intent
 
 By default the skill **proposes changes and writes them** (artifact regeneration, tuning application, sync application). `/discuss` flips the contract: the skill must not write anything. It explains, answers, and asks — the user drives edits.
@@ -29,3 +31,9 @@ Any `/kb roadmap` invocation where the user message contains `/discuss` (as a to
 ## Why
 
 The user keeps autonomy. `/discuss` is the on-ramp for a human to understand what the skill *would* do before authorizing it. It is a deliberate low-energy mode — useful for reviewing a new scope, validating a tuning proposal, or sanity-checking correlation results without letting the skill mutate state.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

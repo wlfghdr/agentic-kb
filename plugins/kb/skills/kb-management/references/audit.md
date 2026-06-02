@@ -1,5 +1,7 @@
 # Reference: `/kb audit`
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 KB-wide consistency audit. Runs the foundational checks directly, then delegates scope-specific audits to installed primitive skills (`kb-roadmap`, `kb-journeys`) and consolidates the results into a single report with offered corrections.
 
 ## When to run
@@ -106,6 +108,7 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-24 | Linked delegated roadmap and journeys audits to their canonical audit references and replaced the inline journeys checklist with the J1-J19 delegated rule summary from `kb-journeys/references/audit.md` | Issue #125 |
 | 2026-05-23 | Tightened K16 wording so it is mechanically checkable: it now cites the required `routing-mode` / `correlation-id` log keys, the propose → confirm → capture line ordering, and the supported-fallback exemption. Aligned with the "Log format" subsection added to [`capture-routing.md`](./capture-routing.md) | Copilot review #116 |
 | 2026-05-23 | Added K16 (`capture-routing-unconfirmed` — every reflection-driven capture has a paired confirmation entry in `.kb-log/` before the mutation) for the capture-routing contract in [`capture-routing.md`](./capture-routing.md). Updated the output-shape line to reference K1-K16 | Artifact layer routing |

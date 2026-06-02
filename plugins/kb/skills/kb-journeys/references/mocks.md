@@ -1,5 +1,7 @@
 # Reference: mock extraction
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Why this exists
 
 A journey markdown file often embeds UI or terminal mocks that illustrate a step. Readers and reviewers need to link to a specific mock in isolation — for a Slack message, a PR review comment, a presentation, or to iterate the mock without scrolling through the whole journey. The extractor turns every inline mock into its own standalone HTML page and back-links both directions.
@@ -87,3 +89,9 @@ Running the extractor twice with no source change produces byte-identical output
 ## Integration with `render`
 
 `kb-journeys render` runs the extractor as its last step. `kb-journeys extract-mocks` is the extractor-only command, useful when only mock content changed.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

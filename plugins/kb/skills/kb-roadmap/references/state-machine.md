@@ -1,5 +1,7 @@
 # Reference: state machine and resume routing
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Motivation
 
 The skill runs on partial data, mid-workflow, with humans in the loop. It must be able to:
@@ -68,3 +70,9 @@ The rules are deterministic, documented, and testable. LLM judgment is not used 
 ## Why this is not VI-specific
 
 The markers are generic status words (`draft`, `reviewed`, `published`, `archived`) and the rules refer only to artifact freshness, review backlog, and unresolved findings. No domain vocabulary.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
