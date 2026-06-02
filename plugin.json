@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/agent-plugin.json",
   "name": "agentic-kb",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "AI-native, layered knowledge operations — core kb-management/kb-setup flows, the kb-operator agent, and stable setup-proposed product roadmap/journey skills. Prompt spec executed by any compatible AI harness (Claude Code, VS Code Copilot Chat, OpenCode); no runtime ships.",
   "author": "agentic-kb contributors",
   "license": "Apache-2.0",

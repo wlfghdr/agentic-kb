@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes (including retros), decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 6.2.0
+version: 6.3.0
 triggers:
   # Command surface
   - "/kb"
@@ -266,6 +266,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in setup and tracker-backed primitive references | Issue #145 |
 | 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-24 | Added a discoverability pointer to `docs/concurrency.md` and expanded the `/kb sync [layer]` flow row so the management skill exposes both responsibilities: contributor-scoped cross-reference reconciliation and concurrency reconciliation. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-24 | Tightened core rule 12 so reflection-driven routing fires only on the strong-signal rubric in `references/capture-routing.md`, with weak or ambiguous signals falling through to default. This keeps the skill-level rule aligned with the operational heuristics added for issue #126 | Issue #126 |

@@ -29,7 +29,7 @@ Do not use tracker-backed primitives for private raw notes, sensitive material, 
 
 ## Onboarding Decisions
 
-`/kb setup` must make primitive ownership explicit instead of assuming every first-class object is file-backed.
+`/kb setup` must make primitive ownership explicit instead of assuming every first-class object is file-backed. Private and personal primitives default to files; shared process and operational primitives default to GitHub Issues as the tracker backbone unless setup records an explicit file-backed fallback.
 
 For each layer that enables `decisions`, `tasks`, `ideas`, `roadmaps`, or tracker-backed intake, setup proposes one of these modes per primitive family:
 
@@ -110,7 +110,7 @@ layers:
 | `connections.trackers[].issue-types` | Tracker-native kinds setup expects to exist or creates instructions/templates for |
 | `connections.trackers[].status-values` | Status values setup expects for triage and audit output |
 
-If a primitive family is absent from `primitive-storage`, the default is `files` for traditional KB primitives and `tracker` only for provider-native intake families that have no canonical KB directory, such as `feedback` or `feature-intake`.
+If a primitive family is absent from `primitive-storage`, the default is `files` for personal/private layers. Shared contributor layers must not rely on omission: setup records GitHub Issues-backed ownership for shared process/operational primitives by default, or records an explicit `files` fallback with the reason. Provider-native intake families that have no canonical KB directory, such as `feedback` or `feature-intake`, remain tracker-backed when configured.
 
 ## Metadata Rules
 
@@ -232,5 +232,6 @@ Watch for these problems:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Changed the tracker-backed primitive default so shared process/operational primitives default to GitHub Issues-backed ownership, while personal/private layers stay file-backed and shared file-backed mode must be explicit | Issue #145 |
 | 2026-05-17 | Expanded the proposal into an onboarding contract: setup now asks which primitives are file-backed, tracker-backed, or hybrid; records `primitive-storage` beside tracker connections; and treats generic GitHub/Jira setup packages, governance CI, labeler/PR templates, manual setup checklists, and tracker workflow skills as expected onboarding outcomes | Tracker-backed onboarding design |
 | 2026-05-17 | Added the generic tracker-backed primitive pattern for teams that use issue trackers as the operational backbone for feedback, ideas, decisions, tasks, and feature intake | Cross-repo tracker-backbone review |

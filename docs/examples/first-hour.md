@@ -1,6 +1,6 @@
 # First Hour — Zero to First Useful Layer Graph
 
-> **Version:** 6.2.0 | **Last updated:** 2026-05-24
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
 
 This walkthrough covers the minimum path from nothing installed to the first useful `/kb` responses in a freshly initialized workspace. Target audience: a developer who wants to prove the adoption path end-to-end in under an hour.
 
@@ -132,6 +132,7 @@ If the command targets a `role: consumer` layer, it must refuse clearly.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in the setup and reference specs. Walkthrough flow unchanged | Issue #145 |
 | 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-18 | Phase 1 / Phase 2 question table renumbered to match the Sweep-1 phase swap: Q1–Q3 is now workspace + harness facts (frontloaded), Q4–Q11 is the open-ended context block. Added a "Setup closing — the first win" subsection that documents Step 7 of `kb-setup/SKILL.md` so adopters know to expect the optional bootstrap capture and the curated next-steps shortlist instead of a read-only "Setup: OK". Closes audit findings #99 and #101; corrects pre-existing drift left by Sweep 1 | Concept/onboarding/process audit |
 | 2026-05-15 | v6.1.0: bumped doc version to match the release-readiness baseline. The first-hour walkthrough remains compatible with the goal-oriented setup flow while the canonical acceptance path now carries the expanded delivery/operations and retro proofs | Release-readiness audit |

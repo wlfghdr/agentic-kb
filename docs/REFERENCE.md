@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 6.2.0
+> **Version:** 6.3.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the role-by-role daily companion to the operating model, see [docs/role-handbook.md](./role-handbook.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For concurrent-write rules (promote collisions, backlink mutation, topic merges), see [docs/concurrency.md](./concurrency.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -661,7 +661,7 @@ Field contract:
 
 ### Primitive storage and tracker backbones
 
-First-class primitives do not all need to use the same operational backbone. A layer may keep private or early-stage work in Markdown files while using an issue tracker as the canonical operational home for shared decisions, tasks, feature intake, or roadmap items.
+First-class primitives do not all need to use the same operational backbone. Private or early-stage work stays file-backed by default. Shared process and operational artifacts default to GitHub Issues as the canonical operational home for decisions, tasks, feature intake, and roadmap items, with KB files retaining synthesis, evidence, reports, summaries, and backlinks. A layer may still declare `files` or `hybrid` explicitly when that is the confirmed ownership model.
 
 `primitive-storage` is the ownership map. It complements `connections.trackers[]`: the tracker connection says how to reach the external system, while `primitive-storage` says which primitive family the external system owns.
 
@@ -717,7 +717,7 @@ Valid modes:
 
 For GitHub-backed layers, setup should generate or guide creation of the GitHub governance profile: native issue types, issue forms, project/status guidance, labels that do not duplicate native metadata, pull request templates, governance CI, a path labeler, manual branch-protection/CODEOWNERS/project setup checklist, and a repo-local tracker workflow skill. For Jira-backed layers, setup should record project key/URL, issue type mapping, status mapping, query/JQL, link policy, and confirmation-gated write-back capabilities. Other trackers follow the same contract through adapter-specific fields under `connections.trackers[]`.
 
-If a primitive family is omitted from `primitive-storage`, readers assume `files` for built-in KB primitives and no write-back for tracker-native intake families. Skills must refuse ambiguous writes when both a KB file and tracker item appear to be canonical for the same item.
+If a primitive family is omitted from `primitive-storage`, readers assume `files` for personal/private layers. In shared contributor layers, setup must render an explicit `primitive-storage` block: `github-issues` tracker ownership for shared process/operational families by default, or an explicit `files` fallback when the adopter cannot or does not want GitHub Issues to be canonical. Skills must refuse ambiguous writes when both a KB file and tracker item appear to be canonical for the same item.
 
 ### Product-management primitives
 
@@ -1215,6 +1215,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-06-02 | Version aligned to 6.3.0 and §5 changed the shared process/operational primitive default from file-backed KB records to GitHub Issues via explicit `primitive-storage`, with file-backed defaults retained for personal/private layers. Source: issue #145 |
 | 2026-05-24 | §1 capture-time layer routing now points reflection-driven routing at the strong/weak signal rubric in `capture-routing.md` and states that weak or ambiguous signals fall through to default. This removes the vague "clearly implies" trigger from the structural reference while keeping the detailed operational examples in the dedicated contract. Source: issue #126 |
 | 2026-05-24 | Version aligned to 6.2.0 |
 | 2026-05-23 | §1 added "Capture-time layer routing" subsection codifying the three routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate for agent-inferred non-default capture targets. Direct cross-layer capture is now a named first-class flow parallel to `/kb promote`, not an implicit consequence of "context selects another contributor-capable layer". Full schema, audit rule K16, and response shapes live in `plugins/kb/skills/kb-management/references/capture-routing.md`. Closes the spec gap where artifacts could only flow private → shared via promote, and the agent had no codified obligation to confirm a self-chosen non-default destination |

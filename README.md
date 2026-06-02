@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v6.2.0-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v6.3.0-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -324,7 +324,7 @@ The reading list is grouped by audience. Pick the row that matches what you are 
 
 | Area | Status |
 |------|--------|
-| Framework spec | Stable (v6.2.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
+| Framework spec | Stable (v6.3.0), open items in [`docs/roadmap.md`](docs/roadmap.md) |
 | Core plugin (`kb-management`, `kb-setup`, `kb-operator`) | Stable behavioral spec (executed by the harness's agent; no runtime ships) |
 | Product-management skills | `kb-roadmap`, `kb-journeys` (stable setup-proposed skills, enabled per owning layer) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |

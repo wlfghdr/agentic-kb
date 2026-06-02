@@ -137,6 +137,28 @@ def scaffold_personal_kb(workspace: Path) -> Path:
                             findings: contributor-scoped
                             topics: contributor-scoped
                             notes: shared
+                        connections:
+                            trackers:
+                                - name: team-work
+                                    kind: github-issues
+                                    repo: wlfghdr/agentic-kb
+                                    scope: is:issue
+                                    issue-types: [Decision, Task]
+                                    status-values: [Todo, In Progress, In Review, Done]
+                            writeback:
+                                enabled: false
+                                capabilities: []
+                        primitive-storage:
+                            decisions:
+                                mode: tracker
+                                tracker: team-work
+                                kind: Decision
+                                summary-dir: _kb-decisions
+                            tasks:
+                                mode: tracker
+                                tracker: team-work
+                                kind: Task
+                                summary-dir: _kb-tasks
                     - name: engineering-org
                         scope: org-unit
                         role: contributor
