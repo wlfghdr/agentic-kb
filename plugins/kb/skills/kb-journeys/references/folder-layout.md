@@ -1,5 +1,7 @@
 # Reference: folder layout
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Default layout
 
 ```
@@ -63,3 +65,9 @@ Hyphen, not dot, separates tier.phase from the slug in the filename (dots in fil
 ## Retention
 
 The journey primitive has no retention policy — journey markdown is source and lives indefinitely. Generated HTML is regenerable, so no archive is needed.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

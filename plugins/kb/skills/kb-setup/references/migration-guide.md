@@ -1,5 +1,7 @@
 # Migration Guide — kb-setup
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 For users who already have a knowledge base in another layout.
 
 ## Detection
@@ -84,5 +86,6 @@ Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-10 | Corrected the task-archive migration target from the flat `_kb-tasks/archive/YYYY-MM.md` to the canonical `_kb-tasks/archive/YYYY/MM.md` shape defined in `docs/REFERENCE.md` §3, so the migration helper produces a layout that matches the rest of the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-25 | Added the explicit `/kb migrate layer-model` and `/kb migrate archives` helper guidance for the 5.1 closeout so legacy adopters have a deterministic migration path | v5.1.0 closeout release |

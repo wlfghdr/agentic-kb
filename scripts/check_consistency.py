@@ -20,7 +20,10 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 IGNORED_PATH_PARTS = {".git", "node_modules", ".venv", "venv", "__pycache__"}
 
-LONG_LIVED_DIRS: list[Path] = []
+LONG_LIVED_DIRS: list[Path] = [
+    REPO / "plugins" / "kb" / "agents",
+    REPO / "plugins" / "kb" / "skills",
+]
 OPTIONAL_LONG_LIVED = [REPO / "docs" / "REFERENCE.md", REPO / "docs" / "glossary.md"]
 
 # Files that are allowed to not have a version header.
@@ -67,6 +70,7 @@ def _load_external_blocklist() -> list[str]:
     return terms
 
 VERSION_RE = re.compile(r"\*\*Version:\*\*\s*(\d+)\.(\d+)(?:\.(\d+))?")
+FRONTMATTER_VERSION_RE = re.compile(r"^version:\s*(\d+)\.(\d+)(?:\.(\d+))?\s*$", re.MULTILINE)
 CHANGELOG_RE = re.compile(r"^##\s+Changelog\s*$", re.MULTILINE)
 HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 INLINE_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -82,8 +86,18 @@ def iter_long_lived_docs():
     for d in LONG_LIVED_DIRS:
         if not d.is_dir():
             continue
-        for p in sorted(d.glob("*.md")):
-            yield p
+        for p in sorted(d.rglob("*.md")):
+            rel = p.relative_to(REPO)
+            parts = rel.parts
+            if "templates" in parts:
+                continue
+            if d.name == "agents":
+                if p.parent == d:
+                    yield p
+                continue
+            if d.name == "skills":
+                if p.name == "SKILL.md" or "references" in parts:
+                    yield p
     for p in OPTIONAL_LONG_LIVED:
         if p.is_file():
             yield p
@@ -101,6 +115,10 @@ def parse_version(value: str) -> tuple[int, int, int] | None:
     if not match:
         return None
     return tuple(int(part) for part in match.groups())
+
+
+def has_version_field(text: str) -> bool:
+    return bool(VERSION_RE.search(text) or FRONTMATTER_VERSION_RE.search(text))
 
 
 def normalize_anchor(text: str) -> str:
@@ -131,7 +149,7 @@ def check_versions_and_changelogs() -> list[str]:
     for doc in iter_long_lived_docs():
         text = doc.read_text(encoding="utf-8")
         rel = doc.relative_to(REPO)
-        if doc not in EXEMPT_FROM_VERSION and not VERSION_RE.search(text):
+        if doc not in EXEMPT_FROM_VERSION and not has_version_field(text):
             errors.append(f"MISSING **Version:** field: {rel}")
         if not CHANGELOG_RE.search(text):
             errors.append(f"MISSING '## Changelog' section: {rel}")
@@ -497,4 +515,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

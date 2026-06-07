@@ -1,5 +1,7 @@
 # Tracker-Backed Primitives
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Some teams already run their day-to-day product and delivery work through an issue tracker. `agentic-kb` should support that pattern without turning the KB into a duplicate tracker.
 
 This reference defines the generic pattern for using tracker items as the operational backbone for decisions, ideas, tasks, feedback, and feature intake while keeping KB files as synthesis, evidence, and artifact memory.
@@ -232,6 +234,7 @@ Watch for these problems:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-06-02 | Changed the tracker-backed primitive default so shared process/operational primitives default to GitHub Issues-backed ownership, while personal/private layers stay file-backed and shared file-backed mode must be explicit | Issue #145 |
 | 2026-05-17 | Expanded the proposal into an onboarding contract: setup now asks which primitives are file-backed, tracker-backed, or hybrid; records `primitive-storage` beside tracker connections; and treats generic GitHub/Jira setup packages, governance CI, labeler/PR templates, manual setup checklists, and tracker workflow skills as expected onboarding outcomes | Tracker-backed onboarding design |
 | 2026-05-17 | Added the generic tracker-backed primitive pattern for teams that use issue trackers as the operational backbone for feedback, ideas, decisions, tasks, and feature intake | Cross-repo tracker-backbone review |

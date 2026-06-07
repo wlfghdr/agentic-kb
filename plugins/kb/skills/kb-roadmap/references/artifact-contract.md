@@ -1,5 +1,7 @@
 # Reference: artifact output contract
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Every `/kb roadmap` run emits three files with the same base name under the scope-specific directory:
 
 ```
@@ -133,5 +135,6 @@ The helper's JSON payload does not currently carry the SKILL version field. Comp
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Aligned the artifact contract with the shipped helper output shape, roll-up filename rule, and root index refresh behavior | Integration pass |
 | 2026-04-30 | Updated the JSON sidecar version example to match kb-roadmap v0.2.0 | Product-management surface integration |

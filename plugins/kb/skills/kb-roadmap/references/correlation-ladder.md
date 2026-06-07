@@ -1,5 +1,7 @@
 # Reference: the five-tier correlation ladder
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 The correlation engine matches plan items (tickets, milestones) to delivery signals (commits, PRs, tags, ADRs). It applies tiers in order and stops at the first match. Every matched pair records its tier for later auditing; every unmatched item flows to tier 5 (mismatch finding).
 
 ## Tier 1 — Direct key match
@@ -88,3 +90,9 @@ Each match records:
 ```
 
 The JSON sidecar preserves the full ladder output so future runs can diff correlation quality over time.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

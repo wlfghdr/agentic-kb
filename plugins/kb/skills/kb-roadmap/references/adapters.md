@@ -1,5 +1,7 @@
 # Reference: source adapters
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Adapters normalize heterogeneous plan and delivery sources into a common item shape. The draft behavioral spec covers the full set below. The shipped helper script in this repo currently implements `ticket-export-markdown` and `github-issues`; the remaining adapters stay documented as the next extension points so the published surface remains explicit.
 
 ## Common item shape
@@ -178,5 +180,6 @@ Collisions raise an explicit error — no silent override.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Clarified which roadmap adapters are implemented by the shipped helper script versus still spec-only in the draft contract | Integration pass |
 | 2026-04-22 | Replaced an internal example label with a generic one to keep the roadmap adapter reference vendor-neutral | Vendor-neutrality rescreen |

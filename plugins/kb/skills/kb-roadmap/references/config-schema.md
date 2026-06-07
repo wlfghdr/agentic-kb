@@ -1,5 +1,7 @@
 # Reference: active-layer `roadmap:` block in `.kb-config/layers.yaml`
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Full schema with defaults.
 
 The active layer may also declare trackers under `connections.trackers[]`. At 5.1, the roadmap pilot normalizes those connection-backed trackers into read-only `issue-trackers[]` entries when the legacy per-skill block is absent.
@@ -169,5 +171,6 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-30 | Added the presentation-view config surface for phase/lane roadmap boards, customer-value headlines, draft callouts, and implemented markers | Product-management surface integration |
 | 2026-04-25 | Clarified the 5.1 config contract: the active layer owns the roadmap block, `connections.trackers[]` can seed read-only tracker inputs, and `issue-trackers[]` is now documented as a legacy or override surface | v5.1.0 closeout release |

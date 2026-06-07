@@ -1,5 +1,7 @@
 # Reference: journey authoring commands
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 `kb-journeys` shares the four-command authoring arc with `kb-roadmap` (`ideate` / `discuss` / `review` / `refine`), with journey-specific deltas. See `kb-roadmap/references/authoring-commands.md` for the shared stance contract.
 
 ## Shared contract
@@ -96,3 +98,9 @@ When invoked this way, the review stance:
 - On `/kb journeys refine` success, the drift finding is marked **resolved** and the journey is re-rendered.
 
 This is the only supported path for journey edits driven by delivery drift. Journeys are **never** silently updated by roadmap runs.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

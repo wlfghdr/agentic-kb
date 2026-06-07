@@ -1,5 +1,7 @@
 # Reference: `/kb roadmap audit`
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Full-sweep consistency audit for the roadmap scope. Runs every rule defined across the skill and reports each violation with a proposed correction. Every violation is actionable — the user can accept, reject, or defer.
 
 ## When to run
@@ -112,3 +114,9 @@ When `/kb roadmap` runs the state machine and finds a recent audit artifact with
 | 1 | Config error (skill cannot run) |
 | 2 | Violations exceed severity-gate |
 | 3 | User deferred one or more resolutions without completing |
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

@@ -1,5 +1,7 @@
 # Reference: item authoring commands
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance:
 
 | Command | Stance | Produces |
@@ -231,3 +233,9 @@ When the scope has a tracker with `write-*` capabilities declared, each authorin
 | `refine` | Attach the implementation plan as a comment and propose a status transition to `defined` (if `write-comments` + `write-status`) |
 
 All tracker writes are gated by `--apply` + interactive confirmation, matching the safety rules in `issue-trackers.md`.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

@@ -1,5 +1,7 @@
 # Output Contract — collaboration-safe review
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 This document defines the response contract for `agentic-kb` operations where humans need to review or trust what an agent did.
 
 The top-level rule stays the same: keep output terse. But terse does not mean ambiguous.
@@ -220,4 +222,5 @@ Suggested next steps:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3. No semantic changes to the action-mode rules, the four required sections, or the example outputs | v6.0.0 adoption + daily-usage gap audit |

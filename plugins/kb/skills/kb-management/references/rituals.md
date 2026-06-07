@@ -1,5 +1,7 @@
 # Rituals — kb-management
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Invariants for every ritual
 
 1. Start with `/kb status` mental check.
@@ -65,4 +67,5 @@ Rituals are idempotent within a day / week — running twice doesn't duplicate l
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-10 | First changelog row in this file (closes the AGENTS rule 3 gap), plus three drift fixes the v6 audit surfaced: replaced the retired `SKILL.md rule #11c` cross-references with pointers to the current rule 8 (Task creation and closure are explicit); corrected the task-archive path from `_kb-tasks/archive/YYYY-MM.md` to the canonical `_kb-tasks/archive/YYYY/MM.md` declared in `docs/REFERENCE.md` §3 so end-of-day archival writes to the right place; corrected the weekly-summary finding path to the year-nested `_kb-references/findings/YYYY/YYYY-MM-DD-weekly-summary.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |

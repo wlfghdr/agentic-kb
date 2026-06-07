@@ -1,5 +1,7 @@
 # Reference: `.kb-config/layers.yaml` `journeys:` block
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Full schema with defaults.
 
 ```yaml
@@ -73,4 +75,5 @@ journeys:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-30 | Added setup-written ownership metadata and clarified that layered journey inheritance remains future work | Product-management surface integration |

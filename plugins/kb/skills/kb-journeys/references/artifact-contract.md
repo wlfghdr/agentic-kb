@@ -1,5 +1,7 @@
 # Reference: journey artifact contract
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 ## Inputs
 
 - The configured `journeys.source-dir` directory tree (default `_kb-journeys/`).
@@ -106,4 +108,5 @@ Every generated page carries a `<meta name="generator" content="kb-journeys v<ve
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Aligned the journey artifact contract with the shipped overview/index output, current metadata rendering, and optional dependency fallback behavior | Integration pass |

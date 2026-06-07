@@ -1,5 +1,7 @@
 # Setup Flow — step by step
 
+> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+
 Full walkthrough the skill follows on `/kb setup`.
 
 For the deterministic acceptance baseline used to verify real onboarding and team rollout quality, see [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
@@ -300,6 +302,7 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-06-02 | Changed the setup-flow default so shared process/operational primitives render GitHub Issues-backed `primitive-storage` by default, with explicit file-backed fallback only when GitHub Issues is unavailable or rejected | Issue #145 |
 | 2026-05-18 | VS Code IDE-configuration note rewritten: the `chat.plugins.marketplaces` setting belongs to user-level `settings.json` (workspace settings not honored per the official docs), the surrounding feature is Microsoft Preview, and `scripts/install --target vscode` is recommended as the stable path. Closes audit finding #97 | Concept/onboarding/process audit |
 | 2026-05-18 | Phase order flipped to match `kb-setup` SKILL: phase 1 is now "Workspace and harness facts" (frontloaded), phase 2 is the open-ended "Context and goals" block. Expert-mode skip path made explicit — phase 1 is never skipped because the wizard needs workspace root + IDE targets before it writes anything. Closes audit finding #98 | Concept/onboarding/process audit |
