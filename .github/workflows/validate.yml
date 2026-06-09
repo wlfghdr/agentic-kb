@@ -94,3 +94,8 @@ jobs:
         run: python3 scripts/test_kb_migrations.py
       - name: Regression test capture routing heuristics fixture
         run: python3 scripts/test_capture_routing.py
+      - name: Regression test installer behavior
+        run: python3 scripts/test_install.py
+      - name: Regression test kb-report runtime behavior
+        run: python3 scripts/test_kb_report_runtime.py
+

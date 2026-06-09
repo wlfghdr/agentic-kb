@@ -9,6 +9,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 TEMPLATES = [
     REPO / "plugins" / "kb" / "skills" / "kb-management" / "templates" / "report.html",
+    REPO / "plugins" / "kb" / "skills" / "kb-management" / "templates" / "artifact-base.html",
+    REPO / "plugins" / "kb" / "skills" / "kb-management" / "templates" / "index.html",
     REPO / "plugins" / "kb" / "skills" / "kb-setup" / "templates" / "presentation-template.html",
 ]
 EXTERNAL_RESOURCE_RE = re.compile(
