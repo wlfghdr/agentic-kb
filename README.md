@@ -9,6 +9,18 @@
 
 ---
 
+## The agentic-* suite
+
+`agentic-kb` works with any harness and any workflow framework — and it is also the **knowledge layer** of the agentic-* suite, three building blocks for running an agentic organization on Git:
+
+| Repo | Role |
+|------|------|
+| [agentic-enterprise](https://github.com/wlfghdr/agentic-enterprise) | **The operating model** — governance layers, process loops, policies, and templates. Humans decide, agents execute, Git governs. |
+| [agentic-kb](https://github.com/wlfghdr/agentic-kb) | **The knowledge layer** — layered, vendor-neutral knowledge ops via the `/kb` command (this repo). |
+| [agentic-dev](https://github.com/wlfghdr/agentic-dev) | **The execution layer** — deterministic engineering triage and execution loop. |
+
+---
+
 ## The real problem
 
 Your agents made you 10× faster at creating. Nothing made you faster at *deciding*.
@@ -330,17 +342,7 @@ The reading list is grouped by audience. Pick the row that matches what you are 
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
 
-## The agentic-* suite
 
-`agentic-kb` works with any harness and any workflow framework — and it is also the **knowledge layer** of the agentic-* suite, three building blocks for running an agentic organization on Git:
-
-| Repo | Role |
-|------|------|
-| [agentic-enterprise](https://github.com/wlfghdr/agentic-enterprise) | **The operating model** — governance layers, process loops, policies, and templates. Humans decide, agents execute, Git governs. |
-| [agentic-kb](https://github.com/wlfghdr/agentic-kb) | **The knowledge layer** — layered, vendor-neutral knowledge ops via the `/kb` command (this repo). |
-| [agentic-dev](https://github.com/wlfghdr/agentic-dev) | **The execution layer** — deterministic engineering triage and execution loop. |
-
-The suite is an example pairing, not a dependency: the spec stays vendor-neutral and harness-agnostic either way.
 
 ## Contributing
 
