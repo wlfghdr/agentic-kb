@@ -1,7 +1,7 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 6.3.0
+version: 6.3.1
 uses:
   - kb-management
   - kb-setup
@@ -181,6 +181,7 @@ This agent is **stateless** between invocations. All state is in the file system
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-10 | Version aligned to 6.3.1 | Version alignment |
 | 2026-06-02 | Version aligned to 6.3.0 after setup changed the shared process/operational primitive default to GitHub Issues-backed storage | Issue #145 |
 | 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-25 | Version aligned to 6.1.0 to track the capture-routing changes and framework release | Version alignment |

@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including tracker-backed primitive ownership and product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, tracker setup artifacts, and HTML style references.
-version: 6.3.0
+version: 6.3.1
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -367,6 +367,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-10 | Version aligned to 6.3.1 | Version alignment |
 | 2026-06-02 | Version aligned to 6.3.0 and changed setup defaults so shared process/operational primitives default to GitHub Issues-backed `primitive-storage`, while personal/private layers stay file-backed and shared file-backed mode must be an explicit fallback | Issue #145 |
 | 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-25 | Removed hard-coded command-surface counts from Step 7 so setup points at the canonical command reference instead of repeating a number that can drift | Issue #123 |

@@ -19,6 +19,14 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+## [6.3.1] — 2026-06-10
+
+### Fixed
+
+- **CI Test Suite Coverage Gaps** — added missing `test_install.py` and `test_kb_report_runtime.py` integration tests to the CI validate job.
+- **HTML Templates Self-Containment Checks** — expanded `test_html_templates.py` to assert offline self-containment for `artifact-base.html` and `index.html`.
+- **Visual Redesign & Alignment** — completely redesigned `index.html` with a modern dark theme, ambient glows, Outfit font, scroll-reveal animation, and Trio cards matching the suite style. Removed pedantic markdown-lint configuration.
+
 ## [6.3.0] — 2026-06-10
 
 > **Why MINOR:** switches the shared work-backend default to GitHub Issues, extends consistency-check coverage to all plugin spec metadata, adds suite cross-references and tag-triggered release automation — all non-breaking additions on the v6 layer graph.
