@@ -21,6 +21,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Added
 
+- **Release automation** — new `.github/workflows/release.yml`: pushing a `v*` tag creates the matching GitHub release with notes extracted from this changelog. Same workflow ships across agentic-enterprise, agentic-kb, and agentic-dev for a consistent suite release process.
 - **Suite cross-references** — README gains a "The agentic-* suite" section and the landing page (`index.html`) gains suite footer links positioning agentic-kb as the knowledge layer next to [agentic-enterprise](https://github.com/wlfghdr/agentic-enterprise) (operating model) and [agentic-dev](https://github.com/wlfghdr/agentic-dev) (execution layer). Phrased as an example pairing — the spec stays vendor-neutral and harness-agnostic. The landing page's "Lean by construction" card now counts the four shipped reference skills instead of the outdated two.
 
 ### Changed
