@@ -48,7 +48,7 @@ You don't have to be "fully agentic" for `agentic-kb` to pay off. The contract i
 | **2 — Agent-assisted triage** | humans, at every gate | agent proposes, human confirms | the `/kb` evaluation gate fires on capture; the agent suggests where things belong; humans approve before anything persists. Maps to **automation level 1**. |
 | **3 — Bounded autonomous knowledge ops** | humans, at exception gates | agent files, promotes, digests on a cadence you wire | scheduled rituals (`start-day`, `digest`, `end-week`), guarded auto-promote on confidence threshold, exception escalation. Maps to **automation levels 2–3**. `agentic-kb` does not ship a scheduler — you wire OS cron, CI, or your harness's native automation to invoke `/kb`; the skill defines what runs, you own the trigger. |
 
-`agentic-kb` is the **knowledge-ops layer** of an agentic enterprise: it owns Strategy, Product Direction, Design, and Learning artifacts (foundation, roadmaps, journeys, briefs, specs, decisions, findings, topics, reports) and pairs cleanly with any **repo-as-OS framework** that owns the work-flow side (signals, missions, PRs, releases). It works standalone too — capture-discipline-only is a valid stop, not a half-installed product.
+`agentic-kb` is the **knowledge-ops layer** of an agentic enterprise: it owns Strategy, Product Direction, Design, and Learning artifacts (foundation, roadmaps, journeys, briefs, specs, decisions, findings, topics, reports) and pairs cleanly with any **repo-as-OS framework** that owns the work-flow side (signals, missions, PRs, releases) — for example [agentic-enterprise](https://github.com/wlfghdr/agentic-enterprise) with its execution loop [agentic-dev](https://github.com/wlfghdr/agentic-dev) (see [The agentic-* suite](#the-agentic--suite)). It works standalone too — capture-discipline-only is a valid stop, not a half-installed product.
 
 The right move for most teams is **start at Stage 1, graduate when the workflow is steady, never skip ahead.** `kb-setup` asks where you are today and biases the proposal to the lightest scaffold that still makes the next stage easy.
 
@@ -329,6 +329,18 @@ The reading list is grouped by audience. Pick the row that matches what you are 
 | Product-management skills | `kb-roadmap`, `kb-journeys` (stable setup-proposed skills, enabled per owning layer) |
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
+
+## The agentic-* suite
+
+`agentic-kb` works with any harness and any workflow framework — and it is also the **knowledge layer** of the agentic-* suite, three building blocks for running an agentic organization on Git:
+
+| Repo | Role |
+|------|------|
+| [agentic-enterprise](https://github.com/wlfghdr/agentic-enterprise) | **The operating model** — governance layers, process loops, policies, and templates. Humans decide, agents execute, Git governs. |
+| [agentic-kb](https://github.com/wlfghdr/agentic-kb) | **The knowledge layer** — layered, vendor-neutral knowledge ops via the `/kb` command (this repo). |
+| [agentic-dev](https://github.com/wlfghdr/agentic-dev) | **The execution layer** — deterministic engineering triage and execution loop. |
+
+The suite is an example pairing, not a dependency: the spec stays vendor-neutral and harness-agnostic either way.
 
 ## Contributing
 

@@ -151,7 +151,7 @@
       <div class="card"><h3>🗂 No database</h3><p>Plain Markdown in a git repo. Your KB versions like code, reviews like code, diffs like code. If a folder can read it, this works.</p></div>
       <div class="card"><h3>☁️ No cloud backend</h3><p>No SaaS. No auth. No infra. Your knowledge stays on your disk. If the vendor disappears tomorrow, your KB is still there.</p></div>
       <div class="card"><h3>🔓 No vendor lock-in</h3><p>Claude Code and VS Code have marketplace/native plugin paths. OpenCode, Gemini, and Kiro get installer-backed native entrypoints. Codex uses the same repo contract via <code>AGENTS.md</code> plus a reusable <code>kb</code> skill.</p></div>
-      <div class="card"><h3>🪶 Lean by construction</h3><p>One spec. Two reference skills. One reference agent. One installer. Install in about a minute. Rip it out in five if it's not for you.</p></div>
+      <div class="card"><h3>🪶 Lean by construction</h3><p>One spec. One plugin with four reference skills. One reference agent. One installer. Install in about a minute. Rip it out in five if it's not for you.</p></div>
     </div>
   </section>
 
@@ -176,7 +176,7 @@
         <p style="font-size:.78rem;color:var(--fg3);margin-top:.5rem">automation: levels 2–3</p>
       </div>
     </div>
-    <p style="text-align:center;font-size:.92rem;color:var(--fg2);margin-top:1.25rem"><code>agentic-kb</code> is the <strong>knowledge-ops layer</strong> of an agentic enterprise — it owns Strategy, Product Direction, Design, Delivery, Operations, and Learning artifacts (foundation, roadmaps, journeys, briefs, specs, decisions, findings, topics, reports, releases, incidents) and pairs cleanly with any <strong>repo-as-OS framework</strong> that owns the work-flow side (signals, missions, PRs, releases). Standalone is also a valid stop — capture-discipline-only is not a half-installed product.</p>
+    <p style="text-align:center;font-size:.92rem;color:var(--fg2);margin-top:1.25rem"><code>agentic-kb</code> is the <strong>knowledge-ops layer</strong> of an agentic enterprise — it owns Strategy, Product Direction, Design, Delivery, Operations, and Learning artifacts (foundation, roadmaps, journeys, briefs, specs, decisions, findings, topics, reports, releases, incidents) and pairs cleanly with any <strong>repo-as-OS framework</strong> that owns the work-flow side (signals, missions, PRs, releases) — for example <a href="https://github.com/wlfghdr/agentic-enterprise">agentic-enterprise</a> with its execution loop <a href="https://github.com/wlfghdr/agentic-dev">agentic-dev</a>. Standalone is also a valid stop — capture-discipline-only is not a half-installed product.</p>
     <p style="text-align:center;font-size:.85rem;color:var(--fg3)">Right move for most teams: <strong>start at Stage 1, graduate when the workflow is steady, never skip ahead.</strong></p>
   </section>
 
@@ -403,6 +403,7 @@ scripts/install --target &lt;harness&gt; --global
   <!-- FOOTER -->
   <div class="footer">
     <p>Apache-2.0 · <a href="README.md">README</a> · <a href="docs/REFERENCE.md">Reference</a> · <a href="CONTRIBUTING.md">Contributing</a> · <a href="https://github.com/wlfghdr/agentic-kb">GitHub</a></p>
+    <p style="margin-top:.5rem">Part of the <strong>agentic-*</strong> suite: <a href="https://github.com/wlfghdr/agentic-enterprise">agentic-enterprise</a> (operating model) · <a href="https://github.com/wlfghdr/agentic-kb">agentic-kb</a> (knowledge layer) · <a href="https://github.com/wlfghdr/agentic-dev">agentic-dev</a> (execution layer)</p>
   </div>
 
 </main>

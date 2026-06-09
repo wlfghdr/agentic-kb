@@ -19,6 +19,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Added
+
+- **agentic-* suite cross-references** — README gains a "The agentic-* suite" section and the landing page (`index.html`) gains suite footer links positioning agentic-kb as the knowledge layer next to [agentic-enterprise](https://github.com/wlfghdr/agentic-enterprise) (operating model) and [agentic-dev](https://github.com/wlfghdr/agentic-dev) (execution layer). Phrased as an example pairing — the spec stays vendor-neutral and harness-agnostic. The landing page's "Lean by construction" card now counts the four shipped reference skills instead of the outdated two.
+
 ### Changed
 
 - **Default work backend (#145)** — switched the shared process/operational primitive default from file-backed KB records to GitHub Issues. Personal/private layers still default to files, but shared decisions, tasks, feature intake, and roadmap items now use a generated `github-issues` tracker profile unless setup records an explicit file-backed fallback.
