@@ -19,6 +19,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+## [6.3.0] — 2026-06-10
+
+> **Why MINOR:** switches the shared work-backend default to GitHub Issues, extends consistency-check coverage to all plugin spec metadata, adds suite cross-references and tag-triggered release automation — all non-breaking additions on the v6 layer graph.
+
 ### Added
 
 - **Release automation** — new `.github/workflows/release.yml`: pushing a `v*` tag creates the matching GitHub release with notes extracted from this changelog. Same workflow ships across agentic-enterprise, agentic-kb, and agentic-dev for a consistent suite release process.
