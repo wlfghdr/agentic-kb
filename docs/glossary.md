@@ -1,6 +1,6 @@
 # Glossary
 
-> **Version:** 0.9 | **Last updated:** 2026-05-23
+> **Version:** 0.10 | **Last updated:** 2026-06-17
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
@@ -29,6 +29,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Harness** | The IDE or CLI environment where the skills run. Marketplace/native plugin paths today are VS Code Copilot Chat and Claude Code. Installer-supported native command or skill paths include OpenCode, Gemini CLI, and Kiro IDE. Compatible skill workflows, such as Codex CLI, use the same repo-local KB contract through `AGENTS.md` plus `.agents/skills/`. |
 | **Idea** | A first-class incubation object for observations with novelty potential. Lifecycle: `seed → growing → ready → shipped \| archived`. Path: `_kb-ideas/I-YYYY-MM-DD-slug.md`. Developed via `/kb develop`. |
 | **Incident record** | A dated operations artifact under `_kb-operations/incidents/YYYY/` that captures impact, timeline, mitigations, and follow-up work for a production interruption. |
+| **Intake** | A request or input item — most commonly a **feature intake** — that enters the KB to be triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. Often tracker-backed (see `Tracker-backed primitive`); when shared work uses an issue tracker as the operational backbone, intake items default to GitHub Issues alongside decisions, tasks, and roadmap items. |
 | **Journey** | A hierarchical user, customer, operator, or product flow (`journey → phase → sub-journey → step`) with readiness per visible step. A product-management primitive managed by the setup-proposed `kb-journeys` skill. |
 | **Layer** | A KB repo participating in the workspace graph. Layers are named and typed by `scope`, not by fixed ladder position. |
 | **Marketplace** | A repo that indexes and hosts plugins for one layer's audience. It is cross-cutting and may attach to any layer via `marketplace:` in `.kb-config/layers.yaml`. |
@@ -85,6 +86,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-17 | Added `Intake` as the canonical term for a request/input item (most commonly a feature intake) that is triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. The term was already used across `REFERENCE.md`, `first-run-acceptance.md`, `collaboration.md`, and the tracker-backed-primitives reference without a canonical definition. Version bumped to 0.10 | Terminology consistency sweep |
 | 2026-05-23 | Added `Capture routing` as a canonical term covering the default / explicit / reflection-driven modes and the human-confirmation gate. Extended the `Capture` entry with a pointer to the new term. Version bumped to 0.9 | Artifact layer routing |
 | 2026-05-18 | `Task` entry expanded with split-ownership rule against external trackers (KB tasks own knowledge work; tracker tickets own engineering work; not two views of the same thing). Closes audit finding #103 | Concept/onboarding/process audit |
 | 2026-05-18 | Disambiguated `Contributor-scoped` (artifact visibility) and `Role` (layer mutation rights) so adopters cannot conflate the two axes. Both entries now point at the new "Two orthogonal axes" callout in `docs/REFERENCE.md` §1. Updated the `Adoption stage` entry to reference phase 2 question 11 after the kb-setup phase swap. Closes audit findings #98 and #104 | Concept/onboarding/process audit |

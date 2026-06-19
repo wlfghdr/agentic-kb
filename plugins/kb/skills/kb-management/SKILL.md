@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes (including retros), decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 6.3.1
+version: 6.3.2
 triggers:
   # Command surface
   - "/kb"
@@ -266,6 +266,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-06-17 | Version aligned to 6.3.2 (framework patch — glossary `Intake` term added; no behavioral change to this skill) | Version alignment |
 | 2026-06-10 | Version aligned to 6.3.1 | Version alignment |
 | 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in setup and tracker-backed primitive references | Issue #145 |
 | 2026-05-25 | Version aligned to 6.2.0 | Version alignment |

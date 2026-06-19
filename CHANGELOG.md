@@ -19,6 +19,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+### Added
+
+- **Glossary: `Intake`** — added a canonical definition for *intake* (most commonly *feature intake*): a request/input item that is triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. The term was already used across `docs/REFERENCE.md`, `docs/first-run-acceptance.md`, `docs/collaboration.md`, and `plugins/kb/skills/kb-management/references/tracker-backed-primitives.md` without a canonical entry. Glossary bumped to 0.10.
+
 ## [6.3.1] — 2026-06-10
 
 ### Fixed
