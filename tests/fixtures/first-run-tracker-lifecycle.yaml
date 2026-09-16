@@ -20,6 +20,9 @@ config:
           - name: custom-work
             kind: custom
             endpoint: custom-work
+          - name: jira-export
+            kind: jira
+            export-dir: ../jira-export/ROAD
         writeback:
           enabled: false
           capabilities: []
@@ -39,6 +42,11 @@ config:
           tracker: custom-work
           kind: Decision
           summary-dir: _kb-decisions
+        roadmap-items:
+          mode: tracker
+          tracker: jira-export
+          kind: Roadmap Item
+          summary-dir: _kb-roadmaps/team-observability/summaries
 
 canonical-record:
   family: tasks
@@ -153,7 +161,19 @@ cases:
     expected: manual-proposal
     proposal: Create Decision "Choose the cache recovery objective".
     manual-steps: Create the proposed Decision manually and return its identifier.
-    resulting-id: ISSUE-42
+    resulting-id: DECISION-3
+
+  - name: export-backed-jira-without-capabilities-stays-read-only
+    source: canonical
+    family: roadmap-items
+    tracker: jira-export
+    operation: status
+    authenticated: true
+    confirmed: true
+    expected: manual-proposal
+    proposal: Move ROAD-7 to In Progress.
+    manual-steps: Update ROAD-7 manually because the export-backed connection is read-only.
+    resulting-id: ROAD-7
 
   - name: disabled-connection-digest-comment
     source: connection-digest

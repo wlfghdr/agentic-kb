@@ -39,6 +39,7 @@ layers:
           repo: org/backend-api
           scope: is:issue is:open label:roadmap
           capabilities: [create, status, label, comment, link]
+          # auth-env: TRACKER_TOKEN  # optional; omit when ambient auth is documented
         - kind: jira-export
           export-path: _kb-inputs/jira-export.csv
           project: PROJ
@@ -72,6 +73,7 @@ layers:
 | `trackers[].scope` | Filter expression passed to the adapter (label, query, JQL, etc.) |
 | `reference-mode` | `link` cites the source, `inline` embeds a summary, `none` records only the watermark |
 | `trackers[].capabilities` | Canonical primitive operations implemented by this configured adapter: `create`, `status`, `label`, `comment`, and/or `link` |
+| `trackers[].auth-env` | Optional environment-variable name containing adapter credentials; the config stores the name, never the credential. Omit only for adapters with documented ambient authentication |
 | `writeback.enabled` | Reserved switch for connection-digest-derived mutations; it does not authorize canonical primitive operations |
 | `writeback.capabilities` | Reserved connection-digest operations; omit or leave empty while digest write-back is unsupported |
 | `primitive-storage.*.tracker` | Name of the tracker connection that owns the primitive family when the mode is `tracker` or `hybrid` |
@@ -82,11 +84,13 @@ layers:
 |------|-------------|----------------|
 | `github-issues` | GitHub Issues via the API; canonical CRUD is supported when the corresponding capability is declared and authentication is available | `repo`, optional `scope` query |
 | `github-projects` | GitHub Projects v2; project-field updates are supported only when declared, and issue creation requires a paired live issue tracker | `repo`, `project-number` |
+| `jira-rest` | Live Jira REST adapter; canonical operations require the corresponding capability and token-based authentication | `base-url`, `project`, `auth-env` |
+| `linear-graphql` | Live Linear GraphQL adapter; canonical operations require the corresponding capability and token-based authentication | `team`, `auth-env` |
 | `jira-export` | Exported Jira CSV or JSON; read-only | `export-path`, `project` |
 | `linear-export` | Exported Linear CSV; read-only | `export-path`, optional `team` |
 | `csv` | Generic CSV with configurable column mapping; read-only | `export-path`, `column-map` |
 
-For live API trackers (`github-issues`, `github-projects`), the skill reads using the harness's ambient authentication context. For export-backed trackers, the user drops a fresh export into the declared path before running `/kb digest connections`.
+Live API trackers name credentials with `auth-env`; `github-issues` and `github-projects` may instead use their documented ambient authenticated CLI context. For export-backed trackers, the user drops a fresh export into the declared path before running `/kb digest connections`.
 
 ## Setup flow
 
@@ -213,6 +217,7 @@ To stop tracking a connection:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Added `trackers[].auth-env` to the canonical connection field contract while retaining documented ambient authentication as an explicit alternative | PR #153 review |
 | 2026-09-16 | Separated supported canonical tracker CRUD from reserved connection-digest write-back; defined capability, authentication, and per-mutation confirmation precedence plus the manual-proposal fallback | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-18 | Relabeled the Write-back section as RESERVED (not implemented in v6.1.0): `writeback.enabled: true` is a no-op today; the planned contract is preserved as the future spec; open questions (which trackers, auth model, source-of-truth rule, concurrent-write semantics) are now explicit. `kb-setup` must not propose `writeback.enabled: true` in v6.1.0. Closes audit finding #102 | Concept/onboarding/process audit |

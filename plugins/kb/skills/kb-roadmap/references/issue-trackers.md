@@ -82,13 +82,13 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 
 - The skill never posts a comment, transitions a status, links records, or creates an item unless `primitive-storage.roadmap-items` makes the selected connection tracker canonical and that connection declares the exact operation.
 - `/kb roadmap sync --apply` requires available authentication/tooling and interactive confirmation per write. Batch `--apply --yes` is refused for shared workspaces; roadmap configuration cannot weaken the canonical per-action confirmation rule.
-- Missing ownership, capability, or authentication produces a complete manual proposal. After manual completion, the skill waits for and records the resulting tracker identifier without creating a competing roadmap item.
+- Missing ownership follows the configured canonical home and does not propose a mutation in the noncanonical tracker. Only after tracker ownership succeeds may missing capability or authentication produce a complete manual tracker proposal; after manual completion, the skill waits for and records the resulting identifier without creating a competing roadmap item.
 - Every write records an audit line in `.kb-log/YYYY-MM-DD.log` with tracker, item id, operation, and the correlation evidence that triggered it.
-- Credentials are read from environment variables named in `auth-env`. The skill never reads, stores, or emits token values.
+- Credentials are read from the canonical `connections.trackers[].auth-env` name or from a documented ambient authentication context. The skill never reads, stores, or emits token values.
 
 ### Legacy roadmap capability migration
 
-Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must propose moving those declarations to the same named tracker under `connections.trackers[].capabilities` using this mapping: `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link`. The user confirms the proposed config edit before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership or capability gates.
+Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must propose moving those declarations to the same named tracker under `connections.trackers[].capabilities` using this mapping: `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link`. If the legacy entry names `auth-env`, the same confirmed diff copies that environment-variable name—not its value—to `connections.trackers[].auth-env`; otherwise the migration asks for an authentication source or records documented ambient authentication. The user confirms the proposed config edit before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership, capability, or authentication gates.
 
 ## Migration from "plan-sources" terminology
 
@@ -101,6 +101,7 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Prevented manual tracker proposals after failed ownership and moved authentication-source authority and migration to the canonical connection | PR #153 review |
 | 2026-09-16 | Routed roadmap writes through `primitive-storage.roadmap-items` and canonical connection capabilities; added explicit migration mapping for legacy `write-*` names | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-25 | Updated the tracker reference to prefer active-layer `connections.trackers[]` and recast `issue-trackers[]` as the legacy/override surface for the 5.1 closeout | v5.1.0 closeout release |

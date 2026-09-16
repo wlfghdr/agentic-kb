@@ -662,9 +662,9 @@ First-class primitives do not all need to use the same operational backbone. Pri
 
 `primitive-storage` is the ownership map. It complements `connections.trackers[]`: the tracker connection says how to reach the external system, while `primitive-storage` says which primitive family the external system owns.
 
-Canonical tracker lifecycle and connection-digest write-back are separate contracts. `connections.trackers[].capabilities` declares which canonical operations (`create`, `status`, `label`, `comment`, `link`) a live adapter implements. `connections.writeback` is reserved for mutations derived from `/kb digest connections` and remains a no-op. Operation precedence is: canonical ownership from `primitive-storage`, implemented adapter capability, available authentication/tooling, then explicit confirmation for the single proposed mutation. When capability or authentication is absent, provide the full proposal and exact manual steps and wait for the tracker identifier; never create a competing canonical KB file. The behavioral contract lives in [`tracker-backed-primitives.md`](../plugins/kb/skills/kb-management/references/tracker-backed-primitives.md).
+Canonical tracker lifecycle and connection-digest write-back are separate contracts. `connections.trackers[].capabilities` declares which canonical operations (`create`, `status`, `label`, `comment`, `link`) a live adapter implements; optional `connections.trackers[].auth-env` stores the environment-variable name for credentials when the adapter does not use documented ambient authentication. `connections.writeback` is reserved for mutations derived from `/kb digest connections` and remains a no-op. Operation precedence is: canonical ownership from `primitive-storage`, implemented adapter capability, available authentication/tooling, then explicit confirmation for the single proposed mutation. Ownership failure follows the configured canonical home and must not propose a mutation in a noncanonical tracker. Once tracker ownership succeeds, missing capability or authentication yields the full manual proposal and exact steps; the skill then waits for the tracker identifier and never creates a competing canonical KB file. The behavioral contract lives in [`tracker-backed-primitives.md`](../plugins/kb/skills/kb-management/references/tracker-backed-primitives.md).
 
-Roadmap writes use this same contract: `primitive-storage.roadmap-items` must select the tracker, and `/kb roadmap sync --apply` cannot use `roadmap.issue-trackers[].write-*` declarations to bypass ownership or canonical connection capabilities. Pre-6.4 known live adapters with no capability field use the reference's temporary normalization with a visible setup/audit migration warning; explicit empty lists stay read-only.
+Roadmap writes use this same contract: `primitive-storage.roadmap-items` must select the tracker, and `/kb roadmap sync --apply` cannot use `roadmap.issue-trackers[].write-*` declarations to bypass ownership or canonical connection capabilities. Pre-6.4 unambiguous live adapters with no capability field use the reference's temporary normalization with a visible setup/audit migration warning; explicit empty lists and generic/export-backed adapters stay read-only.
 
 ```yaml
 layers:
@@ -680,6 +680,7 @@ layers:
           issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
           status-values: [Todo, In Progress, In Review, Done]
           capabilities: [create, status, label, comment, link]
+          # auth-env: TRACKER_TOKEN  # optional when documented ambient auth is used
       writeback:
         enabled: false
         capabilities: []
@@ -717,7 +718,7 @@ Valid modes:
 | `tracker` | Configured tracker items | Create supporting summary/backlink directories when requested and generate tracker setup artifacts |
 | `hybrid` | KB files until promotion, then tracker items | Create file directories plus promotion rules to create/link tracker items when the sharing boundary is crossed |
 
-For GitHub-backed layers, setup should generate or guide creation of the GitHub governance profile: native issue types, issue forms, project/status guidance, labels that do not duplicate native metadata, pull request templates, governance CI, a path labeler, manual branch-protection/CODEOWNERS/project setup checklist, and a repo-local tracker workflow skill. For Jira-backed layers, setup should record project key/URL, issue type mapping, status mapping, query/JQL, link policy, and implemented canonical CRUD capabilities. Other trackers follow the same contract through adapter-specific fields under `connections.trackers[]`.
+For GitHub-backed layers, setup should generate or guide creation of the GitHub governance profile: native issue types, issue forms, project/status guidance, labels that do not duplicate native metadata, pull request templates, governance CI, a path labeler, manual branch-protection/CODEOWNERS/project setup checklist, and a repo-local tracker workflow skill. For Jira-backed layers, setup should record project key/URL, issue type mapping, status mapping, query/JQL, link policy, implemented canonical CRUD capabilities, and the `auth-env` name on the canonical connection. Other trackers follow the same contract through adapter-specific fields under `connections.trackers[]`.
 
 If a primitive family is omitted from `primitive-storage`, readers assume `files` for personal/private layers. In shared contributor layers, setup must render an explicit `primitive-storage` block: `github-issues` tracker ownership for shared process/operational families by default, or an explicit `files` fallback when the adopter cannot or does not want GitHub Issues to be canonical. Skills must refuse ambiguous writes when both a KB file and tracker item appear to be canonical for the same item.
 
@@ -1217,7 +1218,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
-| 2026-09-16 | Version aligned to 6.4.0; §5 separated canonical tracker CRUD capabilities from reserved connection-digest write-back, routed roadmap writes through the same ownership gates, and added transitional migration for legacy capability declarations. Source: issue #152 and PR #153 review |
+| 2026-09-16 | Version aligned to 6.4.0; §5 separated canonical tracker CRUD capabilities from reserved connection-digest write-back, routed roadmap writes through the same ownership gates, added canonical authentication-source configuration, distinguished ownership failures from executable manual handoffs, and limited transitional normalization to unambiguous live adapters. Source: issue #152 and PR #153 review |
 | 2026-06-02 | Version aligned to 6.3.0 and §5 changed the shared process/operational primitive default from file-backed KB records to GitHub Issues via explicit `primitive-storage`, with file-backed defaults retained for personal/private layers. Source: issue #145 |
 | 2026-05-24 | §1 capture-time layer routing now points reflection-driven routing at the strong/weak signal rubric in `capture-routing.md` and states that weak or ambiguous signals fall through to default. This removes the vague "clearly implies" trigger from the structural reference while keeping the detailed operational examples in the dedicated contract. Source: issue #126 |
 | 2026-05-24 | Version aligned to 6.2.0 |

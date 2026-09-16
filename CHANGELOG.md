@@ -25,7 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
-- **Tracker mutation capability boundary (#152)** — added the 6.4.0 canonical tracker CRUD contract (`create`, `status`, `label`, `comment`, `link`) separately from reserved connection-digest write-back; defined ownership → capability → authentication → per-mutation confirmation precedence; routed roadmap apply flows through the same gates; added confirmed migration for legacy tracker declarations; corrected issue-only status semantics; and expanded the nested-schema offline lifecycle fixture.
+- **Tracker mutation capability boundary (#152)** — added the 6.4.0 canonical tracker CRUD contract (`create`, `status`, `label`, `comment`, `link`) separately from reserved connection-digest write-back; defined ownership → capability → authentication → per-mutation confirmation precedence; routed roadmap apply flows through the same gates without parallel file records; added canonical authentication-source configuration plus audit/setup migration for legacy declarations; restricted normalization to unambiguous live adapters; corrected issue-only status semantics; and expanded the nested-schema offline lifecycle fixture.
 
 ## [6.3.1] — 2026-06-10
 

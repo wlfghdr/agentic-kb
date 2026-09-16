@@ -11,7 +11,7 @@ Roadmap items move through a creative and critical authoring arc before they ent
 | `review <item>` | **hybrid** — challenge then create | Feedback, risks, todos, mitigations, further ideas appended to the item |
 | `refine <item>` | **actionable** — delivery-shaped | Implementation plan sections appended to the item |
 
-All four operate on items inside `_kb-roadmaps/<scope>/items/` (markdown files, one per item). They respect the state markers from `state-machine.md` and the phase pipeline from `phase-gates.md`.
+All four operate on the canonical roadmap item selected by `primitive-storage.roadmap-items`. In `files` mode that is `_kb-roadmaps/<scope>/items/R-*.md`; in `tracker` mode it is the tracker item, with only an optional configured summary/backlink written locally; in `hybrid` mode it is the file until the confirmed promotion transfers canonical ownership to the tracker. They respect the state markers from `state-machine.md` and the phase pipeline from `phase-gates.md`.
 
 ## Common contract
 
@@ -20,7 +20,7 @@ Every authoring command:
 1. Locates the item — either by path or by id lookup in the scope's index.
 2. Reads the full item + any linked plan item from the configured tracker (if one exists).
 3. Applies its stance via the instructions below.
-4. Writes output into the item body under a dedicated H2 section, prefixed with a timestamp comment for audit.
+4. Writes output into the canonical item body under a dedicated section, prefixed with a timestamp marker where the backing store supports it.
 5. Appends a state marker transition if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.).
 6. Never transitions phase gates silently — gate changes require `/kb roadmap --check-gates` + user confirmation.
 
@@ -91,7 +91,7 @@ Turns a seed (KB idea, decision, informal note, or empty prompt) into one or mor
 
 ### Output
 
-Writes `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md` for each accepted item. Unaccepted candidates are logged to `.kb-log/YYYY-MM-DD.log` with rationale — visible on the next invocation so the user sees what was *not* taken.
+For each accepted item, branch on `primitive-storage.roadmap-items`: `files` writes `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md`; `tracker` proposes or creates the canonical tracker item and may write only the configured summary/backlink after its identifier is known; `hybrid` writes the file until its later confirmed promotion. Never create both an active `R-*.md` item and a tracker item for the same canonical work. Unaccepted candidates are logged to `.kb-log/YYYY-MM-DD.log` with rationale — visible on the next invocation so the user sees what was *not* taken.
 
 ---
 
@@ -223,7 +223,7 @@ Appends `## Refinement (<date>)` with:
 
 ## Authoring + trackers
 
-When the scope has a tracker with `write-*` capabilities declared, each authoring command offers (but never silently performs) a tracker side-effect:
+When `primitive-storage.roadmap-items` selects a tracker, each authoring command may offer (but never silently perform) the operation declared by the matching canonical connection:
 
 | Command | Offered tracker write |
 |---|---|
@@ -238,5 +238,6 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Made every authoring command storage-mode-aware so tracker mode operates on one canonical tracker item and writes only an optional local summary/backlink | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

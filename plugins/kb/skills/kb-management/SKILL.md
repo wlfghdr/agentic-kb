@@ -194,7 +194,7 @@ When a flow creates or updates a primitive covered by `primitive-storage`, resol
 
 If the config is ambiguous or both a KB file and tracker item claim canonical ownership, stop and propose an audit/cleanup step before mutation.
 
-For `tracker` operations, apply the capability precedence from `references/tracker-backed-primitives.md`: `primitive-storage` selects canonical ownership; the named tracker must declare the operation in `capabilities`; authentication/tooling must be available; and the user must confirm that exact mutation. For a pre-6.4 known live adapter whose capability field is absent, apply the reference's temporary normalization and surface its migration warning; an explicit empty list remains read-only. `connections.writeback` governs only reserved connection-digest write-back and cannot enable canonical CRUD. When capability or authentication is absent, provide a complete manual proposal and wait for the resulting tracker identifier; do not create a competing canonical KB record.
+For `tracker` operations, apply the capability precedence from `references/tracker-backed-primitives.md`: `primitive-storage` selects canonical ownership; the named tracker must declare the operation in `capabilities`; authentication/tooling must be available through canonical `auth-env` or documented ambient authentication; and the user must confirm that exact mutation. For a pre-6.4 unambiguous live adapter whose capability field is absent, apply the reference's temporary normalization and surface its migration warning; explicit empty lists plus generic/export-backed/custom adapters remain read-only. `connections.writeback` governs only reserved connection-digest write-back and cannot enable canonical CRUD. Ownership failure follows the configured canonical home without proposing a noncanonical tracker mutation. After ownership succeeds, missing capability or authentication produces a complete manual proposal and waits for the resulting tracker identifier; no path creates a competing canonical KB record.
 
 ## Output contract
 
@@ -268,6 +268,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Restricted legacy normalization to unambiguous live adapters, anchored authentication on the canonical connection, and separated ownership-blocked routing from manual tracker handoff | PR #153 review |
 | 2026-09-16 | Routed tracker-backed primitive mutations through the canonical CRUD capability/authentication/confirmation contract, added transitional normalization for known legacy live adapters, and kept connection-digest write-back reserved | Issue #152 and PR #153 review |
 | 2026-06-17 | Version aligned to 6.3.2 (framework patch — glossary `Intake` term added; no behavioral change to this skill) | Version alignment |
 | 2026-06-10 | Version aligned to 6.3.1 | Version alignment |

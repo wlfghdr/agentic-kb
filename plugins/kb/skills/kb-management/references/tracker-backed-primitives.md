@@ -113,6 +113,7 @@ layers:
 | `connections.trackers[].issue-types` | Tracker-native kinds setup expects to exist or creates instructions/templates for |
 | `connections.trackers[].status-values` | Status values setup expects for triage and audit output |
 | `connections.trackers[].capabilities` | Canonical primitive operations the configured live adapter implements: `create`, `status`, `label`, `comment`, and/or `link` |
+| `connections.trackers[].auth-env` | Optional environment-variable name for adapter credentials; omit only when the adapter uses a documented ambient authentication context |
 
 If a primitive family is absent from `primitive-storage`, the default is `files` for personal/private layers. Shared contributor layers must not rely on omission: setup records GitHub Issues-backed ownership for shared process/operational primitives by default, or records an explicit `files` fallback with the reason. Provider-native intake families that have no canonical KB directory, such as `feedback` or `feature-intake`, remain tracker-backed when configured.
 
@@ -125,12 +126,12 @@ Tracker entries created before 6.4.0 have no `capabilities` field. To avoid sile
 | Legacy live adapter kind | Temporary normalized capabilities |
 |---|---|
 | `github-issues` | `create`, `status` (open/close), `label`, `comment`, `link` |
-| `jira` / `jira-rest` | `status`, `comment`, `link` |
-| `linear` / `linear-graphql` | `status`, `comment` |
+| `jira-rest` | `status`, `comment`, `link` |
+| `linear-graphql` | `status`, `comment` |
 
-This compatibility rule applies only when the field is absent. An explicit empty list means read-only. Export-backed or custom adapters with no declaration remain read-only because their implementation cannot be inferred safely.
+This compatibility rule applies only when the field is absent and the kind unambiguously names a live adapter. An explicit empty list means read-only. Generic `jira` or `linear` kinds, entries with `export-dir` / `export-path`, and custom adapters with no declaration remain read-only because their implementation cannot be inferred safely.
 
-On the next `/kb setup` or `/kb audit`, show the normalized list and evidence, ask the user to accept or edit it, then persist the confirmed `capabilities` field. Emit a deprecation warning until that migration is complete. Authentication and per-action confirmation remain mandatory during the compatibility window; normalization grants no standing permission.
+On the next `/kb setup` or `/kb audit`, show the normalized list and evidence, ask the user to accept or edit it, then persist the confirmed `capabilities` field. When the adapter needs token-based authentication, also migrate a legacy roadmap `auth-env` value to the canonical connection or ask for the environment-variable name; never copy a credential value. Emit a deprecation warning until that migration is complete. Authentication and per-action confirmation remain mandatory during the compatibility window; normalization grants no standing permission.
 
 ## Metadata Rules
 
@@ -256,6 +257,7 @@ Watch for these problems:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Restricted legacy normalization to unambiguous live adapter kinds, kept export-backed generic Jira/Linear entries read-only, and made the canonical connection's authentication source part of migration | PR #153 review |
 | 2026-09-16 | Added transitional normalization and setup/audit migration for pre-6.4 live tracker entries that lack an explicit capability list; limited GitHub issue-only `status` capability to open/close when project-field metadata is absent | Issue #152 review |
 | 2026-09-16 | Defined supported canonical tracker CRUD separately from reserved connection-digest write-back, including strict gate precedence and a manual proposal/handoff fallback that preserves one canonical record | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

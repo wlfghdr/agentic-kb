@@ -128,7 +128,7 @@ Tracker-backed setup passes only when:
 - generated templates have no unresolved setup placeholders,
 - the repo-local tracker workflow skill enforces ownership → capability → authentication → one-action confirmation for issue creation, comments, labels, links, and status changes, with a complete manual proposal when an execution gate is unavailable.
 
-For an existing pre-6.4 workspace, setup first detects known live tracker entries with no `capabilities` field. It presents the temporary normalized list from the tracker-backed primitive contract for confirmation or editing, persists accepted values, and warns about any entry left unresolved. Explicit empty lists, export-backed adapters, and custom adapters remain read-only unless the user declares verified operations.
+For an existing pre-6.4 workspace, setup first detects unambiguous live tracker entries with no `capabilities` field. It presents the temporary normalized list from the tracker-backed primitive contract for confirmation or editing, persists accepted values, and warns about any entry left unresolved. The same diff copies a matching legacy roadmap `auth-env` name to the canonical connection, or records a user-supplied environment-variable name / documented ambient authentication source. Explicit empty lists, generic Jira/Linear kinds, export-backed adapters, and custom adapters remain read-only unless the user declares verified operations.
 
 ## Scaffold — additional shared contributor layer
 
@@ -305,6 +305,7 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Restricted legacy tracker normalization to unambiguous live adapters and included canonical authentication-source names in the confirmed migration diff | PR #153 review |
 | 2026-09-16 | Added existing-workspace capability migration for known pre-6.4 live adapters while preserving explicit read-only and custom/export-backed configurations | Issue #152 review |
 | 2026-09-16 | Aligned tracker setup verification with canonical CRUD capability declarations, reserved digest write-back, strict gate precedence, and manual fallback | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

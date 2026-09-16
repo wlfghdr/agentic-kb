@@ -34,14 +34,13 @@ def evaluate(case: dict, config: dict) -> str:
     )
     legacy_capabilities = {
         "github-issues": ["create", "status", "label", "comment", "link"],
-        "jira": ["status", "comment", "link"],
         "jira-rest": ["status", "comment", "link"],
-        "linear": ["status", "comment"],
         "linear-graphql": ["status", "comment"],
     }
     capabilities = tracker.get("capabilities") if tracker else []
     if tracker is not None and "capabilities" not in tracker:
-        capabilities = legacy_capabilities.get(tracker.get("kind"), [])
+        export_backed = "export-dir" in tracker or "export-path" in tracker
+        capabilities = [] if export_backed else legacy_capabilities.get(tracker.get("kind"), [])
     elif capabilities is None:
         capabilities = []
     if tracker is None or case["operation"] not in capabilities:
@@ -93,6 +92,17 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             outcomes["custom-adapter-without-capabilities-stays-read-only"],
             "manual-proposal",
         )
+        self.assertEqual(
+            outcomes["export-backed-jira-without-capabilities-stays-read-only"],
+            "manual-proposal",
+        )
+        ownership_case = next(
+            case
+            for case in fixture["cases"]
+            if case["name"] == "storage-does-not-select-tracker"
+        )
+        self.assertNotIn("proposal", ownership_case)
+        self.assertNotIn("manual-steps", ownership_case)
 
     def test_manual_lifecycle_preserves_one_canonical_record(self) -> None:
         fixture = self.fixture
@@ -110,7 +120,15 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         for case in manual_cases:
             self.assertTrue(case.get("proposal"), case["name"])
             self.assertTrue(case.get("manual-steps"), case["name"])
-            self.assertEqual(case.get("resulting-id"), record["external-id"], case["name"])
+            self.assertTrue(case.get("resulting-id"), case["name"])
+
+        canonical_manual_cases = [
+            case for case in manual_cases if case.get("family") == record["family"]
+        ]
+        self.assertEqual(
+            {case["resulting-id"] for case in canonical_manual_cases},
+            {record["external-id"]},
+        )
 
         self.assertEqual(fixture["expected-external-writes"], [])
 

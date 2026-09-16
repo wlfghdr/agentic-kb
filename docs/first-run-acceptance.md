@@ -547,7 +547,7 @@ Run the deterministic lifecycle fixture:
 python3 scripts/test_tracker_lifecycle_fixture.py
 ```
 
-The fixture at `tests/fixtures/first-run-tracker-lifecycle.yaml` covers one shared tracker-backed task from create through execution handoff and close. It proves that storage ownership is checked first; absent authentication yields actionable manual proposals for `create`, `link`, and `status`; the manually supplied tracker identifier remains the one canonical record across all three stages; an undeclared label operation cannot be authorized by confirmation; disabled digest write-back does not block a dry-run-supported canonical comment; and digest-derived comments remain reserved even if the reserved switch is set manually. The test is pure local evaluation and fails if any case requests a live external write or a fallback canonical KB file.
+The fixture at `tests/fixtures/first-run-tracker-lifecycle.yaml` covers one shared tracker-backed task from create through execution handoff and close. It proves that storage ownership is checked first and an ownership failure offers no noncanonical tracker handoff; absent authentication yields actionable manual proposals for `create`, `link`, and `status` only after ownership succeeds; the manually supplied tracker identifier remains the one canonical record across all three stages; an undeclared label operation cannot be authorized by confirmation; export-backed generic Jira remains read-only during legacy normalization; disabled digest write-back does not block a dry-run-supported canonical comment; and digest-derived comments remain reserved even if the reserved switch is set manually. The test is pure local evaluation and fails if any case requests a live external write or a fallback canonical KB file.
 
 ## Team lead verification checklist
 
@@ -588,7 +588,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-09-16 | Added the offline shared tracker-backed lifecycle fixture using the real nested layer/connection schema and covering create, handoff, close, disabled digest writes, missing capability, absent authentication, legacy normalization, manual completion, and the single-canonical-record invariant | Issue #152 and PR #153 review |
+| 2026-09-16 | Added the offline shared tracker-backed lifecycle fixture using the real nested layer/connection schema and covering create, handoff, close, disabled digest writes, missing capability, absent authentication, legacy normalization, export-backed read-only behavior, ownership-blocked routing, manual completion, and the single-canonical-record invariant | Issue #152 and PR #153 review |
 | 2026-06-02 | Version aligned to 6.3.0 and changed the deterministic baseline so the personal layer stays file-backed while the shared team layer defaults decisions and tasks to GitHub Issues-backed `primitive-storage` with write-back still confirmation-gated | Issue #145 |
 | 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-18 | Preamble now explicitly tags the doc as a maintainer/QA baseline and points adopters at `docs/examples/first-hour.md` for the actual first-install walkthrough. Closes audit finding #100 (acceptance.md was being referenced from README "Where to start" as if it were user onboarding) | Concept/onboarding/process audit |

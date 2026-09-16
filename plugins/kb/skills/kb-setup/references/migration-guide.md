@@ -76,6 +76,10 @@ Prompt the user for 1–5 parallel tracks. Create files.
 
 Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and ask user to fill in minimum required fields.
 
+### Pre-6.4 tracker connections
+
+Run `/kb audit` rule K17 or rerun `/kb setup`. For an unambiguous live adapter missing `connections.trackers[].capabilities`, preview the normalized capability list and any legacy roadmap `auth-env` name as a diff on the canonical connection. Persist only after confirmation. Explicit empty lists and generic, export-backed, or custom adapters stay read-only until the user verifies their implemented operations and authentication source.
+
 ## After migration
 
 - Commit with message `chore(kb-setup): migrate to agentic-kb v<version> layout`.
@@ -86,6 +90,7 @@ Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Added the confirmed pre-6.4 tracker capability and authentication-source migration path shared by setup and audit K17 | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-10 | Corrected the task-archive migration target from the flat `_kb-tasks/archive/YYYY-MM.md` to the canonical `_kb-tasks/archive/YYYY/MM.md` shape defined in `docs/REFERENCE.md` §3, so the migration helper produces a layout that matches the rest of the spec | v6.0.0 adoption + daily-usage gap audit |
