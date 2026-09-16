@@ -88,7 +88,13 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 
 ### Legacy roadmap capability migration
 
-Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must propose moving those declarations to the same named tracker under `connections.trackers[].capabilities` using this mapping: `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link`. If the legacy entry names `auth-env`, the same confirmed diff copies that environment-variable name—not its value—to `connections.trackers[].auth-env`; otherwise the migration asks for an authentication source or records documented ambient authentication. The user confirms the proposed config edit before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership, capability, or authentication gates.
+Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must build one complete migration proposal rather than only rename those capabilities:
+
+1. Select the same-named canonical connection when it already exists; otherwise derive a new `connections.trackers[]` entry from the legacy adapter and its non-secret access fields. If more than one destination is plausible, ask the user to choose instead of persisting.
+2. Map `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link` onto that canonical connection. Copy a legacy `auth-env` environment-variable name—not its value—or ask for an authentication source / documented ambient authentication.
+3. Create `primitive-storage.roadmap-items` with `mode: tracker`, the selected canonical tracker name, and `kind: Roadmap Item` when no ownership mapping exists. If an existing mapping names another canonical home, surface the conflict and do not overwrite it.
+
+The user confirms this whole config diff before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership, capability, or authentication gates.
 
 ## Migration from "plan-sources" terminology
 
@@ -101,6 +107,7 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Made legacy roadmap migration create or select the canonical connection and `primitive-storage.roadmap-items` ownership mapping in the same confirmed diff | PR #153 review |
 | 2026-09-16 | Prevented manual tracker proposals after failed ownership and moved authentication-source authority and migration to the canonical connection | PR #153 review |
 | 2026-09-16 | Routed roadmap writes through `primitive-storage.roadmap-items` and canonical connection capabilities; added explicit migration mapping for legacy `write-*` names | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

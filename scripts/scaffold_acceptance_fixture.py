@@ -97,87 +97,88 @@ def scaffold_personal_kb(workspace: Path) -> Path:
         kb / ".kb-config" / "layers.yaml",
         """
         layers:
-                    - name: alice-personal
-                        scope: personal
-                        role: contributor
-                        parent: team-observability
-                        path: .
-                        features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes, delivery, operations]
-                        workstreams:
-                            - name: platform-signals
-                                themes: [observability, reliability]
-                        marketplace:
-                            repo: ../team-observability-kb
-                            install-mode: repository
-                        connections:
-                            product-repos:
-                                - name: agentic-kb
-                                    path: ../agentic-kb
-                                    remote: wlfghdr/agentic-kb
-                                    watch:
-                                        - CHANGELOG.md
-                                        - docs/REFERENCE.md
-                                        - plugins/kb/skills/
-                                    ticket-pattern: '#\\d+'
-                            trackers:
-                                - kind: github-issues
-                                    repo: wlfghdr/agentic-kb
-                                    scope: is:issue is:open
-                            reference-mode: link
-                            writeback:
-                                enabled: false
-                                capabilities: []
-                    - name: team-observability
-                        scope: team
-                        role: contributor
-                        parent: engineering-org
-                        path: ../team-observability-kb
-                        features: [findings, topics, decisions, tasks, notes, foundation, reports, delivery, operations, marketplace]
-                        contributor-mode:
-                            findings: contributor-scoped
-                            topics: contributor-scoped
-                            notes: shared
-                        connections:
-                            trackers:
-                                - name: team-work
-                                    kind: github-issues
-                                    repo: wlfghdr/agentic-kb
-                                    scope: is:issue
-                                    issue-types: [Decision, Task]
-                                    # No project field mapping: status means issue open/close.
-                                    status-values: [Open, Closed]
-                                    capabilities: [create, status, label, comment, link]
-                            writeback:
-                                enabled: false
-                                capabilities: []
-                        primitive-storage:
-                            decisions:
-                                mode: tracker
-                                tracker: team-work
-                                kind: Decision
-                                summary-dir: _kb-decisions
-                            tasks:
-                                mode: tracker
-                                tracker: team-work
-                                kind: Task
-                                summary-dir: _kb-tasks
-                    - name: engineering-org
-                        scope: org-unit
-                        role: contributor
-                        parent: company-enablement
-                        path: ../engineering-org-kb
-                        features: [findings, topics, decisions, tasks, foundation, reports, marketplace]
-                    - name: company-enablement
-                        scope: company
-                        role: consumer
-                        parent: null
-                        path: ../company-enablement-kb
-                        features: [foundation, decisions, reports, marketplace]
+          - name: alice-personal
+            scope: personal
+            role: contributor
+            parent: team-observability
+            path: .
+            features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes, delivery, operations]
+            workstreams:
+              - name: platform-signals
+                themes: [observability, reliability]
+            marketplace:
+              repo: ../team-observability-kb
+              install-mode: repository
+            connections:
+              product-repos:
+                - name: agentic-kb
+                  path: ../agentic-kb
+                  remote: wlfghdr/agentic-kb
+                  watch:
+                    - CHANGELOG.md
+                    - docs/REFERENCE.md
+                    - plugins/kb/skills/
+                  ticket-pattern: '#\\d+'
+              trackers:
+                - kind: github-issues
+                  repo: wlfghdr/agentic-kb
+                  scope: is:issue is:open
+                  capabilities: []
+              reference-mode: link
+              writeback:
+                enabled: false
+                capabilities: []
+          - name: team-observability
+            scope: team
+            role: contributor
+            parent: engineering-org
+            path: ../team-observability-kb
+            features: [findings, topics, decisions, tasks, notes, foundation, reports, delivery, operations, marketplace]
+            contributor-mode:
+              findings: contributor-scoped
+              topics: contributor-scoped
+              notes: shared
+            connections:
+              trackers:
+                - name: team-work
+                  kind: github-issues
+                  repo: wlfghdr/agentic-kb
+                  scope: is:issue
+                  issue-types: [Decision, Task]
+                  # No project field mapping: status means issue open/close.
+                  status-values: [Open, Closed]
+                  capabilities: [create, status, label, comment, link]
+              writeback:
+                enabled: false
+                capabilities: []
+            primitive-storage:
+              decisions:
+                mode: tracker
+                tracker: team-work
+                kind: Decision
+                summary-dir: _kb-decisions
+              tasks:
+                mode: tracker
+                tracker: team-work
+                kind: Task
+                summary-dir: _kb-tasks
+          - name: engineering-org
+            scope: org-unit
+            role: contributor
+            parent: company-enablement
+            path: ../engineering-org-kb
+            features: [findings, topics, decisions, tasks, foundation, reports, marketplace]
+          - name: company-enablement
+            scope: company
+            role: consumer
+            parent: null
+            path: ../company-enablement-kb
+            features: [foundation, decisions, reports, marketplace]
         workspace:
           aliases:
             tkb: ../team-observability-kb
             okb: ../engineering-org-kb
-                        ckb: ../company-enablement-kb
+            ckb: ../company-enablement-kb
         """,
     )
     write(kb / ".kb-config" / "automation.yaml", "level: 1\n")

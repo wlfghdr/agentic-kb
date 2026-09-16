@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import unittest
 from pathlib import Path
 
@@ -34,6 +35,7 @@ def evaluate(case: dict, config: dict) -> str:
     )
     legacy_capabilities = {
         "github-issues": ["create", "status", "label", "comment", "link"],
+        "github-projects": ["status"],
         "jira-rest": ["status", "comment", "link"],
         "linear-graphql": ["status", "comment"],
     }
@@ -45,11 +47,62 @@ def evaluate(case: dict, config: dict) -> str:
         capabilities = []
     if tracker is None or case["operation"] not in capabilities:
         return "manual-proposal"
+    if tracker["kind"] == "github-projects" and case["operation"] in {
+        "create",
+        "label",
+        "comment",
+        "link",
+    }:
+        issue_tracker = next(
+            (
+                item
+                for item in layer["connections"]["trackers"]
+                if item.get("name") == tracker.get("issue-tracker")
+            ),
+            None,
+        )
+        if (
+            issue_tracker is None
+            or issue_tracker.get("kind") != "github-issues"
+            or issue_tracker.get("repo") != tracker.get("repo")
+        ):
+            return "manual-proposal"
     if not case["authenticated"]:
         return "manual-proposal"
     if not case["confirmed"]:
         return "awaiting-confirmation"
     return "dry-run-supported"
+
+
+def preview_legacy_roadmap_migration(migration: dict) -> dict:
+    """Build the canonical config diff required for a sole legacy roadmap tracker."""
+    layer = deepcopy(migration["input"]["layer"])
+    legacy = migration["input"]["issue-tracker"]
+    capability_map = {
+        "write-item": "create",
+        "write-status": "status",
+        "write-comments": "comment",
+        "write-link": "link",
+    }
+    connection = {
+        "name": legacy["name"],
+        "kind": legacy["adapter"],
+        **legacy.get("config", {}),
+        "capabilities": [
+            capability_map[item]
+            for item in legacy.get("capabilities", [])
+            if item in capability_map
+        ],
+    }
+    if legacy.get("auth-env"):
+        connection["auth-env"] = legacy["auth-env"]
+    layer.setdefault("connections", {}).setdefault("trackers", []).append(connection)
+    layer.setdefault("primitive-storage", {})["roadmap-items"] = {
+        "mode": "tracker",
+        "tracker": legacy["name"],
+        "kind": "Roadmap Item",
+    }
+    return layer
 
 
 class TrackerLifecycleFixtureTests(unittest.TestCase):
@@ -86,6 +139,14 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         )
         self.assertEqual(
             outcomes["legacy-live-adapter-normalizes-capabilities"],
+            "dry-run-supported",
+        )
+        self.assertEqual(
+            outcomes["project-connection-delegates-create-to-paired-issues"],
+            "dry-run-supported",
+        )
+        self.assertEqual(
+            outcomes["legacy-project-adapter-normalizes-status"],
             "dry-run-supported",
         )
         self.assertEqual(
@@ -131,6 +192,19 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         )
 
         self.assertEqual(fixture["expected-external-writes"], [])
+
+    def test_legacy_roadmap_migration_establishes_connection_and_ownership(self) -> None:
+        migration = self.fixture["legacy-roadmap-migration"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            [migration["expected"]["connection"]],
+        )
+        self.assertEqual(
+            migrated["primitive-storage"]["roadmap-items"],
+            migration["expected"]["ownership"],
+        )
 
 
 if __name__ == "__main__":

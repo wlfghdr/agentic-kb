@@ -159,7 +159,7 @@ roadmap:
 - `ownership.layer`, when present, must match the layer entry that contains this `roadmap:` block.
 - `ownership.mode: layered-future` documents intent only; current setup should not synthesize cross-layer roll-ups unless an expert user configures them explicitly.
 - At least one `delivery-sources` entry must be declared.
-- Any legacy `issue-trackers[].write-*` capability triggers a migration proposal to the matching `connections.trackers[].capabilities`; a legacy `auth-env` is copied as an environment-variable name to the canonical connection in the same confirmed diff. Neither legacy field can authorize a write in place.
+- Any legacy `issue-trackers[].write-*` capability triggers a complete migration proposal: create or select the canonical `connections.trackers[]` entry, map the write capabilities and `auth-env` environment-variable name, and create `primitive-storage.roadmap-items` ownership when it is absent. An ambiguous destination or conflicting existing ownership requires user selection and is never overwritten. Legacy fields cannot authorize a write in place.
 - Every apply-capable roadmap tracker must be selected by `primitive-storage.roadmap-items`, declare the exact canonical operation on the matching connection, and name its authentication source.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
@@ -172,6 +172,7 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Required legacy roadmap migration to establish both a canonical connection and `primitive-storage.roadmap-items` ownership, with ambiguity/conflict refusal | PR #153 review |
 | 2026-09-16 | Defined `auth-env` on the canonical tracker connection and included legacy authentication-source names in the confirmed roadmap migration | PR #153 review |
 | 2026-09-16 | Made roadmap `issue-trackers[]` read-only authority and required canonical ownership/capabilities for apply flows, with migration of legacy `write-*` names | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **PR #153 review follow-up** — made every freshly scaffolded tracker declare capabilities explicitly; preserved legacy GitHub Projects status operations; defined its paired issue endpoint for issue CRUD; and made legacy roadmap migration establish canonical connection plus ownership rather than only renaming capabilities.
 - **Tracker mutation capability boundary (#152)** — added the 6.4.0 canonical tracker CRUD contract (`create`, `status`, `label`, `comment`, `link`) separately from reserved connection-digest write-back; defined ownership → capability → authentication → per-mutation confirmation precedence; routed roadmap apply flows through the same gates without parallel file records; added canonical authentication-source configuration plus audit/setup migration for legacy declarations; restricted normalization to unambiguous live adapters; corrected issue-only status semantics; and expanded the nested-schema offline lifecycle fixture.
 
 ## [6.3.1] — 2026-06-10

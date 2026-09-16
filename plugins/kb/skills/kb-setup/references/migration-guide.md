@@ -78,7 +78,7 @@ Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and
 
 ### Pre-6.4 tracker connections
 
-Run `/kb audit` rule K17 or rerun `/kb setup`. For an unambiguous live adapter missing `connections.trackers[].capabilities`, preview the normalized capability list and any legacy roadmap `auth-env` name as a diff on the canonical connection. Persist only after confirmation. Explicit empty lists and generic, export-backed, or custom adapters stay read-only until the user verifies their implemented operations and authentication source.
+Run `/kb audit` rule K17 or rerun `/kb setup`. For an unambiguous live adapter missing `connections.trackers[].capabilities`, preview the normalized capability list and any legacy roadmap `auth-env` name as a diff on the canonical connection. A legacy roadmap tracker with write capabilities also creates or selects its canonical `connections.trackers[]` entry and, when absent, adds `primitive-storage.roadmap-items` ownership in that same diff. Ambiguous destinations and conflicting ownership require an explicit user choice and are not overwritten. Persist only after confirmation. Explicit empty lists and generic, export-backed, or custom adapters stay read-only until the user verifies their implemented operations and authentication source.
 
 ## After migration
 
@@ -90,6 +90,7 @@ Run `/kb audit` rule K17 or rerun `/kb setup`. For an unambiguous live adapter m
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Extended legacy roadmap migration to establish canonical connection and roadmap-item ownership instead of migrating capability names alone | PR #153 review |
 | 2026-09-16 | Added the confirmed pre-6.4 tracker capability and authentication-source migration path shared by setup and audit K17 | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

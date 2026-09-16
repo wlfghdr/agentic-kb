@@ -43,9 +43,12 @@ layers:
         - kind: jira-export
           export-path: _kb-inputs/jira-export.csv
           project: PROJ
-        - kind: github-projects
+        - name: backend-project
+          kind: github-projects
           repo: org/backend-api
           project-number: 3
+          issue-tracker: backend-work
+          capabilities: [create, status, label, comment, link]
 
       reference-mode: link            # link | inline | none
       writeback:
@@ -74,6 +77,7 @@ layers:
 | `reference-mode` | `link` cites the source, `inline` embeds a summary, `none` records only the watermark |
 | `trackers[].capabilities` | Canonical primitive operations implemented by this configured adapter: `create`, `status`, `label`, `comment`, and/or `link` |
 | `trackers[].auth-env` | Optional environment-variable name containing adapter credentials; the config stores the name, never the credential. Omit only for adapters with documented ambient authentication |
+| `trackers[].issue-tracker` | For `github-projects`, the name of a same-layer `github-issues` connection used for issue CRUD while the project connection stays canonical |
 | `writeback.enabled` | Reserved switch for connection-digest-derived mutations; it does not authorize canonical primitive operations |
 | `writeback.capabilities` | Reserved connection-digest operations; omit or leave empty while digest write-back is unsupported |
 | `primitive-storage.*.tracker` | Name of the tracker connection that owns the primitive family when the mode is `tracker` or `hybrid` |
@@ -83,7 +87,7 @@ layers:
 | Kind | Description | Required fields |
 |------|-------------|----------------|
 | `github-issues` | GitHub Issues via the API; canonical CRUD is supported when the corresponding capability is declared and authentication is available | `repo`, optional `scope` query |
-| `github-projects` | GitHub Projects v2; project-field updates are supported only when declared, and issue creation requires a paired live issue tracker | `repo`, `project-number` |
+| `github-projects` | GitHub Projects v2 composite adapter; project status uses the project connection, while `create`, `label`, `comment`, and `link` delegate to its paired issue connection | `repo`, `project-number`; `issue-tracker` when issue operations are declared |
 | `jira-rest` | Live Jira REST adapter; canonical operations require the corresponding capability and token-based authentication | `base-url`, `project`, `auth-env` |
 | `linear-graphql` | Live Linear GraphQL adapter; canonical operations require the corresponding capability and token-based authentication | `team`, `auth-env` |
 | `jira-export` | Exported Jira CSV or JSON; read-only | `export-path`, `project` |
@@ -91,6 +95,8 @@ layers:
 | `csv` | Generic CSV with configurable column mapping; read-only | `export-path`, `column-map` |
 
 Live API trackers name credentials with `auth-env`; `github-issues` and `github-projects` may instead use their documented ambient authenticated CLI context. For export-backed trackers, the user drops a fresh export into the declared path before running `/kb digest connections`.
+
+When `primitive-storage` selects a `github-projects` connection, that project connection remains the single canonical tracker. Its `issue-tracker` reference is adapter wiring, not a second ownership claim: the referenced same-layer connection must be `kind: github-issues`, target the same repository, and provide the issue endpoint used by declared issue operations. The project connection's capability list is authoritative for the composite adapter, and authentication/tooling must be available for the delegated endpoint before a mutation can proceed.
 
 ## Setup flow
 
@@ -217,6 +223,7 @@ To stop tracking a connection:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Defined `github-projects` as a composite canonical connection with an explicit same-layer `issue-tracker` reference for issue CRUD | PR #153 review |
 | 2026-09-16 | Added `trackers[].auth-env` to the canonical connection field contract while retaining documented ambient authentication as an explicit alternative | PR #153 review |
 | 2026-09-16 | Separated supported canonical tracker CRUD from reserved connection-digest write-back; defined capability, authentication, and per-mutation confirmation precedence plus the manual-proposal fallback | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
