@@ -1,6 +1,6 @@
 # Setup Flow — step by step
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.3.3 | **Last updated:** 2026-09-16
 
 Full walkthrough the skill follows on `/kb setup`.
 
@@ -115,7 +115,7 @@ Also print a manual setup checklist for GitHub-native settings that files cannot
 
 ### Jira-backed tracker
 
-Write the Jira mapping into `connections.trackers[]` and `primitive-storage`, then generate the generic tracker workflow skill. Print a manual setup checklist for project key/URL, issue types, workflow statuses, required fields, link policy, and token/auth environment names. Do not assume a specific Jira hierarchy or workflow. Export-backed Jira setups are valid: they use read-only queries/files first and leave write-back disabled.
+Write the Jira mapping into `connections.trackers[]` and `primitive-storage`, then generate the generic tracker workflow skill. Print a manual setup checklist for project key/URL, issue types, workflow statuses, required fields, link policy, implemented canonical CRUD capabilities, and token/auth environment names. Do not assume a specific Jira hierarchy or workflow. Export-backed Jira setups are valid: they declare no canonical CRUD capabilities, use read-only queries/files, and leave connection-digest write-back disabled.
 
 ### Verification
 
@@ -123,9 +123,10 @@ Tracker-backed setup passes only when:
 
 - every `primitive-storage.*.tracker` points at a declared `connections.trackers[].name`,
 - every configured kind/type has either a generated GitHub issue form or documented Jira type mapping,
-- `writeback.enabled: true` appears only after explicit confirmation,
+- every live tracker declares the canonical CRUD operations its adapter implements; export-backed trackers declare none,
+- `connections.writeback.enabled` is `false` with an empty capability list because connection-digest write-back is reserved,
 - generated templates have no unresolved setup placeholders,
-- the repo-local tracker workflow skill says that issue creation, comments, labels, links, status changes, and transitions require confirmation.
+- the repo-local tracker workflow skill enforces ownership → capability → authentication → one-action confirmation for issue creation, comments, labels, links, and status changes, with a complete manual proposal when an execution gate is unavailable.
 
 ## Scaffold — additional shared contributor layer
 
@@ -302,6 +303,7 @@ After the quickstart, validate the deterministic rollout baseline against [`docs
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Aligned tracker setup verification with canonical CRUD capability declarations, reserved digest write-back, strict gate precedence, and manual fallback | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-06-02 | Changed the setup-flow default so shared process/operational primitives render GitHub Issues-backed `primitive-storage` by default, with explicit file-backed fallback only when GitHub Issues is unavailable or rejected | Issue #145 |
 | 2026-05-18 | VS Code IDE-configuration note rewritten: the `chat.plugins.marketplaces` setting belongs to user-level `settings.json` (workspace settings not honored per the official docs), the surrounding feature is Microsoft Preview, and `scripts/install --target vscode` is recommended as the stable path. Closes audit finding #97 | Concept/onboarding/process audit |

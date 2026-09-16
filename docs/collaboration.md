@@ -1,6 +1,6 @@
 # Collaboration Guide
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.3.3 | **Last updated:** 2026-09-16
 
 This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
@@ -173,6 +173,8 @@ If upstream material conflicts with the current local view, the agent should:
 - suggest a decision or review,
 - avoid pretending convergence already happened.
 
+Connection digests remain read-only with respect to external systems. This is separate from confirmation-gated lifecycle work on a tracker item that is itself the canonical shared decision or task. For canonical tracker work, ownership, declared adapter capability, available authentication, and one-action human confirmation must all be present. Missing confirmation leaves the mutation proposed; missing capability or authentication produces a complete manual handoff. Neither path creates a duplicate KB record.
+
 ### 4. Shared decisions need explicit humans
 
 In team, org, and company-facing contributor layers, decisions must name the humans around the decision clearly enough that others can act on them.
@@ -326,6 +328,7 @@ That is the safest path to getting value without trust erosion.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Clarified the shared-workspace boundary between read-only connection digests and confirmation-gated lifecycle operations on canonical tracker records | Issue #152 |
 | 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in the setup and reference specs. Collaboration semantics unchanged | Issue #145 |
 | 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-23 | Added shared-workspace rule 2a "Direct cross-layer capture: explicit OR confirmed" covering the three capture-routing modes (default / explicit / reflection-driven) and the human-confirmation contract that protects against (a) silent agent-inferred shared writes and (b) routine team intake being misframed as private sense-making | Artifact layer routing |

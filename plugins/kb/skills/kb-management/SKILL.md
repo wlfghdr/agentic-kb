@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes (including retros), decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 6.3.2
+version: 6.3.3
 triggers:
   # Command surface
   - "/kb"
@@ -194,6 +194,8 @@ When a flow creates or updates a primitive covered by `primitive-storage`, resol
 
 If the config is ambiguous or both a KB file and tracker item claim canonical ownership, stop and propose an audit/cleanup step before mutation.
 
+For `tracker` operations, apply the capability precedence from `references/tracker-backed-primitives.md`: `primitive-storage` selects canonical ownership; the named tracker must declare the operation in `capabilities`; authentication/tooling must be available; and the user must confirm that exact mutation. `connections.writeback` governs only reserved connection-digest write-back and cannot enable canonical CRUD. When capability or authentication is absent, provide a complete manual proposal and wait for the resulting tracker identifier; do not create a competing canonical KB record.
+
 ## Output contract
 
 Every response follows the same shape:
@@ -266,6 +268,7 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Routed tracker-backed primitive mutations through the canonical CRUD capability/authentication/confirmation contract while keeping connection-digest write-back reserved | Issue #152 |
 | 2026-06-17 | Version aligned to 6.3.2 (framework patch — glossary `Intake` term added; no behavioral change to this skill) | Version alignment |
 | 2026-06-10 | Version aligned to 6.3.1 | Version alignment |
 | 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in setup and tracker-backed primitive references | Issue #145 |

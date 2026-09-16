@@ -13,7 +13,7 @@ What's next, what's deferred, what's out of scope.
 
 ## Later
 
-- **Tracker write-back hardening** — broader write-back fixtures for tracker-backed decisions, tasks, ideas, feedback, and feature intake after the proposal is tested with adopter repos.
+- **Tracker adapter hardening** — broader canonical CRUD fixtures for tracker-backed decisions, tasks, ideas, feedback, and feature intake after the ownership/capability/authentication/confirmation contract is tested with adopter repos. Connection-digest write-back remains a separate reserved capability.
 - **Cross-org coordination** — digest mechanism across multiple peer org-unit layers. Deferred until real deployments exist.
 - **Company-source automation** — polling company channels for OKRs/strategy. Blocked on machine-readable company comms.
 - **Knowledge graph visualization** — interactive rendering of the finding→topic→decision graph.
@@ -32,6 +32,7 @@ What's next, what's deferred, what's out of scope.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Renamed the later tracker hardening item to canonical adapter coverage and kept reserved connection-digest write-back explicitly separate | Issue #152 |
 | 2026-05-17 | Expanded the open tracker-backed onboarding item to include the generic GitHub governance profile, not just primitive storage and provider mappings | Tracker-backed onboarding hardening |
 | 2026-05-17 | Reworded the current tracker-backed work from proposal-only to onboarding: the open item now covers setup decisions, `primitive-storage`, and generic GitHub/Jira setup outcomes while broader write-back hardening remains later | Tracker-backed onboarding design |
 | 2026-05-17 | Moved the issue-tracker backbone idea from a host-specific later item to a generic tracker-backed primitive proposal and named write-back hardening as the later implementation work | Cross-repo tracker-backbone review |

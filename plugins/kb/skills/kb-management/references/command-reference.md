@@ -1,6 +1,6 @@
 # Command Reference — kb-management
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.3.3 | **Last updated:** 2026-09-16
 
 ## Capture & Process
 
@@ -40,7 +40,7 @@ Retros also carry an explicit closure lifecycle (`status: open | tracked | close
 
 Tasks follow the same canonical-ownership rule as decisions: if a team, org, or company layer owns the same work item and accountable owner, keep the task there and close/archive the source-layer duplicate. A contributor-owned layer may keep a separate task only for a narrower personal sub-task or owner-specific slice that links back to the canonical shared task.
 
-If the active layer declares `primitive-storage` with `mode: tracker` for `decisions` or `tasks`, these commands create a proposed tracker mutation instead of a canonical KB file mutation. The agent must show the issue/ticket body, type/kind, target tracker, links, and write-back action, then wait for confirmation. KB files in the supporting summary directory may be written only as backlinks, reports, or archived context.
+If the active layer declares `primitive-storage` with `mode: tracker` for `decisions` or `tasks`, these commands create a proposed tracker mutation instead of a canonical KB file mutation. The agent must show the issue/ticket body, type/kind, target tracker, links, and action, then evaluate the capability boundary in [`tracker-backed-primitives.md`](./tracker-backed-primitives.md): declared adapter capability, available authentication/tooling, and explicit confirmation are all required to apply it. Missing capability or authentication returns the same proposal with exact manual steps; the user supplies the resulting tracker identifier for the backlink. KB files in the supporting summary directory may be written only as backlinks, reports, or archived context. The reserved connection-digest `writeback` switch does not govern these commands.
 
 ## Ideas
 
@@ -220,6 +220,7 @@ See `output-contract.md` for the full wording contract and examples.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Routed tracker-backed decision/task commands through the canonical CRUD capability contract and documented the manual fallback for missing capability or authentication | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-24 | Expanded the `/kb sync [layer]` row so it carries both parts of the contract: contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases from `docs/concurrency.md` (promote conflicts, diverged backlinks, and unresolved topic author-sections). Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-23 | Expanded the Capture & Process section: the `/kb [text/URL/path]` row now names the three capture-routing modes and links to the new `capture-routing.md`; added a `/kb <layer> [input]` row for explicit-mode direct routing to a non-default layer | Artifact layer routing |

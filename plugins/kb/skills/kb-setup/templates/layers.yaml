@@ -26,11 +26,10 @@ layers:
       product-repos: []
       trackers: []
       reference-mode: link
-      # writeback is RESERVED in v6.1.0 — the field is recognized by the schema
-      # but has no effect. Setting `enabled: true` is a no-op today. The block
-      # stays so future versions can add real write-back support without a
-      # config migration. See plugins/kb/skills/kb-management/references/
-      # connections-lifecycle.md "Write-back (RESERVED)" for the planned contract.
+      # This reserved block controls connection-digest-derived mutations only.
+      # It has no effect today and does not enable or disable canonical tracker
+      # CRUD. See the "Two mutation capabilities" contract in connections-
+      # lifecycle.md.
       writeback:
         enabled: false
         capabilities: []
@@ -61,6 +60,7 @@ layers:
     #       scope: is:issue
     #       issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
     #       status-values: [Todo, In Progress, In Review, Done]
+    #       capabilities: [create, status, label, comment, link]
     # primitive-storage:
     #   decisions:
     #     mode: tracker

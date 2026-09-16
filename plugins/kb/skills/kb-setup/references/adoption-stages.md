@@ -1,6 +1,6 @@
 # Adoption Stages
 
-> **Version:** 0.1.1 | **Last updated:** 2026-05-15
+> **Version:** 0.1.2 | **Last updated:** 2026-09-16
 
 This reference defines the three adoption stages `agentic-kb` is designed for, the graduation criteria between them, and how the stages relate to automation levels.
 
@@ -21,7 +21,7 @@ What it scaffolds:
 - one contributor anchor layer,
 - the minimum feature set the team actually authors today (typically `findings`, `topics`, `decisions`, `notes`, `tasks`, `foundation`),
 - automation level **1** (manual only),
-- no `connections:` write-back, no `auto-promote`, no roadmap/journey features unless the team's own goals require them.
+- no connection-digest write-back, no live canonical tracker mutations, no `auto-promote`, and no roadmap/journey features unless the team's own goals require them.
 
 What it gives the team that they did not have before:
 
@@ -139,6 +139,7 @@ This mapping is intentionally generic. `agentic-kb` does not depend on any speci
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Clarified that Stage 1 excludes both reserved connection-digest write-back and live canonical tracker mutations without conflating their capability contracts | Issue #152 |
 | 2026-05-18 | Updated cross-references to match the kb-setup phase order swap (phase 2 question 11 owns "operating context today"; phase 1 question 3 owns the repo-as-OS discovery pass). No semantic change to the staged-adoption contract | Concept/onboarding/process audit |
 | 2026-05-15 | Reframed Stage 1 exclusions without draft-feature wording and renamed "not yet" capability sections to "stays off at this stage" so staged adoption reads as intentional scope, not unfinished behavior | Release-readiness audit |
 | 2026-04-27 | Initial reference: three-stage adoption ladder, graduation criteria, mapping to automation levels and to repo-as-OS frameworks | Soft-transition extension |

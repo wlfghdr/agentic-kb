@@ -23,6 +23,10 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 - **Glossary: `Intake`** — added a canonical definition for *intake* (most commonly *feature intake*): a request/input item that is triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. The term was already used across `docs/REFERENCE.md`, `docs/first-run-acceptance.md`, `docs/collaboration.md`, and `plugins/kb/skills/kb-management/references/tracker-backed-primitives.md` without a canonical entry. Glossary bumped to 0.10.
 
+### Fixed
+
+- **Tracker mutation capability boundary (#152)** — separated supported canonical tracker CRUD (`create`, `status`, `label`, `comment`, `link`) from reserved connection-digest write-back; defined ownership → capability → authentication → per-mutation confirmation precedence; added the manual proposal/handoff fallback that preserves one canonical record; aligned setup, command, connection, collaboration, README, and generated tracker guidance; and added an offline first-run lifecycle fixture covering create, handoff, close, disabled digest writes, missing capability, and absent authentication.
+
 ## [6.3.1] — 2026-06-10
 
 ### Fixed

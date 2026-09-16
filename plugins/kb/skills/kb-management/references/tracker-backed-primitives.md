@@ -1,6 +1,6 @@
 # Tracker-Backed Primitives
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.3.3 | **Last updated:** 2026-09-16
 
 Some teams already run their day-to-day product and delivery work through an issue tracker. `agentic-kb` should support that pattern without turning the KB into a duplicate tracker.
 
@@ -47,7 +47,7 @@ The proposal must show:
 - which tracker owns each tracker-backed family,
 - where supporting KB summaries/backlinks live,
 - which repository, project, board, or query parameters scope the tracker items,
-- whether write-back is disabled, read-only, or confirmation-gated apply,
+- which canonical CRUD operations the adapter implements and that connection-digest write-back remains disabled/reserved,
 - which setup artifacts will be generated for the selected tracker provider.
 
 If the user chooses tracker-backed mode, setup should create the tracker configuration and local support files in one pass. It must not leave the user with a valid KB config but no issue templates, project/type guidance, or skills explaining how agents should operate on the configured tracker.
@@ -69,6 +69,7 @@ layers:
 					scope: is:issue
 					issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
 					status-values: [Todo, In Progress, In Review, Done]
+					capabilities: [create, status, label, comment, link]
 			writeback:
 				enabled: false
 				capabilities: []
@@ -111,6 +112,7 @@ layers:
 | `primitive-storage.<family>.summary-dir` | KB directory for summaries, reports, backlinks, or archived context when `mode: tracker` |
 | `connections.trackers[].issue-types` | Tracker-native kinds setup expects to exist or creates instructions/templates for |
 | `connections.trackers[].status-values` | Status values setup expects for triage and audit output |
+| `connections.trackers[].capabilities` | Canonical primitive operations the configured live adapter implements: `create`, `status`, `label`, `comment`, and/or `link` |
 
 If a primitive family is absent from `primitive-storage`, the default is `files` for personal/private layers. Shared contributor layers must not rely on omission: setup records GitHub Issues-backed ownership for shared process/operational primitives by default, or records an explicit `files` fallback with the reason. Provider-native intake families that have no canonical KB directory, such as `feedback` or `feature-intake`, remain tracker-backed when configured.
 
@@ -163,10 +165,10 @@ Minimum outcome:
 | Primitive mapping | Decision, task, idea, feature intake, and roadmap-item families mapped to configured Jira issue types or request types |
 | Status mapping | Status values used by audit/report output mapped to the Jira workflow states the adopter names |
 | Link policy | Required links back to KB summaries, roadmap artifacts, specs, PRs, or downstream delivery tickets documented in config |
-| Write-back policy | `writeback.enabled` stays `false` unless the user explicitly enables confirmation-gated comments, links, or transitions |
+| Mutation policy | Declare implemented canonical CRUD in `connections.trackers[].capabilities`; keep connection-digest `writeback.enabled` false |
 | Repo-local skill | A generic tracker workflow skill that reads the Jira mapping and refuses unconfirmed mutations |
 
-Jira setup must stay adapter-neutral: Cloud, Server, REST, export-backed, and proxy-backed access are configuration choices. The spec only requires the project, query, field mapping, and write-back policy to be explicit.
+Jira setup must stay adapter-neutral: Cloud, Server, REST, export-backed, and proxy-backed access are configuration choices. The spec only requires the project, query, field mapping, canonical CRUD capabilities, and reserved digest write-back policy to be explicit.
 
 ## Routing Rules
 
@@ -189,10 +191,14 @@ Skills that operate on tracker-backed primitives should:
 3. preserve source evidence and provenance,
 4. use configured tracker kinds from `connections.trackers[]`,
 5. use `primitive-storage` to decide whether to create a file, a tracker item, or a promotion proposal,
-6. respect `writeback.enabled` and `writeback.capabilities`,
+6. require the requested canonical operation in `connections.trackers[].capabilities` and verify authentication/tool availability,
 7. ask for explicit confirmation before creating issues, changing status, applying labels, posting comments, or linking items,
-8. log every write-back with target identifier and action,
-9. summarize what changed and which record is now canonical.
+8. treat `connections.writeback` as a separate, reserved connection-digest capability that cannot enable canonical CRUD,
+9. when capability or authentication is absent, return the complete proposal and exact manual steps, then wait for the resulting tracker identifier instead of creating a competing canonical KB file,
+10. log every applied or manually completed tracker mutation with target identifier and action,
+11. summarize what changed and which record is now canonical.
+
+The precedence is strict: `primitive-storage` chooses the canonical home; tracker capabilities determine which operations the adapter implements; authentication determines whether the implementation is usable now; explicit confirmation authorizes one proposed mutation. A later gate cannot override an earlier failure. In particular, confirmation does not manufacture a capability, and `writeback.enabled` neither enables nor disables canonical tracker CRUD.
 
 ## Suggested Generic Skills
 
@@ -215,7 +221,7 @@ Tracker-backed primitives complement `kb-roadmap`:
 - tracker intake explains the source and intent of work,
 - roadmap reconciliation compares plan truth with delivery reality,
 - mismatch findings create or update decisions and tasks,
-- write-back remains opt-in and confirmation-gated.
+- canonical tracker mutations remain capability-, authentication-, and confirmation-gated; connection-digest write-back remains reserved.
 
 This keeps tracker workflows operational while letting KB reports provide synthesis and drift detection.
 
@@ -234,6 +240,7 @@ Watch for these problems:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Defined supported canonical tracker CRUD separately from reserved connection-digest write-back, including strict gate precedence and a manual proposal/handoff fallback that preserves one canonical record | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-06-02 | Changed the tracker-backed primitive default so shared process/operational primitives default to GitHub Issues-backed ownership, while personal/private layers stay file-backed and shared file-backed mode must be explicit | Issue #145 |
 | 2026-05-17 | Expanded the proposal into an onboarding contract: setup now asks which primitives are file-backed, tracker-backed, or hybrid; records `primitive-storage` beside tracker connections; and treats generic GitHub/Jira setup packages, governance CI, labeler/PR templates, manual setup checklists, and tracker workflow skills as expected onboarding outcomes | Tracker-backed onboarding design |

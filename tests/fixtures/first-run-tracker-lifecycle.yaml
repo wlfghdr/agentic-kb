@@ -1,0 +1,129 @@
+fixture: first-run-tracker-lifecycle
+execution-mode: offline
+
+config:
+  primitive-storage:
+    tasks:
+      mode: tracker
+      tracker: team-work
+      kind: Task
+      summary-dir: _kb-tasks
+  trackers:
+    - name: team-work
+      kind: github-issues
+      repo: example/team-work
+      capabilities: [create, status, comment, link]
+  writeback:
+    enabled: false
+    capabilities: []
+
+canonical-record:
+  family: tasks
+  external-id: ISSUE-42
+  canonical-kb-files: []
+  supporting-records:
+    - _kb-tasks/ISSUE-42.md
+  manual-lifecycle:
+    - stage: create
+      operation: create
+      resulting-id: ISSUE-42
+    - stage: handoff
+      operation: link
+      resulting-id: ISSUE-42
+    - stage: close
+      operation: status
+      resulting-id: ISSUE-42
+
+cases:
+  - name: storage-does-not-select-tracker
+    source: canonical
+    family: decisions
+    tracker: team-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
+  - name: create-without-authentication
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: create
+    authenticated: false
+    confirmed: true
+    expected: manual-proposal
+    proposal: Create Task "Document the cache failover runbook".
+    manual-steps: Open the configured tracker, create the proposed Task, and return its identifier.
+    resulting-id: ISSUE-42
+
+  - name: handoff-link-without-authentication
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: link
+    authenticated: false
+    confirmed: true
+    expected: manual-proposal
+    proposal: Link ISSUE-42 to delivery item DELIVERY-9.
+    manual-steps: Add the destination link to ISSUE-42 and return the unchanged source identifier.
+    resulting-id: ISSUE-42
+
+  - name: close-without-authentication
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: status
+    authenticated: false
+    confirmed: true
+    expected: manual-proposal
+    proposal: Move ISSUE-42 to Done with closure evidence.
+    manual-steps: Set ISSUE-42 to Done in the configured tracker and report completion.
+    resulting-id: ISSUE-42
+
+  - name: confirmation-cannot-add-label-capability
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: label
+    authenticated: true
+    confirmed: true
+    expected: manual-proposal
+    proposal: Apply the risk label to ISSUE-42.
+    manual-steps: Apply the label manually because this adapter does not declare label capability.
+    resulting-id: ISSUE-42
+
+  - name: digest-disabled-does-not-block-canonical-comment
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: comment
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+
+  - name: canonical-status-still-awaits-confirmation
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: status
+    authenticated: true
+    confirmed: false
+    expected: awaiting-confirmation
+
+  - name: disabled-connection-digest-comment
+    source: connection-digest
+    operation: comment
+    writeback-enabled: false
+    authenticated: true
+    confirmed: true
+    expected: reserved-noop
+
+  - name: manually-enabled-connection-digest-comment
+    source: connection-digest
+    operation: comment
+    writeback-enabled: true
+    authenticated: true
+    confirmed: true
+    expected: reserved-noop
+
+expected-external-writes: []

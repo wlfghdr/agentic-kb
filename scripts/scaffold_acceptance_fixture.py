@@ -145,6 +145,7 @@ def scaffold_personal_kb(workspace: Path) -> Path:
                                     scope: is:issue
                                     issue-types: [Decision, Task]
                                     status-values: [Todo, In Progress, In Review, Done]
+                                    capabilities: [create, status, label, comment, link]
                             writeback:
                                 enabled: false
                                 capabilities: []
