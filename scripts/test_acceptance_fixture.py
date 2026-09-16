@@ -102,6 +102,7 @@ class AcceptanceFixtureTests(unittest.TestCase):
             self.assertIn("features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes, delivery, operations]", layers)
             self.assertIn("connections:", layers)
             self.assertIn("trackers:", layers)
+            self.assertIn("status-values: [Open, Closed]", layers)
             self.assertIn("capabilities: [create, status, label, comment, link]", layers)
             self.assertIn("writeback:\n                        enabled: false", layers)
             self.assertIn("marketplace:", layers)

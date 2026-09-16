@@ -1,6 +1,6 @@
 # Reference: journey markdown structure
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 Every journey markdown file follows this contract. `kb-journeys render` validates it; `kb-journeys audit` reports violations.
 
@@ -142,5 +142,6 @@ See `templates/journey-overview.md.hbs` for the scaffold.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-25 | Replaced the obsolete inline audit checklist with a pointer to the canonical J1-J19 audit reference | PR #141 review |

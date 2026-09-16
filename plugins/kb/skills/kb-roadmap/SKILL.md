@@ -1,7 +1,7 @@
 ---
 name: kb-roadmap
 description: Reconcile planning-truth sources against delivery reality. Ingests ≥1 plan source (ticket export, milestone markdown, OKRs) and ≥1 delivery source (git repository, ADR set, release log), runs a five-tier correlation ladder, detects mismatches, and emits a living roadmap artifact in Markdown, HTML, and JSON. Triggered by `/kb roadmap` and roadmap-reconciliation phrases.
-version: 1.0.0
+version: 1.1.0
 triggers:
   - "/kb roadmap"
   - "roadmap synthesis"
@@ -63,7 +63,7 @@ Concurrency contract: [`docs/concurrency.md`](../../../../docs/concurrency.md) g
 3. **Never silently drop an unmatched item.** It is either a delivery-without-plan, a plan-without-delivery, or a traceability gap — all three are first-class artifact entries.
 4. **Deep-investigation matches (tier 4) are proposed, never final.** Emit them as `proposed, pending review`; the user confirms before downgrading to tier 1–3.
 5. **Graceful degradation.** Artifact must be useful even when correlation rate is 0% — in that case, plan + delivery render side-by-side with an explicit "no matches found" banner.
-6. **Read-only by default.** `digest` and plain `roadmap` never write to plan sources. `sync` emits a dry-run plan unless `--apply` is passed, and `--apply` requires a confirmation prompt. Tracker writes (comments, status, links) require the same `--apply` gate.
+6. **Read-only by default.** `digest` and plain `roadmap` never write to plan sources. `sync` emits a dry-run plan unless `--apply` is passed. A tracker mutation may proceed only when `primitive-storage.roadmap-items` selects that tracker, the matching `connections.trackers[]` entry declares the canonical operation, authentication/tooling is available, and the user confirms that one write. Legacy `roadmap.issue-trackers[].write-*` names are migration input, not mutation authority. See `references/issue-trackers.md`.
 7. **Resume routing is deterministic.** When invoked with no work to do, run the conformance check + state assessment + ordered resume rules from `references/state-machine.md`. LLM judgment is not used to pick the next action.
 8. **`/discuss` mode is write-free.** When the user message contains `/discuss`, do not regenerate artifacts, apply tuning, or write to trackers. Explain, propose, preview — see `references/discuss-mode.md`.
 9. **Continuous config tuning is opt-in.** After each run, emit a tuning digest (zero-match filters, low-match filters, unreachable items, suspected noise). Apply only via `/kb roadmap tune` with explicit per-proposal confirmation. See `references/issue-trackers.md`.
@@ -256,6 +256,7 @@ The shipped helper script covers config-driven generation and dry-run validation
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Bumped to v1.1.0 and routed roadmap tracker mutations through canonical primitive ownership, connection capabilities, authentication, and per-action confirmation; legacy `write-*` names are migration-only | Issue #152 review |
 | 2026-05-24 | Added a concurrency-contract pointer so roadmap adopters can find the shared-layer `/kb sync` and `/kb audit` reconciliation rules from the skill spec. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-15 | Promoted the roadmap skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified that apply-capable flows are stable but gated by explicit commands and confirmations | Release-readiness audit |
 | 2026-05-08 | Bumped to v0.2.0 and clarified the current helper-script adapter/runtime coverage against the broader draft command surface | Integration pass |

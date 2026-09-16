@@ -72,6 +72,8 @@ Use native GitHub metadata for canonical fields:
 
 Labels are for dimensions that native metadata does not model: area, component, risk, audience, version impact, documentation impact, workflow hints, or adopter-specific routing cues. Labels must not duplicate type, status, priority, or milestone.
 
+When no GitHub Project and status-field mapping is configured, the adapter's `status` capability covers issue open/close only. Project workflow transitions such as `In Progress` or `In Review` require resolvable project, field, and option identifiers; setup must collect that mapping or leave those transitions as manual proposals.
+
 ### PR discipline
 
 Pull requests should:
@@ -146,5 +148,6 @@ Setup is not complete for this profile until:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Limited issue-only status mutations to open/close unless project-field metadata makes workflow transitions executable | Issue #152 review |
 | 2026-09-16 | Required generated tracker guidance to enforce canonical CRUD ownership/capability/authentication/confirmation precedence, manual fallback, and separation from reserved digest write-back | Issue #152 |
 | 2026-05-17 | Initial generic GitHub governance profile covering issue-driven work, native metadata, PR discipline, CI/local-agent parity, generated files, manual setup checklist, and verification | Tracker-backed onboarding hardening |

@@ -18,15 +18,33 @@ def evaluate(case: dict, config: dict) -> str:
     if case["source"] == "connection-digest":
         return "reserved-noop"
 
-    storage = config["primitive-storage"].get(case["family"], {})
+    layer_name = case.get("layer", config["active-layer"])
+    layer = next(item for item in config["layers"] if item["name"] == layer_name)
+    storage = layer["primitive-storage"].get(case["family"], {})
     if storage.get("mode") != "tracker" or storage.get("tracker") != case["tracker"]:
         return "ownership-blocked"
 
     tracker = next(
-        (item for item in config["trackers"] if item["name"] == case["tracker"]),
+        (
+            item
+            for item in layer["connections"]["trackers"]
+            if item["name"] == case["tracker"]
+        ),
         None,
     )
-    if tracker is None or case["operation"] not in tracker.get("capabilities", []):
+    legacy_capabilities = {
+        "github-issues": ["create", "status", "label", "comment", "link"],
+        "jira": ["status", "comment", "link"],
+        "jira-rest": ["status", "comment", "link"],
+        "linear": ["status", "comment"],
+        "linear-graphql": ["status", "comment"],
+    }
+    capabilities = tracker.get("capabilities") if tracker else []
+    if tracker is not None and "capabilities" not in tracker:
+        capabilities = legacy_capabilities.get(tracker.get("kind"), [])
+    elif capabilities is None:
+        capabilities = []
+    if tracker is None or case["operation"] not in capabilities:
         return "manual-proposal"
     if not case["authenticated"]:
         return "manual-proposal"
@@ -43,8 +61,10 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
     def test_gate_precedence_and_reserved_digest_boundary(self) -> None:
         fixture = self.fixture
         self.assertEqual(fixture["execution-mode"], "offline")
-        self.assertFalse(fixture["config"]["writeback"]["enabled"])
-        self.assertEqual(fixture["config"]["writeback"]["capabilities"], [])
+        layer = fixture["config"]["layers"][0]
+        self.assertEqual(layer["name"], fixture["config"]["active-layer"])
+        self.assertFalse(layer["connections"]["writeback"]["enabled"])
+        self.assertEqual(layer["connections"]["writeback"]["capabilities"], [])
 
         outcomes = {}
         for case in fixture["cases"]:
@@ -64,6 +84,14 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         self.assertEqual(
             outcomes["manually-enabled-connection-digest-comment"],
             "reserved-noop",
+        )
+        self.assertEqual(
+            outcomes["legacy-live-adapter-normalizes-capabilities"],
+            "dry-run-supported",
+        )
+        self.assertEqual(
+            outcomes["custom-adapter-without-capabilities-stays-read-only"],
+            "manual-proposal",
         )
 
     def test_manual_lifecycle_preserves_one_canonical_record(self) -> None:

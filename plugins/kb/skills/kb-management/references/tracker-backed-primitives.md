@@ -1,6 +1,6 @@
 # Tracker-Backed Primitives
 
-> **Version:** 6.3.3 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 Some teams already run their day-to-day product and delivery work through an issue tracker. `agentic-kb` should support that pattern without turning the KB into a duplicate tracker.
 
@@ -115,6 +115,22 @@ layers:
 | `connections.trackers[].capabilities` | Canonical primitive operations the configured live adapter implements: `create`, `status`, `label`, `comment`, and/or `link` |
 
 If a primitive family is absent from `primitive-storage`, the default is `files` for personal/private layers. Shared contributor layers must not rely on omission: setup records GitHub Issues-backed ownership for shared process/operational primitives by default, or records an explicit `files` fallback with the reason. Provider-native intake families that have no canonical KB directory, such as `feedback` or `feature-intake`, remain tracker-backed when configured.
+
+For a `github-issues` connection without project-field metadata, `status` means issue open/close only. Values such as `In Progress` or `In Review` become executable only when the adapter can resolve the configured project, status field, and option identifiers. Otherwise the skill returns the manual transition proposal even though issue open/close remains supported.
+
+### Legacy capability normalization
+
+Tracker entries created before 6.4.0 have no `capabilities` field. To avoid silently disabling their previously confirmation-gated operations, readers temporarily normalize a missing field for known live adapters to the capabilities documented before this field existed:
+
+| Legacy live adapter kind | Temporary normalized capabilities |
+|---|---|
+| `github-issues` | `create`, `status` (open/close), `label`, `comment`, `link` |
+| `jira` / `jira-rest` | `status`, `comment`, `link` |
+| `linear` / `linear-graphql` | `status`, `comment` |
+
+This compatibility rule applies only when the field is absent. An explicit empty list means read-only. Export-backed or custom adapters with no declaration remain read-only because their implementation cannot be inferred safely.
+
+On the next `/kb setup` or `/kb audit`, show the normalized list and evidence, ask the user to accept or edit it, then persist the confirmed `capabilities` field. Emit a deprecation warning until that migration is complete. Authentication and per-action confirmation remain mandatory during the compatibility window; normalization grants no standing permission.
 
 ## Metadata Rules
 
@@ -240,6 +256,7 @@ Watch for these problems:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Added transitional normalization and setup/audit migration for pre-6.4 live tracker entries that lack an explicit capability list; limited GitHub issue-only `status` capability to open/close when project-field metadata is absent | Issue #152 review |
 | 2026-09-16 | Defined supported canonical tracker CRUD separately from reserved connection-digest write-back, including strict gate precedence and a manual proposal/handoff fallback that preserves one canonical record | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-06-02 | Changed the tracker-backed primitive default so shared process/operational primitives default to GitHub Issues-backed ownership, while personal/private layers stay file-backed and shared file-backed mode must be explicit | Issue #145 |

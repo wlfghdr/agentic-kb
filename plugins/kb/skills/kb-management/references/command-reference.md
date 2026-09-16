@@ -1,6 +1,6 @@
 # Command Reference — kb-management
 
-> **Version:** 6.3.3 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 ## Capture & Process
 

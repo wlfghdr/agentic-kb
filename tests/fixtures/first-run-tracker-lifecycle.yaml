@@ -2,20 +2,43 @@ fixture: first-run-tracker-lifecycle
 execution-mode: offline
 
 config:
-  primitive-storage:
-    tasks:
-      mode: tracker
-      tracker: team-work
-      kind: Task
-      summary-dir: _kb-tasks
-  trackers:
-    - name: team-work
-      kind: github-issues
-      repo: example/team-work
-      capabilities: [create, status, comment, link]
-  writeback:
-    enabled: false
-    capabilities: []
+  active-layer: team-observability
+  layers:
+    - name: team-observability
+      scope: team
+      role: contributor
+      path: ../team-observability-kb
+      connections:
+        trackers:
+          - name: team-work
+            kind: github-issues
+            repo: example/team-work
+            capabilities: [create, status, comment, link]
+          - name: legacy-work
+            kind: github-issues
+            repo: example/legacy-work
+          - name: custom-work
+            kind: custom
+            endpoint: custom-work
+        writeback:
+          enabled: false
+          capabilities: []
+      primitive-storage:
+        tasks:
+          mode: tracker
+          tracker: team-work
+          kind: Task
+          summary-dir: _kb-tasks
+        ideas:
+          mode: tracker
+          tracker: legacy-work
+          kind: Idea
+          summary-dir: _kb-ideas
+        decisions:
+          mode: tracker
+          tracker: custom-work
+          kind: Decision
+          summary-dir: _kb-decisions
 
 canonical-record:
   family: tasks
@@ -76,8 +99,8 @@ cases:
     authenticated: false
     confirmed: true
     expected: manual-proposal
-    proposal: Move ISSUE-42 to Done with closure evidence.
-    manual-steps: Set ISSUE-42 to Done in the configured tracker and report completion.
+    proposal: Close ISSUE-42 with closure evidence.
+    manual-steps: Close ISSUE-42 in the configured issue tracker and report completion.
     resulting-id: ISSUE-42
 
   - name: confirmation-cannot-add-label-capability
@@ -109,6 +132,28 @@ cases:
     authenticated: true
     confirmed: false
     expected: awaiting-confirmation
+
+  - name: legacy-live-adapter-normalizes-capabilities
+    source: canonical
+    family: ideas
+    tracker: legacy-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+    migration-warning: Persist the confirmed normalized capabilities on the next setup or audit.
+
+  - name: custom-adapter-without-capabilities-stays-read-only
+    source: canonical
+    family: decisions
+    tracker: custom-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: manual-proposal
+    proposal: Create Decision "Choose the cache recovery objective".
+    manual-steps: Create the proposed Decision manually and return its identifier.
+    resulting-id: ISSUE-42
 
   - name: disabled-connection-digest-comment
     source: connection-digest

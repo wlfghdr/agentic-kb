@@ -1,10 +1,10 @@
 # Reference: active-layer `roadmap:` block in `.kb-config/layers.yaml`
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 Full schema with defaults.
 
-The active layer may also declare trackers under `connections.trackers[]`. At 5.1, the roadmap pilot normalizes those connection-backed trackers into read-only `issue-trackers[]` entries when the legacy per-skill block is absent.
+The active layer may also declare trackers under `connections.trackers[]`. The roadmap skill normalizes those connection-backed trackers into read-only `issue-trackers[]` entries when the legacy per-skill block is absent. Canonical writes require `primitive-storage.roadmap-items` ownership plus canonical capabilities on the matching connection tracker.
 
 ```yaml
 roadmap:
@@ -94,12 +94,12 @@ roadmap:
       correlation: {}
 
   # Legacy per-skill tracker declarations. Prefer active-layer connections.trackers[]
-  # for read-only tracker inputs; keep issue-trackers[] for adapter-specific writeback
-  # metadata or explicit per-roadmap overrides. See references/issue-trackers.md.
+  # for tracker inputs; keep issue-trackers[] only for adapter-specific read metadata
+  # or explicit per-roadmap read overrides. See references/issue-trackers.md.
   issue-trackers:
     - name: <string>                       # unique per tracker instance
       adapter: <string>                    # github-issues | jira-rest | linear-graphql | ticket-export-markdown | custom
-      capabilities: [read-items]           # subset of: read-items, read-graph, read-comments, write-comments, write-status, write-link, write-item
+      capabilities: [read-items]           # subset of: read-items, read-graph, read-comments
       config: {}                           # adapter-specific (base-url, project, auth-env, etc.)
       auth-env: <ENV_VAR_NAME>             # env var holding the token; never stored in config
 
@@ -159,7 +159,8 @@ roadmap:
 - `ownership.layer`, when present, must match the layer entry that contains this `roadmap:` block.
 - `ownership.mode: layered-future` documents intent only; current setup should not synthesize cross-layer roll-ups unless an expert user configures them explicitly.
 - At least one `delivery-sources` entry must be declared.
-- Every `issue-trackers[]` entry with any `write-*` capability must declare `auth-env`.
+- Any legacy `issue-trackers[].write-*` capability triggers a migration proposal to the matching `connections.trackers[].capabilities`; it cannot authorize a write in place.
+- Every apply-capable roadmap tracker must be selected by `primitive-storage.roadmap-items`, declare the exact canonical operation on the matching connection, and name its authentication source.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
 - `mismatch-findings.route-to` empty string disables routing; any other value must be a relative path under the KB root.
@@ -171,6 +172,7 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Made roadmap `issue-trackers[]` read-only authority and required canonical ownership/capabilities for apply flows, with migration of legacy `write-*` names | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-30 | Added the presentation-view config surface for phase/lane roadmap boards, customer-value headlines, draft callouts, and implemented markers | Product-management surface integration |
 | 2026-04-25 | Clarified the 5.1 config contract: the active layer owns the roadmap block, `connections.trackers[]` can seed read-only tracker inputs, and `issue-trackers[]` is now documented as a legacy or override surface | v5.1.0 closeout release |

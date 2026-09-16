@@ -1,6 +1,6 @@
 # Connections — setup and lifecycle
 
-> **Version:** 6.3.3 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 This reference covers how to declare, configure, and maintain external connections for a layer. Connections give `/kb digest connections` its source list, and they appear in triage drift checks and `start-day` briefings.
 

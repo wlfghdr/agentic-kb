@@ -1,6 +1,6 @@
 # Reference
 
-> **Version:** 6.3.3
+> **Version:** 6.4.0
 
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the role-by-role daily companion to the operating model, see [docs/role-handbook.md](./role-handbook.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For concurrent-write rules (promote collisions, backlink mutation, topic merges), see [docs/concurrency.md](./concurrency.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
@@ -664,6 +664,8 @@ First-class primitives do not all need to use the same operational backbone. Pri
 
 Canonical tracker lifecycle and connection-digest write-back are separate contracts. `connections.trackers[].capabilities` declares which canonical operations (`create`, `status`, `label`, `comment`, `link`) a live adapter implements. `connections.writeback` is reserved for mutations derived from `/kb digest connections` and remains a no-op. Operation precedence is: canonical ownership from `primitive-storage`, implemented adapter capability, available authentication/tooling, then explicit confirmation for the single proposed mutation. When capability or authentication is absent, provide the full proposal and exact manual steps and wait for the tracker identifier; never create a competing canonical KB file. The behavioral contract lives in [`tracker-backed-primitives.md`](../plugins/kb/skills/kb-management/references/tracker-backed-primitives.md).
 
+Roadmap writes use this same contract: `primitive-storage.roadmap-items` must select the tracker, and `/kb roadmap sync --apply` cannot use `roadmap.issue-trackers[].write-*` declarations to bypass ownership or canonical connection capabilities. Pre-6.4 known live adapters with no capability field use the reference's temporary normalization with a visible setup/audit migration warning; explicit empty lists stay read-only.
+
 ```yaml
 layers:
   - name: team-kb
@@ -1215,7 +1217,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
-| 2026-09-16 | §5 separated canonical tracker CRUD capabilities from reserved connection-digest write-back and defined ownership/capability/authentication/confirmation precedence with a manual fallback. Source: issue #152 |
+| 2026-09-16 | Version aligned to 6.4.0; §5 separated canonical tracker CRUD capabilities from reserved connection-digest write-back, routed roadmap writes through the same ownership gates, and added transitional migration for legacy capability declarations. Source: issue #152 and PR #153 review |
 | 2026-06-02 | Version aligned to 6.3.0 and §5 changed the shared process/operational primitive default from file-backed KB records to GitHub Issues via explicit `primitive-storage`, with file-backed defaults retained for personal/private layers. Source: issue #145 |
 | 2026-05-24 | §1 capture-time layer routing now points reflection-driven routing at the strong/weak signal rubric in `capture-routing.md` and states that weak or ambiguous signals fall through to default. This removes the vague "clearly implies" trigger from the structural reference while keeping the detailed operational examples in the dedicated contract. Source: issue #126 |
 | 2026-05-24 | Version aligned to 6.2.0 |

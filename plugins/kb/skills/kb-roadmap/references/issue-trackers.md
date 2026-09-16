@@ -1,30 +1,25 @@
 # Reference: issue trackers as first-class sources
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 ## Why this exists
 
 Organizations track plans across heterogeneous systems — GitHub issues, Jira, Linear, a Notion board, a spreadsheet — and correlate delivery in a separate system. The skill treats *every* such system as an **issue tracker** with a common capability surface, not as a one-off "plan source".
 
-Trackers are **bidirectional** when the adopter opts in: the skill can read plans, propose updates derived from delivery reality, and (with confirmation) write back comments or status transitions.
+Trackers are **bidirectional** when the adopter opts in: the skill can read plans and propose updates derived from delivery reality. Applying a proposal uses the same canonical tracker mutation contract as every other primitive.
 
-At 5.1, the preferred home for tracker declarations is the active layer's `connections.trackers[]` block in `.kb-config/layers.yaml`. The older `roadmap.issue-trackers[]` block remains accepted for adapter-specific writeback metadata and per-roadmap overrides.
+The preferred home for tracker declarations is the active layer's `connections.trackers[]` block in `.kb-config/layers.yaml`. The older `roadmap.issue-trackers[]` block remains accepted for read capabilities, adapter-specific read metadata, and per-roadmap overrides; it does not independently authorize writes.
 
 ## Generic tracker model
 
-Every tracker adapter implements a subset of these capabilities. Declare what the adapter supports; the skill degrades gracefully when a capability is absent.
+Every roadmap tracker adapter implements a subset of these read capabilities. Declare what the adapter supports; the skill degrades gracefully when a capability is absent.
 
 | Capability | Purpose |
 |---|---|
 | `read-items` | List items in scope with filters (labels, status, assignees, dates) |
 | `read-graph` | Follow cross-references (PR→ticket, ticket→remote-links, epic→children) |
 | `read-comments` | Read comments for correlation-graph walking |
-| `write-comments` | Post a comment (e.g. "linked to PR #123 by kb-roadmap") |
-| `write-status` | Transition an item's status |
-| `write-link` | Add a cross-reference between two items |
-| `write-item` | Create a new item (used by `sync` when `delivered-unplanned` should become a ticket) |
-
-Read-only trackers set only `read-*`. The skill never calls an unsupported capability.
+Read-only trackers set only `read-*`. Canonical writes are declared on the matching `connections.trackers[].capabilities` entry with `create`, `status`, `comment`, or `link`; `label` is also available to adapters that implement it. The skill never calls an unsupported capability.
 
 ## Shipped tracker adapters
 
@@ -85,22 +80,28 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 
 ## Safety
 
-- The skill never posts a comment, transitions a status, or creates an item without an explicit `--apply` on `/kb roadmap sync`.
-- `--apply` requires interactive confirmation per write. Batch `--apply --yes` is refused on trackers that touch shared workspaces; requires a per-tracker `allow-batch-writes: true` in config.
+- The skill never posts a comment, transitions a status, links records, or creates an item unless `primitive-storage.roadmap-items` makes the selected connection tracker canonical and that connection declares the exact operation.
+- `/kb roadmap sync --apply` requires available authentication/tooling and interactive confirmation per write. Batch `--apply --yes` is refused for shared workspaces; roadmap configuration cannot weaken the canonical per-action confirmation rule.
+- Missing ownership, capability, or authentication produces a complete manual proposal. After manual completion, the skill waits for and records the resulting tracker identifier without creating a competing roadmap item.
 - Every write records an audit line in `.kb-log/YYYY-MM-DD.log` with tracker, item id, operation, and the correlation evidence that triggered it.
 - Credentials are read from environment variables named in `auth-env`. The skill never reads, stores, or emits token values.
+
+### Legacy roadmap capability migration
+
+Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must propose moving those declarations to the same named tracker under `connections.trackers[].capabilities` using this mapping: `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link`. The user confirms the proposed config edit before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership or capability gates.
 
 ## Migration from "plan-sources" terminology
 
 Earlier schema used `plan-sources:` generically. Trackers are a specialized plan source with bidirectional capability. Both forms are accepted:
 
 - Read-only plan sources (markdown milestones, release logs) stay under `plan-sources:`.
-- Read-only tracker inputs now prefer active-layer `connections.trackers[]`; bidirectional, adapter-driven roadmap-specific overrides still live under `issue-trackers:` when needed.
+- Tracker inputs now prefer active-layer `connections.trackers[]`; adapter-driven roadmap-specific read overrides may still live under `issue-trackers:` when needed.
 
 ## Changelog
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Routed roadmap writes through `primitive-storage.roadmap-items` and canonical connection capabilities; added explicit migration mapping for legacy `write-*` names | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-25 | Updated the tracker reference to prefer active-layer `connections.trackers[]` and recast `issue-trackers[]` as the legacy/override surface for the 5.1 closeout | v5.1.0 closeout release |
 

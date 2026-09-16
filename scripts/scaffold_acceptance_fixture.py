@@ -144,7 +144,8 @@ def scaffold_personal_kb(workspace: Path) -> Path:
                                     repo: wlfghdr/agentic-kb
                                     scope: is:issue
                                     issue-types: [Decision, Task]
-                                    status-values: [Todo, In Progress, In Review, Done]
+                                    # No project field mapping: status means issue open/close.
+                                    status-values: [Open, Closed]
                                     capabilities: [create, status, label, comment, link]
                             writeback:
                                 enabled: false

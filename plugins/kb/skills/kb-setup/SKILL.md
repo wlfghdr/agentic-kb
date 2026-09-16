@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including tracker-backed primitive ownership and product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, tracker setup artifacts, and HTML style references.
-version: 6.3.3
+version: 6.4.0
 triggers:
   - "/kb setup"
   - "setup kb"
@@ -205,6 +205,8 @@ For any tracker provider, setup records canonical CRUD separately from connectio
 
 Missing capability or authentication must produce the complete issue/update proposal plus exact manual UI/CLI/API steps. After the user supplies the resulting tracker identifier, setup or the operating skill records only the configured summary/backlink and handoff log; it never creates a competing canonical KB decision or task.
 
+For an existing workspace, scan live tracker entries before validation. When a known pre-6.4 adapter has no `capabilities` field, show the temporary normalized list from `kb-management/references/tracker-backed-primitives.md`, let the user accept or edit it, and persist the confirmed field. An explicit empty list is intentional read-only configuration and must not be expanded. Export-backed and custom adapters stay read-only until the user supplies an implemented list. Report unresolved legacy entries as migration warnings, not as silently unsupported adapters.
+
 ### Step 5 — Configure harnesses
 
 Write only the harness hooks needed for the selected surfaces:
@@ -369,6 +371,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Added the existing-workspace migration that confirms and persists normalized capabilities for known pre-6.4 live tracker entries | Issue #152 review |
 | 2026-09-16 | Separated canonical tracker CRUD capabilities from reserved connection-digest write-back and added strict ownership/capability/authentication/confirmation precedence plus manual handoff fallback | Issue #152 |
 | 2026-06-17 | Version aligned to 6.3.2 (framework patch — glossary `Intake` term added; no behavioral change to this skill) | Version alignment |
 | 2026-06-10 | Version aligned to 6.3.1 | Version alignment |

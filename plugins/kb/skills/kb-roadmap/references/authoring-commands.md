@@ -1,6 +1,6 @@
 # Reference: item authoring commands
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 6.4.0 | **Last updated:** 2026-09-16
 
 Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance:
 
@@ -227,10 +227,10 @@ When the scope has a tracker with `write-*` capabilities declared, each authorin
 
 | Command | Offered tracker write |
 |---|---|
-| `ideate` | Create a new tracker item (if `write-item`) — dry-run preview first |
-| `discuss` | Post critique as a comment on the linked tracker item (if `write-comments`) |
-| `review` | Post a review summary + top risks as a comment (if `write-comments`) |
-| `refine` | Attach the implementation plan as a comment and propose a status transition to `defined` (if `write-comments` + `write-status`) |
+| `ideate` | Propose a new canonical roadmap item; apply only when `primitive-storage.roadmap-items` selects the tracker and its connection declares `create` |
+| `discuss` | Post critique on the canonical tracker item only when its connection declares `comment` |
+| `review` | Post a review summary + top risks on the canonical tracker item only when its connection declares `comment` |
+| `refine` | Attach the implementation plan and propose a transition to `defined` only when the canonical connection declares `comment` and `status` |
 
 All tracker writes are gated by `--apply` + interactive confirmation, matching the safety rules in `issue-trackers.md`.
 
@@ -238,4 +238,5 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Version aligned to 6.4.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
