@@ -248,7 +248,7 @@ See `references/adapters.md`.
 
 ## Status
 
-Stable setup-proposed skill (`v1.0.0`). It is offered when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`.
+Stable setup-proposed skill (`v1.1.0`). It is offered when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`.
 
 The shipped helper script covers config-driven generation and dry-run validation for detail and roll-up scopes. Apply-capable flows such as `sync`, `tune`, `review-tier-4`, and plan-source writes stay behind explicit command and confirmation gates defined in the behavioral contract above.
 
@@ -256,6 +256,7 @@ The shipped helper script covers config-driven generation and dry-run validation
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Aligned the Status section with the current v1.1.0 skill frontmatter | PR #153 review |
 | 2026-09-16 | Required canonical connection authentication and prohibited tracker handoff proposals when roadmap-item ownership points elsewhere | PR #153 review |
 | 2026-09-16 | Bumped to v1.1.0 and routed roadmap tracker mutations through canonical primitive ownership, connection capabilities, authentication, and per-action confirmation; legacy `write-*` names are migration-only | Issue #152 review |
 | 2026-05-24 | Added a concurrency-contract pointer so roadmap adopters can find the shared-layer `/kb sync` and `/kb audit` reconciliation rules from the skill spec. Closes #124 | `/kb sync` contract reconciliation |

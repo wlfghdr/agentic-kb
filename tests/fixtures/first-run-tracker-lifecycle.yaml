@@ -58,9 +58,10 @@ config:
           kind: Roadmap Item
           summary-dir: _kb-roadmaps/team-observability/summaries
         feature-intake:
-          mode: tracker
+          mode: hybrid
           tracker: project-work
           kind: Feature
+          file-dir: _kb-feature-intake
         feedback:
           mode: tracker
           tracker: legacy-project
@@ -169,11 +170,21 @@ cases:
     expected: dry-run-supported
     migration-warning: Persist the confirmed normalized capabilities on the next setup or audit.
 
-  - name: project-connection-delegates-create-to-paired-issues
+  - name: hybrid-before-promotion-remains-file-owned
     source: canonical
     family: feature-intake
     tracker: project-work
     operation: create
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
+  - name: hybrid-promotion-transfers-canonical-ownership
+    source: canonical
+    family: feature-intake
+    tracker: project-work
+    operation: create
+    phase: promotion
     authenticated: true
     confirmed: true
     expected: dry-run-supported

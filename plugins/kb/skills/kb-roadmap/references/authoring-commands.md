@@ -20,8 +20,8 @@ Every authoring command:
 1. Locates the item — either by path or by id lookup in the scope's index.
 2. Reads the full item + any linked plan item from the configured tracker (if one exists).
 3. Applies its stance via the instructions below.
-4. Writes output into the canonical item body under a dedicated section, prefixed with a timestamp marker where the backing store supports it.
-5. Appends a state marker transition if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.).
+4. Writes output into the canonical item's authoring history under a dedicated section, prefixed with a timestamp marker where the backing store supports it. File-backed items append to the body; tracker-backed items append one structured comment.
+5. Appends a state marker transition in that same history entry if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.). Tracker readers resolve the latest marker across the item body and ordered authoring comments.
 6. Never transitions phase gates silently — gate changes require `/kb roadmap --check-gates` + user confirmation.
 
 Item body layout after authoring passes:
@@ -58,7 +58,7 @@ Item body layout after authoring passes:
 ### Open questions
 ```
 
-Re-running a command appends a new timestamped section; it does not overwrite previous output. History is preserved in the file.
+Re-running a command appends a new timestamped section; it does not overwrite previous output. History is preserved in the file body or, for tracker-backed items, in ordered structured comments.
 
 ---
 
@@ -174,7 +174,7 @@ Appends `## Review (<date>)` to the item body with:
 - [for <risk-id>] <outcome-shaped todo>
 ```
 
-Transitions the item's `status: draft` to `status: reviewed` marker on success. A second `review` run appends a new section — the marker history records the re-review.
+Transitions the item's `status: draft` to `status: reviewed` marker on success. For a tracker-backed item, the structured review comment contains both the `## Review (<date>)` section and `<!-- status: reviewed @ <timestamp> -->`; the ordered comment stream is the canonical authoring history, so no separate body-update capability is required. A second `review` run appends a new section or comment — the marker history records the re-review.
 
 ---
 
@@ -229,7 +229,7 @@ When `primitive-storage.roadmap-items` selects a tracker, each authoring command
 |---|---|
 | `ideate` | Propose a new canonical roadmap item; apply only when `primitive-storage.roadmap-items` selects the tracker and its connection declares `create` |
 | `discuss` | Post critique on the canonical tracker item only when its connection declares `comment` |
-| `review` | Post a review summary + top risks on the canonical tracker item only when its connection declares `comment` |
+| `review` | Post one structured comment containing the review section, top risks, and `reviewed` state marker on the canonical tracker item only when its connection declares `comment` |
 | `refine` | Attach the implementation plan and propose a transition to `defined` only when the canonical connection declares `comment` and `status` |
 
 All tracker writes are gated by `--apply` + interactive confirmation, matching the safety rules in `issue-trackers.md`.
@@ -238,6 +238,7 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Defined structured tracker comments as the canonical authoring history for review sections and state markers, avoiding an undeclared body-update capability | PR #153 review |
 | 2026-09-16 | Made every authoring command storage-mode-aware so tracker mode operates on one canonical tracker item and writes only an optional local summary/backlink | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

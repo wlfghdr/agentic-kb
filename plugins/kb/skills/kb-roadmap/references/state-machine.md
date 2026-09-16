@@ -13,7 +13,7 @@ Both properties come from **inline state markers** + **ordered resume rules**.
 
 ## Inline state markers
 
-Every generated artifact carries state at the top of its body, above the summary strip:
+Every generated file artifact carries state at the top of its body, above the summary strip:
 
 ```markdown
 <!-- status: draft -->
@@ -21,7 +21,7 @@ Every generated artifact carries state at the top of its body, above the summary
 <!-- status: published @ 2026-04-21T14:30:00Z -->
 ```
 
-Markers are append-only. The current status is the newest marker. Any process (the skill, a grep, a CI check) reads the latest marker to decide what to do next.
+Markers are append-only. For a tracker-backed roadmap item, authoring commands place the marker in the same structured comment as their timestamped section; the item's body followed by its ordered authoring comments forms the marker stream. The current status is the newest marker in the applicable stream. Any process reads the latest marker to decide what to do next.
 
 When the skill regenerates an artifact, it preserves the existing marker history and adds a new `draft` marker on top. The review command `/kb roadmap --review` is what flips `draft` → `reviewed`; `/kb roadmap publish` (if implemented) flips `reviewed` → `published`.
 
@@ -75,5 +75,6 @@ The markers are generic status words (`draft`, `reviewed`, `published`, `archive
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Defined ordered structured comments as the state-marker stream for tracker-backed roadmap items | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

@@ -22,7 +22,10 @@ def evaluate(case: dict, config: dict) -> str:
     layer_name = case.get("layer", config["active-layer"])
     layer = next(item for item in config["layers"] if item["name"] == layer_name)
     storage = layer["primitive-storage"].get(case["family"], {})
-    if storage.get("mode") != "tracker" or storage.get("tracker") != case["tracker"]:
+    tracker_owned = storage.get("mode") == "tracker" or (
+        storage.get("mode") == "hybrid" and case.get("phase") == "promotion"
+    )
+    if not tracker_owned or storage.get("tracker") != case["tracker"]:
         return "ownership-blocked"
 
     tracker = next(
@@ -142,7 +145,11 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             "dry-run-supported",
         )
         self.assertEqual(
-            outcomes["project-connection-delegates-create-to-paired-issues"],
+            outcomes["hybrid-before-promotion-remains-file-owned"],
+            "ownership-blocked",
+        )
+        self.assertEqual(
+            outcomes["hybrid-promotion-transfers-canonical-ownership"],
             "dry-run-supported",
         )
         self.assertEqual(
