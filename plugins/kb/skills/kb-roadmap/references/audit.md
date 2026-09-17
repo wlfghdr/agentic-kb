@@ -38,7 +38,7 @@ Covers four dimensions:
 | R12 | Scope membership: every item in the scope's journey-refs is reachable through at least one item (no orphan journey tier) | `journey-tier-orphan` | Offer creation of a parent-epic tracker item to cover the tier |
 | R13 | Structural: citation notation parseable by `journey-grounding.citation-pattern` | `citation-format-error` | Offer to rewrite the citation in the canonical format |
 | R14 | Structural: no duplicate ids across plan sources (same key seen in two plan trackers with conflicting metadata) | `duplicate-plan-id` | Offer merge proposal |
-| R15 | Config: every tracker named in a scope's `trackers[]` exists in `issue-trackers[]` | `config-tracker-missing` | Offer to add the tracker definition |
+| R15 | Config: every tracker named in a scope's `trackers[]` resolves first in the active layer's preferred `connections.trackers[]` registry or, for a roadmap-specific read override, in legacy `roadmap.issue-trackers[]` | `config-tracker-missing` | Offer to add the missing canonical connection or legacy read override, without duplicating an existing connection |
 
 ## Infrastructure / foundational escape hatch (R1 only)
 
@@ -119,5 +119,6 @@ When `/kb roadmap` runs the state machine and finds a recent audit artifact with
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Updated R15 to resolve scope trackers through the preferred connection registry before legacy roadmap read overrides | PR #153 review |
 | 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

@@ -304,7 +304,7 @@ legacy-roadmap-migration:
       mode: tracker
       tracker: legacy-roadmap
       kind: Roadmap Item
-    legacy-capabilities: [read-items]
+    legacy-capabilities: [read-items, read-comments]
 
 legacy-roadmap-export-name-collision:
   input:
@@ -711,3 +711,70 @@ legacy-roadmap-differently-named-destination:
       mode: tracker
       tracker: roadmap-primary
       kind: Roadmap Item
+
+legacy-roadmap-missing-identities:
+  - name: github-repository-missing
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: github-issues
+              capabilities: [read-items, write-status]
+              config: {}
+    expected-error: legacy source is missing required tracker identity
+  - name: linear-team-empty
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: linear-graphql
+              capabilities: [read-items, write-status]
+              config:
+                team: ""
+              auth-env: LINEAR_TOKEN
+    expected-error: legacy source is missing required tracker identity
+
+legacy-roadmap-unsupported-operations:
+  - name: jira-create
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: jira-rest
+              capabilities: [read-items, write-item]
+              config:
+                base-url: https://tracker.example.invalid
+                project: ROAD
+              auth-env: JIRA_TOKEN
+    expected-error: legacy source requests operations unsupported by the live adapter
+  - name: linear-link
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: linear-graphql
+              capabilities: [read-items, write-link]
+              config:
+                team: observability
+              auth-env: LINEAR_TOKEN
+    expected-error: legacy source requests operations unsupported by the live adapter

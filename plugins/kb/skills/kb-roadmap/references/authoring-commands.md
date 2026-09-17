@@ -18,7 +18,7 @@ All four roadmap commands operate on the canonical roadmap item selected by `pri
 Every authoring command:
 
 1. Locates the item — either by path or by id lookup in the scope's index.
-2. Before the first tracker read, shows the structured external-read preflight from [`html-artifacts.md`](../../kb-management/references/html-artifacts.md): sources, item/scope filters and time window, read-only intent, and output paths. Explicit invocation satisfies execution confirmation but never suppresses this disclosure. It then reads the full item, ordered authoring comments needed to resolve the latest marker, and any linked plan item.
+2. Before the first tracker read, shows the structured external-read preflight from [`html-artifacts.md`](../../kb-management/references/html-artifacts.md): sources, item/scope filters and time window, execution mode, and output paths. The mode is `read-only` for preview-only invocations and `apply-capable follow-up` when `--apply` may offer a mutation after the read. Explicit invocation satisfies execution confirmation but never suppresses this disclosure. It then reads the full item, ordered authoring comments needed to resolve the latest marker, and any linked plan item.
 3. Applies its stance via the instructions below.
 4. Writes output into the canonical item's authoring history under a dedicated section, prefixed with a timestamp marker where the backing store supports it. File-backed items append to the body; tracker-backed items append one structured comment.
 5. Appends a state marker transition in that same history entry if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.). Tracker readers resolve the latest marker across the item body and ordered authoring comments.
@@ -238,6 +238,7 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Made authoring preflights distinguish preview-only reads from invocations with an apply-capable follow-up | PR #153 review |
 | 2026-09-17 | Required the external-read preflight before tracker-backed authoring fetches and scoped roadmap ownership/tracker rules away from journey commands | PR #153 review |
 | 2026-09-17 | Routed reviewed phase application through confirmation-gated `sync --apply`; `--check-gates` remains read-only | PR #153 review |
 | 2026-09-17 | Added `--apply` to tracker-capable authoring command grammar and limited `refine` itself to the `comment` capability; a later gate transition independently requires `status` | PR #153 review |

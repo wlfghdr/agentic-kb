@@ -14,6 +14,17 @@ All four commands:
 4. Append output under a dated H2 inside the markdown file — never overwrite existing content.
 5. Append a state marker when the stance produces one (`drafted`, `reviewed`, etc.).
 
+Journey-specific command shapes are:
+
+```
+/kb journeys ideate [<journey-or-seed>] [--apply]
+/kb journeys discuss <journey-or-step> [--write] [--apply]
+/kb journeys review <journey-or-step> [--from-finding <path>] [--apply]
+/kb journeys refine <journey-or-step> [--force] [--apply]
+```
+
+`--apply` affects only an optional tracker side-effect against an explicitly linked delivery record. Journey-file changes still follow the command's normal file-write behavior; `discuss` remains write-free unless `--write` is present.
+
 ## Deltas per command
 
 ### `ideate`
@@ -103,6 +114,7 @@ This is the only supported path for journey edits driven by delivery drift. Jour
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Added journey-specific `--apply` command shapes for optional linked-delivery tracker side-effects | PR #153 review |
 | 2026-09-17 | Limited the imported roadmap authoring contract to stance guidance and kept journey tracker side-effects on explicitly linked delivery records | PR #153 review |
 | 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

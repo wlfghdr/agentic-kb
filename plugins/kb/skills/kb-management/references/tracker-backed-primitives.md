@@ -65,10 +65,9 @@ layers:
 				- name: team-work
 					kind: github-issues
 					repo: org/team-work
-					project: Team Planning
 					scope: is:issue
 					issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
-					status-values: [Todo, In Progress, In Review, Done]
+					status-values: [Open, Closed]
 					capabilities: [create, status, label, comment, link]
 			writeback:
 				enabled: false
@@ -259,6 +258,7 @@ Watch for these problems:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Corrected the issue-only configuration example to expose only open/closed status values | PR #153 review |
 | 2026-09-16 | Added conservative legacy `github-projects` status normalization and the explicit paired issue-tracker field required for issue CRUD | PR #153 review |
 | 2026-09-16 | Restricted legacy normalization to unambiguous live adapter kinds, kept export-backed generic Jira/Linear entries read-only, and made the canonical connection's authentication source part of migration | PR #153 review |
 | 2026-09-16 | Added transitional normalization and setup/audit migration for pre-7.0 live tracker entries that lack an explicit capability list; limited GitHub issue-only `status` capability to open/close when project-field metadata is absent | Issue #152 review |

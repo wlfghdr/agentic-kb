@@ -676,10 +676,9 @@ layers:
         - name: team-work
           kind: github-issues
           repo: org/team-work
-          project: Team Planning
           scope: is:issue
           issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
-          status-values: [Todo, In Progress, In Review, Done]
+          status-values: [Open, Closed]
           capabilities: [create, status, label, comment, link]
           # auth-env: TRACKER_TOKEN  # optional when documented ambient auth is used
       writeback:
@@ -1219,6 +1218,7 @@ Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.j
 
 | Date | What changed |
 |------|-------------|
+| 2026-09-17 | Corrected the issue-only tracker example to advertise only resolvable open/closed statuses. Source: PR #153 review |
 | 2026-09-17 | Marked the read-only tracker sample with explicit empty capabilities. Source: PR #153 review |
 | 2026-09-16 | Added the explicit paired issue connection for canonical GitHub Projects CRUD and clarified complete legacy roadmap ownership migration. Source: PR #153 review |
 | 2026-09-16 | Version aligned to 7.0.0; §5 separated canonical tracker CRUD capabilities from reserved connection-digest write-back, routed roadmap writes through the same ownership gates, added canonical authentication-source configuration, distinguished ownership failures from executable manual handoffs, and limited transitional normalization to unambiguous live adapters. Source: issue #152 and PR #153 review |

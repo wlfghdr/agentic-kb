@@ -230,7 +230,7 @@ Minimum verification sequence:
 4. run `/kb start-day` in the anchor layer,
 5. if a team or org layer exists, prove one promote or digest path,
 6. if `roadmaps` or `journeys` are enabled, render their dry-run outputs,
-7. if any tracker-backed primitive is configured, validate that each `primitive-storage.*.tracker` points to a declared tracker, that live adapters declare canonical CRUD capabilities, that required issue forms or type-mapping instructions exist for GitHub/Jira selections, and that reserved connection-digest write-back remains disabled.
+7. if any tracker-backed primitive is configured, validate that each `primitive-storage.*.tracker` points to a declared tracker, that live adapters declare canonical CRUD capabilities, and that every mutation-capable connection has either its required canonical `auth-env` source or the adapter's documented ambient authentication available. Also validate that required issue forms or type-mapping instructions exist for GitHub/Jira selections and that reserved connection-digest write-back remains disabled. Missing token authentication fails setup verification rather than completing with an unusable connection.
 
 ### Step 7 — First win + next-steps shortlist
 
@@ -371,6 +371,7 @@ After writing the scaffold, scan the workspace for any remaining double-curly pl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Required setup verification to prove canonical or documented ambient authentication for mutation-capable live trackers | PR #153 review |
 | 2026-09-16 | Narrowed existing-workspace normalization to unambiguous live adapters and added canonical authentication-source migration | PR #153 review |
 | 2026-09-16 | Added the existing-workspace migration that confirms and persists normalized capabilities for known pre-7.0 live tracker entries | Issue #152 review |
 | 2026-09-16 | Separated canonical tracker CRUD capabilities from reserved connection-digest write-back and added strict ownership/capability/authentication/confirmation precedence plus manual handoff fallback | Issue #152 |

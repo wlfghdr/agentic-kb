@@ -20,6 +20,13 @@ LEGACY_LIVE_CAPABILITIES = {
     "linear-graphql": ["status", "comment"],
 }
 
+ADAPTER_SUPPORTED_CAPABILITIES = {
+    "github-issues": {"create", "status", "label", "comment", "link"},
+    "github-projects": {"create", "status", "label", "comment", "link"},
+    "jira-rest": {"status", "comment", "link"},
+    "linear-graphql": {"status", "comment"},
+}
+
 
 class MigrationConflict(ValueError):
     """Raised with the unchanged layer when canonical ownership is ambiguous."""
@@ -134,15 +141,24 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
             "legacy source is not a supported live adapter",
             layer,
         )
+    mapped_capabilities = [
+        capability_map[item]
+        for item in legacy.get("capabilities", [])
+        if item in capability_map
+    ]
+    unsupported_capabilities = set(mapped_capabilities).difference(
+        ADAPTER_SUPPORTED_CAPABILITIES[legacy["adapter"]]
+    )
+    if unsupported_capabilities:
+        raise MigrationConflict(
+            "legacy source requests operations unsupported by the live adapter",
+            layer,
+        )
     proposed_connection = {
         "name": legacy["name"],
         "kind": legacy["adapter"],
         **legacy_config,
-        "capabilities": [
-            capability_map[item]
-            for item in legacy.get("capabilities", [])
-            if item in capability_map
-        ],
+        "capabilities": mapped_capabilities,
     }
     if legacy.get("auth-env"):
         proposed_connection["auth-env"] = legacy["auth-env"]
@@ -155,6 +171,11 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         "linear-graphql": ("team",),
     }
     identity_fields = identity_fields_by_adapter.get(legacy["adapter"], ())
+    if any(not proposed_connection.get(field) for field in identity_fields):
+        raise MigrationConflict(
+            "legacy source is missing required tracker identity",
+            layer,
+        )
     compatible_live = [
         item
         for item in trackers
@@ -327,6 +348,8 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         for item in legacy.get("capabilities", [])
         if item not in capability_map
     ]
+    if "comment" in mapped_capabilities and "read-comments" not in legacy["capabilities"]:
+        legacy["capabilities"].append("read-comments")
     return layer
 
 
@@ -618,6 +641,24 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             migrated["primitive-storage"]["roadmap-items"],
             migration["expected"]["ownership"],
         )
+
+    def test_legacy_roadmap_migration_requires_complete_identity(self) -> None:
+        for migration in self.fixture["legacy-roadmap-missing-identities"]:
+            with self.subTest(migration=migration["name"]):
+                with self.assertRaisesRegex(
+                    MigrationConflict, migration["expected-error"]
+                ) as caught:
+                    preview_legacy_roadmap_migration(migration)
+                self.assertEqual(caught.exception.layer, migration["input"]["layer"])
+
+    def test_legacy_roadmap_migration_rejects_unsupported_operations(self) -> None:
+        for migration in self.fixture["legacy-roadmap-unsupported-operations"]:
+            with self.subTest(migration=migration["name"]):
+                with self.assertRaisesRegex(
+                    MigrationConflict, migration["expected-error"]
+                ) as caught:
+                    preview_legacy_roadmap_migration(migration)
+                self.assertEqual(caught.exception.layer, migration["input"]["layer"])
 
 
 if __name__ == "__main__":

@@ -56,10 +56,9 @@ layers:
     #     - name: team-work
     #       kind: github-issues
     #       repo: org/repo
-    #       project: Team Planning
     #       scope: is:issue
     #       issue-types: [Feedback, Idea, Decision, Task, Feature, Roadmap Item]
-    #       status-values: [Todo, In Progress, In Review, Done]
+    #       status-values: [Open, Closed]
     #       capabilities: [create, status, label, comment, link]
     # primitive-storage:
     #   decisions:
