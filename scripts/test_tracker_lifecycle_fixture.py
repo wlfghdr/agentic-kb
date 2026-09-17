@@ -92,6 +92,10 @@ def evaluate(case: dict, fixture: dict) -> str:
         capabilities = []
     if tracker is None or case["operation"] not in capabilities:
         return "manual-proposal"
+    if case["operation"] not in ADAPTER_SUPPORTED_CAPABILITIES.get(
+        tracker.get("kind"), set()
+    ):
+        return "manual-proposal"
     if tracker["kind"] == "github-projects" and case["operation"] in {
         "create",
         "label",
@@ -348,7 +352,10 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         for item in legacy.get("capabilities", [])
         if item not in capability_map
     ]
-    if "comment" in mapped_capabilities and "read-comments" not in legacy["capabilities"]:
+    if (
+        "comment" in proposed_connection["capabilities"]
+        and "read-comments" not in legacy["capabilities"]
+    ):
         legacy["capabilities"].append("read-comments")
     return layer
 
@@ -440,6 +447,39 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         self.assertNotIn("proposal", mismatch_link_case)
         self.assertNotIn("manual-steps", mismatch_link_case)
 
+    def test_declared_operation_must_be_implemented_by_adapter(self) -> None:
+        fixture = deepcopy(self.fixture)
+        layer = fixture["config"]["layers"][0]
+        layer["connections"]["trackers"].append(
+            {
+                "name": "jira-live",
+                "kind": "jira-rest",
+                "base-url": "https://tracker.example.invalid",
+                "project": "ROAD",
+                "auth-env": "JIRA_TOKEN",
+                "capabilities": ["create"],
+            }
+        )
+        layer["primitive-storage"]["roadmap-items"] = {
+            "mode": "tracker",
+            "tracker": "jira-live",
+            "kind": "Roadmap Item",
+        }
+
+        outcome = evaluate(
+            {
+                "source": "canonical",
+                "family": "roadmap-items",
+                "tracker": "jira-live",
+                "operation": "create",
+                "authenticated": True,
+                "confirmed": True,
+            },
+            fixture,
+        )
+
+        self.assertEqual(outcome, "manual-proposal")
+
     def test_manual_lifecycle_preserves_one_canonical_record(self) -> None:
         fixture = self.fixture
         record = fixture["canonical-record"]
@@ -510,6 +550,10 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         self.assertEqual(
             migrated["primitive-storage"]["roadmap-items"],
             migration["expected"]["ownership"],
+        )
+        self.assertEqual(
+            migrated["roadmap"]["issue-trackers"][0]["capabilities"],
+            migration["expected"]["legacy-capabilities"],
         )
 
     def test_legacy_roadmap_migration_preserves_normalized_capabilities(self) -> None:

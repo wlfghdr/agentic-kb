@@ -39,7 +39,7 @@ Proposes plan-source updates derived from delivery reality:
 
 Before `sync` reads a tracker-backed item's body or ordered comments to discover an authoring marker, it shows the structured external-read preflight from [`html-artifacts.md`](../../kb-management/references/html-artifacts.md): canonical tracker and linked sources, scope/item filters and time window, dry-run or apply-capable execution mode, and the sync-plan output path. Explicit invocation authorizes the read but does not suppress this disclosure.
 
-For authoring markers, `sync` identifies the canonical item from the marker's own history, reruns the same read-only criteria as `--check-gates`, includes that evidence in the plan, and treats the proposal as consumed when the canonical phase reaches the proposed value; no separate consumption write is required. Without `--apply`: writes a dry-run plan to `<output-dir>/roadmap-<scope>-<date>.sync.md`. With `--apply`: requires interactive confirmation before each plan-source mutation. A tracker-backed phase transition additionally requires canonical `primitive-storage.roadmap-items` ownership plus `status` capability and authentication on the selected connection. `--apply` is only valid when the canonical plan-source adapter supports the proposed operation; read-only adapters reject it.
+For authoring markers, `sync` identifies the canonical item from the marker's own history, reruns the same read-only criteria as `--check-gates`, and includes that evidence in the plan. It treats a proposal as consumed when the canonical phase is the proposed phase or any later phase in the configured pipeline, so an append-only marker can never propose a regression; no separate consumption write is required. Without `--apply`: writes a dry-run plan to `<output-dir>/roadmap-<scope>-<date>.sync.md`. With `--apply`: requires interactive confirmation before each plan-source mutation. A tracker-backed phase transition additionally requires canonical `primitive-storage.roadmap-items` ownership plus `status` capability and authentication on the selected connection. `--apply` is only valid when the canonical plan-source adapter supports the proposed operation; read-only adapters reject it.
 
 ### `--review-tier-4`
 
@@ -148,6 +148,7 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Made phase proposals consumed at the proposed or any later configured phase, preventing stale markers from proposing regressions | PR #153 review |
 | 2026-09-17 | Required the structured external-read preflight before `sync` loads tracker-backed authoring history | PR #153 review |
 | 2026-09-17 | Defined how `sync` discovers, verifies, and applies proposed authoring phase markers | PR #153 review |
 | 2026-09-17 | Added `--apply` and canonical ownership/capability gates to mismatch-link writes while retaining manual mappings for noncanonical sources | PR #153 review |

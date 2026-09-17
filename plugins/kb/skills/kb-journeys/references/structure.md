@@ -54,6 +54,7 @@ Where:
 Step body contains:
 
 - Prose description.
+- Optional `**Delivery record**: <identifier-or-URL>` metadata linking the step to its canonical execution record. Journey `ideate --apply` writes this after creating the first delivery record; later tracker side-effects require it.
 - Optional `#### Readiness` with a chip span.
 - Optional `#### Mock` with the mock envelope.
 - Optional `#### Alternates` listing named failure routes (explicit, not implicit).
@@ -142,6 +143,7 @@ See `templates/journey-overview.md.hbs` for the scaffold.
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Added optional step-level delivery-record metadata for journey authoring side-effects | PR #153 review |
 | 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-25 | Replaced the obsolete inline audit checklist with a pointer to the canonical J1-J19 audit reference | PR #141 review |

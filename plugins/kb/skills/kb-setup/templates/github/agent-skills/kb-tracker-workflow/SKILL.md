@@ -50,8 +50,9 @@ First classify whether the requested item belongs to a KB primitive family confi
 4. Identify whether the requested primitive is `files`, `tracker`, or `hybrid`.
 5. Require the exact canonical operation in the selected tracker's `capabilities`.
 6. Verify authentication and suitable tracker tooling are available.
-7. Search existing KB files and tracker items for duplicates when tools are available.
-8. Show the exact target and mutation and wait for explicit confirmation of that one action.
+7. Before any tracker duplicate search, show the structured external-read preflight: tracker sources, query/filter and time window, read-only duplicate-search intent, and the proposed mutation or local output it informs. Explicit invocation authorizes the search but does not suppress this disclosure.
+8. Search existing KB files and tracker items for duplicates when tools are available.
+9. Show the exact target and mutation and wait for explicit confirmation of that one action.
 
 The order is strict: `primitive-storage` chooses ownership; tracker capabilities declare implemented operations; authentication makes an operation usable now; confirmation authorizes one proposed mutation. Confirmation cannot manufacture a missing capability or authentication. The separate `connections.writeback` block is reserved for connection-digest-derived mutations and has no bearing on canonical tracker CRUD.
 

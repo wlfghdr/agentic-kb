@@ -371,6 +371,7 @@ legacy-roadmap-existing-capabilities:
       mode: tracker
       tracker: legacy-roadmap
       kind: Roadmap Item
+    legacy-capabilities: [read-items, read-comments]
 
 legacy-roadmap-normalized-capabilities:
   input:
