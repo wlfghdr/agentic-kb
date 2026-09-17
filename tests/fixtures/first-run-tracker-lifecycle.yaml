@@ -580,3 +580,118 @@ legacy-roadmap-explicit-read-only:
             config:
               repo: example/roadmap
   expected-error: canonical connection is explicitly read-only
+
+legacy-project-roadmap-migration:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: delivery-project
+            adapter: github-projects
+            capabilities: [read-items, write-item, write-status, write-comments, write-link]
+            config:
+              repo: example/roadmap
+              project-number: 8
+  expected:
+    connections:
+      - name: delivery-project-issues
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [create, comment, link]
+      - name: delivery-project
+        kind: github-projects
+        repo: example/roadmap
+        project-number: 8
+        capabilities: [create, status, comment, link]
+        issue-tracker: delivery-project-issues
+    ownership:
+      mode: tracker
+      tracker: delivery-project
+      kind: Roadmap Item
+
+legacy-project-roadmap-existing-issue-connection:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: delivery-issues
+            kind: github-issues
+            repo: example/roadmap
+            capabilities: [comment]
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: delivery-project
+            adapter: github-projects
+            capabilities: [read-items, write-item, write-status, write-comments]
+            config:
+              repo: example/roadmap
+              project-number: 8
+  expected:
+    connections:
+      - name: delivery-issues
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [comment, create]
+      - name: delivery-project
+        kind: github-projects
+        repo: example/roadmap
+        project-number: 8
+        capabilities: [create, status, comment]
+        issue-tracker: delivery-issues
+
+legacy-roadmap-ambiguous-destinations:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: roadmap-primary
+            kind: github-issues
+            repo: example/roadmap
+          - name: roadmap-secondary
+            kind: github-issues
+            repo: example/roadmap
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected-error: multiple compatible live destinations require explicit user selection
+
+legacy-roadmap-differently-named-destination:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: roadmap-primary
+            kind: github-issues
+            repo: example/roadmap
+            capabilities: [comment]
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected:
+    connections:
+      - name: roadmap-primary
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [comment, status]
+    ownership:
+      mode: tracker
+      tracker: roadmap-primary
+      kind: Roadmap Item

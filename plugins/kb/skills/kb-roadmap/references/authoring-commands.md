@@ -1,6 +1,6 @@
 # Reference: item authoring commands
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-17
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance:
 
@@ -242,5 +242,5 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 | 2026-09-17 | Added `--apply` to tracker-capable authoring command grammar and limited `refine` itself to the `comment` capability; a later gate transition independently requires `status` | PR #153 review |
 | 2026-09-16 | Defined structured tracker comments as the canonical authoring history for review sections and state markers, avoiding an undeclared body-update capability | PR #153 review |
 | 2026-09-16 | Made every authoring command storage-mode-aware so tracker mode operates on one canonical tracker item and writes only an optional local summary/backlink | PR #153 review |
-| 2026-09-16 | Version aligned to 6.4.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |
+| 2026-09-16 | Version aligned to 7.0.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

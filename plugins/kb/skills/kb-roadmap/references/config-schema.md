@@ -1,6 +1,6 @@
 # Reference: active-layer `roadmap:` block in `.kb-config/layers.yaml`
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-17
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 Full schema with defaults.
 

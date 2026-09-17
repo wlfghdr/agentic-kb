@@ -1,6 +1,6 @@
 # Reference: issue trackers as first-class sources
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-17
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 ## Why this exists
 
@@ -26,9 +26,9 @@ Read-only trackers set only `read-*`. Canonical writes are declared on the match
 | Adapter | Tracker | Read | Write |
 |---|---|---|---|
 | `ticket-export-markdown` | Any tracker exported as markdown files with YAML frontmatter | items, graph | — |
-| `github-issues` | GitHub (via `gh` CLI) | items, graph, comments | comments, status (close/reopen), link, item |
-| `jira-rest` | Jira Cloud or Server (via REST + token) | items, graph, comments | comments, status, link |
-| `linear-graphql` | Linear (via GraphQL) | items, graph, comments | comments, status |
+| `github-issues` | GitHub (via `gh` CLI) | items, graph, comments | comment, status (close/reopen), link, create |
+| `jira-rest` | Jira Cloud or Server (via REST + token) | items, graph, comments | comment, status, link |
+| `linear-graphql` | Linear (via GraphQL) | items, graph, comments | comment, status |
 
 Adopters add trackers by dropping a Python module under `<adopter-kb>/.kb-scripts/roadmap-adapters/<name>.py` implementing the `Tracker` protocol (see `adapters.md`).
 
@@ -90,12 +90,13 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 
 ### Legacy roadmap capability migration
 
-Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must build one complete migration proposal rather than only rename those capabilities:
+Pre-7.0 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must build one complete migration proposal rather than only rename those capabilities:
 
-1. Select a same-named canonical connection only when it is a compatible live adapter: its kind matches the legacy live adapter, its non-secret endpoint identity matches, and it has no `export-dir` or `export-path`. A same-named export-backed, custom, or incompatible connection remains read-only and must not receive write capabilities; derive a distinct live connection name instead. A compatible connection with an explicit empty capability list is intentionally read-only: pause for the user to edit it or select another destination rather than adding writes. If more than one live destination is plausible, ask the user to choose instead of persisting.
+1. Inspect every canonical connection for a compatible live adapter: its kind matches the legacy live adapter, its non-secret endpoint identity matches, and it has no `export-dir` or `export-path`. Reuse the sole compatible connection even when its name differs. A same-named export-backed, custom, or incompatible connection remains read-only and must not receive write capabilities; derive a distinct live connection name only when no compatible destination exists. A compatible connection with an explicit empty capability list is intentionally read-only: pause for the user to edit it or select another destination rather than adding writes. If more than one live destination is plausible, ask the user to choose instead of persisting.
 2. Map `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link` onto that canonical connection. Preserve its declared capabilities, or its temporary normalized capabilities when the field is absent, before adding the mapped operations. Preserve an `auth-env` already declared on the selected connection; otherwise copy the legacy environment-variable name—not its value—from either the tracker entry or its documented `config` mapping. For a token-only adapter, pause and ask for that source when neither location supplies one; do not present the migration as complete. Adapters with documented ambient authentication may retain that mode.
-3. Remove the migrated `write-*` names from the legacy entry while preserving its `read-*` capabilities, so setup and audit do not propose the same migration again.
-4. Create `primitive-storage.roadmap-items` with `mode: tracker`, the selected canonical tracker name, and `kind: Roadmap Item` when no ownership mapping exists. If an existing mapping names another canonical home, surface the conflict and do not overwrite it.
+3. When the selected adapter is `github-projects` and the mapped operations include issue CRUD (`create`, `label`, `comment`, or `link`), select the sole compatible same-repository `github-issues` connection or create one, declare the required capabilities there, and set the project connection's `issue-tracker` reference. Pause rather than guessing when multiple issue connections match or an explicit read-only connection would need mutation.
+4. Remove the migrated `write-*` names from the legacy entry while preserving its `read-*` capabilities, so setup and audit do not propose the same migration again.
+5. Create `primitive-storage.roadmap-items` with `mode: tracker`, the selected canonical tracker name, and `kind: Roadmap Item` when no ownership mapping exists. If an existing mapping names another canonical home, surface the conflict and do not overwrite it.
 
 The user confirms this whole config diff before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership, capability, or authentication gates.
 
@@ -110,6 +111,7 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Required migration to inspect every compatible destination and to create or select the paired issue connection for project-backed issue CRUD; corrected the adapter matrix to canonical operation names | PR #153 review |
 | 2026-09-17 | Preserved normalized capabilities and canonical authentication during legacy migration, including nested legacy authentication metadata | PR #153 review |
 | 2026-09-17 | Made legacy migration pause without token authentication, clean up migrated write names, and refuse automatic upgrades of explicit read-only connections | PR #153 review |
 | 2026-09-17 | Limited apply-capable roadmap ownership to one canonical tracker per layer and prevented legacy migration from upgrading same-named export-backed or incompatible connections | PR #153 review |

@@ -1,6 +1,6 @@
 # Automation Levels — setup contract
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 This reference defines what the setup interview means when it asks for automation level `1`, `2`, or `3`.
 
@@ -56,7 +56,7 @@ When `/kb setup` writes `.kb-config/automation.yaml`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-18 | Added explicit "Scheduler ownership" section (agentic-kb does not ship a scheduler; the adopter wires OS cron / CI / harness-native automation) and a "Confidence threshold (level 3)" section that requires the wizard to confirm threshold + excluded workstreams + a worked example before writing `auto-promote.enabled: true`. Closes audit findings #94 and #105 | Concept/onboarding/process audit |
 | 2026-04-25 | Initial reference defining the setup interview contract for automation levels 1/2/3 and how they map into `.kb-config/automation.yaml` | Deep spec-audit follow-up |

@@ -1,6 +1,6 @@
 # Tracker-Backed Primitives
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 Some teams already run their day-to-day product and delivery work through an issue tracker. `agentic-kb` should support that pattern without turning the KB into a duplicate tracker.
 
@@ -122,7 +122,7 @@ For a `github-issues` connection without project-field metadata, `status` means 
 
 ### Legacy capability normalization
 
-Tracker entries created before 6.4.0 have no `capabilities` field. To avoid silently disabling their previously confirmation-gated operations, readers temporarily normalize a missing field for known live adapters to the capabilities documented before this field existed:
+Tracker entries created before 7.0.0 have no `capabilities` field. To avoid silently disabling their previously confirmation-gated operations, readers temporarily normalize a missing field for known live adapters to the capabilities documented before this field existed:
 
 | Legacy live adapter kind | Temporary normalized capabilities |
 |---|---|
@@ -261,7 +261,7 @@ Watch for these problems:
 |------|-------------|--------|
 | 2026-09-16 | Added conservative legacy `github-projects` status normalization and the explicit paired issue-tracker field required for issue CRUD | PR #153 review |
 | 2026-09-16 | Restricted legacy normalization to unambiguous live adapter kinds, kept export-backed generic Jira/Linear entries read-only, and made the canonical connection's authentication source part of migration | PR #153 review |
-| 2026-09-16 | Added transitional normalization and setup/audit migration for pre-6.4 live tracker entries that lack an explicit capability list; limited GitHub issue-only `status` capability to open/close when project-field metadata is absent | Issue #152 review |
+| 2026-09-16 | Added transitional normalization and setup/audit migration for pre-7.0 live tracker entries that lack an explicit capability list; limited GitHub issue-only `status` capability to open/close when project-field metadata is absent | Issue #152 review |
 | 2026-09-16 | Defined supported canonical tracker CRUD separately from reserved connection-digest write-back, including strict gate precedence and a manual proposal/handoff fallback that preserves one canonical record | Issue #152 |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-06-02 | Changed the tracker-backed primitive default so shared process/operational primitives default to GitHub Issues-backed ownership, while personal/private layers stay file-backed and shared file-backed mode must be explicit | Issue #145 |

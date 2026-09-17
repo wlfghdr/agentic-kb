@@ -1,6 +1,6 @@
 # Capture Routing — choosing the destination layer for a new artifact
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 This reference defines **which layer a `/kb` capture lands in**, and when the agent may write that artifact directly into a non-default layer without first staging it as a private finding for later promotion.
 
@@ -182,7 +182,7 @@ For mode 3 the response **before** the mutation is the proposed-routing block ab
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-24 | Added the reflection-driven inference heuristics subsection defining strong signals, weak signals, concrete examples, and the deepest-layer tie-breaker so agents have an operational rubric for when to propose a non-default capture target. The routing-mode table now points at this rubric instead of relying on vague "clearly implies" wording | Issue #126 |
 | 2026-05-23 | Review-feedback follow-up on the initial reference: fixed the broken YAML in the `capture-routing:` example (the `source: paste-prefix: "TEAM-PLATFORM:"` line had two `:` tokens at the same indentation, restructured as a single quoted scalar `source: "paste-prefix:TEAM-PLATFORM:"`); rephrased the "Default mode is the floor" sentence to name the modes explicitly instead of referencing an `(b)` label that did not exist; added the "Log format" subsection declaring the three reserved operations (`capture-routing-propose`, `capture-routing-confirm`/`capture-routing-reject`, `capture`), their required `details` keys, the `correlation-id` rules, and a worked example so audit rule K16 is mechanically checkable. Audit K16 wording tightened accordingly | Copilot review #116 |

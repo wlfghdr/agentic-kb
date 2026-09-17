@@ -1,6 +1,6 @@
 # Reference: journey grounding
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 Journeys are the **ground truth** for what should become reality. Tracker items describe *intent to build something*; journeys describe *what the product must actually do*. When the two diverge, the journey wins — the roadmap is there to close the gap, not the other way round.
 
@@ -134,5 +134,5 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

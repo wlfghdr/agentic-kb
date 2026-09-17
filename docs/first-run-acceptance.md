@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 >
 > **Audience: maintainers and QA.** This is the deterministic baseline a release lead or team lead runs to verify that onboarding still produces the same working contract for every fresh adopter. **It is not the doc to read after you first install agentic-kb.** For that, use [`docs/examples/first-hour.md`](./examples/first-hour.md) — it walks the same install → setup → first capture path in narrative form, takes ~1 hour, and ends with a visible artifact you can open in a browser.
 

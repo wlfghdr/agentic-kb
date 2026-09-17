@@ -1,6 +1,6 @@
 # Reference: journey artifact contract
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 ## Inputs
 
@@ -108,6 +108,6 @@ Every generated page carries a `<meta name="generator" content="kb-journeys v<ve
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Aligned the journey artifact contract with the shipped overview/index output, current metadata rendering, and optional dependency fallback behavior | Integration pass |

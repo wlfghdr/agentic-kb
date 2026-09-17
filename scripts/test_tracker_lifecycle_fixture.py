@@ -136,10 +136,6 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         proposed_connection["auth-env"] = legacy["auth-env"]
 
     trackers = layer.setdefault("connections", {}).setdefault("trackers", [])
-    same_named = next(
-        (item for item in trackers if item.get("name") == legacy["name"]),
-        None,
-    )
     identity_fields_by_adapter = {
         "github-issues": ("repo",),
         "github-projects": ("repo", "project-number"),
@@ -147,22 +143,30 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         "linear-graphql": ("team",),
     }
     identity_fields = identity_fields_by_adapter.get(legacy["adapter"], ())
-    compatible_live = same_named is not None and (
-        legacy["adapter"] in identity_fields_by_adapter
-        and same_named.get("kind") == legacy["adapter"]
-        and "export-dir" not in same_named
-        and "export-path" not in same_named
+    compatible_live = [
+        item
+        for item in trackers
+        if legacy["adapter"] in identity_fields_by_adapter
+        and item.get("kind") == legacy["adapter"]
+        and "export-dir" not in item
+        and "export-path" not in item
         and all(
-            field in same_named
+            field in item
             and field in proposed_connection
-            and same_named[field] == proposed_connection[field]
+            and item[field] == proposed_connection[field]
             for field in identity_fields
         )
-    )
+    ]
+    if len(compatible_live) > 1:
+        raise MigrationConflict(
+            "multiple compatible live destinations require explicit user selection",
+            layer,
+        )
+    selected = compatible_live[0] if compatible_live else None
     if (
-        compatible_live
-        and "capabilities" in same_named
-        and same_named["capabilities"] == []
+        selected is not None
+        and "capabilities" in selected
+        and selected["capabilities"] == []
     ):
         raise MigrationConflict(
             "canonical connection is explicitly read-only; migration requires "
@@ -170,7 +174,7 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
             layer,
         )
     token_only_adapters = {"jira-rest", "linear-graphql"}
-    existing_auth = compatible_live and same_named.get("auth-env")
+    existing_auth = selected is not None and selected.get("auth-env")
     if legacy["adapter"] in token_only_adapters and not (
         proposed_connection.get("auth-env") or existing_auth
     ):
@@ -178,11 +182,11 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
             "token-only adapter requires an authentication source before migration",
             layer,
         )
-    if compatible_live:
+    if selected is not None:
         existing_capabilities = (
-            same_named.get("capabilities") or []
-            if "capabilities" in same_named
-            else LEGACY_LIVE_CAPABILITIES.get(same_named.get("kind"), [])
+            selected.get("capabilities") or []
+            if "capabilities" in selected
+            else LEGACY_LIVE_CAPABILITIES.get(selected.get("kind"), [])
         )
         proposed_connection["capabilities"] = list(
             dict.fromkeys(
@@ -194,9 +198,14 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         )
         if existing_auth:
             proposed_connection["auth-env"] = existing_auth
-        destination_name = legacy["name"]
+        destination_name = selected["name"]
+        proposed_connection["name"] = destination_name
     else:
         destination_name = legacy["name"]
+        same_named = next(
+            (item for item in trackers if item.get("name") == legacy["name"]),
+            None,
+        )
         if same_named is not None:
             suffix = 1
             destination_name = f'{legacy["name"]}-live'
@@ -205,6 +214,7 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
                 suffix += 1
                 destination_name = f'{legacy["name"]}-live-{suffix}'
             proposed_connection["name"] = destination_name
+
     existing_ownership = layer.setdefault("primitive-storage", {}).get(
         "roadmap-items"
     )
@@ -218,8 +228,79 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
             layer,
         )
 
-    if compatible_live:
-        same_named.update(proposed_connection)
+    project_issue_operations = {"create", "label", "comment", "link"}
+    required_issue_operations = [
+        operation
+        for operation in proposed_connection["capabilities"]
+        if operation in project_issue_operations
+    ]
+    if legacy["adapter"] == "github-projects" and required_issue_operations:
+        referenced_issue_name = selected and selected.get("issue-tracker")
+        issue_candidates = (
+            [
+                item
+                for item in trackers
+                if item.get("name") == referenced_issue_name
+                and item.get("kind") == "github-issues"
+                and item.get("repo") == proposed_connection.get("repo")
+                and "export-dir" not in item
+                and "export-path" not in item
+            ]
+            if referenced_issue_name
+            else [
+                item
+                for item in trackers
+                if item.get("kind") == "github-issues"
+                and item.get("repo") == proposed_connection.get("repo")
+                and "export-dir" not in item
+                and "export-path" not in item
+            ]
+        )
+        if referenced_issue_name and not issue_candidates:
+            raise MigrationConflict(
+                "configured issue-tracker reference is not a compatible live connection",
+                layer,
+            )
+        if len(issue_candidates) > 1:
+            raise MigrationConflict(
+                "multiple compatible issue connections require explicit user selection",
+                layer,
+            )
+        if issue_candidates:
+            issue_connection = issue_candidates[0]
+            if issue_connection.get("capabilities") == []:
+                raise MigrationConflict(
+                    "paired issue connection is explicitly read-only; migration "
+                    "requires user selection or editing",
+                    layer,
+                )
+            existing_issue_capabilities = (
+                issue_connection.get("capabilities") or []
+                if "capabilities" in issue_connection
+                else LEGACY_LIVE_CAPABILITIES["github-issues"]
+            )
+            issue_connection["capabilities"] = list(
+                dict.fromkeys(
+                    [*existing_issue_capabilities, *required_issue_operations]
+                )
+            )
+        else:
+            existing_names = {item.get("name") for item in trackers}
+            issue_name = f"{destination_name}-issues"
+            suffix = 1
+            while issue_name in existing_names:
+                suffix += 1
+                issue_name = f"{destination_name}-issues-{suffix}"
+            issue_connection = {
+                "name": issue_name,
+                "kind": "github-issues",
+                "repo": proposed_connection["repo"],
+                "capabilities": required_issue_operations,
+            }
+            trackers.append(issue_connection)
+        proposed_connection["issue-tracker"] = issue_connection["name"]
+    if selected is not None:
+        selected.update(proposed_connection)
     else:
         trackers.append(proposed_connection)
 
@@ -468,6 +549,53 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             preview_legacy_roadmap_migration(migration)
 
         self.assertEqual(caught.exception.layer, migration["input"]["layer"])
+
+    def test_project_migration_creates_paired_issue_connection(self) -> None:
+        migration = self.fixture["legacy-project-roadmap-migration"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            migration["expected"]["connections"],
+        )
+        self.assertEqual(
+            migrated["primitive-storage"]["roadmap-items"],
+            migration["expected"]["ownership"],
+        )
+
+    def test_project_migration_selects_existing_paired_issue_connection(self) -> None:
+        migration = self.fixture["legacy-project-roadmap-existing-issue-connection"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            migration["expected"]["connections"],
+        )
+
+    def test_legacy_roadmap_migration_refuses_ambiguous_destinations(self) -> None:
+        migration = self.fixture["legacy-roadmap-ambiguous-destinations"]
+
+        with self.assertRaisesRegex(
+            MigrationConflict, migration["expected-error"]
+        ) as caught:
+            preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(caught.exception.layer, migration["input"]["layer"])
+
+    def test_legacy_roadmap_migration_reuses_sole_differently_named_destination(
+        self,
+    ) -> None:
+        migration = self.fixture["legacy-roadmap-differently-named-destination"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            migration["expected"]["connections"],
+        )
+        self.assertEqual(
+            migrated["primitive-storage"]["roadmap-items"],
+            migration["expected"]["ownership"],
+        )
 
 
 if __name__ == "__main__":

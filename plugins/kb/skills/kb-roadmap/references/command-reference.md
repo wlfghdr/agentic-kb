@@ -1,6 +1,6 @@
 # Reference: `/kb roadmap` command reference
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-17
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 ## Base command
 
@@ -147,6 +147,6 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 |------|-------------|--------|
 | 2026-09-17 | Added `--apply` and canonical ownership/capability gates to mismatch-link writes while retaining manual mappings for noncanonical sources | PR #153 review |
 | 2026-09-17 | Added `--apply` to each tracker-capable item-authoring command shape | PR #153 review |
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Clarified which `/kb roadmap` behaviors are covered by the shipped helper script versus the broader draft command spec | Integration pass |

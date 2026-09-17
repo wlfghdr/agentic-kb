@@ -1,7 +1,7 @@
 ---
 name: kb-roadmap
 description: Reconcile planning-truth sources against delivery reality. Ingests ≥1 plan source (ticket export, milestone markdown, OKRs) and ≥1 delivery source (git repository, ADR set, release log), runs a five-tier correlation ladder, detects mismatches, and emits a living roadmap artifact in Markdown, HTML, and JSON. Triggered by `/kb roadmap` and roadmap-reconciliation phrases.
-version: 1.1.0
+version: 2.0.0
 triggers:
   - "/kb roadmap"
   - "roadmap synthesis"
@@ -248,7 +248,7 @@ See `references/adapters.md`.
 
 ## Status
 
-Stable setup-proposed skill (`v1.1.0`). It is offered when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`.
+Stable setup-proposed skill (`v2.0.0`). It is offered when the user's role, goals, sources, or desired outputs imply product-management roadmap work; adopters confirm the owning layer by declaring a `roadmap:` block on that layer in `.kb-config/layers.yaml`.
 
 The shipped helper script covers config-driven generation and dry-run validation for detail and roll-up scopes. Apply-capable flows such as `sync`, `tune`, `review-tier-4`, and plan-source writes stay behind explicit command and confirmation gates defined in the behavioral contract above.
 
@@ -258,9 +258,9 @@ The shipped helper script covers config-driven generation and dry-run validation
 |------|-------------|--------|
 | 2026-09-17 | Routed mismatch-link mutations through canonical roadmap ownership and the normal apply gates; noncanonical read sources remain manual mappings | PR #153 review |
 | 2026-09-17 | Accepted either canonical `auth-env` or documented ambient adapter authentication for roadmap tracker writes | PR #153 review |
-| 2026-09-16 | Aligned the Status section with the current v1.1.0 skill frontmatter | PR #153 review |
+| 2026-09-16 | Aligned the Status section with the current v2.0.0 skill frontmatter | PR #153 review |
 | 2026-09-16 | Required canonical connection authentication and prohibited tracker handoff proposals when roadmap-item ownership points elsewhere | PR #153 review |
-| 2026-09-16 | Bumped to v1.1.0 and routed roadmap tracker mutations through canonical primitive ownership, connection capabilities, authentication, and per-action confirmation; legacy `write-*` names are migration-only | Issue #152 review |
+| 2026-09-16 | Bumped to v2.0.0 and routed roadmap tracker mutations through canonical primitive ownership, connection capabilities, authentication, and per-action confirmation; legacy `write-*` names are migration-only | Issue #152 review |
 | 2026-05-24 | Added a concurrency-contract pointer so roadmap adopters can find the shared-layer `/kb sync` and `/kb audit` reconciliation rules from the skill spec. Closes #124 | `/kb sync` contract reconciliation |
 | 2026-05-15 | Promoted the roadmap skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified that apply-capable flows are stable but gated by explicit commands and confirmations | Release-readiness audit |
 | 2026-05-08 | Bumped to v0.2.0 and clarified the current helper-script adapter/runtime coverage against the broader draft command surface | Integration pass |

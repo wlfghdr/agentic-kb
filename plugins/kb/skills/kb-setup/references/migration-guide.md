@@ -1,6 +1,6 @@
 # Migration Guide — kb-setup
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 For users who already have a knowledge base in another layout.
 
@@ -76,7 +76,7 @@ Prompt the user for 1–5 parallel tracks. Create files.
 
 Create `me.md`, `context.md`, `stakeholders.md`, `sources.md` from templates and ask user to fill in minimum required fields.
 
-### Pre-6.4 tracker connections
+### Pre-7.0 tracker connections
 
 Run `/kb audit` rule K17 or rerun `/kb setup`. For an unambiguous live adapter missing `connections.trackers[].capabilities`, preview the normalized capability list and any legacy roadmap `auth-env` name as a diff on the canonical connection. A legacy roadmap tracker with write capabilities also creates or selects its canonical `connections.trackers[]` entry and, when absent, adds `primitive-storage.roadmap-items` ownership in that same diff. Ambiguous destinations and conflicting ownership require an explicit user choice and are not overwritten. Persist only after confirmation. Explicit empty lists and generic, export-backed, or custom adapters stay read-only until the user verifies their implemented operations and authentication source.
 
@@ -91,8 +91,8 @@ Run `/kb audit` rule K17 or rerun `/kb setup`. For an unambiguous live adapter m
 | Date | What changed | Source |
 |------|-------------|--------|
 | 2026-09-16 | Extended legacy roadmap migration to establish canonical connection and roadmap-item ownership instead of migrating capability names alone | PR #153 review |
-| 2026-09-16 | Added the confirmed pre-6.4 tracker capability and authentication-source migration path shared by setup and audit K17 | PR #153 review |
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Added the confirmed pre-7.0 tracker capability and authentication-source migration path shared by setup and audit K17 | PR #153 review |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-10 | Corrected the task-archive migration target from the flat `_kb-tasks/archive/YYYY-MM.md` to the canonical `_kb-tasks/archive/YYYY/MM.md` shape defined in `docs/REFERENCE.md` §3, so the migration helper produces a layout that matches the rest of the spec | v6.0.0 adoption + daily-usage gap audit |
 | 2026-04-25 | Added the explicit `/kb migrate layer-model` and `/kb migrate archives` helper guidance for the 5.1 closeout so legacy adopters have a deterministic migration path | v5.1.0 closeout release |

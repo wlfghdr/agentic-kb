@@ -1,6 +1,6 @@
 # The Evaluation Gate — kb-management
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 Applied at **every persistence boundary**. The gate is the system's immune system.
 
@@ -88,6 +88,6 @@ The gate is **not a hard blocker**. If the user insists after being told the rat
 
 | Date | What changed | Source |
 |------|-------------|--------|
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-22 | Reframed Q5 as positive novelty, clarified that the gate score is the count of ✅ yes answers, and fixed the worked examples/log wording to match the rubric | Fixes #30 |

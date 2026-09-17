@@ -1,6 +1,6 @@
 # Reference: state machine and resume routing
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-17
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 ## Motivation
 
@@ -30,6 +30,8 @@ When the skill regenerates an artifact, it preserves the existing marker history
 When the user invokes `/kb roadmap` without arguments, or with only `--scope`, the skill runs the following ordered routing before any work:
 
 ### Step 1 — Conformance check
+
+Before any live `read-items` or `read-comments` call, present the structured external-read preflight required by [`html-artifacts.md`](../../kb-management/references/html-artifacts.md#external-read-preflight): name the tracker sources, filters/time window, read-only resume intent, and artifact paths that may be regenerated. An explicit `/kb roadmap` invocation satisfies the execution confirmation, but it does not remove the requirement to show the preflight before fetching.
 
 Produce a pass/fail table for the scope:
 
@@ -75,9 +77,10 @@ The markers are generic status words (`draft`, `reviewed`, `published`, `archive
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Required the external-read preflight before tracker-backed resume fetches | PR #153 review |
 | 2026-09-17 | Made ordered comment-history reads unconditional for every tracker-backed canonical item before state assessment | PR #153 review |
 | 2026-09-17 | Required an ordered `read-comments` history fetch, in addition to `read-items`, before tracker-backed state assessment and resume | PR #153 review |
 | 2026-09-17 | Scoped filesystem-only resume to file-backed artifacts and made canonical tracker-history reachability an explicit prerequisite for tracker-backed authoring resume | PR #153 review |
 | 2026-09-16 | Defined ordered structured comments as the state-marker stream for tracker-backed roadmap items | PR #153 review |
-| 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
