@@ -14,6 +14,14 @@ REPO = Path(__file__).resolve().parent.parent
 FIXTURE = REPO / "tests" / "fixtures" / "first-run-tracker-lifecycle.yaml"
 
 
+class MigrationConflict(ValueError):
+    """Raised with the unchanged layer when canonical ownership is ambiguous."""
+
+    def __init__(self, message: str, layer: dict) -> None:
+        super().__init__(message)
+        self.layer = layer
+
+
 def evaluate(case: dict, fixture: dict) -> str:
     """Evaluate mutation gates without invoking a tracker client or network API."""
     if case["source"] == "connection-digest":
@@ -124,20 +132,34 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         (item for item in trackers if item.get("name") == legacy["name"]),
         None,
     )
-    identity_fields = ("repo", "project", "project-key", "base-url")
+    identity_fields_by_adapter = {
+        "github-issues": ("repo",),
+        "github-projects": ("repo", "project-number"),
+        "jira-rest": ("base-url", "project"),
+        "linear-graphql": ("team",),
+    }
+    identity_fields = identity_fields_by_adapter.get(legacy["adapter"], ())
     compatible_live = same_named is not None and (
-        same_named.get("kind") == legacy["adapter"]
+        legacy["adapter"] in identity_fields_by_adapter
+        and same_named.get("kind") == legacy["adapter"]
         and "export-dir" not in same_named
         and "export-path" not in same_named
         and all(
-            field not in same_named
-            or field not in proposed_connection
-            or same_named[field] == proposed_connection[field]
+            field in same_named
+            and field in proposed_connection
+            and same_named[field] == proposed_connection[field]
             for field in identity_fields
         )
     )
     if compatible_live:
-        same_named.update(proposed_connection)
+        proposed_connection["capabilities"] = list(
+            dict.fromkeys(
+                [
+                    *(same_named.get("capabilities") or []),
+                    *proposed_connection["capabilities"],
+                ]
+            )
+        )
         destination_name = legacy["name"]
     else:
         destination_name = legacy["name"]
@@ -149,13 +171,30 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
                 suffix += 1
                 destination_name = f'{legacy["name"]}-live-{suffix}'
             proposed_connection["name"] = destination_name
+    existing_ownership = layer.setdefault("primitive-storage", {}).get(
+        "roadmap-items"
+    )
+    if existing_ownership is not None and not (
+        existing_ownership.get("mode") in {"tracker", "hybrid"}
+        and existing_ownership.get("tracker") == destination_name
+    ):
+        raise MigrationConflict(
+            "roadmap-items already names a different canonical home; "
+            "migration requires explicit user resolution",
+            layer,
+        )
+
+    if compatible_live:
+        same_named.update(proposed_connection)
+    else:
         trackers.append(proposed_connection)
 
-    layer.setdefault("primitive-storage", {})["roadmap-items"] = {
-        "mode": "tracker",
-        "tracker": destination_name,
-        "kind": "Roadmap Item",
-    }
+    if existing_ownership is None:
+        layer["primitive-storage"]["roadmap-items"] = {
+            "mode": "tracker",
+            "tracker": destination_name,
+            "kind": "Roadmap Item",
+        }
     return layer
 
 
@@ -285,6 +324,45 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             migration["expected"]["ownership"],
         )
         self.assertNotIn("capabilities", migrated["connections"]["trackers"][0])
+
+    def test_legacy_roadmap_migration_merges_existing_capabilities(self) -> None:
+        migration = self.fixture["legacy-roadmap-existing-capabilities"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            [migration["expected"]["connection"]],
+        )
+        self.assertEqual(
+            migrated["primitive-storage"]["roadmap-items"],
+            migration["expected"]["ownership"],
+        )
+
+    def test_legacy_roadmap_migration_refuses_conflicting_ownership(self) -> None:
+        migration = self.fixture["legacy-roadmap-conflicting-ownership"]
+
+        with self.assertRaisesRegex(
+            MigrationConflict, migration["expected-error"]
+        ) as caught:
+            preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            caught.exception.layer,
+            migration["input"]["layer"],
+        )
+
+    def test_legacy_roadmap_migration_rejects_identity_mismatches(self) -> None:
+        for migration in self.fixture["legacy-roadmap-identity-mismatches"]:
+            with self.subTest(migration=migration["name"]):
+                migrated = preview_legacy_roadmap_migration(migration)
+                self.assertEqual(
+                    migrated["connections"]["trackers"],
+                    migration["expected"]["connections"],
+                )
+                self.assertEqual(
+                    migrated["primitive-storage"]["roadmap-items"],
+                    migration["expected"]["ownership"],
+                )
 
 
 if __name__ == "__main__":

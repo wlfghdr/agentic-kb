@@ -315,3 +315,127 @@ legacy-roadmap-export-name-collision:
       mode: tracker
       tracker: legacy-roadmap-live
       kind: Roadmap Item
+
+legacy-roadmap-existing-capabilities:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            repo: example/roadmap
+            scope: "is:issue label:roadmap"
+            capabilities: [create, label, comment]
+      primitive-storage: {}
+    issue-tracker:
+      name: legacy-roadmap
+      adapter: github-issues
+      capabilities: [read-items, write-status, write-link]
+      config:
+        repo: example/roadmap
+      auth-env: ROADMAP_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: github-issues
+      repo: example/roadmap
+      scope: "is:issue label:roadmap"
+      capabilities: [create, label, comment, status, link]
+      auth-env: ROADMAP_TOKEN
+    ownership:
+      mode: tracker
+      tracker: legacy-roadmap
+      kind: Roadmap Item
+
+legacy-roadmap-conflicting-ownership:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage:
+        roadmap-items:
+          mode: files
+          file-dir: _kb-roadmaps/team-observability/items
+    issue-tracker:
+      name: legacy-roadmap
+      adapter: github-issues
+      capabilities: [read-items, write-status]
+      config:
+        repo: example/roadmap
+      auth-env: ROADMAP_TOKEN
+  expected-error: already names a different canonical home
+  expected-ownership:
+    mode: files
+    file-dir: _kb-roadmaps/team-observability/items
+
+legacy-roadmap-identity-mismatches:
+  - name: linear-team-mismatch
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers:
+            - name: legacy-roadmap
+              kind: linear-graphql
+              team: platform
+              capabilities: [comment]
+        primitive-storage: {}
+      issue-tracker:
+        name: legacy-roadmap
+        adapter: linear-graphql
+        capabilities: [read-items, write-status]
+        config:
+          team: observability
+        auth-env: LINEAR_TOKEN
+    expected:
+      connections:
+        - name: legacy-roadmap
+          kind: linear-graphql
+          team: platform
+          capabilities: [comment]
+        - name: legacy-roadmap-live
+          kind: linear-graphql
+          team: observability
+          capabilities: [status]
+          auth-env: LINEAR_TOKEN
+      ownership:
+        mode: tracker
+        tracker: legacy-roadmap-live
+        kind: Roadmap Item
+  - name: github-project-number-mismatch
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers:
+            - name: legacy-roadmap
+              kind: github-projects
+              repo: example/roadmap
+              project-number: 7
+              capabilities: [status]
+        primitive-storage: {}
+      issue-tracker:
+        name: legacy-roadmap
+        adapter: github-projects
+        capabilities: [read-items, write-status]
+        config:
+          repo: example/roadmap
+          project-number: 8
+    expected:
+      connections:
+        - name: legacy-roadmap
+          kind: github-projects
+          repo: example/roadmap
+          project-number: 7
+          capabilities: [status]
+        - name: legacy-roadmap-live
+          kind: github-projects
+          repo: example/roadmap
+          project-number: 8
+          capabilities: [status]
+      ownership:
+        mode: tracker
+        tracker: legacy-roadmap-live
+        kind: Roadmap Item
