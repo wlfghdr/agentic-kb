@@ -13,6 +13,13 @@ import yaml
 REPO = Path(__file__).resolve().parent.parent
 FIXTURE = REPO / "tests" / "fixtures" / "first-run-tracker-lifecycle.yaml"
 
+LEGACY_LIVE_CAPABILITIES = {
+    "github-issues": ["create", "status", "label", "comment", "link"],
+    "github-projects": ["status"],
+    "jira-rest": ["status", "comment", "link"],
+    "linear-graphql": ["status", "comment"],
+}
+
 
 class MigrationConflict(ValueError):
     """Raised with the unchanged layer when canonical ownership is ambiguous."""
@@ -43,7 +50,10 @@ def evaluate(case: dict, fixture: dict) -> str:
     tracker_owned = storage.get("mode") == "tracker" or (
         storage.get("mode") == "hybrid"
         and (
-            case.get("phase") == "promotion"
+            (
+                case.get("phase") == "promotion"
+                and case["operation"] == "create"
+            )
             or (
                 promoted_record is not None
                 and promoted_record["source-status"] == "promoted"
@@ -63,16 +73,14 @@ def evaluate(case: dict, fixture: dict) -> str:
         ),
         None,
     )
-    legacy_capabilities = {
-        "github-issues": ["create", "status", "label", "comment", "link"],
-        "github-projects": ["status"],
-        "jira-rest": ["status", "comment", "link"],
-        "linear-graphql": ["status", "comment"],
-    }
     capabilities = tracker.get("capabilities") if tracker else []
     if tracker is not None and "capabilities" not in tracker:
         export_backed = "export-dir" in tracker or "export-path" in tracker
-        capabilities = [] if export_backed else legacy_capabilities.get(tracker.get("kind"), [])
+        capabilities = (
+            []
+            if export_backed
+            else LEGACY_LIVE_CAPABILITIES.get(tracker.get("kind"), [])
+        )
     elif capabilities is None:
         capabilities = []
     if tracker is None or case["operation"] not in capabilities:
@@ -164,21 +172,28 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
     token_only_adapters = {"jira-rest", "linear-graphql"}
     existing_auth = compatible_live and same_named.get("auth-env")
     if legacy["adapter"] in token_only_adapters and not (
-        legacy.get("auth-env") or existing_auth
+        proposed_connection.get("auth-env") or existing_auth
     ):
         raise MigrationConflict(
             "token-only adapter requires an authentication source before migration",
             layer,
         )
     if compatible_live:
+        existing_capabilities = (
+            same_named.get("capabilities") or []
+            if "capabilities" in same_named
+            else LEGACY_LIVE_CAPABILITIES.get(same_named.get("kind"), [])
+        )
         proposed_connection["capabilities"] = list(
             dict.fromkeys(
                 [
-                    *(same_named.get("capabilities") or []),
+                    *existing_capabilities,
                     *proposed_connection["capabilities"],
                 ]
             )
         )
+        if existing_auth:
+            proposed_connection["auth-env"] = existing_auth
         destination_name = legacy["name"]
     else:
         destination_name = legacy["name"]
@@ -269,6 +284,10 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         self.assertEqual(
             outcomes["hybrid-promotion-transfers-canonical-ownership"],
             "dry-run-supported",
+        )
+        self.assertEqual(
+            outcomes["hybrid-promotion-comment-requires-created-record"],
+            "ownership-blocked",
         )
         self.assertEqual(
             outcomes["hybrid-follow-up-uses-transferred-ownership"],
@@ -375,6 +394,33 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         self.assertEqual(
             migrated["primitive-storage"]["roadmap-items"],
             migration["expected"]["ownership"],
+        )
+
+    def test_legacy_roadmap_migration_preserves_normalized_capabilities(self) -> None:
+        migration = self.fixture["legacy-roadmap-normalized-capabilities"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            [migration["expected"]["connection"]],
+        )
+
+    def test_legacy_roadmap_migration_preserves_canonical_authentication(self) -> None:
+        migration = self.fixture["legacy-roadmap-canonical-authentication"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            [migration["expected"]["connection"]],
+        )
+
+    def test_legacy_roadmap_migration_accepts_nested_authentication(self) -> None:
+        migration = self.fixture["legacy-roadmap-nested-authentication"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            [migration["expected"]["connection"]],
         )
 
     def test_legacy_roadmap_migration_refuses_conflicting_ownership(self) -> None:

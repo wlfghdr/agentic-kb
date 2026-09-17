@@ -205,6 +205,17 @@ cases:
     confirmed: true
     expected: dry-run-supported
 
+  - name: hybrid-promotion-comment-requires-created-record
+    source: canonical
+    family: feature-intake
+    item: FEATURE-18
+    tracker: project-work
+    operation: comment
+    phase: promotion
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
   - name: hybrid-follow-up-uses-transferred-ownership
     source: canonical
     family: feature-intake
@@ -360,6 +371,83 @@ legacy-roadmap-existing-capabilities:
       mode: tracker
       tracker: legacy-roadmap
       kind: Roadmap Item
+
+legacy-roadmap-normalized-capabilities:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            repo: example/roadmap
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: github-issues
+      repo: example/roadmap
+      capabilities: [create, status, label, comment, link]
+
+legacy-roadmap-canonical-authentication:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: linear-graphql
+            team: observability
+            capabilities: [comment]
+            auth-env: CANONICAL_LINEAR_TOKEN
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: linear-graphql
+            capabilities: [read-items, write-status]
+            config:
+              team: observability
+            auth-env: LEGACY_LINEAR_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: linear-graphql
+      team: observability
+      capabilities: [comment, status]
+      auth-env: CANONICAL_LINEAR_TOKEN
+
+legacy-roadmap-nested-authentication:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: jira-rest
+            capabilities: [read-items, write-status]
+            config:
+              base-url: https://tracker.example.invalid
+              project: ROAD
+              auth-env: JIRA_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: jira-rest
+      base-url: https://tracker.example.invalid
+      project: ROAD
+      auth-env: JIRA_TOKEN
+      capabilities: [status]
 
 legacy-roadmap-conflicting-ownership:
   input:
