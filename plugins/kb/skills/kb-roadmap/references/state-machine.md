@@ -1,12 +1,12 @@
 # Reference: state machine and resume routing
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-17
 
 ## Motivation
 
 The skill runs on partial data, mid-workflow, with humans in the loop. It must be able to:
 
-1. Tell what state a scope is in from the file system alone (no sidecar DB).
+1. Tell what state a file-backed scope is in from the file system alone (no sidecar DB), or read the canonical tracker history when roadmap-item storage is tracker-backed.
 2. Pick a single next action deterministically when re-invoked.
 
 Both properties come from **inline state markers** + **ordered resume rules**.
@@ -21,7 +21,7 @@ Every generated file artifact carries state at the top of its body, above the su
 <!-- status: published @ 2026-04-21T14:30:00Z -->
 ```
 
-Markers are append-only. For a tracker-backed roadmap item, authoring commands place the marker in the same structured comment as their timestamped section; the item's body followed by its ordered authoring comments forms the marker stream. The current status is the newest marker in the applicable stream. Any process reads the latest marker to decide what to do next.
+Markers are append-only. For a tracker-backed roadmap item, authoring commands place the marker in the same structured comment as their timestamped section; the item's body followed by its ordered authoring comments forms the marker stream. The current status is the newest marker in the applicable stream. Tracker reachability is therefore a prerequisite for resuming tracker-backed authoring, and the conformance check stops before state assessment when that history cannot be read. Any process reads the latest marker from the canonical backing store to decide what to do next.
 
 When the skill regenerates an artifact, it preserves the existing marker history and adds a new `draft` marker on top. The review command `/kb roadmap --review` is what flips `draft` → `reviewed`; `/kb roadmap publish` (if implemented) flips `reviewed` → `published`.
 
@@ -75,6 +75,7 @@ The markers are generic status words (`draft`, `reviewed`, `published`, `archive
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Scoped filesystem-only resume to file-backed artifacts and made canonical tracker-history reachability an explicit prerequisite for tracker-backed authoring resume | PR #153 review |
 | 2026-09-16 | Defined ordered structured comments as the state-marker stream for tracker-backed roadmap items | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

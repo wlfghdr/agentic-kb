@@ -84,6 +84,13 @@ canonical-record:
       operation: status
       resulting-id: ISSUE-42
 
+promoted-records:
+  - family: feature-intake
+    source-id: FEATURE-17
+    source-status: promoted
+    tracker: project-work
+    external-id: ISSUE-77
+
 cases:
   - name: storage-does-not-select-tracker
     source: canonical
@@ -185,6 +192,16 @@ cases:
     tracker: project-work
     operation: create
     phase: promotion
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+
+  - name: hybrid-follow-up-uses-transferred-ownership
+    source: canonical
+    family: feature-intake
+    item: FEATURE-17
+    tracker: project-work
+    operation: comment
     authenticated: true
     confirmed: true
     expected: dry-run-supported

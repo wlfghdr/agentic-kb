@@ -42,7 +42,7 @@ Never leave two active records pretending to own the same decision, task, featur
 
 ## Required Preflight
 
-Before creating or updating any tracker item:
+First classify whether the requested item belongs to a KB primitive family configured in the active layer's `primitive-storage`. For a configured tracker-backed KB primitive, before creating or updating its tracker item:
 
 1. Read `.kb-config/layers.yaml`.
 2. Find the active layer.
@@ -54,6 +54,8 @@ Before creating or updating any tracker item:
 8. Show the exact target and mutation and wait for explicit confirmation of that one action.
 
 The order is strict: `primitive-storage` chooses ownership; tracker capabilities declare implemented operations; authentication makes an operation usable now; confirmation authorizes one proposed mutation. Confirmation cannot manufacture a missing capability or authentication. The separate `connections.writeback` block is reserved for connection-digest-derived mutations and has no bearing on canonical tracker CRUD.
+
+For ordinary repository work that has no configured KB primitive family—such as a Bug, Content Update, or Governance Change—do not invent a `primitive-storage` owner or apply the canonical-KB capability gate. Follow the repository issue/PR rules below, verify authentication and suitable tooling, show the exact mutation, and require confirmation before applying it.
 
 Before changing repository files for non-trivial work:
 

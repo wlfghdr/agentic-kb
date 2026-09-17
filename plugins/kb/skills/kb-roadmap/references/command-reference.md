@@ -1,6 +1,6 @@
 # Reference: `/kb roadmap` command reference
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-17
 
 ## Base command
 
@@ -96,25 +96,25 @@ Four dedicated commands for creating and shaping roadmap items. Full contract in
 ### `ideate`
 
 ```
-/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>]
-/kb roadmap ideate --scope NAME --prompt "text"
-/kb roadmap ideate --scope NAME
+/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>] [--apply]
+/kb roadmap ideate --scope NAME --prompt "text" [--apply]
+/kb roadmap ideate --scope NAME [--apply]
 ```
 
-Creative pass. Turns a KB idea, decision, free-text prompt, or nothing (scans for unlinked seeds) into one or more roadmap item stubs under `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md`. Proposes 2–5 variants when space to expand; flags overlaps; names the value. Items open at phase `idea`, status `draft`.
+Creative pass. Turns a KB idea, decision, free-text prompt, or nothing (scans for unlinked seeds) into one or more roadmap items. File-backed and pre-promotion hybrid items use `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md`; tracker-backed items are proposed unless `--apply` and the mutation gates succeed. Proposes 2–5 variants when space to expand; flags overlaps; names the value. Items open at phase `idea`, status `draft`.
 
 ### `discuss`
 
 ```
-/kb roadmap discuss <item-path-or-id> [--scope NAME] [--write]
+/kb roadmap discuss <item-path-or-id> [--scope NAME] [--write] [--apply]
 ```
 
-Devil's advocate. Challenges assumptions, surfaces contradictions with existing items / decisions / foundation, scans for hedging language, steel-mans the opposing view. Write-free by default; `--write` appends a `## Critique` section to the item.
+Devil's advocate. Challenges assumptions, surfaces contradictions with existing items / decisions / foundation, scans for hedging language, steel-mans the opposing view. Write-free by default; `--write` appends a `## Critique` section to a file-backed item, while `--apply` is required to post it to a tracker-backed item.
 
 ### `review`
 
 ```
-/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only]
+/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only] [--apply]
 ```
 
 Challenge-then-create. Runs condensed `discuss` output first, then adds adjacent ideas, risks (severity-classified), and outcome-shaped todos with mitigations. Every entry cites evidence. Appends `## Review` section; transitions `draft` → `reviewed`.
@@ -122,7 +122,7 @@ Challenge-then-create. Runs condensed `discuss` output first, then adds adjacent
 ### `refine`
 
 ```
-/kb roadmap refine <item-path-or-id> [--scope NAME] [--force]
+/kb roadmap refine <item-path-or-id> [--scope NAME] [--force] [--apply]
 ```
 
 Actionable pass. Decomposes reviewed outcomes into sized tasks with dependencies, writes testable acceptance criteria, lists interface contracts, marks blocking open questions. Refuses to run on `draft` items without `--force`. Proposes a `defined` gate transition when criteria are satisfied.
@@ -145,6 +145,7 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Added `--apply` to each tracker-capable item-authoring command shape | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Clarified which `/kb roadmap` behaviors are covered by the shipped helper script versus the broader draft command spec | Integration pass |

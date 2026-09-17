@@ -14,16 +14,35 @@ REPO = Path(__file__).resolve().parent.parent
 FIXTURE = REPO / "tests" / "fixtures" / "first-run-tracker-lifecycle.yaml"
 
 
-def evaluate(case: dict, config: dict) -> str:
+def evaluate(case: dict, fixture: dict) -> str:
     """Evaluate mutation gates without invoking a tracker client or network API."""
     if case["source"] == "connection-digest":
         return "reserved-noop"
 
+    config = fixture["config"]
     layer_name = case.get("layer", config["active-layer"])
     layer = next(item for item in config["layers"] if item["name"] == layer_name)
     storage = layer["primitive-storage"].get(case["family"], {})
+    promoted_record = next(
+        (
+            item
+            for item in fixture.get("promoted-records", [])
+            if item["family"] == case["family"]
+            and item["source-id"] == case.get("item")
+        ),
+        None,
+    )
     tracker_owned = storage.get("mode") == "tracker" or (
-        storage.get("mode") == "hybrid" and case.get("phase") == "promotion"
+        storage.get("mode") == "hybrid"
+        and (
+            case.get("phase") == "promotion"
+            or (
+                promoted_record is not None
+                and promoted_record["source-status"] == "promoted"
+                and promoted_record["tracker"] == storage.get("tracker")
+                and bool(promoted_record.get("external-id"))
+            )
+        )
     )
     if not tracker_owned or storage.get("tracker") != case["tracker"]:
         return "ownership-blocked"
@@ -123,7 +142,7 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
 
         outcomes = {}
         for case in fixture["cases"]:
-            outcome = evaluate(case, fixture["config"])
+            outcome = evaluate(case, fixture)
             outcomes[case["name"]] = outcome
             self.assertEqual(outcome, case["expected"], case["name"])
 
@@ -152,6 +171,14 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             outcomes["hybrid-promotion-transfers-canonical-ownership"],
             "dry-run-supported",
         )
+        self.assertEqual(
+            outcomes["hybrid-follow-up-uses-transferred-ownership"],
+            "dry-run-supported",
+        )
+        promoted_record = fixture["promoted-records"][0]
+        self.assertEqual(promoted_record["source-status"], "promoted")
+        self.assertEqual(promoted_record["tracker"], "project-work")
+        self.assertEqual(promoted_record["external-id"], "ISSUE-77")
         self.assertEqual(
             outcomes["legacy-project-adapter-normalizes-status"],
             "dry-run-supported",

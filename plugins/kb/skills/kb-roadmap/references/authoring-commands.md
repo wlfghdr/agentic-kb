@@ -1,6 +1,6 @@
 # Reference: item authoring commands
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-17
 
 Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance:
 
@@ -84,9 +84,9 @@ Turns a seed (KB idea, decision, informal note, or empty prompt) into one or mor
 ### Command shapes
 
 ```
-/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>]
-/kb roadmap ideate --scope NAME --prompt "text"
-/kb roadmap ideate --scope NAME                 # scans for unlinked seeds, proposes shortlist
+/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>] [--apply]
+/kb roadmap ideate --scope NAME --prompt "text" [--apply]
+/kb roadmap ideate --scope NAME [--apply]       # scans for unlinked seeds, proposes shortlist
 ```
 
 ### Output
@@ -111,10 +111,10 @@ Challenges an existing item. **Writes nothing by default** — output is in-chat
 ### Command shape
 
 ```
-/kb roadmap discuss <item-path-or-id> [--scope NAME]
+/kb roadmap discuss <item-path-or-id> [--scope NAME] [--write] [--apply]
 ```
 
-`/discuss` mode (the global write-free mode from `references/discuss-mode.md`) applies automatically to this command — `discuss` is write-free by default. To persist the critique into the item body, re-run with `--write`.
+`/discuss` mode (the global write-free mode from `references/discuss-mode.md`) applies automatically to this command — `discuss` is write-free by default. To persist the critique, re-run with `--write` for a file-backed item or `--apply` for a tracker-backed item.
 
 ### Output
 
@@ -134,7 +134,7 @@ Open questions (N)
   1. ...
 ```
 
-With `--write`, the same content is appended as a `## Critique (<date>)` section.
+With `--write`, the same content is appended as a `## Critique (<date>)` section in a file-backed item. With `--apply`, it is posted as a structured comment on a tracker-backed item after the normal mutation gates pass.
 
 ---
 
@@ -153,7 +153,7 @@ The hybrid pass. First runs the `discuss` stance, then pivots into creative cont
 ### Command shape
 
 ```
-/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only]
+/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only] [--apply]
 ```
 
 `--discuss-only` stops after the critique section (use this when you want the `discuss` output in the item body without the creative contribution).
@@ -195,7 +195,7 @@ Turns a reviewed item into actionable delivery detail. Stance is **engineering-g
 ### Command shape
 
 ```
-/kb roadmap refine <item-path-or-id> [--scope NAME] [--force]
+/kb roadmap refine <item-path-or-id> [--scope NAME] [--force] [--apply]
 ```
 
 ### Output
@@ -230,7 +230,7 @@ When `primitive-storage.roadmap-items` selects a tracker, each authoring command
 | `ideate` | Propose a new canonical roadmap item; apply only when `primitive-storage.roadmap-items` selects the tracker and its connection declares `create` |
 | `discuss` | Post critique on the canonical tracker item only when its connection declares `comment` |
 | `review` | Post one structured comment containing the review section, top risks, and `reviewed` state marker on the canonical tracker item only when its connection declares `comment` |
-| `refine` | Attach the implementation plan and propose a transition to `defined` only when the canonical connection declares `comment` and `status` |
+| `refine` | Post the implementation plan and proposed `defined` transition when the canonical connection declares `comment`; applying that transition later through `--check-gates` separately requires `status` |
 
 All tracker writes are gated by `--apply` + interactive confirmation, matching the safety rules in `issue-trackers.md`.
 
@@ -238,6 +238,7 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Added `--apply` to tracker-capable authoring command grammar and limited `refine` itself to the `comment` capability; a later gate transition independently requires `status` | PR #153 review |
 | 2026-09-16 | Defined structured tracker comments as the canonical authoring history for review sections and state markers, avoiding an undeclared body-update capability | PR #153 review |
 | 2026-09-16 | Made every authoring command storage-mode-aware so tracker mode operates on one canonical tracker item and writes only an optional local summary/backlink | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |

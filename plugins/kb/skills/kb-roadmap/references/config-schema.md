@@ -1,6 +1,6 @@
 # Reference: active-layer `roadmap:` block in `.kb-config/layers.yaml`
 
-> **Version:** 6.4.0 | **Last updated:** 2026-09-16
+> **Version:** 6.4.0 | **Last updated:** 2026-09-17
 
 Full schema with defaults.
 
@@ -160,7 +160,7 @@ roadmap:
 - `ownership.mode: layered-future` documents intent only; current setup should not synthesize cross-layer roll-ups unless an expert user configures them explicitly.
 - At least one `delivery-sources` entry must be declared.
 - Any legacy `issue-trackers[].write-*` capability triggers a complete migration proposal: create or select the canonical `connections.trackers[]` entry, map the write capabilities and `auth-env` environment-variable name, and create `primitive-storage.roadmap-items` ownership when it is absent. An ambiguous destination or conflicting existing ownership requires user selection and is never overwritten. Legacy fields cannot authorize a write in place.
-- Every apply-capable roadmap tracker must be selected by `primitive-storage.roadmap-items`, declare the exact canonical operation on the matching connection, and name its authentication source.
+- Every apply-capable roadmap tracker must be selected by `primitive-storage.roadmap-items`, declare the exact canonical operation on the matching connection, and provide authentication through canonical `auth-env` or the adapter's documented ambient context.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
 - `mismatch-findings.route-to` empty string disables routing; any other value must be a relative path under the KB root.
@@ -172,6 +172,7 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Aligned apply-capable validation with the documented choice of canonical `auth-env` or ambient adapter authentication | PR #153 review |
 | 2026-09-16 | Required legacy roadmap migration to establish both a canonical connection and `primitive-storage.roadmap-items` ownership, with ambiguity/conflict refusal | PR #153 review |
 | 2026-09-16 | Defined `auth-env` on the canonical tracker connection and included legacy authentication-source names in the confirmed roadmap migration | PR #153 review |
 | 2026-09-16 | Made roadmap `issue-trackers[]` read-only authority and required canonical ownership/capabilities for apply flows, with migration of legacy `write-*` names | Issue #152 review |
