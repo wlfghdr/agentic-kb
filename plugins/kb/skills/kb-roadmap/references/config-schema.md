@@ -159,8 +159,8 @@ roadmap:
 - `ownership.layer`, when present, must match the layer entry that contains this `roadmap:` block.
 - `ownership.mode: layered-future` documents intent only; current setup should not synthesize cross-layer roll-ups unless an expert user configures them explicitly.
 - At least one `delivery-sources` entry must be declared.
-- Any legacy `issue-trackers[].write-*` capability triggers a complete migration proposal: create or select the canonical `connections.trackers[]` entry, map the write capabilities and `auth-env` environment-variable name, and create `primitive-storage.roadmap-items` ownership when it is absent. An ambiguous destination or conflicting existing ownership requires user selection and is never overwritten. Legacy fields cannot authorize a write in place.
-- Every apply-capable roadmap tracker must be selected by `primitive-storage.roadmap-items`, declare the exact canonical operation on the matching connection, and provide authentication through canonical `auth-env` or the adapter's documented ambient context.
+- Any legacy `issue-trackers[].write-*` capability triggers a complete migration proposal: create or select a compatible live `connections.trackers[]` entry, map the write capabilities and `auth-env` environment-variable name, and create `primitive-storage.roadmap-items` ownership when it is absent. A same-named export-backed, custom, or endpoint-incompatible connection is not a migration destination and must remain read-only; create a distinctly named live connection instead. An ambiguous destination or conflicting existing ownership requires user selection and is never overwritten. Legacy fields cannot authorize a write in place.
+- A layer may use heterogeneous roadmap trackers as read inputs, but `primitive-storage.roadmap-items` selects at most one canonical tracker for apply-capable scopes in that layer. Every apply-capable roadmap operation must target that tracker, declare the exact canonical operation on its connection, and provide authentication through canonical `auth-env` or the adapter's documented ambient context. Scopes that need different canonical write destinations belong in separately owning layers.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
 - `mismatch-findings.route-to` empty string disables routing; any other value must be a relative path under the KB root.
@@ -172,6 +172,7 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Restricted apply-capable roadmap ownership to one tracker per layer and excluded export-backed or incompatible same-name connections from legacy write migration | PR #153 review |
 | 2026-09-17 | Aligned apply-capable validation with the documented choice of canonical `auth-env` or ambient adapter authentication | PR #153 review |
 | 2026-09-16 | Required legacy roadmap migration to establish both a canonical connection and `primitive-storage.roadmap-items` ownership, with ambiguity/conflict refusal | PR #153 review |
 | 2026-09-16 | Defined `auth-env` on the canonical tracker connection and included legacy authentication-source names in the confirmed roadmap migration | PR #153 review |

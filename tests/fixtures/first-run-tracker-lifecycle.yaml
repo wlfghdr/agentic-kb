@@ -283,3 +283,35 @@ legacy-roadmap-migration:
       mode: tracker
       tracker: legacy-roadmap
       kind: Roadmap Item
+
+legacy-roadmap-export-name-collision:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            export-dir: ../tracker-export/ROAD
+      primitive-storage: {}
+    issue-tracker:
+      name: legacy-roadmap
+      adapter: github-issues
+      capabilities: [read-items, write-item, write-status, write-comments]
+      config:
+        repo: example/roadmap
+      auth-env: ROADMAP_TOKEN
+  expected:
+    connections:
+      - name: legacy-roadmap
+        kind: github-issues
+        export-dir: ../tracker-export/ROAD
+      - name: legacy-roadmap-live
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [create, status, comment]
+        auth-env: ROADMAP_TOKEN
+    ownership:
+      mode: tracker
+      tracker: legacy-roadmap-live
+      kind: Roadmap Item

@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **PR #153 latest review follow-up** — required readable ordered tracker comments before tracker-backed resume; routed reviewed phase transitions through `sync --apply`; made the singular per-layer roadmap tracker ownership boundary explicit for heterogeneous sources; and prevented legacy migration from granting write capabilities to export-backed or incompatible connections.
 - **PR #153 final review follow-up** — persisted promoted hybrid ownership in the lifecycle fixture and covered a later mutation; added `--apply` to tracker-capable roadmap authoring grammar; separated refinement comments from later status transitions; made tracker reachability explicit for deterministic resume; aligned the roadmap README to v1.1.0; accepted documented ambient authentication; and scoped generated canonical-ownership gates to configured KB primitives.
 - **PR #153 current-head review** — covered hybrid promotion ownership in the lifecycle fixture, aligned the roadmap skill's status declaration with v1.1.0, and defined structured tracker comments as the canonical review-section and state-marker history.
 - **PR #153 review follow-up** — made every freshly scaffolded tracker declare capabilities explicitly; preserved legacy GitHub Projects status operations; defined its paired issue endpoint for issue CRUD; and made legacy roadmap migration establish canonical connection plus ownership rather than only renaming capabilities.

@@ -37,7 +37,7 @@ Produce a pass/fail table for the scope:
 |---|---|
 | `_kb-roadmaps/<scope>/` exists | directory present |
 | Scope configured | `.kb-config/layers.yaml` has `roadmap.scopes.<scope>` |
-| All declared trackers reachable | `read-items` dry call returns without error |
+| All required tracker data readable | `read-items` returns without error for every declared tracker; for a tracker-backed canonical item whose marker stream includes structured comments, `read-comments` also returns its ordered comment history without error |
 | Last artifact fresh | newest file in `<scope>/` within `freshness-days` |
 | Review backlog | no orphan `draft` markers older than `draft-stale-days` |
 
@@ -57,7 +57,7 @@ Scan the scope directory for the newest roadmap and status artifacts. Read their
 Apply in order. Stop at first match. The action it points to is the **single next step** surfaced to the user.
 
 1. **Scope not configured** → run `/kb setup` tracker block for this scope.
-2. **Declared tracker unreachable** → report failure + config path; stop.
+2. **Required tracker data unreadable** → report the failed item/history read + config path; stop.
 3. **No artifact yet OR freshness expired** → generate a new roadmap (`/kb roadmap --scope <name>`).
 4. **Artifact exists with `draft` marker** → offer review (`/kb roadmap --review --scope <name>`).
 5. **Review older than cadence** → generate a new status short-form (`/kb roadmap status --scope <name>`).
@@ -75,6 +75,7 @@ The markers are generic status words (`draft`, `reviewed`, `published`, `archive
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Required an ordered `read-comments` history fetch, in addition to `read-items`, before tracker-backed state assessment and resume | PR #153 review |
 | 2026-09-17 | Scoped filesystem-only resume to file-backed artifacts and made canonical tracker-history reachability an explicit prerequisite for tracker-backed authoring resume | PR #153 review |
 | 2026-09-16 | Defined ordered structured comments as the state-marker stream for tracker-backed roadmap items | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |

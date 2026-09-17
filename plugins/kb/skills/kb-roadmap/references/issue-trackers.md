@@ -63,6 +63,8 @@ layers:
 
 `search` is a free-form adapter-specific block. Every adapter documents which fields it accepts.
 
+A layer may read and correlate heterogeneous trackers across scopes, but the current `primitive-storage.roadmap-items` contract names one canonical tracker for the whole roadmap-item family in that layer. Therefore only scopes whose canonical items live in that selected tracker are apply-capable. Other configured trackers remain read-only inputs. If scopes require different canonical write destinations, place them in separately owning layers; per-scope tracker ownership is not part of the current schema. Setup and audit must reject a configuration that presents more than one tracker in the same layer as apply-capable for roadmap items.
+
 ## Continuous tuning
 
 Search filters drift: labels get renamed, components get split, new ones appear. The skill can propose config updates after each run.
@@ -90,7 +92,7 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 
 Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must build one complete migration proposal rather than only rename those capabilities:
 
-1. Select the same-named canonical connection when it already exists; otherwise derive a new `connections.trackers[]` entry from the legacy adapter and its non-secret access fields. If more than one destination is plausible, ask the user to choose instead of persisting.
+1. Select a same-named canonical connection only when it is a compatible live adapter: its kind matches the legacy live adapter, its non-secret endpoint identity matches, and it has no `export-dir` or `export-path`. A same-named export-backed, custom, or incompatible connection remains read-only and must not receive write capabilities; derive a distinct live connection name instead. If more than one live destination is plausible, ask the user to choose instead of persisting.
 2. Map `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link` onto that canonical connection. Copy a legacy `auth-env` environment-variable name—not its value—or ask for an authentication source / documented ambient authentication.
 3. Create `primitive-storage.roadmap-items` with `mode: tracker`, the selected canonical tracker name, and `kind: Roadmap Item` when no ownership mapping exists. If an existing mapping names another canonical home, surface the conflict and do not overwrite it.
 
@@ -107,6 +109,7 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Limited apply-capable roadmap ownership to one canonical tracker per layer and prevented legacy migration from upgrading same-named export-backed or incompatible connections | PR #153 review |
 | 2026-09-16 | Made legacy roadmap migration create or select the canonical connection and `primitive-storage.roadmap-items` ownership mapping in the same confirmed diff | PR #153 review |
 | 2026-09-16 | Prevented manual tracker proposals after failed ownership and moved authentication-source authority and migration to the canonical connection | PR #153 review |
 | 2026-09-16 | Routed roadmap writes through `primitive-storage.roadmap-items` and canonical connection capabilities; added explicit migration mapping for legacy `write-*` names | Issue #152 review |

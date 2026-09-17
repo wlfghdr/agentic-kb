@@ -190,7 +190,7 @@ Turns a reviewed item into actionable delivery detail. Stance is **engineering-g
 - **Identify interfaces + contracts.** If the item touches APIs, file formats, or protocols, list them with current state and target state.
 - **List open questions explicitly.** If any question blocks delivery start, mark it with `[blocks-start]`.
 - **Never promise dates.** The refine output is sequencing and sizing, not scheduling.
-- **Propose a gate transition.** If the refined content satisfies the `defined` gate criteria, emit a `[propose] phase: defined` line at the bottom of the section. The user applies via `/kb roadmap --check-gates` + confirm.
+- **Propose a gate transition.** If the refined content appears to satisfy the `defined` gate criteria, emit a `[propose] phase: defined` line at the bottom of the section. The user verifies it with `/kb roadmap --check-gates --scope <name>`, then applies the reviewed transition through `/kb roadmap sync --scope <name> --apply` and its per-write confirmation.
 
 ### Command shape
 
@@ -230,7 +230,7 @@ When `primitive-storage.roadmap-items` selects a tracker, each authoring command
 | `ideate` | Propose a new canonical roadmap item; apply only when `primitive-storage.roadmap-items` selects the tracker and its connection declares `create` |
 | `discuss` | Post critique on the canonical tracker item only when its connection declares `comment` |
 | `review` | Post one structured comment containing the review section, top risks, and `reviewed` state marker on the canonical tracker item only when its connection declares `comment` |
-| `refine` | Post the implementation plan and proposed `defined` transition when the canonical connection declares `comment`; applying that transition later through `--check-gates` separately requires `status` |
+| `refine` | Post the implementation plan and proposed `defined` transition when the canonical connection declares `comment`; `--check-gates` only verifies criteria, and applying the reviewed transition later through `sync --apply` separately requires `status` |
 
 All tracker writes are gated by `--apply` + interactive confirmation, matching the safety rules in `issue-trackers.md`.
 
@@ -238,6 +238,7 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Routed reviewed phase application through confirmation-gated `sync --apply`; `--check-gates` remains read-only | PR #153 review |
 | 2026-09-17 | Added `--apply` to tracker-capable authoring command grammar and limited `refine` itself to the `comment` capability; a later gate transition independently requires `status` | PR #153 review |
 | 2026-09-16 | Defined structured tracker comments as the canonical authoring history for review sections and state markers, avoiding an undeclared body-update capability | PR #153 review |
 | 2026-09-16 | Made every authoring command storage-mode-aware so tracker mode operates on one canonical tracker item and writes only an optional local summary/backlink | PR #153 review |

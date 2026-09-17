@@ -106,7 +106,7 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         "write-comments": "comment",
         "write-link": "link",
     }
-    connection = {
+    proposed_connection = {
         "name": legacy["name"],
         "kind": legacy["adapter"],
         **legacy.get("config", {}),
@@ -117,11 +117,43 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         ],
     }
     if legacy.get("auth-env"):
-        connection["auth-env"] = legacy["auth-env"]
-    layer.setdefault("connections", {}).setdefault("trackers", []).append(connection)
+        proposed_connection["auth-env"] = legacy["auth-env"]
+
+    trackers = layer.setdefault("connections", {}).setdefault("trackers", [])
+    same_named = next(
+        (item for item in trackers if item.get("name") == legacy["name"]),
+        None,
+    )
+    identity_fields = ("repo", "project", "project-key", "base-url")
+    compatible_live = same_named is not None and (
+        same_named.get("kind") == legacy["adapter"]
+        and "export-dir" not in same_named
+        and "export-path" not in same_named
+        and all(
+            field not in same_named
+            or field not in proposed_connection
+            or same_named[field] == proposed_connection[field]
+            for field in identity_fields
+        )
+    )
+    if compatible_live:
+        same_named.update(proposed_connection)
+        destination_name = legacy["name"]
+    else:
+        destination_name = legacy["name"]
+        if same_named is not None:
+            suffix = 1
+            destination_name = f'{legacy["name"]}-live'
+            existing_names = {item.get("name") for item in trackers}
+            while destination_name in existing_names:
+                suffix += 1
+                destination_name = f'{legacy["name"]}-live-{suffix}'
+            proposed_connection["name"] = destination_name
+        trackers.append(proposed_connection)
+
     layer.setdefault("primitive-storage", {})["roadmap-items"] = {
         "mode": "tracker",
-        "tracker": legacy["name"],
+        "tracker": destination_name,
         "kind": "Roadmap Item",
     }
     return layer
@@ -239,6 +271,20 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             migrated["primitive-storage"]["roadmap-items"],
             migration["expected"]["ownership"],
         )
+
+    def test_legacy_roadmap_migration_preserves_export_backed_connection(self) -> None:
+        migration = self.fixture["legacy-roadmap-export-name-collision"]
+        migrated = preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(
+            migrated["connections"]["trackers"],
+            migration["expected"]["connections"],
+        )
+        self.assertEqual(
+            migrated["primitive-storage"]["roadmap-items"],
+            migration["expected"]["ownership"],
+        )
+        self.assertNotIn("capabilities", migrated["connections"]["trackers"][0])
 
 
 if __name__ == "__main__":
