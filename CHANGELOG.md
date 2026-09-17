@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **PR #153 tracker migration and mismatch-link follow-up** — routed mismatch links through canonical ownership and apply gates; required authentication before token-only legacy migration; removed migrated legacy write names; and preserved explicit read-only connection declarations.
 - **PR #153 migration/resume review follow-up** — made ordered comment-history reads mandatory before every tracker-backed resume; preserved existing canonical connection capabilities during legacy roadmap migration; rejected mismatched adapter identities; and refused conflicting roadmap ownership instead of overwriting it.
 - **PR #153 latest review follow-up** — required readable ordered tracker comments before tracker-backed resume; routed reviewed phase transitions through `sync --apply`; made the singular per-layer roadmap tracker ownership boundary explicit for heterogeneous sources; and prevented legacy migration from granting write capabilities to export-backed or incompatible connections.
 - **PR #153 final review follow-up** — persisted promoted hybrid ownership in the lifecycle fixture and covered a later mutation; added `--apply` to tracker-capable roadmap authoring grammar; separated refinement comments from later status transitions; made tracker reachability explicit for deterministic resume; aligned the roadmap README to v1.1.0; accepted documented ambient authentication; and scoped generated canonical-ownership gates to configured KB primitives.

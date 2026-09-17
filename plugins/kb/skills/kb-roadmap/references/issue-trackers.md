@@ -92,9 +92,10 @@ Tuning is **opt-in** and never silent. Without `/kb roadmap tune`, the digest is
 
 Pre-6.4 configurations may carry `write-item`, `write-status`, `write-comments`, or `write-link` under `roadmap.issue-trackers[].capabilities`. Setup and audit must build one complete migration proposal rather than only rename those capabilities:
 
-1. Select a same-named canonical connection only when it is a compatible live adapter: its kind matches the legacy live adapter, its non-secret endpoint identity matches, and it has no `export-dir` or `export-path`. A same-named export-backed, custom, or incompatible connection remains read-only and must not receive write capabilities; derive a distinct live connection name instead. If more than one live destination is plausible, ask the user to choose instead of persisting.
-2. Map `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link` onto that canonical connection. Copy a legacy `auth-env` environment-variable name—not its value—or ask for an authentication source / documented ambient authentication.
-3. Create `primitive-storage.roadmap-items` with `mode: tracker`, the selected canonical tracker name, and `kind: Roadmap Item` when no ownership mapping exists. If an existing mapping names another canonical home, surface the conflict and do not overwrite it.
+1. Select a same-named canonical connection only when it is a compatible live adapter: its kind matches the legacy live adapter, its non-secret endpoint identity matches, and it has no `export-dir` or `export-path`. A same-named export-backed, custom, or incompatible connection remains read-only and must not receive write capabilities; derive a distinct live connection name instead. A compatible connection with an explicit empty capability list is intentionally read-only: pause for the user to edit it or select another destination rather than adding writes. If more than one live destination is plausible, ask the user to choose instead of persisting.
+2. Map `write-item` → `create`, `write-status` → `status`, `write-comments` → `comment`, and `write-link` → `link` onto that canonical connection. Copy a legacy `auth-env` environment-variable name—not its value—or use an authentication source already declared on the selected connection. For a token-only adapter, pause and ask for that source when neither exists; do not present the migration as complete. Adapters with documented ambient authentication may retain that mode.
+3. Remove the migrated `write-*` names from the legacy entry while preserving its `read-*` capabilities, so setup and audit do not propose the same migration again.
+4. Create `primitive-storage.roadmap-items` with `mode: tracker`, the selected canonical tracker name, and `kind: Roadmap Item` when no ownership mapping exists. If an existing mapping names another canonical home, surface the conflict and do not overwrite it.
 
 The user confirms this whole config diff before it is persisted. Until migration is accepted, legacy names may describe the proposal but do not satisfy ownership, capability, or authentication gates.
 
@@ -109,6 +110,7 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Made legacy migration pause without token authentication, clean up migrated write names, and refuse automatic upgrades of explicit read-only connections | PR #153 review |
 | 2026-09-17 | Limited apply-capable roadmap ownership to one canonical tracker per layer and prevented legacy migration from upgrading same-named export-backed or incompatible connections | PR #153 review |
 | 2026-09-16 | Made legacy roadmap migration create or select the canonical connection and `primitive-storage.roadmap-items` ownership mapping in the same confirmed diff | PR #153 review |
 | 2026-09-16 | Prevented manual tracker proposals after failed ownership and moved authentication-source authority and migration to the canonical connection | PR #153 review |

@@ -107,7 +107,7 @@ def evaluate(case: dict, fixture: dict) -> str:
 def preview_legacy_roadmap_migration(migration: dict) -> dict:
     """Build the canonical config diff required for a sole legacy roadmap tracker."""
     layer = deepcopy(migration["input"]["layer"])
-    legacy = migration["input"]["issue-tracker"]
+    legacy = layer["roadmap"]["issue-trackers"][0]
     capability_map = {
         "write-item": "create",
         "write-status": "status",
@@ -151,6 +151,25 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
             for field in identity_fields
         )
     )
+    if (
+        compatible_live
+        and "capabilities" in same_named
+        and same_named["capabilities"] == []
+    ):
+        raise MigrationConflict(
+            "canonical connection is explicitly read-only; migration requires "
+            "user selection or editing",
+            layer,
+        )
+    token_only_adapters = {"jira-rest", "linear-graphql"}
+    existing_auth = compatible_live and same_named.get("auth-env")
+    if legacy["adapter"] in token_only_adapters and not (
+        legacy.get("auth-env") or existing_auth
+    ):
+        raise MigrationConflict(
+            "token-only adapter requires an authentication source before migration",
+            layer,
+        )
     if compatible_live:
         proposed_connection["capabilities"] = list(
             dict.fromkeys(
@@ -195,6 +214,11 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
             "tracker": destination_name,
             "kind": "Roadmap Item",
         }
+    legacy["capabilities"] = [
+        item
+        for item in legacy.get("capabilities", [])
+        if item not in capability_map
+    ]
     return layer
 
 
@@ -222,6 +246,10 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
             "dry-run-supported",
         )
         self.assertEqual(outcomes["storage-does-not-select-tracker"], "ownership-blocked")
+        self.assertEqual(
+            outcomes["mismatch-link-cannot-target-noncanonical-read-tracker"],
+            "ownership-blocked",
+        )
         self.assertEqual(
             outcomes["confirmation-cannot-add-label-capability"],
             "manual-proposal",
@@ -269,6 +297,13 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         )
         self.assertNotIn("proposal", ownership_case)
         self.assertNotIn("manual-steps", ownership_case)
+        mismatch_link_case = next(
+            case
+            for case in fixture["cases"]
+            if case["name"] == "mismatch-link-cannot-target-noncanonical-read-tracker"
+        )
+        self.assertNotIn("proposal", mismatch_link_case)
+        self.assertNotIn("manual-steps", mismatch_link_case)
 
     def test_manual_lifecycle_preserves_one_canonical_record(self) -> None:
         fixture = self.fixture
@@ -309,6 +344,10 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
         self.assertEqual(
             migrated["primitive-storage"]["roadmap-items"],
             migration["expected"]["ownership"],
+        )
+        self.assertEqual(
+            migrated["roadmap"]["issue-trackers"][0]["capabilities"],
+            migration["expected"]["legacy-capabilities"],
         )
 
     def test_legacy_roadmap_migration_preserves_export_backed_connection(self) -> None:
@@ -363,6 +402,26 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
                     migrated["primitive-storage"]["roadmap-items"],
                     migration["expected"]["ownership"],
                 )
+
+    def test_legacy_roadmap_migration_requires_token_authentication(self) -> None:
+        migration = self.fixture["legacy-roadmap-missing-authentication"]
+
+        with self.assertRaisesRegex(
+            MigrationConflict, migration["expected-error"]
+        ) as caught:
+            preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(caught.exception.layer, migration["input"]["layer"])
+
+    def test_legacy_roadmap_migration_preserves_explicit_read_only(self) -> None:
+        migration = self.fixture["legacy-roadmap-explicit-read-only"]
+
+        with self.assertRaisesRegex(
+            MigrationConflict, migration["expected-error"]
+        ) as caught:
+            preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(caught.exception.layer, migration["input"]["layer"])
 
 
 if __name__ == "__main__":

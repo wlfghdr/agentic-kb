@@ -49,10 +49,10 @@ Walks tier-4 proposed matches from the most recent run. For each: shows plan + d
 ### `--review-mismatches`
 
 ```
-/kb roadmap --review-mismatches [--scope NAME] [--class CLASS]
+/kb roadmap --review-mismatches [--scope NAME] [--class CLASS] [--apply]
 ```
 
-Walks section-E entries. For each: shows evidence + proposed action, prompts `accept | suppress | link`. `link` opens an interactive cross-reference editor that writes back to the plan source (if adapter supports writes) or records a manual mapping in `roadmap-state.json`.
+Walks section-E entries. For each: shows evidence + proposed action, prompts `accept | suppress | link`. Without `--apply`, `link` previews the cross-reference. With `--apply`, it may write only to the tracker selected by `primitive-storage.roadmap-items`, and only after the canonical connection passes the `link` capability, authentication/tooling, and per-write confirmation gates. A mismatch whose plan source is a different read input never receives a tracker mutation; `link` records a manual mapping in `roadmap-state.json` instead.
 
 ### `tune`
 
@@ -145,6 +145,7 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Added `--apply` and canonical ownership/capability gates to mismatch-link writes while retaining manual mappings for noncanonical sources | PR #153 review |
 | 2026-09-17 | Added `--apply` to each tracker-capable item-authoring command shape | PR #153 review |
 | 2026-09-16 | Version aligned to 6.4.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

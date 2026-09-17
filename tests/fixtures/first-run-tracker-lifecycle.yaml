@@ -101,6 +101,15 @@ cases:
     confirmed: true
     expected: ownership-blocked
 
+  - name: mismatch-link-cannot-target-noncanonical-read-tracker
+    source: mismatch-review
+    family: roadmap-items
+    tracker: team-work
+    operation: link
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
   - name: create-without-authentication
     source: canonical
     family: tasks
@@ -265,13 +274,14 @@ legacy-roadmap-migration:
       connections:
         trackers: []
       primitive-storage: {}
-    issue-tracker:
-      name: legacy-roadmap
-      adapter: github-issues
-      capabilities: [read-items, write-item, write-status, write-comments, write-link]
-      config:
-        repo: example/roadmap
-      auth-env: ROADMAP_TOKEN
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-item, write-status, write-comments, write-link]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
   expected:
     connection:
       name: legacy-roadmap
@@ -283,6 +293,7 @@ legacy-roadmap-migration:
       mode: tracker
       tracker: legacy-roadmap
       kind: Roadmap Item
+    legacy-capabilities: [read-items]
 
 legacy-roadmap-export-name-collision:
   input:
@@ -294,13 +305,14 @@ legacy-roadmap-export-name-collision:
             kind: github-issues
             export-dir: ../tracker-export/ROAD
       primitive-storage: {}
-    issue-tracker:
-      name: legacy-roadmap
-      adapter: github-issues
-      capabilities: [read-items, write-item, write-status, write-comments]
-      config:
-        repo: example/roadmap
-      auth-env: ROADMAP_TOKEN
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-item, write-status, write-comments]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
   expected:
     connections:
       - name: legacy-roadmap
@@ -328,13 +340,14 @@ legacy-roadmap-existing-capabilities:
             scope: "is:issue label:roadmap"
             capabilities: [create, label, comment]
       primitive-storage: {}
-    issue-tracker:
-      name: legacy-roadmap
-      adapter: github-issues
-      capabilities: [read-items, write-status, write-link]
-      config:
-        repo: example/roadmap
-      auth-env: ROADMAP_TOKEN
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status, write-link]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
   expected:
     connection:
       name: legacy-roadmap
@@ -358,13 +371,14 @@ legacy-roadmap-conflicting-ownership:
         roadmap-items:
           mode: files
           file-dir: _kb-roadmaps/team-observability/items
-    issue-tracker:
-      name: legacy-roadmap
-      adapter: github-issues
-      capabilities: [read-items, write-status]
-      config:
-        repo: example/roadmap
-      auth-env: ROADMAP_TOKEN
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
   expected-error: already names a different canonical home
   expected-ownership:
     mode: files
@@ -382,13 +396,14 @@ legacy-roadmap-identity-mismatches:
               team: platform
               capabilities: [comment]
         primitive-storage: {}
-      issue-tracker:
-        name: legacy-roadmap
-        adapter: linear-graphql
-        capabilities: [read-items, write-status]
-        config:
-          team: observability
-        auth-env: LINEAR_TOKEN
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: linear-graphql
+              capabilities: [read-items, write-status]
+              config:
+                team: observability
+              auth-env: LINEAR_TOKEN
     expected:
       connections:
         - name: legacy-roadmap
@@ -416,13 +431,14 @@ legacy-roadmap-identity-mismatches:
               project-number: 7
               capabilities: [status]
         primitive-storage: {}
-      issue-tracker:
-        name: legacy-roadmap
-        adapter: github-projects
-        capabilities: [read-items, write-status]
-        config:
-          repo: example/roadmap
-          project-number: 8
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: github-projects
+              capabilities: [read-items, write-status]
+              config:
+                repo: example/roadmap
+                project-number: 8
     expected:
       connections:
         - name: legacy-roadmap
@@ -439,3 +455,40 @@ legacy-roadmap-identity-mismatches:
         mode: tracker
         tracker: legacy-roadmap-live
         kind: Roadmap Item
+
+legacy-roadmap-missing-authentication:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: jira-rest
+            capabilities: [read-items, write-status]
+            config:
+              base-url: https://tracker.example.invalid
+              project: ROAD
+  expected-error: token-only adapter requires an authentication source
+
+legacy-roadmap-explicit-read-only:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            repo: example/roadmap
+            capabilities: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected-error: canonical connection is explicitly read-only
