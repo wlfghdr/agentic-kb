@@ -122,10 +122,22 @@ def preview_legacy_roadmap_migration(migration: dict) -> dict:
         "write-comments": "comment",
         "write-link": "link",
     }
+    legacy_config = legacy.get("config", {})
+    export_fields = {"export-dir", "export-path"}
+    if export_fields.intersection(legacy) or export_fields.intersection(legacy_config):
+        raise MigrationConflict(
+            "export-backed legacy source cannot receive mutation capabilities",
+            layer,
+        )
+    if legacy["adapter"] not in LEGACY_LIVE_CAPABILITIES:
+        raise MigrationConflict(
+            "legacy source is not a supported live adapter",
+            layer,
+        )
     proposed_connection = {
         "name": legacy["name"],
         "kind": legacy["adapter"],
-        **legacy.get("config", {}),
+        **legacy_config,
         "capabilities": [
             capability_map[item]
             for item in legacy.get("capabilities", [])
@@ -542,6 +554,16 @@ class TrackerLifecycleFixtureTests(unittest.TestCase):
 
     def test_legacy_roadmap_migration_preserves_explicit_read_only(self) -> None:
         migration = self.fixture["legacy-roadmap-explicit-read-only"]
+
+        with self.assertRaisesRegex(
+            MigrationConflict, migration["expected-error"]
+        ) as caught:
+            preview_legacy_roadmap_migration(migration)
+
+        self.assertEqual(caught.exception.layer, migration["input"]["layer"])
+
+    def test_legacy_roadmap_migration_rejects_export_backed_source(self) -> None:
+        migration = self.fixture["legacy-roadmap-export-backed-source"]
 
         with self.assertRaisesRegex(
             MigrationConflict, migration["expected-error"]

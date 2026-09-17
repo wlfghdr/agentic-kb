@@ -35,8 +35,9 @@ Proposes plan-source updates derived from delivery reality:
 - Tickets that appear closed (matching merged PRs) → propose status transition
 - Tier-2 cross-references that only exist one-way → propose adding the reverse link
 - `delivered-unplanned` items above threshold → propose opening a ticket
+- Latest unconsumed authoring-history markers such as `[propose] phase: defined`, when a current read-only gate evaluation passes → propose the named phase transition
 
-Without `--apply`: writes a dry-run plan to `<output-dir>/roadmap-<scope>-<date>.sync.md`. With `--apply`: requires interactive confirmation before mutating plan sources. `--apply` is only valid when the plan-source adapter supports writes; most read-only adapters reject it.
+For authoring markers, `sync` identifies the canonical item from the marker's own history, reruns the same read-only criteria as `--check-gates`, includes that evidence in the plan, and treats the proposal as consumed when the canonical phase reaches the proposed value; no separate consumption write is required. Without `--apply`: writes a dry-run plan to `<output-dir>/roadmap-<scope>-<date>.sync.md`. With `--apply`: requires interactive confirmation before each plan-source mutation. A tracker-backed phase transition additionally requires canonical `primitive-storage.roadmap-items` ownership plus `status` capability and authentication on the selected connection. `--apply` is only valid when the canonical plan-source adapter supports the proposed operation; read-only adapters reject it.
 
 ### `--review-tier-4`
 
@@ -145,6 +146,7 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Defined how `sync` discovers, verifies, and applies proposed authoring phase markers | PR #153 review |
 | 2026-09-17 | Added `--apply` and canonical ownership/capability gates to mismatch-link writes while retaining manual mappings for noncanonical sources | PR #153 review |
 | 2026-09-17 | Added `--apply` to each tracker-capable item-authoring command shape | PR #153 review |
 | 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |

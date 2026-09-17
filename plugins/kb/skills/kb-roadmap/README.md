@@ -22,7 +22,7 @@ Start with exported tracker markdown before live APIs:
 2. bind those directories through the active layer's `connections.trackers[]` export declarations or legacy roadmap tracker bindings,
 3. run the roadmap pilot or `/kb roadmap digest`,
 4. inspect the JSON sidecar and HTML output,
-5. only then add live tracker adapters or write-back.
+5. only then select one live tracker through `primitive-storage.roadmap-items` and declare its supported mutation capabilities on the canonical connection.
 
 That keeps the first adoption proof deterministic, token-free, and easy to run in CI.
 
@@ -48,6 +48,7 @@ This skill ships zero vendor-specific names, colors, or adapters beyond the gene
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Replaced stale write-back onboarding language with canonical tracker ownership and mutation capabilities | PR #153 review |
 | 2026-09-17 | Aligned the marketplace-facing status with the v2.0.0 skill contract | PR #153 review |
 | 2026-05-15 | Promoted status to stable v1.0.0 and aligned the README with the release-ready setup-proposed roadmap contract | Release-readiness audit |
 | 2026-04-30 | Updated status to v0.2.0 and described setup-proposed activation plus value-first phase/lane roadmap outputs | Product-management surface integration |

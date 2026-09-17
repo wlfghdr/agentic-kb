@@ -25,6 +25,7 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ### Fixed
 
+- **PR #153 authoring and migration follow-up** — required the external-read preflight before tracker-backed authoring fetches; defined `sync` handling for proposed phase markers; separated journey side-effects from roadmap-item ownership; refused mutation migration from export-backed legacy sources; and replaced stale roadmap write-back onboarding language.
 - **PR #153 current review follow-up** — made legacy migration select unambiguous compatible destinations and pair project adapters with issue connections; corrected read-only and capability examples; added the tracker-resume external-read preflight; aligned the Connection glossary entry; and classified the ownership/schema break as framework 7.0.0 and roadmap skill 2.0.0.
 - **PR #153 migration edge-case follow-up** — limited the hybrid promotion exception to item creation; preserved normalized capabilities and canonical authentication during legacy roadmap migration; and accepted nested legacy authentication metadata.
 - **PR #153 tracker migration and mismatch-link follow-up** — routed mismatch links through canonical ownership and apply gates; required authentication before token-only legacy migration; removed migrated legacy write names; and preserved explicit read-only connection declarations.

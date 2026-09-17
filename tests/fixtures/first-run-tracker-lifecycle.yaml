@@ -581,6 +581,22 @@ legacy-roadmap-explicit-read-only:
               repo: example/roadmap
   expected-error: canonical connection is explicitly read-only
 
+legacy-roadmap-export-backed-source:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap-export
+            adapter: jira-export
+            capabilities: [read-items, write-status]
+            config:
+              export-path: ../tracker-export/ROAD.md
+  expected-error: export-backed legacy source cannot receive mutation capabilities
+
 legacy-project-roadmap-migration:
   input:
     layer:

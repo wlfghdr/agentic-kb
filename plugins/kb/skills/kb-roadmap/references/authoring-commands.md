@@ -2,7 +2,7 @@
 
 > **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
-Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance:
+Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance. `kb-journeys` reuses the stance guidance only; roadmap storage, tracker ownership, command shapes, and phase gates in this reference apply only to `/kb roadmap`:
 
 | Command | Stance | Produces |
 |---|---|---|
@@ -11,14 +11,14 @@ Roadmap items move through a creative and critical authoring arc before they ent
 | `review <item>` | **hybrid** — challenge then create | Feedback, risks, todos, mitigations, further ideas appended to the item |
 | `refine <item>` | **actionable** — delivery-shaped | Implementation plan sections appended to the item |
 
-All four operate on the canonical roadmap item selected by `primitive-storage.roadmap-items`. In `files` mode that is `_kb-roadmaps/<scope>/items/R-*.md`; in `tracker` mode it is the tracker item, with only an optional configured summary/backlink written locally; in `hybrid` mode it is the file until the confirmed promotion transfers canonical ownership to the tracker. They respect the state markers from `state-machine.md` and the phase pipeline from `phase-gates.md`.
+All four roadmap commands operate on the canonical roadmap item selected by `primitive-storage.roadmap-items`. In `files` mode that is `_kb-roadmaps/<scope>/items/R-*.md`; in `tracker` mode it is the tracker item, with only an optional configured summary/backlink written locally; in `hybrid` mode it is the file until the confirmed promotion transfers canonical ownership to the tracker. They respect the state markers from `state-machine.md` and the phase pipeline from `phase-gates.md`.
 
 ## Common contract
 
 Every authoring command:
 
 1. Locates the item — either by path or by id lookup in the scope's index.
-2. Reads the full item + any linked plan item from the configured tracker (if one exists).
+2. Before the first tracker read, shows the structured external-read preflight from [`html-artifacts.md`](../../kb-management/references/html-artifacts.md): sources, item/scope filters and time window, read-only intent, and output paths. Explicit invocation satisfies execution confirmation but never suppresses this disclosure. It then reads the full item, ordered authoring comments needed to resolve the latest marker, and any linked plan item.
 3. Applies its stance via the instructions below.
 4. Writes output into the canonical item's authoring history under a dedicated section, prefixed with a timestamp marker where the backing store supports it. File-backed items append to the body; tracker-backed items append one structured comment.
 5. Appends a state marker transition in that same history entry if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.). Tracker readers resolve the latest marker across the item body and ordered authoring comments.
@@ -238,6 +238,7 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Required the external-read preflight before tracker-backed authoring fetches and scoped roadmap ownership/tracker rules away from journey commands | PR #153 review |
 | 2026-09-17 | Routed reviewed phase application through confirmation-gated `sync --apply`; `--check-gates` remains read-only | PR #153 review |
 | 2026-09-17 | Added `--apply` to tracker-capable authoring command grammar and limited `refine` itself to the `comment` capability; a later gate transition independently requires `status` | PR #153 review |
 | 2026-09-16 | Defined structured tracker comments as the canonical authoring history for review sections and state markers, avoiding an undeclared body-update capability | PR #153 review |

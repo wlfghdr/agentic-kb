@@ -1,8 +1,8 @@
 # Reference: journey authoring commands
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
-`kb-journeys` shares the four-command authoring arc with `kb-roadmap` (`ideate` / `discuss` / `review` / `refine`), with journey-specific deltas. See `kb-roadmap/references/authoring-commands.md` for the shared stance contract.
+`kb-journeys` shares the four-command authoring arc with `kb-roadmap` (`ideate` / `discuss` / `review` / `refine`), with journey-specific deltas. See `kb-roadmap/references/authoring-commands.md` for the shared stance guidance only. Journey commands do not inherit roadmap command shapes, phase gates, tracker ownership, or `primitive-storage.roadmap-items` routing.
 
 ## Shared contract
 
@@ -69,7 +69,7 @@ Journey-specific rules (in addition to shared contract):
 
 ## Tracker integration
 
-When the scope's configured tracker supports it (see `kb-roadmap/references/issue-trackers.md`), journey authoring offers the same optional side-effects as roadmap authoring:
+Journey files remain canonical. When journey metadata links a delivery record and that record's configured tracker supports the operation (see `kb-roadmap/references/issue-trackers.md`), journey authoring may offer these optional side-effects against that linked record only; it never resolves them through `primitive-storage.roadmap-items`:
 
 | Command | Offered tracker write |
 |---|---|
@@ -103,5 +103,6 @@ This is the only supported path for journey edits driven by delivery drift. Jour
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Limited the imported roadmap authoring contract to stance guidance and kept journey tracker side-effects on explicitly linked delivery records | PR #153 review |
 | 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
