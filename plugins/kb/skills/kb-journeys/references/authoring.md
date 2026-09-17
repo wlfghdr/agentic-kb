@@ -1,8 +1,8 @@
 # Reference: journey authoring commands
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
-`kb-journeys` shares the four-command authoring arc with `kb-roadmap` (`ideate` / `discuss` / `review` / `refine`), with journey-specific deltas. See `kb-roadmap/references/authoring-commands.md` for the shared stance contract.
+`kb-journeys` shares the four-command authoring arc with `kb-roadmap` (`ideate` / `discuss` / `review` / `refine`), with journey-specific deltas. See `kb-roadmap/references/authoring-commands.md` for the shared stance guidance only. Journey commands do not inherit roadmap command shapes, phase gates, tracker ownership, or `primitive-storage.roadmap-items` routing.
 
 ## Shared contract
 
@@ -13,6 +13,17 @@ All four commands:
 3. Apply the stance.
 4. Append output under a dated H2 inside the markdown file — never overwrite existing content.
 5. Append a state marker when the stance produces one (`drafted`, `reviewed`, etc.).
+
+Journey-specific command shapes are:
+
+```
+/kb journeys ideate [<journey-or-seed>] [--apply]
+/kb journeys discuss <journey-or-step> [--write] [--apply]
+/kb journeys review <journey-or-step> [--from-finding <path>] [--apply]
+/kb journeys refine <journey-or-step> [--force] [--apply]
+```
+
+`--apply` affects only an optional tracker side-effect. For `discuss`, `review`, and `refine`, journey metadata must already link the target delivery record. `ideate` may instead create the first delivery record for a new step; after a successful create, it writes the returned identifier or URL into that step as `**Delivery record**: <identifier-or-URL>`. Journey-file changes still follow the command's normal file-write behavior; `discuss` remains write-free unless `--write` is present.
 
 ## Deltas per command
 
@@ -69,7 +80,7 @@ Journey-specific rules (in addition to shared contract):
 
 ## Tracker integration
 
-When the scope's configured tracker supports it (see `kb-roadmap/references/issue-trackers.md`), journey authoring offers the same optional side-effects as roadmap authoring:
+Journey files remain canonical. When journey metadata links a delivery record and that record's configured tracker supports the operation (see `kb-roadmap/references/issue-trackers.md`), journey authoring may offer these optional side-effects against that linked record only; it never resolves them through `primitive-storage.roadmap-items`. The sole create-before-link exception is `ideate`: it may create a delivery record for a newly generated step when the user selects and confirms one active-layer live connection whose shipped adapter and declared capabilities both support `create`. If no such destination exists, or multiple candidates remain without a user selection, emit the complete manual proposal instead of writing. After a successful create, persist the returned reference on that step before later commands may target it.
 
 | Command | Offered tracker write |
 |---|---|
@@ -103,4 +114,8 @@ This is the only supported path for journey edits driven by delivery drift. Jour
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Allowed `ideate` to create a new step's first delivery record and required the returned reference to be persisted on that step | PR #153 review |
+| 2026-09-17 | Added journey-specific `--apply` command shapes for optional linked-delivery tracker side-effects | PR #153 review |
+| 2026-09-17 | Limited the imported roadmap authoring contract to stance guidance and kept journey tracker side-effects on explicitly linked delivery records | PR #153 review |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

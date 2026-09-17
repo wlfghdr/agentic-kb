@@ -1,10 +1,10 @@
 # Reference: active-layer `roadmap:` block in `.kb-config/layers.yaml`
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 Full schema with defaults.
 
-The active layer may also declare trackers under `connections.trackers[]`. At 5.1, the roadmap pilot normalizes those connection-backed trackers into read-only `issue-trackers[]` entries when the legacy per-skill block is absent.
+The active layer may also declare trackers under `connections.trackers[]`. The roadmap skill normalizes those connection-backed trackers into read-only `issue-trackers[]` entries when the legacy per-skill block is absent. Canonical writes require `primitive-storage.roadmap-items` ownership plus canonical capabilities and an authentication source on the matching connection tracker. The canonical connection stores an optional `auth-env: <ENV_VAR_NAME>` (the name only) or relies on a documented ambient authentication context; the legacy roadmap block cannot supply write authority.
 
 ```yaml
 roadmap:
@@ -94,12 +94,12 @@ roadmap:
       correlation: {}
 
   # Legacy per-skill tracker declarations. Prefer active-layer connections.trackers[]
-  # for read-only tracker inputs; keep issue-trackers[] for adapter-specific writeback
-  # metadata or explicit per-roadmap overrides. See references/issue-trackers.md.
+  # for tracker inputs; keep issue-trackers[] only for adapter-specific read metadata
+  # or explicit per-roadmap read overrides. See references/issue-trackers.md.
   issue-trackers:
     - name: <string>                       # unique per tracker instance
-      adapter: <string>                    # github-issues | jira-rest | linear-graphql | ticket-export-markdown | custom
-      capabilities: [read-items]           # subset of: read-items, read-graph, read-comments, write-comments, write-status, write-link, write-item
+      adapter: <string>                    # github-issues | github-projects | jira-rest | linear-graphql | ticket-export-markdown | custom
+      capabilities: [read-items]           # subset of: read-items, read-graph, read-comments
       config: {}                           # adapter-specific (base-url, project, auth-env, etc.)
       auth-env: <ENV_VAR_NAME>             # env var holding the token; never stored in config
 
@@ -159,7 +159,8 @@ roadmap:
 - `ownership.layer`, when present, must match the layer entry that contains this `roadmap:` block.
 - `ownership.mode: layered-future` documents intent only; current setup should not synthesize cross-layer roll-ups unless an expert user configures them explicitly.
 - At least one `delivery-sources` entry must be declared.
-- Every `issue-trackers[]` entry with any `write-*` capability must declare `auth-env`.
+- Any legacy `issue-trackers[].write-*` capability triggers a complete migration proposal: first require every non-secret identity field for the adapter and reject any mapped operation outside that adapter's shipped capability set; then create or select a compatible live `connections.trackers[]` entry, union supported mapped writes with its declared or temporarily normalized capabilities, preserve its existing `auth-env` or copy the legacy environment-variable name from the tracker entry or its `config` mapping, and create `primitive-storage.roadmap-items` ownership when absent. Remove migrated `write-*` names while preserving legacy reads. If the resulting canonical connection supports `comment`, retain `read-comments` on any remaining legacy override or remove that redundant override so comment history stays readable. A legacy source that is itself export-backed or is not a known live adapter pauses unchanged; it cannot seed a mutation-capable connection. A token-only adapter without an authentication source also pauses before producing an applicable diff. A same-named export-backed, custom, or endpoint-incompatible connection is not a migration destination and must remain read-only; create a distinctly named live connection instead. A compatible connection with explicit `capabilities: []` is intentionally read-only and requires user selection or editing rather than an automatic upgrade. An ambiguous destination or conflicting existing ownership requires user selection and is never overwritten. Legacy fields cannot authorize a write in place.
+- A layer may use heterogeneous roadmap trackers as read inputs, but `primitive-storage.roadmap-items` selects at most one canonical tracker for apply-capable scopes in that layer. Every apply-capable roadmap operation must target that tracker, declare the exact canonical operation on its connection, and provide authentication through canonical `auth-env` or the adapter's documented ambient context. Scopes that need different canonical write destinations belong in separately owning layers.
 - `correlation.ticket-key-pattern` must compile as a Python regex.
 - `output-dir` must be inside the KB root (no `..` traversal).
 - `mismatch-findings.route-to` empty string disables routing; any other value must be a relative path under the KB root.
@@ -171,6 +172,16 @@ roadmap:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Preserved `read-comments` on retained legacy overrides whenever the merged canonical connection can comment | PR #153 review |
+| 2026-09-17 | Added `github-projects` to the adapter enumeration and required complete identity, supported mapped writes, and readable migrated comment history | PR #153 review |
+| 2026-09-17 | Refused mutation migration when the legacy roadmap source itself is export-backed or not a known live adapter | PR #153 review |
+| 2026-09-17 | Preserved normalized capabilities and canonical authentication during legacy migration, including nested legacy authentication metadata | PR #153 review |
+| 2026-09-17 | Required authentication before token-only migration, removed migrated legacy write names, and preserved explicitly read-only canonical connections | PR #153 review |
+| 2026-09-17 | Restricted apply-capable roadmap ownership to one tracker per layer and excluded export-backed or incompatible same-name connections from legacy write migration | PR #153 review |
+| 2026-09-17 | Aligned apply-capable validation with the documented choice of canonical `auth-env` or ambient adapter authentication | PR #153 review |
+| 2026-09-16 | Required legacy roadmap migration to establish both a canonical connection and `primitive-storage.roadmap-items` ownership, with ambiguity/conflict refusal | PR #153 review |
+| 2026-09-16 | Defined `auth-env` on the canonical tracker connection and included legacy authentication-source names in the confirmed roadmap migration | PR #153 review |
+| 2026-09-16 | Made roadmap `issue-trackers[]` read-only authority and required canonical ownership/capabilities for apply flows, with migration of legacy `write-*` names | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-04-30 | Added the presentation-view config surface for phase/lane roadmap boards, customer-value headlines, draft callouts, and implemented markers | Product-management surface integration |
 | 2026-04-25 | Clarified the 5.1 config contract: the active layer owns the roadmap block, `connections.trackers[]` can seed read-only tracker inputs, and `issue-trackers[]` is now documented as a legacy or override surface | v5.1.0 closeout release |

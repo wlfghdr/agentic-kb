@@ -1,6 +1,6 @@
 # Reference: `/kb roadmap` command reference
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 ## Base command
 
@@ -35,8 +35,11 @@ Proposes plan-source updates derived from delivery reality:
 - Tickets that appear closed (matching merged PRs) → propose status transition
 - Tier-2 cross-references that only exist one-way → propose adding the reverse link
 - `delivered-unplanned` items above threshold → propose opening a ticket
+- Latest unconsumed authoring-history markers such as `[propose] phase: defined`, when a current read-only gate evaluation passes → propose the named phase transition
 
-Without `--apply`: writes a dry-run plan to `<output-dir>/roadmap-<scope>-<date>.sync.md`. With `--apply`: requires interactive confirmation before mutating plan sources. `--apply` is only valid when the plan-source adapter supports writes; most read-only adapters reject it.
+Before `sync` reads a tracker-backed item's body or ordered comments to discover an authoring marker, it shows the structured external-read preflight from [`html-artifacts.md`](../../kb-management/references/html-artifacts.md): canonical tracker and linked sources, scope/item filters and time window, dry-run or apply-capable execution mode, and the sync-plan output path. Explicit invocation authorizes the read but does not suppress this disclosure.
+
+For authoring markers, `sync` identifies the canonical item from the marker's own history, reruns the same read-only criteria as `--check-gates`, and includes that evidence in the plan. It treats a proposal as consumed when the canonical phase is the proposed phase or any later phase in the configured pipeline, so an append-only marker can never propose a regression; no separate consumption write is required. Without `--apply`: writes a dry-run plan to `<output-dir>/roadmap-<scope>-<date>.sync.md`. With `--apply`: requires interactive confirmation before each plan-source mutation. A tracker-backed phase transition additionally requires canonical `primitive-storage.roadmap-items` ownership plus `status` capability and authentication on the selected connection. `--apply` is only valid when the canonical plan-source adapter supports the proposed operation; read-only adapters reject it.
 
 ### `--review-tier-4`
 
@@ -49,10 +52,10 @@ Walks tier-4 proposed matches from the most recent run. For each: shows plan + d
 ### `--review-mismatches`
 
 ```
-/kb roadmap --review-mismatches [--scope NAME] [--class CLASS]
+/kb roadmap --review-mismatches [--scope NAME] [--class CLASS] [--apply]
 ```
 
-Walks section-E entries. For each: shows evidence + proposed action, prompts `accept | suppress | link`. `link` opens an interactive cross-reference editor that writes back to the plan source (if adapter supports writes) or records a manual mapping in `roadmap-state.json`.
+Walks section-E entries. For each: shows evidence + proposed action, prompts `accept | suppress | link`. Without `--apply`, `link` previews the cross-reference. With `--apply`, it may write only to the tracker selected by `primitive-storage.roadmap-items`, and only after the canonical connection passes the `link` capability, authentication/tooling, and per-write confirmation gates. A mismatch whose plan source is a different read input never receives a tracker mutation; `link` records a manual mapping in `roadmap-state.json` instead.
 
 ### `tune`
 
@@ -96,25 +99,25 @@ Four dedicated commands for creating and shaping roadmap items. Full contract in
 ### `ideate`
 
 ```
-/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>]
-/kb roadmap ideate --scope NAME --prompt "text"
-/kb roadmap ideate --scope NAME
+/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>] [--apply]
+/kb roadmap ideate --scope NAME --prompt "text" [--apply]
+/kb roadmap ideate --scope NAME [--apply]
 ```
 
-Creative pass. Turns a KB idea, decision, free-text prompt, or nothing (scans for unlinked seeds) into one or more roadmap item stubs under `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md`. Proposes 2–5 variants when space to expand; flags overlaps; names the value. Items open at phase `idea`, status `draft`.
+Creative pass. Turns a KB idea, decision, free-text prompt, or nothing (scans for unlinked seeds) into one or more roadmap items. File-backed and pre-promotion hybrid items use `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md`; tracker-backed items are proposed unless `--apply` and the mutation gates succeed. Proposes 2–5 variants when space to expand; flags overlaps; names the value. Items open at phase `idea`, status `draft`.
 
 ### `discuss`
 
 ```
-/kb roadmap discuss <item-path-or-id> [--scope NAME] [--write]
+/kb roadmap discuss <item-path-or-id> [--scope NAME] [--write] [--apply]
 ```
 
-Devil's advocate. Challenges assumptions, surfaces contradictions with existing items / decisions / foundation, scans for hedging language, steel-mans the opposing view. Write-free by default; `--write` appends a `## Critique` section to the item.
+Devil's advocate. Challenges assumptions, surfaces contradictions with existing items / decisions / foundation, scans for hedging language, steel-mans the opposing view. Write-free by default; `--write` appends a `## Critique` section to a file-backed item, while `--apply` is required to post it to a tracker-backed item.
 
 ### `review`
 
 ```
-/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only]
+/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only] [--apply]
 ```
 
 Challenge-then-create. Runs condensed `discuss` output first, then adds adjacent ideas, risks (severity-classified), and outcome-shaped todos with mitigations. Every entry cites evidence. Appends `## Review` section; transitions `draft` → `reviewed`.
@@ -122,7 +125,7 @@ Challenge-then-create. Runs condensed `discuss` output first, then adds adjacent
 ### `refine`
 
 ```
-/kb roadmap refine <item-path-or-id> [--scope NAME] [--force]
+/kb roadmap refine <item-path-or-id> [--scope NAME] [--force] [--apply]
 ```
 
 Actionable pass. Decomposes reviewed outcomes into sized tasks with dependencies, writes testable acceptance criteria, lists interface contracts, marks blocking open questions. Refuses to run on `draft` items without `--force`. Proposes a `defined` gate transition when criteria are satisfied.
@@ -145,5 +148,11 @@ Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-d
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Made phase proposals consumed at the proposed or any later configured phase, preventing stale markers from proposing regressions | PR #153 review |
+| 2026-09-17 | Required the structured external-read preflight before `sync` loads tracker-backed authoring history | PR #153 review |
+| 2026-09-17 | Defined how `sync` discovers, verifies, and applies proposed authoring phase markers | PR #153 review |
+| 2026-09-17 | Added `--apply` and canonical ownership/capability gates to mismatch-link writes while retaining manual mappings for noncanonical sources | PR #153 review |
+| 2026-09-17 | Added `--apply` to each tracker-capable item-authoring command shape | PR #153 review |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-08 | Clarified which `/kb roadmap` behaviors are covered by the shipped helper script versus the broader draft command spec | Integration pass |

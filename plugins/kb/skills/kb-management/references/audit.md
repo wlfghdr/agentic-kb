@@ -1,6 +1,6 @@
 # Reference: `/kb audit`
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 KB-wide consistency audit. Runs the foundational checks directly, then delegates scope-specific audits to installed primitive skills (`kb-roadmap`, `kb-journeys`) and consolidates the results into a single report with offered corrections.
 
@@ -31,6 +31,7 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 | K14 | Every `status: promoted` source file's mtime is not newer than its `promoted-at:` frontmatter date (per [`docs/concurrency.md`](../../../../../docs/concurrency.md) case 2) | `backlink-diverged` | Offer to (a) revert the source edit (canonical wins) or (b) copy the source edit upward to the canonical record and resync the backlink on the next promote |
 | K15 | Every topic that has carried more than one `## Position — @<author>` heading for longer than `freshness.topic-days` (default 60) is flagged (per [`docs/concurrency.md`](../../../../../docs/concurrency.md) case 3) | `topic-author-sections-unconverged` | Offer to open a convergence decision (`D-YYYY-MM-DD-<topic-slug>.md`) that cites both author sections and propose the rewrite to a single `## Position` heading |
 | K16 | For every `.kb-log/` `capture` line whose `details` carry `routing-mode=reflection-driven`, a matching `capture-routing-confirm` entry with the same `correlation-id` and an earlier timestamp must exist in the same daily log (or the previous day's log if the chain crosses midnight). An orphaned `capture-routing-propose` with no paired `confirm`/`reject`/`capture` is also flagged. See [`capture-routing.md`](./capture-routing.md) "Log format" for the full line shape | `capture-routing-unconfirmed` | Offer to (a) revert the artifact to the default active-layer location, or (b) declare a `capture-routing:` rule in `.kb-config/layers.yaml` so future captures of this shape route explicitly. A `capture` line written at `routing-mode=default` after a `capture-routing-reject` is **not** flagged — that is the supported fallback path |
+| K17 | Every pre-7.0 tracker entry that lacks `connections.trackers[].capabilities` is classified as an unambiguous live adapter, explicit read-only/export-backed adapter, or unresolved adapter. Apply-capable connections also name `auth-env` or a documented ambient authentication source. Legacy `roadmap.issue-trackers[].write-*` and `auth-env` values are migration input only | `tracker-capability-migration-required` | Show one config diff that creates/selects the canonical connection when needed, maps legacy write names and authentication source, and adds missing `primitive-storage.roadmap-items` ownership. Persist only after confirmation; refuse ambiguous destinations or conflicting ownership. Keep generic/export-backed/custom entries read-only unless the user verifies implemented operations; never infer from `kind: jira` or `kind: linear` alone |
 
 ## Delegated audits
 
@@ -77,7 +78,7 @@ If `.kb-config/layers.yaml` has a `journeys:` block, run `/kb journeys audit`. P
 Single triple artifact at `_kb-references/reports/audit-<YYYY-MM-DD>.{md,html,json}`:
 
 1. **Summary chip strip** — total violations per primitive (KB-wide / roadmap / journeys / cross-primitive).
-2. **KB-wide violations** — K1-K16 with corrections.
+2. **KB-wide violations** — K1-K17 with corrections.
 3. **Delegated audits** — embedded summaries from `/kb roadmap audit` and `/kb journeys audit`, with links to their full artifacts.
 4. **Cross-primitive violations** — X1-X4 with corrections.
 5. **Offered next actions** — top 5 corrections across all dimensions, ranked by impact × ease.
@@ -108,6 +109,9 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Extended K17's correction to create/select canonical roadmap connections and add missing ownership while refusing ambiguous or conflicting migrations | PR #153 review |
+| 2026-09-16 | Added K17 with the concrete audit detection and confirmed correction path for canonical tracker capabilities and authentication-source migration | PR #153 review |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-24 | Linked delegated roadmap and journeys audits to their canonical audit references and replaced the inline journeys checklist with the J1-J19 delegated rule summary from `kb-journeys/references/audit.md` | Issue #125 |
 | 2026-05-23 | Tightened K16 wording so it is mechanically checkable: it now cites the required `routing-mode` / `correlation-id` log keys, the propose → confirm → capture line ordering, and the supported-fallback exemption. Aligned with the "Log format" subsection added to [`capture-routing.md`](./capture-routing.md) | Copilot review #116 |

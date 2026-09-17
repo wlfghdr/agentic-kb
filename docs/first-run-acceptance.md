@@ -1,6 +1,6 @@
 # First-Run Acceptance Path
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 >
 > **Audience: maintainers and QA.** This is the deterministic baseline a release lead or team lead runs to verify that onboarding still produces the same working contract for every fresh adopter. **It is not the doc to read after you first install agentic-kb.** For that, use [`docs/examples/first-hour.md`](./examples/first-hour.md) — it walks the same install → setup → first capture path in narrative form, takes ~1 hour, and ends with a visible artifact you can open in a browser.
 
@@ -26,9 +26,9 @@ It is intentionally narrow:
 - one documented harness path at a time,
 - manual automation level,
 - builtin HTML styling,
-- no live tracker write-back.
+- no live external tracker writes.
 
-Tracker-backed primitives are part of the shared-layer baseline. The default proof keeps the personal layer's decisions, tasks, and ideas file-backed, while the shared team layer uses GitHub Issues as the canonical home for shared decisions and tasks. Live write-back remains disabled until the user confirms it; setup still generates or stages the GitHub governance profile and records supporting KB summary/backlink directories.
+Tracker-backed primitives are part of the shared-layer baseline. The default proof keeps the personal layer's decisions, tasks, and ideas file-backed, while the shared team layer uses GitHub Issues as the canonical home for shared decisions and tasks. The offline fixture exercises canonical lifecycle proposals without external writes: canonical CRUD is governed by tracker capabilities and per-action confirmation, while connection-digest write-back stays disabled and reserved. Setup still generates or stages the GitHub governance profile and records supporting KB summary/backlink directories.
 
 Product-management roadmap and journey artifacts are optional in the baseline. When the user's role/goals imply them, setup must propose the owning layer and source/output placement in the same confirmation pass as the core KB graph.
 
@@ -249,7 +249,7 @@ The wizard must derive and propose:
 - **adoption-stage label**: `Stage 1 — capture discipline (human-only baseline)`, derived from Q11 + Q10 per `references/adoption-stages.md`. The proposal must show the stage explicitly so the user can see the wizard is suggesting a capture-only scaffold rather than an agent-assisted or bounded-autonomous one,
 - workstream `platform-signals` extracted from Q5,
 - connections containing the product repo and GitHub issues from Q8,
-- `primitive-storage` set to file-backed decisions, tasks, and ideas for `alice-personal`, plus GitHub Issues-backed decisions and tasks for `team-observability` because shared process artifacts default to the visible issue-backed backbone; Q10 keeps write-back confirmation-gated rather than changing the storage default,
+- `primitive-storage` set to file-backed decisions, tasks, and ideas for `alice-personal`, plus GitHub Issues-backed decisions and tasks for `team-observability` because shared process artifacts default to the visible issue-backed backbone; Q10 keeps canonical mutations confirmation-gated and connection-digest write-back disabled rather than changing the storage default,
 - dashboard and report panels matching Q9 (morning briefing + weekly status),
 - automation level `1` (manual only) — mapped from Q10's "confirm everything" answer and consistent with the Stage-1 label (a Stage-1 team must not be configured at automation level 2 or 3). Q9's regular outputs are run by the user, not on a schedule, at this baseline,
 - **graduation criteria for Stage 1 → Stage 2** surfaced as informational defaults (e.g. "≥ 4 weeks of clean `.kb-log/`", "≥ 1 cross-layer promote completed by hand", "`foundation/vmg.md` confirmed by ≥ 1 stakeholder"); the user can accept, edit, or skip this block — it does not block scaffold,
@@ -532,12 +532,22 @@ Acceptance checks:
 
 - the Phase 3 proposal names which primitive families are `files`, `tracker`, or `hybrid`,
 - every tracker-backed primitive points to a declared `connections.trackers[]` entry,
-- the proposal names the target repository or project, issue types/kinds, status values, and write-back mode,
+- the proposal names the target repository or project, issue types/kinds, status values, implemented canonical CRUD capabilities, and reserved digest write-back mode,
 - GitHub-backed setup generates the full governance profile: issue forms, PR template, labeler, governance workflow, manual setup checklist, and repo-local tracker workflow skill; if the target repo is not writable, setup stages those files and prints the manual apply steps,
 - Jira-backed setup records project/query/type/status mappings and prints the manual project setup checklist,
-- `/kb decide` and `/kb task` in the tracker-backed layer show proposed tracker mutations and wait for confirmation,
-- no live tracker write-back happens in the proof unless the user explicitly enables and confirms it,
+- `/kb decide` and `/kb task` in the tracker-backed layer show proposed tracker mutations and enforce ownership → declared capability → authentication/tooling → one-action confirmation precedence,
+- missing capability or authentication returns the complete proposal and exact manual steps; once the user supplies the tracker identifier, only the configured backlink/summary and handoff log are written,
+- `connections.writeback.enabled: false` does not disable supported canonical CRUD, and setting it to `true` would not enable reserved connection-digest write-back,
+- no live external tracker mutation happens in this proof,
 - KB directories for tracker-backed primitives are summaries/backlinks only and do not look like a competing canonical backlog.
+
+Run the deterministic lifecycle fixture:
+
+```bash
+python3 scripts/test_tracker_lifecycle_fixture.py
+```
+
+The fixture at `tests/fixtures/first-run-tracker-lifecycle.yaml` covers one shared tracker-backed task from create through execution handoff and close. It proves that storage ownership is checked first and an ownership failure offers no noncanonical tracker handoff; absent authentication yields actionable manual proposals for `create`, `link`, and `status` only after ownership succeeds; the manually supplied tracker identifier remains the one canonical record across all three stages; an undeclared label operation cannot be authorized by confirmation; export-backed generic Jira remains read-only during legacy normalization; disabled digest write-back does not block a dry-run-supported canonical comment; and digest-derived comments remain reserved even if the reserved switch is set manually. The test is pure local evaluation and fails if any case requests a live external write or a fallback canonical KB file.
 
 ## Team lead verification checklist
 
@@ -578,6 +588,7 @@ Create or reopen an issue if any of these occur:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Added the offline shared tracker-backed lifecycle fixture using the real nested layer/connection schema and covering create, handoff, close, disabled digest writes, missing capability, absent authentication, legacy normalization, export-backed read-only behavior, ownership-blocked routing, manual completion, and the single-canonical-record invariant | Issue #152 and PR #153 review |
 | 2026-06-02 | Version aligned to 6.3.0 and changed the deterministic baseline so the personal layer stays file-backed while the shared team layer defaults decisions and tasks to GitHub Issues-backed `primitive-storage` with write-back still confirmation-gated | Issue #145 |
 | 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
 | 2026-05-18 | Preamble now explicitly tags the doc as a maintainer/QA baseline and points adopters at `docs/examples/first-hour.md` for the actual first-install walkthrough. Closes audit finding #100 (acceptance.md was being referenced from README "Where to start" as if it were user onboarding) | Concept/onboarding/process audit |

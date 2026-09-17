@@ -1,19 +1,19 @@
 # Reference: state machine and resume routing
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
 ## Motivation
 
 The skill runs on partial data, mid-workflow, with humans in the loop. It must be able to:
 
-1. Tell what state a scope is in from the file system alone (no sidecar DB).
+1. Tell what state a file-backed scope is in from the file system alone (no sidecar DB), or read the canonical tracker history when roadmap-item storage is tracker-backed.
 2. Pick a single next action deterministically when re-invoked.
 
 Both properties come from **inline state markers** + **ordered resume rules**.
 
 ## Inline state markers
 
-Every generated artifact carries state at the top of its body, above the summary strip:
+Every generated file artifact carries state at the top of its body, above the summary strip:
 
 ```markdown
 <!-- status: draft -->
@@ -21,7 +21,7 @@ Every generated artifact carries state at the top of its body, above the summary
 <!-- status: published @ 2026-04-21T14:30:00Z -->
 ```
 
-Markers are append-only. The current status is the newest marker. Any process (the skill, a grep, a CI check) reads the latest marker to decide what to do next.
+Markers are append-only. For a tracker-backed roadmap item, authoring commands place the marker in the same structured comment as their timestamped section; the item's body followed by its ordered authoring comments forms the marker stream. The current status is the newest marker in the applicable stream. Tracker reachability is therefore a prerequisite for resuming tracker-backed authoring, and the conformance check stops before state assessment when that history cannot be read. Any process reads the latest marker from the canonical backing store to decide what to do next.
 
 When the skill regenerates an artifact, it preserves the existing marker history and adds a new `draft` marker on top. The review command `/kb roadmap --review` is what flips `draft` → `reviewed`; `/kb roadmap publish` (if implemented) flips `reviewed` → `published`.
 
@@ -31,13 +31,15 @@ When the user invokes `/kb roadmap` without arguments, or with only `--scope`, t
 
 ### Step 1 — Conformance check
 
+Before any live `read-items` or `read-comments` call, present the structured external-read preflight required by [`html-artifacts.md`](../../kb-management/references/html-artifacts.md#external-read-preflight): name the tracker sources, filters/time window, read-only resume intent, and artifact paths that may be regenerated. An explicit `/kb roadmap` invocation satisfies the execution confirmation, but it does not remove the requirement to show the preflight before fetching.
+
 Produce a pass/fail table for the scope:
 
 | Check | Pass criteria |
 |---|---|
 | `_kb-roadmaps/<scope>/` exists | directory present |
 | Scope configured | `.kb-config/layers.yaml` has `roadmap.scopes.<scope>` |
-| All declared trackers reachable | `read-items` dry call returns without error |
+| All required tracker data readable | `read-items` returns without error for every declared tracker; for every tracker-backed canonical item, `read-comments` also returns its ordered comment history without error before any state marker is assessed |
 | Last artifact fresh | newest file in `<scope>/` within `freshness-days` |
 | Review backlog | no orphan `draft` markers older than `draft-stale-days` |
 
@@ -57,7 +59,7 @@ Scan the scope directory for the newest roadmap and status artifacts. Read their
 Apply in order. Stop at first match. The action it points to is the **single next step** surfaced to the user.
 
 1. **Scope not configured** → run `/kb setup` tracker block for this scope.
-2. **Declared tracker unreachable** → report failure + config path; stop.
+2. **Required tracker data unreadable** → report the failed item/history read + config path; stop.
 3. **No artifact yet OR freshness expired** → generate a new roadmap (`/kb roadmap --scope <name>`).
 4. **Artifact exists with `draft` marker** → offer review (`/kb roadmap --review --scope <name>`).
 5. **Review older than cadence** → generate a new status short-form (`/kb roadmap status --scope <name>`).
@@ -75,4 +77,10 @@ The markers are generic status words (`draft`, `reviewed`, `published`, `archive
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Required the external-read preflight before tracker-backed resume fetches | PR #153 review |
+| 2026-09-17 | Made ordered comment-history reads unconditional for every tracker-backed canonical item before state assessment | PR #153 review |
+| 2026-09-17 | Required an ordered `read-comments` history fetch, in addition to `read-items`, before tracker-backed state assessment and resume | PR #153 review |
+| 2026-09-17 | Scoped filesystem-only resume to file-backed artifacts and made canonical tracker-history reachability an explicit prerequisite for tracker-backed authoring resume | PR #153 review |
+| 2026-09-16 | Defined ordered structured comments as the state-marker stream for tracker-backed roadmap items | PR #153 review |
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

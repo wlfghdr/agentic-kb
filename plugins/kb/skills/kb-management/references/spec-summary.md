@@ -1,6 +1,6 @@
 # Spec Summary — for the kb-management skill
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 Condensed runtime reference for the skill. For the full spec, see `docs/REFERENCE.md`.
 
@@ -102,5 +102,6 @@ Scopes are descriptive, not numbered: `personal`, `team`, `org-unit`, `company`,
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
 | 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3. No semantic changes to the layer-graph summary, the layout examples, the config shape, the log-line format, or the descriptive scope list | v6.0.0 adoption + daily-usage gap audit |

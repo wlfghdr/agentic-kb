@@ -1,6 +1,6 @@
 # GitHub Governance Profile
 
-> **Version:** 1.0 | **Last updated:** 2026-05-17
+> **Version:** 1.1 | **Last updated:** 2026-09-16
 
 This reference defines the generic GitHub setup package that `/kb setup` should generate when an adopter chooses GitHub Issues, GitHub Projects, or a GitHub repository as the operational backbone for shared KB work.
 
@@ -72,6 +72,8 @@ Use native GitHub metadata for canonical fields:
 
 Labels are for dimensions that native metadata does not model: area, component, risk, audience, version impact, documentation impact, workflow hints, or adopter-specific routing cues. Labels must not duplicate type, status, priority, or milestone.
 
+When no GitHub Project and status-field mapping is configured, the adapter's `status` capability covers issue open/close only. Project workflow transitions such as `In Progress` or `In Review` require resolvable project, field, and option identifiers; setup must collect that mapping or leave those transitions as manual proposals.
+
 ### PR discipline
 
 Pull requests should:
@@ -122,7 +124,9 @@ The generated `kb-tracker-workflow` skill should be the local operating manual. 
 - task and feature routing,
 - roadmap/spec/journey link checks where those features are enabled,
 - PR closing-link and validation rules,
-- confirmation before GitHub writes,
+- canonical CRUD gate precedence: ownership, declared adapter capability, authentication, then one-action confirmation,
+- actionable manual proposals when capability or authentication is unavailable, without creating a competing KB record,
+- the separation between canonical CRUD and reserved connection-digest write-back,
 - no self-merge or self-approval by agents,
 - CI/local-guidance parity.
 
@@ -134,6 +138,7 @@ Setup is not complete for this profile until:
 
 - every generated YAML file parses,
 - `.kb-config/layers.yaml` declares the tracker and `primitive-storage` ownership,
+- each live tracker entry declares its implemented canonical CRUD capabilities and reserved connection-digest write-back stays disabled,
 - the generated PR template asks for issue links, affected KB/tracker artifacts, validation, and changelog/version impact,
 - the generated guardrail workflow passes on a dry PR or local YAML parse check,
 - the generated skill states the same rules that the workflow enforces,
@@ -143,4 +148,6 @@ Setup is not complete for this profile until:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Limited issue-only status mutations to open/close unless project-field metadata makes workflow transitions executable | Issue #152 review |
+| 2026-09-16 | Required generated tracker guidance to enforce canonical CRUD ownership/capability/authentication/confirmation precedence, manual fallback, and separation from reserved digest write-back | Issue #152 |
 | 2026-05-17 | Initial generic GitHub governance profile covering issue-driven work, native metadata, PR discipline, CI/local-agent parity, generated files, manual setup checklist, and verification | Tracker-backed onboarding hardening |

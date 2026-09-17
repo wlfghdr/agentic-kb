@@ -1,7 +1,7 @@
 ---
 name: kb-management
 description: Lean, layered knowledge management driven by the `/kb` command. Operates on a flexible layer graph, applies the five-question evaluation gate, tracks findings, notes (including retros), decisions, ideas, tasks, briefs, specs, releases, and incidents as first-class artifacts, digests connected repos and trackers, and publishes reusable skills to per-layer marketplaces.
-version: 6.3.2
+version: 7.0.0
 triggers:
   # Command surface
   - "/kb"
@@ -194,6 +194,8 @@ When a flow creates or updates a primitive covered by `primitive-storage`, resol
 
 If the config is ambiguous or both a KB file and tracker item claim canonical ownership, stop and propose an audit/cleanup step before mutation.
 
+For `tracker` operations, apply the capability precedence from `references/tracker-backed-primitives.md`: `primitive-storage` selects canonical ownership; the named tracker must declare the operation in `capabilities`; authentication/tooling must be available through canonical `auth-env` or documented ambient authentication; and the user must confirm that exact mutation. For a pre-7.0 unambiguous live adapter whose capability field is absent, apply the reference's temporary normalization and surface its migration warning; explicit empty lists plus generic/export-backed/custom adapters remain read-only. `connections.writeback` governs only reserved connection-digest write-back and cannot enable canonical CRUD. Ownership failure follows the configured canonical home without proposing a noncanonical tracker mutation. After ownership succeeds, missing capability or authentication produces a complete manual proposal and waits for the resulting tracker identifier; no path creates a competing canonical KB record.
+
 ## Output contract
 
 Every response follows the same shape:
@@ -266,6 +268,8 @@ The templates this skill instantiates live in `templates/`:
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Restricted legacy normalization to unambiguous live adapters, anchored authentication on the canonical connection, and separated ownership-blocked routing from manual tracker handoff | PR #153 review |
+| 2026-09-16 | Routed tracker-backed primitive mutations through the canonical CRUD capability/authentication/confirmation contract, added transitional normalization for known legacy live adapters, and kept connection-digest write-back reserved | Issue #152 and PR #153 review |
 | 2026-06-17 | Version aligned to 6.3.2 (framework patch — glossary `Intake` term added; no behavioral change to this skill) | Version alignment |
 | 2026-06-10 | Version aligned to 6.3.1 | Version alignment |
 | 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in setup and tracker-backed primitive references | Issue #145 |

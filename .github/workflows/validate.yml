@@ -86,6 +86,8 @@ jobs:
         run: python3 scripts/test_generate_dashboard.py
       - name: Regression test layered acceptance fixture
         run: python3 scripts/test_acceptance_fixture.py
+      - name: Regression test offline tracker lifecycle fixture
+        run: python3 scripts/test_tracker_lifecycle_fixture.py
       - name: Regression test export-backed roadmap fixture
         run: python3 scripts/test_kb_roadmap.py
       - name: Regression test kb-journeys

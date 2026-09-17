@@ -1,0 +1,781 @@
+fixture: first-run-tracker-lifecycle
+execution-mode: offline
+
+config:
+  active-layer: team-observability
+  layers:
+    - name: team-observability
+      scope: team
+      role: contributor
+      path: ../team-observability-kb
+      connections:
+        trackers:
+          - name: team-work
+            kind: github-issues
+            repo: example/team-work
+            capabilities: [create, status, comment, link]
+          - name: legacy-work
+            kind: github-issues
+            repo: example/legacy-work
+          - name: project-work
+            kind: github-projects
+            repo: example/team-work
+            project-number: 7
+            issue-tracker: team-work
+            capabilities: [create, status, comment, link]
+          - name: legacy-project
+            kind: github-projects
+            repo: example/legacy-project
+            project-number: 8
+          - name: custom-work
+            kind: custom
+            endpoint: custom-work
+          - name: jira-export
+            kind: jira
+            export-dir: ../jira-export/ROAD
+        writeback:
+          enabled: false
+          capabilities: []
+      primitive-storage:
+        tasks:
+          mode: tracker
+          tracker: team-work
+          kind: Task
+          summary-dir: _kb-tasks
+        ideas:
+          mode: tracker
+          tracker: legacy-work
+          kind: Idea
+          summary-dir: _kb-ideas
+        decisions:
+          mode: tracker
+          tracker: custom-work
+          kind: Decision
+          summary-dir: _kb-decisions
+        roadmap-items:
+          mode: tracker
+          tracker: jira-export
+          kind: Roadmap Item
+          summary-dir: _kb-roadmaps/team-observability/summaries
+        feature-intake:
+          mode: hybrid
+          tracker: project-work
+          kind: Feature
+          file-dir: _kb-feature-intake
+        feedback:
+          mode: tracker
+          tracker: legacy-project
+          kind: Feedback
+
+canonical-record:
+  family: tasks
+  external-id: ISSUE-42
+  canonical-kb-files: []
+  supporting-records:
+    - _kb-tasks/ISSUE-42.md
+  manual-lifecycle:
+    - stage: create
+      operation: create
+      resulting-id: ISSUE-42
+    - stage: handoff
+      operation: link
+      resulting-id: ISSUE-42
+    - stage: close
+      operation: status
+      resulting-id: ISSUE-42
+
+promoted-records:
+  - family: feature-intake
+    source-id: FEATURE-17
+    source-status: promoted
+    tracker: project-work
+    external-id: ISSUE-77
+
+cases:
+  - name: storage-does-not-select-tracker
+    source: canonical
+    family: decisions
+    tracker: team-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
+  - name: mismatch-link-cannot-target-noncanonical-read-tracker
+    source: mismatch-review
+    family: roadmap-items
+    tracker: team-work
+    operation: link
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
+  - name: create-without-authentication
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: create
+    authenticated: false
+    confirmed: true
+    expected: manual-proposal
+    proposal: Create Task "Document the cache failover runbook".
+    manual-steps: Open the configured tracker, create the proposed Task, and return its identifier.
+    resulting-id: ISSUE-42
+
+  - name: handoff-link-without-authentication
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: link
+    authenticated: false
+    confirmed: true
+    expected: manual-proposal
+    proposal: Link ISSUE-42 to delivery item DELIVERY-9.
+    manual-steps: Add the destination link to ISSUE-42 and return the unchanged source identifier.
+    resulting-id: ISSUE-42
+
+  - name: close-without-authentication
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: status
+    authenticated: false
+    confirmed: true
+    expected: manual-proposal
+    proposal: Close ISSUE-42 with closure evidence.
+    manual-steps: Close ISSUE-42 in the configured issue tracker and report completion.
+    resulting-id: ISSUE-42
+
+  - name: confirmation-cannot-add-label-capability
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: label
+    authenticated: true
+    confirmed: true
+    expected: manual-proposal
+    proposal: Apply the risk label to ISSUE-42.
+    manual-steps: Apply the label manually because this adapter does not declare label capability.
+    resulting-id: ISSUE-42
+
+  - name: digest-disabled-does-not-block-canonical-comment
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: comment
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+
+  - name: canonical-status-still-awaits-confirmation
+    source: canonical
+    family: tasks
+    tracker: team-work
+    operation: status
+    authenticated: true
+    confirmed: false
+    expected: awaiting-confirmation
+
+  - name: legacy-live-adapter-normalizes-capabilities
+    source: canonical
+    family: ideas
+    tracker: legacy-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+    migration-warning: Persist the confirmed normalized capabilities on the next setup or audit.
+
+  - name: hybrid-before-promotion-remains-file-owned
+    source: canonical
+    family: feature-intake
+    tracker: project-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
+  - name: hybrid-promotion-transfers-canonical-ownership
+    source: canonical
+    family: feature-intake
+    tracker: project-work
+    operation: create
+    phase: promotion
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+
+  - name: hybrid-promotion-comment-requires-created-record
+    source: canonical
+    family: feature-intake
+    item: FEATURE-18
+    tracker: project-work
+    operation: comment
+    phase: promotion
+    authenticated: true
+    confirmed: true
+    expected: ownership-blocked
+
+  - name: hybrid-follow-up-uses-transferred-ownership
+    source: canonical
+    family: feature-intake
+    item: FEATURE-17
+    tracker: project-work
+    operation: comment
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+
+  - name: legacy-project-adapter-normalizes-status
+    source: canonical
+    family: feedback
+    tracker: legacy-project
+    operation: status
+    authenticated: true
+    confirmed: true
+    expected: dry-run-supported
+    migration-warning: Persist status-only capability on the next setup or audit.
+
+  - name: custom-adapter-without-capabilities-stays-read-only
+    source: canonical
+    family: decisions
+    tracker: custom-work
+    operation: create
+    authenticated: true
+    confirmed: true
+    expected: manual-proposal
+    proposal: Create Decision "Choose the cache recovery objective".
+    manual-steps: Create the proposed Decision manually and return its identifier.
+    resulting-id: DECISION-3
+
+  - name: export-backed-jira-without-capabilities-stays-read-only
+    source: canonical
+    family: roadmap-items
+    tracker: jira-export
+    operation: status
+    authenticated: true
+    confirmed: true
+    expected: manual-proposal
+    proposal: Move ROAD-7 to In Progress.
+    manual-steps: Update ROAD-7 manually because the export-backed connection is read-only.
+    resulting-id: ROAD-7
+
+  - name: disabled-connection-digest-comment
+    source: connection-digest
+    operation: comment
+    writeback-enabled: false
+    authenticated: true
+    confirmed: true
+    expected: reserved-noop
+
+  - name: manually-enabled-connection-digest-comment
+    source: connection-digest
+    operation: comment
+    writeback-enabled: true
+    authenticated: true
+    confirmed: true
+    expected: reserved-noop
+
+expected-external-writes: []
+
+legacy-roadmap-migration:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-item, write-status, write-comments, write-link]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: github-issues
+      repo: example/roadmap
+      capabilities: [create, status, comment, link]
+      auth-env: ROADMAP_TOKEN
+    ownership:
+      mode: tracker
+      tracker: legacy-roadmap
+      kind: Roadmap Item
+    legacy-capabilities: [read-items, read-comments]
+
+legacy-roadmap-export-name-collision:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            export-dir: ../tracker-export/ROAD
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-item, write-status, write-comments]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
+  expected:
+    connections:
+      - name: legacy-roadmap
+        kind: github-issues
+        export-dir: ../tracker-export/ROAD
+      - name: legacy-roadmap-live
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [create, status, comment]
+        auth-env: ROADMAP_TOKEN
+    ownership:
+      mode: tracker
+      tracker: legacy-roadmap-live
+      kind: Roadmap Item
+
+legacy-roadmap-existing-capabilities:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            repo: example/roadmap
+            scope: "is:issue label:roadmap"
+            capabilities: [create, label, comment]
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status, write-link]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: github-issues
+      repo: example/roadmap
+      scope: "is:issue label:roadmap"
+      capabilities: [create, label, comment, status, link]
+      auth-env: ROADMAP_TOKEN
+    ownership:
+      mode: tracker
+      tracker: legacy-roadmap
+      kind: Roadmap Item
+    legacy-capabilities: [read-items, read-comments]
+
+legacy-roadmap-normalized-capabilities:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            repo: example/roadmap
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: github-issues
+      repo: example/roadmap
+      capabilities: [create, status, label, comment, link]
+
+legacy-roadmap-canonical-authentication:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: linear-graphql
+            team: observability
+            capabilities: [comment]
+            auth-env: CANONICAL_LINEAR_TOKEN
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: linear-graphql
+            capabilities: [read-items, write-status]
+            config:
+              team: observability
+            auth-env: LEGACY_LINEAR_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: linear-graphql
+      team: observability
+      capabilities: [comment, status]
+      auth-env: CANONICAL_LINEAR_TOKEN
+
+legacy-roadmap-nested-authentication:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: jira-rest
+            capabilities: [read-items, write-status]
+            config:
+              base-url: https://tracker.example.invalid
+              project: ROAD
+              auth-env: JIRA_TOKEN
+  expected:
+    connection:
+      name: legacy-roadmap
+      kind: jira-rest
+      base-url: https://tracker.example.invalid
+      project: ROAD
+      auth-env: JIRA_TOKEN
+      capabilities: [status]
+
+legacy-roadmap-conflicting-ownership:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage:
+        roadmap-items:
+          mode: files
+          file-dir: _kb-roadmaps/team-observability/items
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+            auth-env: ROADMAP_TOKEN
+  expected-error: already names a different canonical home
+  expected-ownership:
+    mode: files
+    file-dir: _kb-roadmaps/team-observability/items
+
+legacy-roadmap-identity-mismatches:
+  - name: linear-team-mismatch
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers:
+            - name: legacy-roadmap
+              kind: linear-graphql
+              team: platform
+              capabilities: [comment]
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: linear-graphql
+              capabilities: [read-items, write-status]
+              config:
+                team: observability
+              auth-env: LINEAR_TOKEN
+    expected:
+      connections:
+        - name: legacy-roadmap
+          kind: linear-graphql
+          team: platform
+          capabilities: [comment]
+        - name: legacy-roadmap-live
+          kind: linear-graphql
+          team: observability
+          capabilities: [status]
+          auth-env: LINEAR_TOKEN
+      ownership:
+        mode: tracker
+        tracker: legacy-roadmap-live
+        kind: Roadmap Item
+  - name: github-project-number-mismatch
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers:
+            - name: legacy-roadmap
+              kind: github-projects
+              repo: example/roadmap
+              project-number: 7
+              capabilities: [status]
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: github-projects
+              capabilities: [read-items, write-status]
+              config:
+                repo: example/roadmap
+                project-number: 8
+    expected:
+      connections:
+        - name: legacy-roadmap
+          kind: github-projects
+          repo: example/roadmap
+          project-number: 7
+          capabilities: [status]
+        - name: legacy-roadmap-live
+          kind: github-projects
+          repo: example/roadmap
+          project-number: 8
+          capabilities: [status]
+      ownership:
+        mode: tracker
+        tracker: legacy-roadmap-live
+        kind: Roadmap Item
+
+legacy-roadmap-missing-authentication:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: jira-rest
+            capabilities: [read-items, write-status]
+            config:
+              base-url: https://tracker.example.invalid
+              project: ROAD
+  expected-error: token-only adapter requires an authentication source
+
+legacy-roadmap-explicit-read-only:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: legacy-roadmap
+            kind: github-issues
+            repo: example/roadmap
+            capabilities: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected-error: canonical connection is explicitly read-only
+
+legacy-roadmap-export-backed-source:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap-export
+            adapter: jira-export
+            capabilities: [read-items, write-status]
+            config:
+              export-path: ../tracker-export/ROAD.md
+  expected-error: export-backed legacy source cannot receive mutation capabilities
+
+legacy-project-roadmap-migration:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers: []
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: delivery-project
+            adapter: github-projects
+            capabilities: [read-items, write-item, write-status, write-comments, write-link]
+            config:
+              repo: example/roadmap
+              project-number: 8
+  expected:
+    connections:
+      - name: delivery-project-issues
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [create, comment, link]
+      - name: delivery-project
+        kind: github-projects
+        repo: example/roadmap
+        project-number: 8
+        capabilities: [create, status, comment, link]
+        issue-tracker: delivery-project-issues
+    ownership:
+      mode: tracker
+      tracker: delivery-project
+      kind: Roadmap Item
+
+legacy-project-roadmap-existing-issue-connection:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: delivery-issues
+            kind: github-issues
+            repo: example/roadmap
+            capabilities: [comment]
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: delivery-project
+            adapter: github-projects
+            capabilities: [read-items, write-item, write-status, write-comments]
+            config:
+              repo: example/roadmap
+              project-number: 8
+  expected:
+    connections:
+      - name: delivery-issues
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [comment, create]
+      - name: delivery-project
+        kind: github-projects
+        repo: example/roadmap
+        project-number: 8
+        capabilities: [create, status, comment]
+        issue-tracker: delivery-issues
+
+legacy-roadmap-ambiguous-destinations:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: roadmap-primary
+            kind: github-issues
+            repo: example/roadmap
+          - name: roadmap-secondary
+            kind: github-issues
+            repo: example/roadmap
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected-error: multiple compatible live destinations require explicit user selection
+
+legacy-roadmap-differently-named-destination:
+  input:
+    layer:
+      name: team-observability
+      connections:
+        trackers:
+          - name: roadmap-primary
+            kind: github-issues
+            repo: example/roadmap
+            capabilities: [comment]
+      primitive-storage: {}
+      roadmap:
+        issue-trackers:
+          - name: legacy-roadmap
+            adapter: github-issues
+            capabilities: [read-items, write-status]
+            config:
+              repo: example/roadmap
+  expected:
+    connections:
+      - name: roadmap-primary
+        kind: github-issues
+        repo: example/roadmap
+        capabilities: [comment, status]
+    ownership:
+      mode: tracker
+      tracker: roadmap-primary
+      kind: Roadmap Item
+
+legacy-roadmap-missing-identities:
+  - name: github-repository-missing
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: github-issues
+              capabilities: [read-items, write-status]
+              config: {}
+    expected-error: legacy source is missing required tracker identity
+  - name: linear-team-empty
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: linear-graphql
+              capabilities: [read-items, write-status]
+              config:
+                team: ""
+              auth-env: LINEAR_TOKEN
+    expected-error: legacy source is missing required tracker identity
+
+legacy-roadmap-unsupported-operations:
+  - name: jira-create
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: jira-rest
+              capabilities: [read-items, write-item]
+              config:
+                base-url: https://tracker.example.invalid
+                project: ROAD
+              auth-env: JIRA_TOKEN
+    expected-error: legacy source requests operations unsupported by the live adapter
+  - name: linear-link
+    input:
+      layer:
+        name: team-observability
+        connections:
+          trackers: []
+        primitive-storage: {}
+        roadmap:
+          issue-trackers:
+            - name: legacy-roadmap
+              adapter: linear-graphql
+              capabilities: [read-items, write-link]
+              config:
+                team: observability
+              auth-env: LINEAR_TOKEN
+    expected-error: legacy source requests operations unsupported by the live adapter

@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import yaml
+
 
 REPO = Path(__file__).resolve().parent.parent
 SCRIPT = REPO / "scripts" / "scaffold_acceptance_fixture.py"
@@ -102,7 +104,27 @@ class AcceptanceFixtureTests(unittest.TestCase):
             self.assertIn("features: [inputs, findings, topics, ideas, decisions, tasks, workstreams, foundation, reports, notes, delivery, operations]", layers)
             self.assertIn("connections:", layers)
             self.assertIn("trackers:", layers)
+            self.assertIn("status-values: [Open, Closed]", layers)
             self.assertIn("marketplace:", layers)
+
+            layer_config = yaml.safe_load(layers)
+            configured_layers = {
+                item["name"]: item for item in layer_config["layers"]
+            }
+            personal_trackers = configured_layers["alice-personal"]["connections"]["trackers"]
+            team_trackers = configured_layers["team-observability"]["connections"]["trackers"]
+            self.assertEqual(personal_trackers[0]["capabilities"], [])
+            self.assertEqual(
+                team_trackers[0]["capabilities"],
+                ["create", "status", "label", "comment", "link"],
+            )
+            for tracker in personal_trackers + team_trackers:
+                self.assertIn("capabilities", tracker)
+            for layer_name in ("alice-personal", "team-observability"):
+                self.assertEqual(
+                    configured_layers[layer_name]["connections"]["writeback"],
+                    {"enabled": False, "capabilities": []},
+                )
 
             dashboard = read(personal / "dashboard.html")
             self.assertIn("Focus", dashboard)

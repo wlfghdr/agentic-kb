@@ -139,7 +139,7 @@ In practice that means:
 - **detail roadmaps / engineering backlogs per workstream** for domain-owned progress, demos, refinements, and feedback calls
 - **journeys** as the reference layer that explains what the work is supposed to make true in the product
 
-For roadmap adoption, keep the first proof path lean: start with exported tracker markdown bound through `ticket-export-markdown`, prove the artifact flow locally, then add live tracker adapters and write-back only after the export-backed path is trusted. For journey adoption, start with one end-to-end journey owned by the same layer that owns the roadmap scope, then split across layers only after the ownership boundary is clear.
+For roadmap adoption, keep the first proof path lean: start with exported tracker markdown bound through `ticket-export-markdown`, prove the artifact flow locally, then add live tracker adapters and confirmation-gated canonical mutations only after the export-backed path is trusted. For journey adoption, start with one end-to-end journey owned by the same layer that owns the roadmap scope, then split across layers only after the ownership boundary is clear.
 
 ### GitHub as an operating backbone
 
@@ -154,7 +154,7 @@ That profile includes:
 - a repo-local tracker workflow skill that teaches agents the same issue/project/PR rules CI enforces,
 - a manual checklist for native issue types, project/status fields, labels, milestones, branch protection, CODEOWNERS, parent/sub-issues, and required checks.
 
-The profile stays generic: no organization names, no product-specific labels, no hardcoded project IDs. Setup fills or stages the adopter-specific values and keeps write-back confirmation-gated.
+The profile stays generic: no organization names, no product-specific labels, no hardcoded project IDs. Setup fills or stages the adopter-specific values. Canonical issue creation, status, labels, comments, and links are supported only when `primitive-storage` selects the tracker, the adapter declares the operation, authentication is available, and the user confirms that mutation. Connection-digest write-back is a separate reserved capability and remains read-only. If capability or authentication prevents a canonical tracker operation, `/kb` returns an actionable manual proposal and waits for the tracker identifier instead of creating a competing KB record.
 
 ### The evaluation gate
 

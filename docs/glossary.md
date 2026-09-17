@@ -1,6 +1,6 @@
 # Glossary
 
-> **Version:** 0.10 | **Last updated:** 2026-06-17
+> **Version:** 0.11 | **Last updated:** 2026-09-17
 
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
@@ -14,7 +14,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Capture-only mode** | Synonym for **Adoption stage 1**. The team uses the `agentic-kb` directory contract, evaluation-gate scoring patterns, and audit trail by hand, without invoking the `/kb` agent in the loop. A valid stop, not a half-installed product. |
 | **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and other living shared docs. |
 | **Brief** | A living delivery-intent artifact under `_kb-delivery/briefs/`. It frames the problem, scope, non-goals, success signals, and handoffs before detailed design starts. |
-| **Connection** | A per-layer declaration of linked product repos, trackers, reference mode, and write-back policy under `.kb-config/layers.yaml`. |
+| **Connection** | A per-layer declaration of linked product repos, trackers, reference mode, canonical tracker capabilities and authentication sources, and the separate reserved connection-digest write-back policy under `.kb-config/layers.yaml`. |
 | **Contributor-scoped** | An artifact visibility mode used at multi-user contributor layers: the file belongs to one contributor rather than the whole layer. **This is an axis of the primitive, not of the layer role.** A `contributor` layer can hold both `contributor-scoped` artifacts (private to one author until promoted) and `shared` artifacts (one canonical record per layer) at the same time. Not the same thing as the `contributor` layer role; see `docs/REFERENCE.md` §1 "Two orthogonal axes" for the full mapping. |
 | **Decision** | A first-class artifact representing an open or resolved choice. One file per decision. Lifecycle: `gathering-evidence → under-discussion → proposed → decided`, optionally `revisiting`. |
 | **Delivery** | An optional feature family that adds `_kb-delivery/briefs/` and `_kb-delivery/specs/` for cross-role handoff artifacts between direction and execution. |
@@ -86,6 +86,7 @@ The following terms are **not** used in this spec; use the term on the right ins
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Expanded `Connection` to distinguish canonical tracker capability/authentication declarations from reserved connection-digest write-back policy; version bumped to 0.11 | PR #153 review |
 | 2026-06-17 | Added `Intake` as the canonical term for a request/input item (most commonly a feature intake) that is triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. The term was already used across `REFERENCE.md`, `first-run-acceptance.md`, `collaboration.md`, and the tracker-backed-primitives reference without a canonical definition. Version bumped to 0.10 | Terminology consistency sweep |
 | 2026-05-23 | Added `Capture routing` as a canonical term covering the default / explicit / reflection-driven modes and the human-confirmation gate. Extended the `Capture` entry with a pointer to the new term. Version bumped to 0.9 | Artifact layer routing |
 | 2026-05-18 | `Task` entry expanded with split-ownership rule against external trackers (KB tasks own knowledge work; tracker tickets own engineering work; not two views of the same thing). Closes audit finding #103 | Concept/onboarding/process audit |

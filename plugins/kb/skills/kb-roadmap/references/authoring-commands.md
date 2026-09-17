@@ -1,8 +1,8 @@
 # Reference: item authoring commands
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-17
 
-Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance:
+Roadmap items move through a creative and critical authoring arc before they enter the delivery pipeline. The skill ships four dedicated authoring commands, each with a distinct stance. `kb-journeys` reuses the stance guidance only; roadmap storage, tracker ownership, command shapes, and phase gates in this reference apply only to `/kb roadmap`:
 
 | Command | Stance | Produces |
 |---|---|---|
@@ -11,17 +11,17 @@ Roadmap items move through a creative and critical authoring arc before they ent
 | `review <item>` | **hybrid** — challenge then create | Feedback, risks, todos, mitigations, further ideas appended to the item |
 | `refine <item>` | **actionable** — delivery-shaped | Implementation plan sections appended to the item |
 
-All four operate on items inside `_kb-roadmaps/<scope>/items/` (markdown files, one per item). They respect the state markers from `state-machine.md` and the phase pipeline from `phase-gates.md`.
+All four roadmap commands operate on the canonical roadmap item selected by `primitive-storage.roadmap-items`. In `files` mode that is `_kb-roadmaps/<scope>/items/R-*.md`; in `tracker` mode it is the tracker item, with only an optional configured summary/backlink written locally; in `hybrid` mode it is the file until the confirmed promotion transfers canonical ownership to the tracker. They respect the state markers from `state-machine.md` and the phase pipeline from `phase-gates.md`.
 
 ## Common contract
 
 Every authoring command:
 
 1. Locates the item — either by path or by id lookup in the scope's index.
-2. Reads the full item + any linked plan item from the configured tracker (if one exists).
+2. Before the first tracker read, shows the structured external-read preflight from [`html-artifacts.md`](../../kb-management/references/html-artifacts.md): sources, item/scope filters and time window, execution mode, and output paths. The mode is `read-only` for preview-only invocations and `apply-capable follow-up` when `--apply` may offer a mutation after the read. Explicit invocation satisfies execution confirmation but never suppresses this disclosure. It then reads the full item, ordered authoring comments needed to resolve the latest marker, and any linked plan item.
 3. Applies its stance via the instructions below.
-4. Writes output into the item body under a dedicated H2 section, prefixed with a timestamp comment for audit.
-5. Appends a state marker transition if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.).
+4. Writes output into the canonical item's authoring history under a dedicated section, prefixed with a timestamp marker where the backing store supports it. File-backed items append to the body; tracker-backed items append one structured comment.
+5. Appends a state marker transition in that same history entry if the stance produces one (`ideate` → `draft`, `review` → `reviewed`, etc.). Tracker readers resolve the latest marker across the item body and ordered authoring comments.
 6. Never transitions phase gates silently — gate changes require `/kb roadmap --check-gates` + user confirmation.
 
 Item body layout after authoring passes:
@@ -58,7 +58,7 @@ Item body layout after authoring passes:
 ### Open questions
 ```
 
-Re-running a command appends a new timestamped section; it does not overwrite previous output. History is preserved in the file.
+Re-running a command appends a new timestamped section; it does not overwrite previous output. History is preserved in the file body or, for tracker-backed items, in ordered structured comments.
 
 ---
 
@@ -84,14 +84,14 @@ Turns a seed (KB idea, decision, informal note, or empty prompt) into one or mor
 ### Command shapes
 
 ```
-/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>]
-/kb roadmap ideate --scope NAME --prompt "text"
-/kb roadmap ideate --scope NAME                 # scans for unlinked seeds, proposes shortlist
+/kb roadmap ideate --scope NAME [--from <idea-or-decision-path>] [--apply]
+/kb roadmap ideate --scope NAME --prompt "text" [--apply]
+/kb roadmap ideate --scope NAME [--apply]       # scans for unlinked seeds, proposes shortlist
 ```
 
 ### Output
 
-Writes `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md` for each accepted item. Unaccepted candidates are logged to `.kb-log/YYYY-MM-DD.log` with rationale — visible on the next invocation so the user sees what was *not* taken.
+For each accepted item, branch on `primitive-storage.roadmap-items`: `files` writes `_kb-roadmaps/<scope>/items/R-YYYY-MM-DD-slug.md`; `tracker` proposes or creates the canonical tracker item and may write only the configured summary/backlink after its identifier is known; `hybrid` writes the file until its later confirmed promotion. Never create both an active `R-*.md` item and a tracker item for the same canonical work. Unaccepted candidates are logged to `.kb-log/YYYY-MM-DD.log` with rationale — visible on the next invocation so the user sees what was *not* taken.
 
 ---
 
@@ -111,10 +111,10 @@ Challenges an existing item. **Writes nothing by default** — output is in-chat
 ### Command shape
 
 ```
-/kb roadmap discuss <item-path-or-id> [--scope NAME]
+/kb roadmap discuss <item-path-or-id> [--scope NAME] [--write] [--apply]
 ```
 
-`/discuss` mode (the global write-free mode from `references/discuss-mode.md`) applies automatically to this command — `discuss` is write-free by default. To persist the critique into the item body, re-run with `--write`.
+`/discuss` mode (the global write-free mode from `references/discuss-mode.md`) applies automatically to this command — `discuss` is write-free by default. To persist the critique, re-run with `--write` for a file-backed item or `--apply` for a tracker-backed item.
 
 ### Output
 
@@ -134,7 +134,7 @@ Open questions (N)
   1. ...
 ```
 
-With `--write`, the same content is appended as a `## Critique (<date>)` section.
+With `--write`, the same content is appended as a `## Critique (<date>)` section in a file-backed item. With `--apply`, it is posted as a structured comment on a tracker-backed item after the normal mutation gates pass.
 
 ---
 
@@ -153,7 +153,7 @@ The hybrid pass. First runs the `discuss` stance, then pivots into creative cont
 ### Command shape
 
 ```
-/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only]
+/kb roadmap review <item-path-or-id> [--scope NAME] [--discuss-only] [--apply]
 ```
 
 `--discuss-only` stops after the critique section (use this when you want the `discuss` output in the item body without the creative contribution).
@@ -174,7 +174,7 @@ Appends `## Review (<date>)` to the item body with:
 - [for <risk-id>] <outcome-shaped todo>
 ```
 
-Transitions the item's `status: draft` to `status: reviewed` marker on success. A second `review` run appends a new section — the marker history records the re-review.
+Transitions the item's `status: draft` to `status: reviewed` marker on success. For a tracker-backed item, the structured review comment contains both the `## Review (<date>)` section and `<!-- status: reviewed @ <timestamp> -->`; the ordered comment stream is the canonical authoring history, so no separate body-update capability is required. A second `review` run appends a new section or comment — the marker history records the re-review.
 
 ---
 
@@ -190,12 +190,12 @@ Turns a reviewed item into actionable delivery detail. Stance is **engineering-g
 - **Identify interfaces + contracts.** If the item touches APIs, file formats, or protocols, list them with current state and target state.
 - **List open questions explicitly.** If any question blocks delivery start, mark it with `[blocks-start]`.
 - **Never promise dates.** The refine output is sequencing and sizing, not scheduling.
-- **Propose a gate transition.** If the refined content satisfies the `defined` gate criteria, emit a `[propose] phase: defined` line at the bottom of the section. The user applies via `/kb roadmap --check-gates` + confirm.
+- **Propose a gate transition.** If the refined content appears to satisfy the `defined` gate criteria, emit a `[propose] phase: defined` line at the bottom of the section. The user verifies it with `/kb roadmap --check-gates --scope <name>`, then applies the reviewed transition through `/kb roadmap sync --scope <name> --apply` and its per-write confirmation.
 
 ### Command shape
 
 ```
-/kb roadmap refine <item-path-or-id> [--scope NAME] [--force]
+/kb roadmap refine <item-path-or-id> [--scope NAME] [--force] [--apply]
 ```
 
 ### Output
@@ -223,14 +223,14 @@ Appends `## Refinement (<date>)` with:
 
 ## Authoring + trackers
 
-When the scope has a tracker with `write-*` capabilities declared, each authoring command offers (but never silently performs) a tracker side-effect:
+When `primitive-storage.roadmap-items` selects a tracker, each authoring command may offer (but never silently perform) the operation declared by the matching canonical connection:
 
 | Command | Offered tracker write |
 |---|---|
-| `ideate` | Create a new tracker item (if `write-item`) — dry-run preview first |
-| `discuss` | Post critique as a comment on the linked tracker item (if `write-comments`) |
-| `review` | Post a review summary + top risks as a comment (if `write-comments`) |
-| `refine` | Attach the implementation plan as a comment and propose a status transition to `defined` (if `write-comments` + `write-status`) |
+| `ideate` | Propose a new canonical roadmap item; apply only when `primitive-storage.roadmap-items` selects the tracker and its connection declares `create` |
+| `discuss` | Post critique on the canonical tracker item only when its connection declares `comment` |
+| `review` | Post one structured comment containing the review section, top risks, and `reviewed` state marker on the canonical tracker item only when its connection declares `comment` |
+| `refine` | Post the implementation plan and proposed `defined` transition when the canonical connection declares `comment`; `--check-gates` only verifies criteria, and applying the reviewed transition later through `sync --apply` separately requires `status` |
 
 All tracker writes are gated by `--apply` + interactive confirmation, matching the safety rules in `issue-trackers.md`.
 
@@ -238,4 +238,11 @@ All tracker writes are gated by `--apply` + interactive confirmation, matching t
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-17 | Made authoring preflights distinguish preview-only reads from invocations with an apply-capable follow-up | PR #153 review |
+| 2026-09-17 | Required the external-read preflight before tracker-backed authoring fetches and scoped roadmap ownership/tracker rules away from journey commands | PR #153 review |
+| 2026-09-17 | Routed reviewed phase application through confirmation-gated `sync --apply`; `--check-gates` remains read-only | PR #153 review |
+| 2026-09-17 | Added `--apply` to tracker-capable authoring command grammar and limited `refine` itself to the `comment` capability; a later gate transition independently requires `status` | PR #153 review |
+| 2026-09-16 | Defined structured tracker comments as the canonical authoring history for review sections and state markers, avoiding an undeclared body-update capability | PR #153 review |
+| 2026-09-16 | Made every authoring command storage-mode-aware so tracker mode operates on one canonical tracker item and writes only an optional local summary/backlink | PR #153 review |
+| 2026-09-16 | Version aligned to 7.0.0 and authoring writes moved from legacy `write-*` names to canonical ownership and connection capabilities | Issue #152 review |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

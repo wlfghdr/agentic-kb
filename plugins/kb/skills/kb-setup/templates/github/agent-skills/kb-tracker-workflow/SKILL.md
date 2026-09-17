@@ -42,14 +42,21 @@ Never leave two active records pretending to own the same decision, task, featur
 
 ## Required Preflight
 
-Before creating or updating any tracker item:
+First classify whether the requested item belongs to a KB primitive family configured in the active layer's `primitive-storage`. For a configured tracker-backed KB primitive, before creating or updating its tracker item:
 
 1. Read `.kb-config/layers.yaml`.
 2. Find the active layer.
 3. Read `connections.trackers[]` and `primitive-storage`.
 4. Identify whether the requested primitive is `files`, `tracker`, or `hybrid`.
-5. Search existing KB files and tracker items for duplicates when tools are available.
-6. Show the proposed mutation and wait for explicit confirmation.
+5. Require the exact canonical operation in the selected tracker's `capabilities`.
+6. Verify authentication and suitable tracker tooling are available.
+7. Before any tracker duplicate search, show the structured external-read preflight: tracker sources, query/filter and time window, read-only duplicate-search intent, and the proposed mutation or local output it informs. Explicit invocation authorizes the search but does not suppress this disclosure.
+8. Search existing KB files and tracker items for duplicates when tools are available.
+9. Show the exact target and mutation and wait for explicit confirmation of that one action.
+
+The order is strict: `primitive-storage` chooses ownership; tracker capabilities declare implemented operations; authentication makes an operation usable now; confirmation authorizes one proposed mutation. Confirmation cannot manufacture a missing capability or authentication. The separate `connections.writeback` block is reserved for connection-digest-derived mutations and has no bearing on canonical tracker CRUD.
+
+For ordinary repository work that has no configured KB primitive family—such as a Bug, Content Update, or Governance Change—do not invent a `primitive-storage` owner or apply the canonical-KB capability gate. Follow the repository issue/PR rules below, verify authentication and suitable tooling, show the exact mutation, and require confirmation before applying it.
 
 Before changing repository files for non-trivial work:
 
@@ -166,11 +173,13 @@ When changing `.github/workflows/`, issue templates, PR templates, labeler rules
 ## Behavior
 
 - For `files`, create or update the normal KB file.
-- For `tracker`, create or update the configured tracker item only after confirmation, then write KB summaries or backlinks only when useful.
+- For `tracker`, create or update the configured tracker item only when ownership, declared capability, authentication, and confirmation gates all pass, then write KB summaries or backlinks only when useful.
 - For `hybrid`, keep early exploration in files and propose tracker promotion when the item crosses the configured sharing boundary.
 - Never use labels to duplicate native type, status, priority, or milestone metadata.
 - Never post comments, change status, apply labels, link issues, or create items without confirmation.
-- Log every confirmed write-back with target identifier, action, and evidence.
+- When a capability or authentication is missing, return the complete issue/update proposal with exact manual UI/CLI/API steps. Wait for the resulting tracker identifier, then record only the configured summary/backlink and handoff log; never create a competing canonical KB record.
+- Keep connection digests read-only even if `connections.writeback.enabled` is manually set to `true`; that reserved setting is a no-op.
+- Log every applied or manually completed canonical tracker mutation with target identifier, action, and evidence.
 
 ## Typical Read-Only Checks
 

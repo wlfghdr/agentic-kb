@@ -1,6 +1,6 @@
 # Reference: mismatch findings
 
-> **Version:** 6.3.0 | **Last updated:** 2026-06-02
+> **Version:** 7.0.0 | **Last updated:** 2026-09-16
 
 Mismatch findings are the primary value of the skill on imperfect datasets. Where correlation fails, the artifact surfaces *why* — not silently discard.
 
@@ -82,4 +82,5 @@ Confirmed matches and suppressions persist in `.kb-scripts/roadmap-state.json` s
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
 | 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
