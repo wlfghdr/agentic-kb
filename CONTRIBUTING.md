@@ -21,8 +21,8 @@ Read:
 ### Every doc change must…
 
 1. **Update the doc's own changelog** — each long-lived spec/concept file has a `## Changelog` section at the bottom. Append a newest-first entry: `| YYYY-MM-DD | what changed | source |`.
-2. **Update `CHANGELOG.md`** — add an `Added`/`Changed`/`Fixed`/`Removed` line under `## [Unreleased]`.
-3. **Bump version fields where applicable** — if a spec rule changes semantics, bump the doc's version. If a command surface changes, bump the root `VERSION` (PATCH for prose, MINOR for new rules, MAJOR for breaking).
+2. **Use a Conventional Commit PR title** — `docs:`/`fix:` (PATCH), `feat:` (MINOR), `feat!:` (MAJOR: breaking layout, command surface, or file formats). PRs are squash-merged; the title is the release note.
+3. **Bump the doc's own version where applicable** — if a spec rule changes semantics, bump that doc's `**Version:**`. Never edit the root `VERSION`, plugin manifest versions, or the root `CHANGELOG.md`; release-please maintains them in its release PR.
 4. **Pass CI** — markdown lint, dead-link check, consistency check. A red PR is not ready for review (see [AGENTS.md](AGENTS.md) rule 6).
 5. **No domain lock-in** — this spec is intentionally IDE-agnostic, harness-agnostic, and vendor-neutral. Examples are welcome, but the rules must not hardcode any specific product, company, or tool.
 
@@ -38,8 +38,7 @@ When extending the marketplace/package contract for skills or agents:
 ### PR checklist
 
 - [ ] Spec doc changelog updated (if a spec doc changed)
-- [ ] Root `CHANGELOG.md` updated under `## [Unreleased]`
-- [ ] `VERSION` bumped if the change is user-visible
+- [ ] PR title is a Conventional Commit (it becomes the release note)
 - [ ] Local checks pass (or CI green)
 - [ ] No vendor-specific terms added to spec docs (see `scripts/check_consistency.py` guard list)
 

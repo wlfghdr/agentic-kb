@@ -23,8 +23,10 @@ The spec must remain IDE-agnostic, harness-agnostic, and vendor-neutral. Example
 Any edit to a spec/concept doc MUST:
 
 - append a row to that file's own `## Changelog` section (when the file has one — see "Which files have a per-file changelog" below),
-- add a line under `## [Unreleased]` in the root `CHANGELOG.md`,
-- bump the relevant version field if the change alters semantics (see [CHANGELOG.md](CHANGELOG.md) for PATCH/MINOR/MAJOR rules).
+- bump that doc's own `**Version:**` if the change alters its semantics,
+- use a Conventional Commit PR title (`fix:`, `docs:`, `feat:`, `feat!:` for breaking spec changes). PRs are squash-merged and the title becomes the release note.
+
+Never edit the root `VERSION`, the plugin manifest versions, or the root `CHANGELOG.md` in a change PR. release-please generates them in its release PR.
 
 **Which files have a per-file changelog (and which do not):**
 
