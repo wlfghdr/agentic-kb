@@ -19,6 +19,11 @@ The spec uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR
 
 ## [Unreleased]
 
+## [7.0.0] — 2026-10-14
+
+> Releases v6.4.0–v6.4.1 were tagged by the daily release job without matching
+> CHANGELOG sections; their changes are included in this section.
+
 ### Added
 
 - **Glossary: `Intake`** — added a canonical definition for *intake* (most commonly *feature intake*): a request/input item that is triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. The term was already used across `docs/REFERENCE.md`, `docs/first-run-acceptance.md`, `docs/collaboration.md`, and `plugins/kb/skills/kb-management/references/tracker-backed-primitives.md` without a canonical entry. The later Connection clarification brings the glossary to 0.11.
