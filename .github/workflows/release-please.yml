@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v5
+        id: release
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
@@ -23,3 +24,12 @@ jobs:
           # secret (fine-grained PAT: contents + pull requests write) so release PRs
           # run validate.yml; without it the built-in token is used.
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+
+      # Every PR needs an owner: the release PR goes to the human who decides
+      # when to release. Merging it stays a deliberate human action.
+      - name: Assign release PR
+        if: ${{ steps.release.outputs.pr }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ fromJSON(steps.release.outputs.pr).number }}
+        run: gh pr edit "$PR_NUMBER" -R "$GITHUB_REPOSITORY" --add-assignee wlfghdr
