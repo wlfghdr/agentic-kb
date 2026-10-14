@@ -18,6 +18,23 @@ GitHub release.
 | `feat:` | MINOR |
 | `feat!:` / `BREAKING CHANGE:` (directory layout, command surface, file formats) | MAJOR |
 
+## [8.0.0](https://github.com/wlfghdr/agentic-kb/compare/v7.0.0...v8.0.0) (2026-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* KB artifacts no longer have inline changelogs or version headers, HTML artifacts use dated filenames without versions and no changelog appendix, and check_html_artifacts requires a Sources heading and a "generated <date>" watermark.
+
+### Added
+
+* drop per-file versions and changelogs from the spec and its artifacts ([#157](https://github.com/wlfghdr/agentic-kb/issues/157)) ([ce4bd55](https://github.com/wlfghdr/agentic-kb/commit/ce4bd55eee741b74e58faad5187942f0337c8e5d))
+
+
+### Fixed
+
+* **ci:** skip release PR assignment cleanly when no PR was created ([#156](https://github.com/wlfghdr/agentic-kb/issues/156)) ([5bd9465](https://github.com/wlfghdr/agentic-kb/commit/5bd94654fb81aaa7133227ee29897adc7af5a8ca))
+* keep the version badge intact across release-please bumps ([#159](https://github.com/wlfghdr/agentic-kb/issues/159)) ([bcac98b](https://github.com/wlfghdr/agentic-kb/commit/bcac98bf7d0fba5f76e2df811a1b7692ccfb2ae4))
+
 ## [7.0.0] — 2026-10-14
 
 > Releases v6.4.0–v6.4.1 were tagged by the daily release job without matching
