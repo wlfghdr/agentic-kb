@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v7.0.0-green.svg)](CHANGELOG.md) <!-- x-release-please-version -->
+[![Spec version](https://img.shields.io/static/v1?label=spec&message=v7.0.0&color=green)](CHANGELOG.md) <!-- x-release-please-version -->
 
 ---
 
