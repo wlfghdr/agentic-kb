@@ -36,6 +36,7 @@
 
 ## Required Follow-up
 
+
 - Decision / approval: {{DECISION_LINK}}
 - Status report update: {{STATUS_UPDATE_ACTION}}
 - Delivery report follow-up: {{DELIVERY_UPDATE_ACTION}}
