@@ -1,7 +1,6 @@
 ---
 name: kb-journeys
 description: Author and publish user/customer/product journeys as living markdown with generated HTML views and standalone UI mocks. Journeys are hierarchical (journey → phase → sub-journey → step) with entry/exit conditions, interfaces, and readiness assessments. The skill ships authoring commands (ideate, discuss, review, refine) shared with kb-roadmap's contract, a neutral HTML template whose tokens are set by the adopter's `.kb-config/artifacts.yaml`, and a mock-extraction pipeline that renders every embedded UI mock as a linkable standalone page. Triggered by `/kb journeys` and journey-authoring phrases.
-version: 1.0.0
 triggers:
   - "/kb journeys"
   - "/kb journey"
@@ -115,7 +114,6 @@ Every journey file opens with a metadata block and required sections. See `refer
 > **Sub-Journey**: <one-line path summary>
 > **Tier**: <tier label>
 > **Target duration**: <duration>
-> **Version**: <n.n> | **Last updated**: YYYY-MM-DD
 
 ## Entry Conditions
 - ...
@@ -227,14 +225,3 @@ The journey template reads the same tokens block as `kb-roadmap` (`--fg`, `--bg`
 Stable setup-proposed skill (`v1.0.0`). Setup offers it when the user's role, goals, sources, or desired outputs imply product-management journey work. Activate by declaring `journeys:` in `.kb-config/layers.yaml` + `journeys-template:` in `.kb-config/artifacts.yaml` for the confirmed owning layer.
 
 The shipped helper scripts cover artifact rendering and standalone-mock extraction, including no-extra-dependency fallback paths when `python-markdown` or `beautifulsoup4` are absent. Authoring and audit flows use the same explicit command and confirmation gates documented in this skill.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-05-24 | Added a concurrency-contract pointer so journey adopters can find the shared-layer `/kb sync` and `/kb audit` reconciliation rules from the skill spec. Closes #124 | `/kb sync` contract reconciliation |
-| 2026-05-24 | Added `references/audit.md` to the reference list so the advertised `/kb journeys audit` command points at its canonical J-rule contract | Issue #125 |
-| 2026-05-15 | Promoted the journeys skill contract to stable `v1.0.0`, removed draft-status frontmatter, and clarified helper coverage without presenting authoring/audit as unfinished | Release-readiness audit |
-| 2026-05-08 | Bumped to v0.2.0, removed the stale `overview.html.hbs` template claim, and clarified current helper-script coverage plus optional dependency fallbacks | Integration pass |
-| 2026-04-30 | Promoted journey work into the product-management surface: setup-derived ownership, broader journey/flow triggers, and value-oriented step-title rules | Product-management surface integration |
-| 2026-04-22 | Removed internal-repo reference from extract_mocks.py description | Vendor-neutrality review |

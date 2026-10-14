@@ -1,7 +1,5 @@
 # Naming
 
-> Last updated: **{{DATE}}**
-
 Optional. Naming conventions you follow — for topics, findings, decisions, workstreams, presentations.
 
 <!-- Example:
@@ -9,13 +7,5 @@ Optional. Naming conventions you follow — for topics, findings, decisions, wor
 - Findings: "YYYY-MM-DD-slug.md", descriptive slug.
 - Decisions: "D-YYYY-MM-DD-slug.md".
 - Workstreams: single word, kebab-case.
-- Presentations: "<topic>-v<version>.html".
+- Presentations: "YYYY-MM-DD-<topic>.html" (as-of date; regenerate in place).
 -->
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| {{DATE}} | Initial setup | — |

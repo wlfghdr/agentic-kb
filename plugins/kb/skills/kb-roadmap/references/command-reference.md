@@ -1,7 +1,5 @@
 # Reference: `/kb roadmap` command reference
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-17
-
 ## Base command
 
 The behavioral spec below describes the intended `/kb roadmap` surface. The shipped helper script in this repo currently implements config-driven generation for detail/roll-up scopes plus `--dry-run`; interactive mutation flows remain draft-spec behavior.
@@ -143,16 +141,3 @@ See `references/authoring-commands.md` for stance rules, output shapes, and trac
 | 4 | User aborted during interactive prompt |
 
 Exit code 3 is a hook for CI / scheduled runs: fail the job when new unplanned-delivery above threshold appears.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Made phase proposals consumed at the proposed or any later configured phase, preventing stale markers from proposing regressions | PR #153 review |
-| 2026-09-17 | Required the structured external-read preflight before `sync` loads tracker-backed authoring history | PR #153 review |
-| 2026-09-17 | Defined how `sync` discovers, verifies, and applies proposed authoring phase markers | PR #153 review |
-| 2026-09-17 | Added `--apply` and canonical ownership/capability gates to mismatch-link writes while retaining manual mappings for noncanonical sources | PR #153 review |
-| 2026-09-17 | Added `--apply` to each tracker-capable item-authoring command shape | PR #153 review |
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-08 | Clarified which `/kb roadmap` behaviors are covered by the shipped helper script versus the broader draft command spec | Integration pass |

@@ -1,7 +1,5 @@
 # GitHub Governance Profile
 
-> **Version:** 1.1 | **Last updated:** 2026-09-16
-
 This reference defines the generic GitHub setup package that `/kb setup` should generate when an adopter chooses GitHub Issues, GitHub Projects, or a GitHub repository as the operational backbone for shared KB work.
 
 The goal is not just to create issue forms. The goal is to give the adopter a working issue-and-PR operating model with agent-readable rules, CI guardrails, and clear human approval boundaries.
@@ -83,7 +81,7 @@ Pull requests should:
 - match the issue scope or update/create follow-up issues when scope changes,
 - list validation commands and manual checks,
 - name affected KB artifacts or tracker items,
-- include changelog/version impact when the adopter configured those policies,
+- include release impact (Conventional Commit PR title, version-impact label when the adopter configured one),
 - avoid merging, approving, or enabling auto-merge by the same agent that authored the PR.
 
 ### CI and local-agent parity
@@ -139,15 +137,7 @@ Setup is not complete for this profile until:
 - every generated YAML file parses,
 - `.kb-config/layers.yaml` declares the tracker and `primitive-storage` ownership,
 - each live tracker entry declares its implemented canonical CRUD capabilities and reserved connection-digest write-back stays disabled,
-- the generated PR template asks for issue links, affected KB/tracker artifacts, validation, and changelog/version impact,
+- the generated PR template asks for issue links, affected KB/tracker artifacts, validation, and release impact,
 - the generated guardrail workflow passes on a dry PR or local YAML parse check,
 - the generated skill states the same rules that the workflow enforces,
 - the manual setup checklist names the remaining GitHub UI/API settings.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Limited issue-only status mutations to open/close unless project-field metadata makes workflow transitions executable | Issue #152 review |
-| 2026-09-16 | Required generated tracker guidance to enforce canonical CRUD ownership/capability/authentication/confirmation precedence, manual fallback, and separation from reserved digest write-back | Issue #152 |
-| 2026-05-17 | Initial generic GitHub governance profile covering issue-driven work, native metadata, PR discipline, CI/local-agent parity, generated files, manual setup checklist, and verification | Tracker-backed onboarding hardening |

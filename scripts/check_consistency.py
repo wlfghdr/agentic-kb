@@ -3,8 +3,6 @@
 Consistency + version + vendor-neutrality checks for the agentic-kb spec.
 
 Fails CI if:
-  - any long-lived spec/concept doc is missing a `## Changelog` section
-  - any long-lived doc is missing a `**Version:**` field
   - the root VERSION file is missing or not in X.Y.Z form
   - any spec doc contains a forbidden vendor-specific term
   - any internal markdown link is broken
@@ -25,12 +23,6 @@ LONG_LIVED_DIRS: list[Path] = [
     REPO / "plugins" / "kb" / "skills",
 ]
 OPTIONAL_LONG_LIVED = [REPO / "docs" / "REFERENCE.md", REPO / "docs" / "glossary.md"]
-
-# Files that are allowed to not have a version header.
-EXEMPT_FROM_VERSION = {
-    REPO / "docs" / "roadmap.md",
-}
-
 
 # Terms we forbid in the public spec.
 #
@@ -57,7 +49,6 @@ def _load_external_blocklist() -> list[str]:
 
 VERSION_RE = re.compile(r"\*\*Version:\*\*\s*(\d+)\.(\d+)(?:\.(\d+))?")
 FRONTMATTER_VERSION_RE = re.compile(r"^version:\s*(\d+)\.(\d+)(?:\.(\d+))?\s*(?:#.*)?$", re.MULTILINE)
-CHANGELOG_RE = re.compile(r"^##\s+Changelog\s*$", re.MULTILINE)
 HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 INLINE_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 COMMAND_COUNT_CLAIM_RE = re.compile(r"\b(\d+)[ -]command(?:s)?\b", re.IGNORECASE)
@@ -128,22 +119,6 @@ def is_external(target: str) -> bool:
         lower.startswith(p)
         for p in ("http://", "https://", "mailto:", "tel:", "ftp://")
     )
-
-
-def check_versions_and_changelogs() -> list[str]:
-    errors = []
-    for doc in iter_long_lived_docs():
-        text = doc.read_text(encoding="utf-8")
-        rel = doc.relative_to(REPO)
-        if doc not in EXEMPT_FROM_VERSION and not has_version_field(text):
-            errors.append(f"MISSING **Version:** field: {rel}")
-        if not CHANGELOG_RE.search(text):
-            errors.append(f"MISSING '## Changelog' section: {rel}")
-
-    # Doc **Version:** headers version each doc's own contract and change only
-    # with that doc (logged in its own ## Changelog). They are deliberately not
-    # tied to the aggregate VERSION that release-please bumps.
-    return errors
 
 
 def check_root_version() -> list[str]:
@@ -396,7 +371,6 @@ def main() -> int:
     all_errors += check_changelog_exists()
     all_errors += check_changelog_release_hygiene()
     all_errors += check_manifest_versions()
-    all_errors += check_versions_and_changelogs()
     all_errors += check_forbidden_terms()
     all_errors += check_internal_links()
     all_errors += check_command_list_drift()

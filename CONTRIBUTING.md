@@ -20,9 +20,9 @@ Read:
 
 ### Every doc change must…
 
-1. **Update the doc's own changelog** — each long-lived spec/concept file has a `## Changelog` section at the bottom. Append a newest-first entry: `| YYYY-MM-DD | what changed | source |`.
+1. **No per-file versioning** — do not add version numbers, dates, or changelog sections to files; Git history is the record.
 2. **Use a Conventional Commit PR title** — `docs:`/`fix:` (PATCH), `feat:` (MINOR), `feat!:` (MAJOR: breaking layout, command surface, or file formats). PRs are squash-merged; the title is the release note.
-3. **Bump the doc's own version where applicable** — if a spec rule changes semantics, bump that doc's `**Version:**`. Never edit the root `VERSION`, plugin manifest versions, or the root `CHANGELOG.md`; release-please maintains them in its release PR.
+3. **Leave release files alone** — never edit the root `VERSION`, plugin manifest versions, or the root `CHANGELOG.md`; release-please maintains them in its release PR.
 4. **Pass CI** — markdown lint, dead-link check, consistency check. A red PR is not ready for review (see [AGENTS.md](AGENTS.md) rule 6).
 5. **No domain lock-in** — this spec is intentionally IDE-agnostic, harness-agnostic, and vendor-neutral. Examples are welcome, but the rules must not hardcode any specific product, company, or tool.
 
@@ -37,7 +37,6 @@ When extending the marketplace/package contract for skills or agents:
 
 ### PR checklist
 
-- [ ] Spec doc changelog updated (if a spec doc changed)
 - [ ] PR title is a Conventional Commit (it becomes the release note)
 - [ ] Local checks pass (or CI green)
 - [ ] No vendor-specific terms added to spec docs (see `scripts/check_consistency.py` guard list)
@@ -82,9 +81,3 @@ The pre-push hook enforces this before every push. Emergency bypass: `git push -
 ## Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Be kind, be precise, be honest about what you don't know.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-10-14 | Contribution flow switched to Conventional Commit PR titles; root `CHANGELOG.md`, `VERSION` and plugin manifest versions are maintained by the release-please PR instead of by hand. Added this per-file changelog (required by AGENTS Rule 3) | Release-please migration |

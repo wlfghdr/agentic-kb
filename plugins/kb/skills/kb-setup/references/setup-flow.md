@@ -1,7 +1,5 @@
 # Setup Flow — step by step
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 Full walkthrough the skill follows on `/kb setup`.
 
 For the deterministic acceptance baseline used to verify real onboarding and team rollout quality, see [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
@@ -76,7 +74,7 @@ Instantiate these files from `templates/`:
 - `_kb-tasks/focus.md` ← `focus.md`
 - `_kb-tasks/backlog.md` ← `backlog.md`
 - Per workstream: `_kb-workstreams/<name>.md` ← `workstream.md`
-- Per theme: `_kb-references/topics/<theme-slug>.md` ← `topic.md` (empty changelog)
+- Per theme: `_kb-references/topics/<theme-slug>.md` ← `topic.md`
 - `index.html`, `dashboard.html`, `.nojekyll`
 
 When `roadmaps` or `journeys` are enabled, render their config blocks into `.kb-config/layers.yaml` under the owning layer and their template blocks into `.kb-config/artifacts.yaml`. The first-run default is one owning layer for both artifacts unless the user explicitly selects different owners.
@@ -271,8 +269,7 @@ The current layer's VMG is the merged local view. Upstream updates should never 
 When the user edits `vmg.md` directly or asks to update their VMG, the skill should:
 
 1. propose the change inline,
-2. append a row to the file's `## Changelog` section,
-3. offer a commit if the change is substantive.
+2. offer a commit if the change is substantive (the commit message says what changed).
 
 ### Conflict handling
 
@@ -300,18 +297,3 @@ You're set up. Try:
 ```
 
 After the quickstart, validate the deterministic rollout baseline against [`docs/first-run-acceptance.md`](../../../../../docs/first-run-acceptance.md).
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Restricted legacy tracker normalization to unambiguous live adapters and included canonical authentication-source names in the confirmed migration diff | PR #153 review |
-| 2026-09-16 | Added existing-workspace capability migration for known pre-7.0 live adapters while preserving explicit read-only and custom/export-backed configurations | Issue #152 review |
-| 2026-09-16 | Aligned tracker setup verification with canonical CRUD capability declarations, reserved digest write-back, strict gate precedence, and manual fallback | Issue #152 |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-06-02 | Changed the setup-flow default so shared process/operational primitives render GitHub Issues-backed `primitive-storage` by default, with explicit file-backed fallback only when GitHub Issues is unavailable or rejected | Issue #145 |
-| 2026-05-18 | VS Code IDE-configuration note rewritten: the `chat.plugins.marketplaces` setting belongs to user-level `settings.json` (workspace settings not honored per the official docs), the surrounding feature is Microsoft Preview, and `scripts/install --target vscode` is recommended as the stable path. Closes audit finding #97 | Concept/onboarding/process audit |
-| 2026-05-18 | Phase order flipped to match `kb-setup` SKILL: phase 1 is now "Workspace and harness facts" (frontloaded), phase 2 is the open-ended "Context and goals" block. Expert-mode skip path made explicit — phase 1 is never skipped because the wizard needs workspace root + IDE targets before it writes anything. Closes audit finding #98 | Concept/onboarding/process audit |
-| 2026-05-17 | Added tracker-backbone setup flow: `primitive-storage` rendering, GitHub governance profile scaffold (issue templates, PR template, labeler, CI, checklist, repo-local skill), Jira mapping checklist, and verification rules for tracker-backed primitives | Tracker-backed onboarding design |
-| 2026-04-30 | Added setup guidance for deriving, placing, scaffolding, and verifying roadmap/journey product-management artifacts from role/goals instead of requiring users to know feature names upfront | Product-management surface integration |
-| 2026-04-27 | Added explicit VMG sourcing and update guidance for setup, including URL/file/direct-text population modes, parent-digest updates, manual edits, and conflict handling. Also removed the stale question-number reference from the `vmg.md` scaffold bullet | Documentation gap follow-up |

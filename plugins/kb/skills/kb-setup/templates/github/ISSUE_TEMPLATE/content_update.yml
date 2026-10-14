@@ -28,6 +28,6 @@ body:
     id: governance
     attributes:
       label: Governance notes
-      description: Changelog, approval, ownership, or publication requirements.
+      description: Approval, ownership, or publication requirements.
     validations:
       required: false

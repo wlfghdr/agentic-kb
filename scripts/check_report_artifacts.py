@@ -25,7 +25,6 @@ TEMPLATES = {
             "## Decisions and Asks",
             "## Risks and Blockers",
             "## Shared Artifact Links",
-            "## Change Log",
         ],
     },
     "report-delivery.md": {

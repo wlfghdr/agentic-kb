@@ -1,7 +1,5 @@
 # Role Handbook
 
-> **Version:** 0.1.0 | **Last updated:** 2026-05-14
-
 A role-by-role companion to [`docs/operating-model.md`](./operating-model.md). The operating model explains *which loops exist* and *which artifacts make them legible*; this handbook flips that view so each role can find its own daily reality, top commands, and primary artifacts in one place.
 
 This document is descriptive, not prescriptive. Real titles vary; real teams blend roles. Use the closest match and adapt.
@@ -295,11 +293,3 @@ Open one with `/kb note retro [topic]`. The template lives at [`plugins/kb/skill
 | Learning | Everyone — the retro pattern, findings, and topic updates are the connective tissue |
 
 No role lives in one loop. The handbook lists where each role spends the most time, not where it is restricted to.
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-05-14 | Initial role handbook covering PM, EM, staff/principal engineer, tech lead, engineer, designer, QA, SRE/on-call, security, data; introduced the retrospective pattern as a note variant tied to `_kb-notes/` with a dedicated template | Daily-reality gap audit across software-company roles |

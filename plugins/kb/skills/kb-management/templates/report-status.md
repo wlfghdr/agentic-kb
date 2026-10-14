@@ -35,14 +35,7 @@
 
 ## Shared Artifact Links
 
-
 - Roadmap: {{ROADMAP_LINK}}
 - Journeys: {{JOURNEY_LINK}}
 - Delivery report: {{DELIVERY_REPORT_LINK}}
 - Relevant findings / topics: {{REFERENCE_LINKS}}
-
-## Change Log
-
-| Date | What changed | Why it matters |
-|------|-------------|----------------|
-| {{DATE}} | Initial status report source | Establishes the current shared operating picture |

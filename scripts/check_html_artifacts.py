@@ -10,8 +10,8 @@ elsewhere). This check is therefore a placeholder that:
       * self-contained (no external <script src=...> or <link rel=stylesheet href=...> pointing
         outside the file — allowed: data: URIs, inline)
       * both light and dark theme present (strings 'theme="light"' / 'theme="dark"' or CSS classes)
-      * watermark string on the intro slide (pattern "v<num>.<num> · <date>")
-      * appendix with a "Changelog" heading
+      * watermark string on the intro slide (pattern "generated <date>")
+      * appendix with a "Sources" heading
 """
 from __future__ import annotations
 
@@ -35,8 +35,8 @@ DARK_THEME_PATTERNS = [
     r"""theme[-"':=\s]*["']?dark""",
     r"prefers-color-scheme:\s*dark",
 ]
-WATERMARK_RE = re.compile(r"v\d+\.\d+\s*[·•\-–]\s*\d{4}-\d{2}-\d{2}")
-CHANGELOG_HEADING_RE = re.compile(r"<h[1-6][^>]*>\s*Changelog\s*</h[1-6]>", re.IGNORECASE)
+WATERMARK_RE = re.compile(r"generated\s+\d{4}-\d{2}-\d{2}")
+SOURCES_HEADING_RE = re.compile(r"<h[1-6][^>]*>\s*Sources\s*</h[1-6]>", re.IGNORECASE)
 
 
 def check_artifact(path: Path) -> list[str]:
@@ -55,10 +55,10 @@ def check_artifact(path: Path) -> list[str]:
         errors.append(f"{rel}: dark theme marker not found")
 
     if not WATERMARK_RE.search(text):
-        errors.append(f"{rel}: no watermark in the form 'v<major>.<minor> · <YYYY-MM-DD>' found")
+        errors.append(f"{rel}: no watermark in the form 'generated <YYYY-MM-DD>' found")
 
-    if not CHANGELOG_HEADING_RE.search(text):
-        errors.append(f"{rel}: no 'Changelog' heading found (expected in appendix)")
+    if not SOURCES_HEADING_RE.search(text):
+        errors.append(f"{rel}: no 'Sources' heading found (expected in appendix)")
 
     return errors
 

@@ -29,10 +29,3 @@
 ## Dependencies and handoffs
 
 {{DEPENDENCIES}}
-
----
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| {{DATE}} | Initial brief | {{SOURCE}} |

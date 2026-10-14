@@ -148,7 +148,7 @@ If a team already uses GitHub Issues, GitHub Projects, and pull requests as its 
 That profile includes:
 
 - issue forms for feedback, ideas, decisions, tasks, bugs, features, roadmap items, content updates, and governance changes,
-- a PR template that ties changes back to tracker items, KB artifacts, validation, changelog/version impact, and safe review,
+- a PR template that ties changes back to tracker items, KB artifacts, validation, release impact, and safe review,
 - a governance workflow that checks issue-template syntax, unresolved placeholders, linked issues or explicit exceptions, optional version-impact labels, and repo-local skill presence,
 - a generic path labeler,
 - a repo-local tracker workflow skill that teaches agents the same issue/project/PR rules CI enforces,
@@ -342,16 +342,10 @@ The reading list is grouped by audience. Pick the row that matches what you are 
 | Multi-harness installer | Working (Claude Code / VS Code / OpenCode / Gemini / Kiro / Codex skill path) |
 | CI | Markdown lint, dead-link check, consistency, plugin structure, generator drift, HTML validation |
 
-
-
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Every doc change updates its per-file changelog, uses a Conventional Commit PR title (the root [`CHANGELOG.md`](CHANGELOG.md) is generated from it by release-please), and CI must stay green. Rules for both humans and agents: [`AGENTS.md`](AGENTS.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Every doc change uses a Conventional Commit PR title (no per-file changelogs or versions — Git history is the record) (the root [`CHANGELOG.md`](CHANGELOG.md) is generated from it by release-please), and CI must stay green. Rules for both humans and agents: [`AGENTS.md`](AGENTS.md).
 
 ## License
 
 Apache License 2.0 — see [LICENSE](LICENSE).
-
-## Changelog
-
-Release history lives in [`CHANGELOG.md`](CHANGELOG.md). Pre-v5.0 history is archived in [`CHANGELOG.archive.md`](CHANGELOG.archive.md).

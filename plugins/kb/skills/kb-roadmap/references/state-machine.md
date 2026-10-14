@@ -1,7 +1,5 @@
 # Reference: state machine and resume routing
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-17
-
 ## Motivation
 
 The skill runs on partial data, mid-workflow, with humans in the loop. It must be able to:
@@ -72,15 +70,3 @@ The rules are deterministic, documented, and testable. LLM judgment is not used 
 ## Why this is not VI-specific
 
 The markers are generic status words (`draft`, `reviewed`, `published`, `archived`) and the rules refer only to artifact freshness, review backlog, and unresolved findings. No domain vocabulary.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Required the external-read preflight before tracker-backed resume fetches | PR #153 review |
-| 2026-09-17 | Made ordered comment-history reads unconditional for every tracker-backed canonical item before state assessment | PR #153 review |
-| 2026-09-17 | Required an ordered `read-comments` history fetch, in addition to `read-items`, before tracker-backed state assessment and resume | PR #153 review |
-| 2026-09-17 | Scoped filesystem-only resume to file-backed artifacts and made canonical tracker-history reachability an explicit prerequisite for tracker-backed authoring resume | PR #153 review |
-| 2026-09-16 | Defined ordered structured comments as the state-marker stream for tracker-backed roadmap items | PR #153 review |
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

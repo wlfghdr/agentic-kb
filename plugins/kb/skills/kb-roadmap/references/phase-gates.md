@@ -1,7 +1,5 @@
 # Reference: phase gates for plan items
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 Plan items move through a generic pipeline. Phase markers are declared **inline in each plan item's markdown** (when the tracker exports to markdown) or computed from tracker status mapping (when the tracker is live).
 
 ## Generic phase pipeline
@@ -71,10 +69,3 @@ The forward-plan section (F) groups plan items by phase column instead of by pri
 ## Why this is not VI-specific
 
 The phase names are generic (`idea`, `defined`, `committed`, `in-delivery`, `shipped`, `archived`) and map onto any delivery pipeline — product increments, infrastructure changes, policy decisions, research items. Adopters with their own vocabulary rename phases in config without touching the skill.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

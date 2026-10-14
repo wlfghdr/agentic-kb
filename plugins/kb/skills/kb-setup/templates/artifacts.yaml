@@ -10,17 +10,16 @@ styling:
 watermark:
   enabled: true
   position: intro-slide                 # intro-slide | every-slide
-  format: "v{version} · {date}"
+  format: "generated {date}"
   style: subtle                         # subtle | normal
 
 appendix:
-  changelog: true
   sources: true
   hidden-by-default: false
 
 output:
   directory: _kb-references/reports
-  filename-template: "{slug}-v{version}.html"
+  filename-template: "{date}-{slug}.html"   # as-of date; regenerating overwrites, Git keeps history
 
 # Product-management artifacts. Setup uncomment/renders these when the
 # selected owning layer enables `roadmaps` or `journeys`.

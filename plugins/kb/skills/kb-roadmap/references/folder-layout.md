@@ -1,7 +1,5 @@
 # Reference: folder layout and views
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 The skill emits into a dedicated `_kb-roadmaps/` folder at the adopter's KB root. This folder is a peer of `_kb-references/`, `_kb-decisions/`, `_kb-ideas/`, `_kb-tasks/` — not a subdirectory of reports — because roadmaps are a distinct primitive from strategic reports.
 
 ## Layout
@@ -73,11 +71,3 @@ The skill uses `_kb-roadmaps/` by default. Adopters may override via `roadmap.ou
 ## Retention + archive
 
 The `archive/` directory is reserved for future retention handling. The shipped helper script does not currently move files automatically; it only refreshes `index.html` so the latest artifact per scope stays discoverable at a stable path.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-08 | Removed unimplemented `status-*` outputs and clarified the current helper-script behavior for roll-up scopes and root index generation | Integration pass |

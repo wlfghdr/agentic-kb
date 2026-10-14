@@ -1,7 +1,5 @@
 # Adoption Stages
 
-> **Version:** 0.1.2 | **Last updated:** 2026-09-16
-
 This reference defines the three adoption stages `agentic-kb` is designed for, the graduation criteria between them, and how the stages relate to automation levels.
 
 It is normative for `kb-setup`: phase 2 question 11 ("operating context today") asks the user which stage they are at, and phase 3 question 12 labels the proposed scaffold with the matching stage so the user can see what the wizard inferred.
@@ -132,14 +130,3 @@ This mapping is intentionally generic. `agentic-kb` does not depend on any speci
 - `setup-flow.md` — where in the interview these stages are asked and applied.
 - `../../../../docs/operating-model.md` — the artifact chain (briefs, specs, releases, incidents) the stages instantiate.
 - `../../kb-management/SKILL.md` — the "When to invoke" rule that governs Stage 2 confirmation behavior.
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Clarified that Stage 1 excludes both reserved connection-digest write-back and live canonical tracker mutations without conflating their capability contracts | Issue #152 |
-| 2026-05-18 | Updated cross-references to match the kb-setup phase order swap (phase 2 question 11 owns "operating context today"; phase 1 question 3 owns the repo-as-OS discovery pass). No semantic change to the staged-adoption contract | Concept/onboarding/process audit |
-| 2026-05-15 | Reframed Stage 1 exclusions without draft-feature wording and renamed "not yet" capability sections to "stays off at this stage" so staged adoption reads as intentional scope, not unfinished behavior | Release-readiness audit |
-| 2026-04-27 | Initial reference: three-stage adoption ladder, graduation criteria, mapping to automation levels and to repo-as-OS frameworks | Soft-transition extension |

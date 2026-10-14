@@ -13,7 +13,7 @@ This is a **shared team knowledge base**. Multiple contributors write here. Each
 1. **Never modify another contributor's directory** without explicit permission.
 2. **RACIs are required** on team decisions and TODOs.
 3. **Run the five-question gate** before persisting anything.
-4. **Append inline changelog** on every `_kb-references/topics/` file update.
+4. **Update in place** — no changelog sections or dates in `_kb-references/topics/` files; Git keeps the history.
 5. **Log every operation**.
 6. **Suggest next steps**.
 7. **Offer commit/push/PR** after substantive changes. Respect branch protection.

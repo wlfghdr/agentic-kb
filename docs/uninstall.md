@@ -1,7 +1,5 @@
 # Uninstall
 
-> **Version:** 0.1 | **Last updated:** 2026-05-18
-
 You decided `agentic-kb` is not for you. Here is the clean exit door.
 
 There are two things to remove and they are intentionally separated:
@@ -145,11 +143,3 @@ scripts/install.py --target <harness>
 ```
 
 `/kb setup` is idempotent — running it again on top of an existing workspace adds only missing pieces and never overwrites material without confirmation.
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-05-18 | Initial uninstall doc, closes audit finding #95. Covers harness-side teardown (via `scripts/install.py --uninstall`), marketplace listing backout per harness, optional workspace-data removal, and roundtrip reinstall | Concept/onboarding/process audit |

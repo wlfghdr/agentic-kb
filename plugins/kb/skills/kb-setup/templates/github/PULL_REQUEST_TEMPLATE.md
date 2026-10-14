@@ -31,12 +31,10 @@
 - [ ] Local validation command(s) run:
 - [ ] No validation needed because:
 
-## Changelog impact
+## Release impact
 
-- [ ] Updated relevant inline changelog rows
-- [ ] Updated repository changelog when this changes the public contract
+- [ ] PR title states the change as a Conventional Commit (`fix:`, `feat:`, `feat!:` for breaking changes)
 - [ ] Version-impact label applied when the repository requires one
-- [ ] No changelog needed because this is a mechanical or generated-only change
 
 ## Safety and review
 

@@ -1,7 +1,6 @@
 ---
 name: kb-tracker-workflow
 description: Operate tracker-backed KB primitives using the local .kb-config/layers.yaml primitive-storage and connections.trackers settings. Use for intake, decisions, tasks, feature requests, roadmap items, tracker audits, and file-to-tracker promotion.
-version: 1.0.0
 triggers:
   - "tracker-backed primitive"
   - "tracker intake"

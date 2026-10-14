@@ -34,6 +34,9 @@ jobs:
       - name: Consistency + version + vendor-neutrality checks
         run: python3 scripts/check_consistency.py
 
+      - name: Reject per-file versioning (Git history is the record)
+        run: python3 scripts/check_no_file_versioning.py
+
   plugin-structure:
     name: plugin-structure
     runs-on: ubuntu-latest

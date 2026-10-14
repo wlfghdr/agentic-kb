@@ -1,7 +1,5 @@
 # Collaboration Guide
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 This guide defines the human collaboration contract for `agentic-kb` workspaces. The structural spec explains where files live. This guide explains how people and their agents should behave so shared KB work stays trustworthy.
 
 ## Why this guide exists
@@ -265,7 +263,7 @@ Recovery:
 
 - audit against the spec,
 - fix the structure explicitly,
-- document the correction in changelogs or issue discussion,
+- document the correction in the PR or issue discussion,
 - avoid hidden cleanup in shared branches.
 
 ### False convergence
@@ -321,21 +319,3 @@ For real teams, start with this posture:
 - consumer-only layers: read-only and high signal
 
 That is the safest path to getting value without trust erosion.
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Clarified the shared-workspace boundary between read-only connection digests and confirmation-gated lifecycle operations on canonical tracker records | Issue #152 |
-| 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in the setup and reference specs. Collaboration semantics unchanged | Issue #145 |
-| 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
-| 2026-05-23 | Added shared-workspace rule 2a "Direct cross-layer capture: explicit OR confirmed" covering the three capture-routing modes (default / explicit / reflection-driven) and the human-confirmation contract that protects against (a) silent agent-inferred shared writes and (b) routine team intake being misframed as private sense-making | Artifact layer routing |
-| 2026-05-22 | "Failure modes and recovery" now includes "Parallel mutations on shared layers" pointing at the new `docs/concurrency.md` (promote collisions, backlink mutation, topic merges). Collaboration semantics unchanged; the parallel-mutation failure mode is named explicitly instead of left as the implicit Git-conflict assumption. Closes audit finding #106 | Audit-tracker closeout |
-| 2026-05-15 | Version aligned to 6.1.0 after the release-readiness audit. Collaboration semantics unchanged; this guide now tracks the released retro/role-handbook/delivery-operations surface carried by the rest of the spec | Release-readiness audit |
-| 2026-05-10 | Added the recommended shared artifact set for engineering collaboration and clarified roadmap → delivery → status interplay | Adoption-oriented engineering pass |
-| 2026-05-06 | Added the decision/task promotion ownership rule so shared promotions create one canonical record instead of parallel active source and target decisions/tasks | Decision/task ownership follow-up |
-| 2026-04-25 | Clarified that consumer layers can receive digest updates and host read-down guidance locally, while still refusing promote/publish as a source of new shared truth | Deep spec-audit follow-up |
-| 2026-04-25 | Reworked the collaboration contract for 5.0.0: replaced L1-L4 language with contributor/shared/consumer roles, clarified consumer-only behavior, and updated promotion/publish review points for named layers and per-layer marketplaces | v5.0.0 flexible layer model |
-| 2026-04-20 | Initial collaboration guide defining shared-workspace operating norms, review points, and failure recovery | Issue #7 |
