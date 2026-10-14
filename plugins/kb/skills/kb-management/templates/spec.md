@@ -33,10 +33,3 @@
 ## Open questions
 
 {{QUESTIONS}}
-
----
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| {{DATE}} | Initial spec | {{SOURCE}} |

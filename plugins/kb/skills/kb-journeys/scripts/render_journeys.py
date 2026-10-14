@@ -53,7 +53,6 @@ class JourneyDoc:
     subtitle: str
     tier_label: str
     target_duration: str
-    last_updated: str
     steps: list[dict]
     flow_md: str
     interfaces_md: str
@@ -373,7 +372,6 @@ def parse_journey_doc(source_dir: Path, md_path: Path) -> JourneyDoc:
         subtitle=meta.get("sub-journey", ""),
         tier_label=meta.get("tier", f"Tier {tier}" if tier else "Tier"),
         target_duration=meta.get("target duration", ""),
-        last_updated=meta.get("last updated", ""),
         steps=parse_steps(md),
         flow_md=flow_md,
         interfaces_md=interfaces_md,
@@ -401,7 +399,6 @@ def render_journey(
         subtitle=html.escape(doc.subtitle),
         tier_label=html.escape(doc.tier_label),
         target_duration=html.escape(doc.target_duration),
-        last_updated=html.escape(doc.last_updated),
         readiness_class=doc.readiness_class,
         readiness_chip=doc.readiness_class,
         readiness_label=html.escape(doc.readiness_label),

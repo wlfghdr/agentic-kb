@@ -1,7 +1,5 @@
 # Reference: journey artifact contract
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 ## Inputs
 
 - The configured `journeys.source-dir` directory tree (default `_kb-journeys/`).
@@ -59,7 +57,7 @@ Each `<journey-slug>.html` page has:
 5. **Step summary** — auto-generated ToC; every entry links to the step anchor.
 6. **Flow** — each step rendered with id, actor chip, readiness chip, mock (with "↗ Open standalone" link), alternates.
 7. **Interfaces** — the table rendered as a small graph.
-8. **Footer** — watermark (version + generated-at).
+8. **Footer** — watermark (generator + generated-at).
 
 ## Mock standalone pages
 
@@ -103,11 +101,3 @@ Every generated page carries a `<meta name="generator" content="kb-journeys v<ve
 - If it is absent, the built-in fallback renderer still preserves step anchors, mock envelopes, lists, and tables well enough for artifact generation and mock extraction.
 - If `beautifulsoup4` is available, mock extraction uses the DOM-aware path.
 - If it is absent, the extractor falls back to a regex-based local-file path that still emits standalone pages and source-page backlinks for the supported mock envelope contract.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-08 | Aligned the journey artifact contract with the shipped overview/index output, current metadata rendering, and optional dependency fallback behavior | Integration pass |

@@ -66,11 +66,11 @@ class AcceptanceFixtureTests(unittest.TestCase):
                 org / "dashboard.html",
                 company / "index.html",
                 company / "dashboard.html",
-                personal / "_kb-references" / "reports" / f"{DATE}-personal-brief-v1-0.html",
-                personal / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals-v1-0.html",
-                team / "reports" / f"{DATE}-team-review-v1-0.html",
-                org / "reports" / f"{DATE}-org-brief-v1-0.html",
-                company / "reports" / f"{DATE}-company-brief-v1-0.html",
+                personal / "_kb-references" / "reports" / f"{DATE}-personal-brief.html",
+                personal / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals.html",
+                team / "reports" / f"{DATE}-team-review.html",
+                org / "reports" / f"{DATE}-org-brief.html",
+                company / "reports" / f"{DATE}-company-brief.html",
             ):
                 self.assertTrue(path.exists(), path)
 
@@ -133,16 +133,16 @@ class AcceptanceFixtureTests(unittest.TestCase):
             self.assertIn("Topics", dashboard)
 
             for report in (
-                personal / "_kb-references" / "reports" / f"{DATE}-personal-brief-v1-0.html",
-                personal / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals-v1-0.html",
-                team / "reports" / f"{DATE}-team-review-v1-0.html",
-                org / "reports" / f"{DATE}-org-brief-v1-0.html",
-                company / "reports" / f"{DATE}-company-brief-v1-0.html",
+                personal / "_kb-references" / "reports" / f"{DATE}-personal-brief.html",
+                personal / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals.html",
+                team / "reports" / f"{DATE}-team-review.html",
+                org / "reports" / f"{DATE}-org-brief.html",
+                company / "reports" / f"{DATE}-company-brief.html",
             ):
                 html = read(report)
                 self.assertIn('data-theme="dark"', html)
                 self.assertIn('[data-theme="light"]', html)
-                self.assertIn("Changelog", html)
+                self.assertIn("Sources", html)
                 self.assertNotIn("fonts.googleapis.com", html)
                 self.assertNotIn("@import url(", html)
 

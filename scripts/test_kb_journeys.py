@@ -39,7 +39,6 @@ This overview is rendered into the generated index.
 > **Sub-Journey**: A new user signs up.
 > **Tier**: Individual
 > **Target duration**: 5 minutes
-> **Version**: 0.1 | **Last updated**: 2026-05-08
 
 ## Entry Conditions
 - User has an invite.

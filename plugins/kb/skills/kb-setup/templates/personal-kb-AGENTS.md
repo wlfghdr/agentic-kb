@@ -11,7 +11,7 @@ This is {{USER_NAME}}'s private knowledge base. The agent is a collaborator, not
 ## Rules
 
 1. **Run the five-question gate** before persisting anything.
-2. **Append inline changelog** on every topic / foundation file update.
+2. **Update in place** — no changelog sections or dates in topics or foundation files; Git keeps the history.
 3. **Log every operation** to `.kb-log/YYYY-MM-DD.log`.
 4. **Suggest next steps** after every operation.
 5. **Never silent failures** — surface everything.

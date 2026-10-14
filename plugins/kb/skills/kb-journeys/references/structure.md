@@ -1,7 +1,5 @@
 # Reference: journey markdown structure
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 Every journey markdown file follows this contract. `kb-journeys render` validates it; `kb-journeys audit` reports violations.
 
 ## File-level metadata block
@@ -15,7 +13,6 @@ Required, immediately under the H1:
 > **Tier**: <tier label>
 > **Target duration**: <duration>
 > **Design patterns**: <comma-separated>   (optional)
-> **Version**: <n.n> | **Last updated**: YYYY-MM-DD
 ```
 
 ## Required sections (in order)
@@ -138,12 +135,3 @@ See `templates/journey-overview.md.hbs` for the scaffold.
 - readiness checks against the configured readiness taxonomy
 - mock integrity checks for source envelopes, generated standalone pages, and orphan pages
 - traceability checks for interfaces, cross-reference links, roadmap citations, and ownership metadata
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Added optional step-level delivery-record metadata for journey authoring side-effects | PR #153 review |
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-25 | Replaced the obsolete inline audit checklist with a pointer to the canonical J1-J19 audit reference | PR #141 review |

@@ -1,7 +1,5 @@
 # Tracker-Backed Primitives
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 Some teams already run their day-to-day product and delivery work through an issue tracker. `agentic-kb` should support that pattern without turning the KB into a duplicate tracker.
 
 This reference defines the generic pattern for using tracker items as the operational backbone for decisions, ideas, tasks, feedback, and feature intake while keeping KB files as synthesis, evidence, and artifact memory.
@@ -159,7 +157,7 @@ Minimum outcome:
 |---|---|
 | Issue types | Desired native issue types or type mapping documented: `Feedback`, `Idea`, `Decision`, `Task`, `Feature`, `Roadmap Item` by default; adopters may rename them in config |
 | Issue forms | `.github/ISSUE_TEMPLATE/` forms for each configured kind, with fields matching the generic primitive contract |
-| Pull request template | PR template that asks for linked tracker items, affected KB artifacts, and changelog impact |
+| Pull request template | PR template that asks for linked tracker items, affected KB artifacts, and release impact |
 | Project/status guidance | Project number/name, status values, milestone policy, and required native fields recorded in `connections.trackers[]` |
 | Labels | Optional labels only for area, component, risk, audience, and workflow hints; labels must not duplicate issue type/status/priority |
 | CI guardrail | A governance workflow validating issue-template syntax, unresolved setup placeholders, issue links or explicit exceptions, optional version-impact labels, and the presence of the repo-local skill |
@@ -253,17 +251,3 @@ Watch for these problems:
 - delivery backlog items with no product or planning context,
 - stale decision issues with no outcome,
 - auto-writeback that changes tracker state without human confirmation.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Corrected the issue-only configuration example to expose only open/closed status values | PR #153 review |
-| 2026-09-16 | Added conservative legacy `github-projects` status normalization and the explicit paired issue-tracker field required for issue CRUD | PR #153 review |
-| 2026-09-16 | Restricted legacy normalization to unambiguous live adapter kinds, kept export-backed generic Jira/Linear entries read-only, and made the canonical connection's authentication source part of migration | PR #153 review |
-| 2026-09-16 | Added transitional normalization and setup/audit migration for pre-7.0 live tracker entries that lack an explicit capability list; limited GitHub issue-only `status` capability to open/close when project-field metadata is absent | Issue #152 review |
-| 2026-09-16 | Defined supported canonical tracker CRUD separately from reserved connection-digest write-back, including strict gate precedence and a manual proposal/handoff fallback that preserves one canonical record | Issue #152 |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-06-02 | Changed the tracker-backed primitive default so shared process/operational primitives default to GitHub Issues-backed ownership, while personal/private layers stay file-backed and shared file-backed mode must be explicit | Issue #145 |
-| 2026-05-17 | Expanded the proposal into an onboarding contract: setup now asks which primitives are file-backed, tracker-backed, or hybrid; records `primitive-storage` beside tracker connections; and treats generic GitHub/Jira setup packages, governance CI, labeler/PR templates, manual setup checklists, and tracker workflow skills as expected onboarding outcomes | Tracker-backed onboarding design |
-| 2026-05-17 | Added the generic tracker-backed primitive pattern for teams that use issue trackers as the operational backbone for feedback, ideas, decisions, tasks, and feature intake | Cross-repo tracker-backbone review |

@@ -1,7 +1,5 @@
 # Reference
 
-> **Version:** 7.0.0
-
 Implementation-critical details for building agentic-kb compatible tools. For the user guide, see [README.md](../README.md). For the software-engineering role and artifact model, see [docs/operating-model.md](./operating-model.md). For the role-by-role daily companion to the operating model, see [docs/role-handbook.md](./role-handbook.md). For the deterministic onboarding proof, see [docs/first-run-acceptance.md](./first-run-acceptance.md) and [docs/examples/first-hour.md](./examples/first-hour.md). For the human collaboration contract in shared workspaces, see [docs/collaboration.md](./collaboration.md). For concurrent-write rules (promote collisions, backlink mutation, topic merges), see [docs/concurrency.md](./concurrency.md). For behavioral specs, read the skill and agent files directly: [`plugins/kb/skills/kb-management/SKILL.md`](../plugins/kb/skills/kb-management/SKILL.md), [`plugins/kb/skills/kb-setup/SKILL.md`](../plugins/kb/skills/kb-setup/SKILL.md), [`plugins/kb/agents/kb-operator.md`](../plugins/kb/agents/kb-operator.md).
 
 ---
@@ -256,9 +254,6 @@ Immutable after creation. Corrections create a new finding.
 
 [... living prose, updated in place ...]
 
----
-## Changelog
-| Date | What changed | Source |
 ```
 
 ### Decision (`_kb-decisions/D-YYYY-MM-DD-slug.md`)
@@ -398,12 +393,9 @@ Rules:
 ## Success signals
 ## Dependencies and handoffs
 
----
-## Changelog
-| Date | What changed | Source |
 ```
 
-Briefs are direction-setting handoff artifacts. They explain why work matters, why now, and what outcome is expected without prescribing the full implementation shape. The inline changelog is required because briefs are living documents, not snapshots — they get refined as direction sharpens.
+Briefs are direction-setting handoff artifacts. They explain why work matters, why now, and what outcome is expected without prescribing the full implementation shape. Briefs are living documents, not snapshots — they get refined in place as direction sharpens, and Git keeps the history.
 
 ### Spec (`_kb-delivery/specs/YYYY-MM-DD-slug.md`)
 
@@ -424,12 +416,9 @@ Briefs are direction-setting handoff artifacts. They explain why work matters, w
 ## Verification
 ## Open questions
 
----
-## Changelog
-| Date | What changed | Source |
 ```
 
-Specs are design-decision artifacts. They connect briefs, findings, decisions, and delivery work into a reviewable implementation proposal. The inline changelog tracks how the design moved from `draft` toward `accepted` and what was learned along the way.
+Specs are design-decision artifacts. They connect briefs, findings, decisions, and delivery work into a reviewable implementation proposal. Status moves from `draft` toward `accepted`; Git history and the linked PRs record what was learned along the way.
 
 ### Release record (`_kb-operations/releases/YYYY/YYYY-MM-DD-slug.md`)
 
@@ -802,7 +791,7 @@ styling:
   watermark:
     enabled: true
     position: intro-slide
-    format: "v{version} · {date}"
+    format: "generated {date}"
 
 dashboard:
   panels:
@@ -857,8 +846,8 @@ Two families:
 
 ### Shared contract
 
-1. Subtle watermark: `v{version} · {date}` or `latest · {timestamp}`
-2. Changelog appendix (final slide/section)
+1. Subtle watermark: `generated {date}`
+2. Sources appendix (final slide/section)
 3. Light + dark theme with in-page toggle
 4. Self-contained (all CSS/JS/images inline)
 5. Accessible (semantic HTML, WCAG AA, keyboard nav)
@@ -1211,53 +1200,3 @@ Cross-marketplace upgrades respect the same dependency and version-pin rules as 
 `scripts/install.py` and `scripts/generate_plugins.py` handle cross-harness distribution from one source tree for marketplace-backed and installer-supported harnesses. Compatible Codex workflows reuse the same workspace contract through `AGENTS.md` plus repo/user skill directories.
 
 Versioning rule: the marketplace-facing version in `.claude-plugin/marketplace.json`, `plugin.json`, and `plugins/kb/plugin.json` must match the repo release version declared in `VERSION` and the current release/changelog line. Marketplace versioning is release versioning, not a separate numbering scheme.
-
----
-
-## Changelog
-
-| Date | What changed |
-|------|-------------|
-| 2026-09-17 | Corrected the issue-only tracker example to advertise only resolvable open/closed statuses. Source: PR #153 review |
-| 2026-09-17 | Marked the read-only tracker sample with explicit empty capabilities. Source: PR #153 review |
-| 2026-09-16 | Added the explicit paired issue connection for canonical GitHub Projects CRUD and clarified complete legacy roadmap ownership migration. Source: PR #153 review |
-| 2026-09-16 | Version aligned to 7.0.0; §5 separated canonical tracker CRUD capabilities from reserved connection-digest write-back, routed roadmap writes through the same ownership gates, added canonical authentication-source configuration, distinguished ownership failures from executable manual handoffs, and limited transitional normalization to unambiguous live adapters. Source: issue #152 and PR #153 review |
-| 2026-06-02 | Version aligned to 6.3.0 and §5 changed the shared process/operational primitive default from file-backed KB records to GitHub Issues via explicit `primitive-storage`, with file-backed defaults retained for personal/private layers. Source: issue #145 |
-| 2026-05-24 | §1 capture-time layer routing now points reflection-driven routing at the strong/weak signal rubric in `capture-routing.md` and states that weak or ambiguous signals fall through to default. This removes the vague "clearly implies" trigger from the structural reference while keeping the detailed operational examples in the dedicated contract. Source: issue #126 |
-| 2026-05-24 | Version aligned to 6.2.0 |
-| 2026-05-23 | §1 added "Capture-time layer routing" subsection codifying the three routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate for agent-inferred non-default capture targets. Direct cross-layer capture is now a named first-class flow parallel to `/kb promote`, not an implicit consequence of "context selects another contributor-capable layer". Full schema, audit rule K16, and response shapes live in `plugins/kb/skills/kb-management/references/capture-routing.md`. Closes the spec gap where artifacts could only flow private → shared via promote, and the agent had no codified obligation to confirm a self-chosen non-default destination |
-| 2026-05-22 | Added pointer to `docs/concurrency.md` in the navigation preamble so adopters can find the parallel-promote / backlink-mutation / topic-merge resolution rules without grepping. No structural change in §1–§12. Closes audit finding #106 |
-| 2026-05-22 | §4 added "Backlink (promoted-record stub)" subsection defining the concrete `status: promoted` + `canonical:` + `promoted-at` frontmatter and the standardized banner body that replaces a source-layer record when canonical ownership shifts upward; §4 retro variant added `status: open \| tracked \| closed` frontmatter plus a "Retro closure lifecycle" subsection covering transition triggers, the no-silent-close rule, and supersession; §6 added "HTML artifact lifecycle (commit, host, merge)" subsection covering default `.gitignore` posture per artifact family, `.gitattributes` `merge=ours` for committed live overviews, three hosting modes (`local` / `github-pages` / `external`), and the regeneration repair path; §11 added "Skill versioning, dependencies, and conflict resolution" subsection covering SemVer per skill, `dependencies:` resolution rules, `install-mode: open \| review-required` approval gating, and `priority:`-based conflict resolution across marketplaces. Closes audit findings #107, #111, #112, #113 |
-| 2026-05-18 | §5 layers.yaml example annotated `writeback:` as RESERVED in v6.1.0 (no-op); §6 added the "`auto-promote.confidence-threshold` — what it is" subsection with the 0–5 gate-score definition, the auto-promote eligibility filter, the promote target rule, the conflict-escalation rule, and a worked example; §10 added the "Task ownership — KB vs. external tracker" subsection codifying split ownership (KB owns knowledge work, tracker owns engineering work, read-only links, no parallel status reconciliation) and added a corresponding row to the mapping table. Closes audit findings #102, #103, #105 |
-| 2026-05-18 | §1 split "Contributor-scoped vs shared primitives" into two clearly orthogonal subsections — Axis 1 "Layer role" (`contributor` vs `consumer`, mutation rights) and Axis 2 "Artifact visibility" (`contributor-scoped` vs shared, per-primitive). Added a do-not-conflate callout. Closes the data-leak risk where multi-user team layers ship with everything shared by default because adopters never see the visibility axis. `kb-setup` phase 3 now must surface the default visibility per primitive in the proposed plan before scaffold. Updated the §10 repo-as-OS phrasing to match the kb-setup phase-1/phase-2 swap. Closes audit findings #98 and #104 |
-| 2026-05-17 | Added `primitive-storage` to the layer config contract so onboarding can choose file-backed, tracker-backed, or hybrid ownership per primitive family and can generate generic GitHub/Jira tracker setup outcomes without duplicating canonical records; GitHub setup now points at a fuller governance profile with issue/project/PR rules, CI, labeler, checklist, and repo-local skill |
-| 2026-05-15 | Release-readiness audit: removed active draft-feature wording for roadmap and journey flows, clarified stable helper coverage and apply-capable confirmation gates, trimmed unsupported harness rows from the public support matrix, and aligned the reference with the 6.1.0 release surface |
-| 2026-05-14 | Added the retro variant to §4 Note formats (`type: retro` with cadence/facilitator/period frontmatter and a structured what-went-well / what-didn't / changed / will-change / open-questions / linked-artifacts section set) so sprint, project, post-launch, post-incident, and quarterly retros have a canonical shape. Retros stay inside the existing `notes` feature — no new directory or feature flag. Added a navigation pointer to the new role-handbook companion doc |
-| 2026-05-10 | Version aligned to 6.0.0 after the v5 adoption-arc closeout. Updated the §4 brief, spec, release, and incident file formats so they match the templates the skill actually instantiates: brief gains "Why now", "Success signals", "Dependencies and handoffs", and an inline changelog and moves stakeholders into the frontmatter; spec gains "Requirements", "Proposed shape", "Rollout and migration", "Verification", "Open questions", and an inline changelog and links to the originating brief in the frontmatter; release gains "Audience" and "Linked spec" frontmatter and switches to the rollout/rollback/communications/follow-up section set; incident gains "Owners", "Services", and the precise "Opened" timestamp. The four artifacts are now the same shape across REFERENCE, templates, and the new `/kb brief`, `/kb spec`, `/kb release`, and `/kb incident` verbs in `command-reference.md` |
-| 2026-05-10 | Added shared collaboration artifact guidance for status, delivery, and roadmap-change report sources |
-| 2026-05-08 | Clarified the shipped role of the draft roadmap/journey helper scripts and bumped the reference patch version |
-| 2026-05-06 | Version aligned to 5.6.0 after adding the decision/task promotion ownership rule: promoted decisions and tasks now have one canonical layer unless the source and target scopes genuinely differ |
-| 2026-04-30 | Version aligned to 5.5.0 after promoting roadmap and journey work into the product-management operating surface: setup now derives their owning layer from role/goals and the reference names placement, visibility, and customer-value presentation rules |
-| 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix. Structural contracts in this reference are unchanged; the dispatcher now routes `/kb roadmap` and `/kb journeys` through the kb-management surface that this reference describes |
-| 2026-04-27 | Version aligned to 5.4.1 after the documentation-gap follow-up. Corrected the repo-as-OS bridge field name to `connections.product-repos[]` so the reference matches the live `layers.yaml` schema |
-| 2026-04-27 | Added §9 "Adoption Stages" (capture discipline → agent-assisted triage → bounded autonomous, with mapping to automation levels) and §10 "Relationship to Repo-as-OS Frameworks" (abstract knowledge-ops ↔ work-flow primitive mapping; explicit out-of-scope list). Renumbered the previous §9 / §10 to §11 / §12 and updated the kb-operator cross-reference accordingly. Reference version aligned to 5.4.0 |
-| 2026-04-26 | Added the operating-model pointer and the optional `delivery` / `operations` feature families, including standard file formats for briefs, specs, release records, and incident records |
-| 2026-04-25 | v5.2.0 release alignment — version bumped to track the kb-management trigger expansion and the kb-setup goal-oriented question-flow rework; structural contracts in this reference are unchanged |
-| 2026-04-25 | Clarified the onboarding entry points, separated layer role from contributor-scoped visibility, and documented the automation-level contract directly beside `.kb-config/automation.yaml` |
-| 2026-04-25 | Concept-audit follow-up: the §10 harness matrix now records the "rules-only" and "not feasible" buckets the README lists, so the reference and glossary stay aligned |
-| 2026-04-25 | Added explicit migration-helper coverage for the 5.1.0 closeout: the reference now names `/kb migrate layer-model` and `/kb migrate archives` as the sanctioned way to carry older KBs into the 5.x graph and year-based archive layout |
-| 2026-04-25 | Reworked the core model for 5.0.0: replaced the fixed L1–L5 ladder with a flexible layer graph, moved marketplace to a per-layer cross-cutting block, added role-based promote/publish governance, year-based archive paths, the notes primitive, per-layer external connections, and the progress-report contract |
-| 2026-04-25 | Added generic marketplace guidance for plugin-local utilities, explicit incompatibility metadata, and fixture-backed regression checks for policy/routing-heavy skills; version bumped to 4.1.0 |
-| 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release |
-| 2026-04-25 | Added explicit preflight-fetch and post-generation QA rules to the HTML artifact contract so external-source reads and artifact completion gates are part of the normative spec |
-| 2026-04-24 | Corrected Codex and Kiro support details to the documented skill-based locations (`.agents/skills/`, `.kiro/skills/`), expanded the harness matrix to include Gemini/Kiro installer-backed paths, and added the export-backed roadmap proof recommendation |
-| 2026-04-22 | Dashboard command-center contract now explicitly includes topics as a first-class live panel so accreting knowledge is visible alongside decisions, ideas, and findings |
-| 2026-04-22 | Added `_kb-references/strategy-digests/` to the §3 workspace layout so the digest watermark and per-layer digest findings have a declared home |
-| 2026-04-22 | Collapsed the HTML-artifact families table to the two that actually ship — `dashboard.html` + root `index.html` — after dropping the phantom `inventory.html` / `open-decisions.html` / `open-tasks.html` overviews whose signals already live in `dashboard.html` panels |
-| 2026-04-22 | Corrected the workspace-root required-files row so `.github/prompts/kb.prompt.md` is no longer universal, and added the harness-specific workspace prompt/instruction note for VS Code, Claude Code, OpenCode, and compatible CLI workflows |
-| 2026-04-22 | Reframed evaluation-gate Q5 as positive novelty and removed the obsolete VMG score bonus so the rubric matches the detailed gate reference and skill behavior |
-| 2026-04-22 | Added Codex CLI to the harness support model as a compatible CLI workflow, clarified first-class vs partial/manual support tiers |
-| 2026-04-22 | Fixed markdown-lint violations (indented heading/list, extra table column), removed stale doc-drift source column |
-| 2026-04-22 | Added optional roadmap/journey layout coverage and updated the marketplace layout to the `plugins/<plugin>/` source tree |
-| 2026-04-20 | Linked the dedicated collaboration guide for shared-workspace human operating norms |
-| 2026-04-19 | Initial — consolidated from 23 concept/spec docs |

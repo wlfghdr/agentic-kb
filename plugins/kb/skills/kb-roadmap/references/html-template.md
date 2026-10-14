@@ -1,7 +1,5 @@
 # Reference: Generated HTML roadmap — template contract
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 Every `/kb roadmap` run emits a **triple artifact** (`.md` + `.html` + `.json`) into `<output-dir>/<scope>/roadmap-<YYYY-MM-DD>.*`. This file documents the **HTML contract** — what sections must appear, how they are derived, and how adopters customize them without forking the renderer.
 
 ## Sections (required, in this order)
@@ -103,11 +101,3 @@ To keep artifacts comparable across scopes and KBs, these are deliberately not c
 - The chip-strip summary metrics — they feed into `/kb status` and the cross-primitive audit.
 
 If a customization would require changing any of the above, open an agentic-kb issue rather than patching the renderer. The goal is one generator producing comparable reports across every adopter KB.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-04-30 | Added the optional phase/lane presentation board contract with value headlines, detail lines, draft/agreed/shipped visibility, and no-loss overflow behavior | Product-management surface integration |

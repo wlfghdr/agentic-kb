@@ -1,7 +1,5 @@
 # Reference: `/kb journeys` command reference
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 ## Base command
 
 ```
@@ -120,12 +118,3 @@ Command-specific contracts above take precedence when they are narrower, such as
 | 2 | Audit violations, source ingestion failure, or render failure |
 | 3 | Command completed with unresolved warnings, deferred resolutions, or generated-artifact drift |
 | 4 | User aborted an interactive prompt |
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-25 | Aligned `/kb journeys audit` with the canonical J1-J19 audit reference, including resolution flags, triple artifacts, policy knobs, and exit codes | PR #141 review |
-| 2026-05-08 | Clarified the shipped `render`/`extract-mocks` helper behavior, discovery rules, and optional dependency fallbacks | Integration pass |

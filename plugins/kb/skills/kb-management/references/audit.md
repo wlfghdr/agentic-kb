@@ -1,7 +1,5 @@
 # Reference: `/kb audit`
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 KB-wide consistency audit. Runs the foundational checks directly, then delegates scope-specific audits to installed primitive skills (`kb-roadmap`, `kb-journeys`) and consolidates the results into a single report with offered corrections.
 
 ## When to run
@@ -22,7 +20,7 @@ KB-wide consistency audit. Runs the foundational checks directly, then delegates
 | K5 | Every idea (`_kb-ideas/I-*.md`) has a `**Stage**:` line (`seed` / `growing` / `ready` / `shipped` / `archived`) | `idea-stage-missing` | Prompt for stage |
 | K6 | No pending inputs older than `freshness.inputs-days` without being triaged | `stale-input` | Offer triage now |
 | K7 | Foundation files present: `me.md`, `context.md`, `vmg.md`, `sources.md`, `naming.md` | `foundation-incomplete` | Offer scaffold |
-| K8 | Topics last updated more than `freshness.topic-days` days ago that are still cited by recent findings | `stale-cited-topic` | Offer `/kb develop <topic>` |
+| K8 | Topics last changed (per Git history) more than `freshness.topic-days` days ago that are still cited by recent findings | `stale-cited-topic` | Offer `/kb develop <topic>` |
 | K9 | Workstream files have current status blocks (not "TBD" or empty) | `workstream-status-missing` | Offer digest pull |
 | K10 | HTML artifacts in `_kb-references/reports/` are not older than their source topics | `stale-html-artifact` | Offer regeneration |
 | K11 | Every record with `status: promoted` resolves its `canonical:` target (file exists; relative path resolves; target is not itself another `status: promoted` stub) | `backlink-broken` | Offer to rewrite the relative path (when the canonical target has moved) or to remove the promoted stub if the canonical record was deleted |
@@ -104,18 +102,3 @@ Every resolution respects the existing safety gates (tracker writes need `--appl
 | 2 | Delegated audits failed (roadmap or journeys reported violations beyond their severity-gate) |
 | 3 | Cross-primitive violations |
 | 4 | Audit itself failed to run (config error, missing delegated skill) |
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Extended K17's correction to create/select canonical roadmap connections and add missing ownership while refusing ambiguous or conflicting migrations | PR #153 review |
-| 2026-09-16 | Added K17 with the concrete audit detection and confirmed correction path for canonical tracker capabilities and authentication-source migration | PR #153 review |
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-24 | Linked delegated roadmap and journeys audits to their canonical audit references and replaced the inline journeys checklist with the J1-J19 delegated rule summary from `kb-journeys/references/audit.md` | Issue #125 |
-| 2026-05-23 | Tightened K16 wording so it is mechanically checkable: it now cites the required `routing-mode` / `correlation-id` log keys, the propose → confirm → capture line ordering, and the supported-fallback exemption. Aligned with the "Log format" subsection added to [`capture-routing.md`](./capture-routing.md) | Copilot review #116 |
-| 2026-05-23 | Added K16 (`capture-routing-unconfirmed` — every reflection-driven capture has a paired confirmation entry in `.kb-log/` before the mutation) for the capture-routing contract in [`capture-routing.md`](./capture-routing.md). Updated the output-shape line to reference K1-K16 | Artifact layer routing |
-| 2026-05-22 | Added K13 (`promote-conflict-unresolved`), K14 (`backlink-diverged`), K15 (`topic-author-sections-unconverged`) for the concurrency contract in [`docs/concurrency.md`](../../../../../docs/concurrency.md). Closes audit finding #106 | Audit-tracker closeout |
-| 2026-05-22 | Added K11 (`backlink-broken` — every `status: promoted` record's `canonical:` target must resolve) and K12 (`retro-status-stale` — `open` retros older than 7 days without `tracked` move, or `tracked` retros eligible for `closed`). Closes audit findings #111 and #112 | Concept/spec gap audit |
-| 2026-05-10 | Added the missing `## Changelog` section so this reference satisfies AGENTS rule 3 (every long-lived spec/concept doc carries an inline changelog). No semantic changes to the audit rules, delegated audits, or exit codes | v6.0.0 adoption + daily-usage gap audit |

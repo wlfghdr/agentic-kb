@@ -38,6 +38,9 @@ jobs:
     name: plugin-structure
     runs-on: ubuntu-latest
     steps:
+      - name: Reject per-file versioning (Git history is the record)
+        run: python3 scripts/check_no_file_versioning.py
+
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:

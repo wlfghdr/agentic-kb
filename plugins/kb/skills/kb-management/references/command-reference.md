@@ -1,7 +1,5 @@
 # Command Reference — kb-management
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 ## Capture & Process
 
 | Subcommand | Action |
@@ -215,29 +213,3 @@ Collaboration-safe interpretation:
 - `Suggested next steps` must stay clearly separate from changes that already happened.
 
 See `output-contract.md` for the full wording contract and examples.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Routed tracker-backed decision/task commands through the canonical CRUD capability contract and documented the manual fallback for missing capability or authentication | Issue #152 |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-24 | Expanded the `/kb sync [layer]` row so it carries both parts of the contract: contributor-scoped cross-reference reconciliation and the concurrency reconciliation cases from `docs/concurrency.md` (promote conflicts, diverged backlinks, and unresolved topic author-sections). Closes #124 | `/kb sync` contract reconciliation |
-| 2026-05-23 | Expanded the Capture & Process section: the `/kb [text/URL/path]` row now names the three capture-routing modes and links to the new `capture-routing.md`; added a `/kb <layer> [input]` row for explicit-mode direct routing to a non-default layer | Artifact layer routing |
-| 2026-05-22 | Documented the retro closure lifecycle (`status: open \| tracked \| closed`, `/kb note end` transition to `tracked`, `/kb audit` K12 rule, `/kb start-week` surfacing unfinished commitments) under the Notes section. Expanded the triage scan "Rituals" signal to make the level-1 manual-nudge contract explicit (no scheduler at level 1, so the user is the only thing that triggers rituals; signal turns into an active nudge instead of just an observation). Closes audit findings #108 and #112 | Concept/spec gap audit |
-| 2026-05-17 | Added command behavior for tracker-backed decisions and tasks: commands propose confirmed tracker mutations when `primitive-storage` says the tracker is canonical, and KB files become summaries/backlinks rather than competing records | Tracker-backed onboarding design |
-| 2026-05-15 | Renamed the active roadmap/journey section from draft-skill subcommands to product-management subcommands and clarified that these stable skills are enabled by explicit owning-layer config | Release-readiness audit |
-| 2026-05-14 | Added `/kb note retro [topic]` as a third note variant alongside general and meeting notes. Retros use the structured template at `plugins/kb/skills/kb-management/templates/retro.md`, must produce tracked commitments at close time, and surface a "false convergence" Gate note if they close without any. No new feature flag or directory — retros live inside the existing `notes` feature | Daily-reality gap audit across software-company roles |
-| 2026-05-10 | Added a dedicated Delivery & Operations subcommand section (`/kb brief`, `/kb spec`, `/kb release`, `/kb incident`) so the four operating-model artifacts have canonical command verbs that match the file paths in `docs/REFERENCE.md` §3 and the templates in `plugins/kb/skills/kb-management/templates/`. Each verb requires the matching `delivery` or `operations` feature on the target layer and refuses cleanly when the feature is not enabled. They were already wired as feature-keyword triggers in the kb-management skill but had no discoverable verb, which forced users to rely on natural-language intent matching | v6.0.0 adoption + daily-usage gap audit |
-| 2026-05-10 | Added explicit shared report variants for status, delivery, and roadmap-change collaboration flows | Adoption-oriented engineering pass |
-| 2026-05-06 | Clarified that `/kb promote` must keep decisions and tasks canonical to one owning layer instead of leaving parallel active source and target records | Decision/task ownership follow-up |
-| 2026-04-30 | Clarified that missing roadmap/journey config should route to setup for the owning-layer decision, not silent scaffolding | Product-management surface integration |
-| 2026-04-29 | Added a Draft-skill subcommands section that names the `/kb roadmap` and `/kb journeys` handoffs to the opt-in kb-roadmap and kb-journeys skills and documents the per-layer config gates that activate them | v5.4.2 draft-skill discoverability fix |
-| 2026-04-27 | Added explicit pointers to the dedicated connection lifecycle and publish contract references, and aligned the publish package path with the current marketplace layout under `plugins/<plugin>/skills/<name>/` | Documentation gap follow-up |
-| 2026-04-25 | Added an explicit pointer from the command reference to the staged-review promote contract so adopters can see when staging happens and when it does not | Deep spec-audit follow-up |
-| 2026-04-25 | Added the explicit migration helper commands so the command surface now includes the 5.1 closeout path for old archive layouts and fixed-layer configs | v5.1.0 closeout release |
-| 2026-04-25 | Reworked the command surface for the 5.0 layer graph: promote/publish now target named layers, notes became a first-class primitive, `digest connections` and `report progress` were added, and triage now checks anchor-layer setup plus connection drift | v5.0.0 flexible layer model |
-| 2026-04-22 | Clarified that `--refresh-overviews` is the manual repair path for rebuilding `dashboard.html` and the root artifact `index.html`, replacing the prior always-current/phantom-overview wording | PR #53 fix |
-| 2026-04-22 | Added the missing `Top task` and `External completions` triage signals so the bare-`/kb` status table fully matches `kb.prompt.md` and the task-handling rules | PR #49 follow-up |
-| 2026-04-22 | `/kb task` named as the canonical task verb (with `todo` / `tasks` as accepted aliases); new Ideas section covering `/kb idea` + `/kb develop`; triage stale-task rule split into `focus-overdue-days` (7) and `backlog-stale-days` (14) matching `kb.prompt.md` and SKILL rule 11g | Fixes #24, #25, #26 |
-| 2026-04-22 | Reframed `/kb promote` as a composite local-team operation: intake plus immediate team review and archival, not a pure inbox copy | Team promote flow fix |

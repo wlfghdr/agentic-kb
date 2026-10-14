@@ -16,16 +16,12 @@ For full rules, see CONTRIBUTING.md and AGENTS.md.
 - [ ] Docs / examples / glossary
 - [ ] Other: <!-- describe -->
 
-## Version bump
+## Release impact
 
-- [ ] No bump required (CI / internal-only)
-- [ ] PATCH (prose edits, typos, clarifications)
-- [ ] MINOR (new rules, new commands, additive changes)
-- [ ] MAJOR (breaking changes to layout, commands, or file formats)
+The PR title is the release note (Conventional Commit): `docs:`/`fix:` → PATCH, `feat:` → MINOR, `feat!:` → MAJOR (breaking layout, commands, or file formats).
 
 ## Checklist
 
-- [ ] Per-file `## Changelog` appended for every modified long-lived spec/concept doc
 - [ ] PR title is a Conventional Commit; root `CHANGELOG.md`/`VERSION` untouched (release-please owns them)
 - [ ] Links validated locally (`lychee --config .lychee.toml .`)
 - [ ] `python3 scripts/check_consistency.py` passes

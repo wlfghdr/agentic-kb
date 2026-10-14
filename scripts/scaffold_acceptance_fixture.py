@@ -74,13 +74,11 @@ def html_report(title: str, summary: str) -> str:
           <section class="hero">
             <h1>{title}</h1>
             <p>{summary}</p>
-            <p class="watermark">v1.0 · {DATE}</p>
+            <p class="watermark">generated {DATE}</p>
           </section>
           <section>
-            <h2>Changelog</h2>
-            <table>
-              <tr><td>{DATE}</td><td>Initial acceptance-fixture artifact.</td><td>scaffold_acceptance_fixture.py</td></tr>
-            </table>
+            <h2>Sources</h2>
+            <ul><li>scaffold_acceptance_fixture.py</li></ul>
           </section>
         </main>
         </body>
@@ -243,11 +241,6 @@ def scaffold_personal_kb(workspace: Path) -> Path:
 
         Proof beats philosophy for first-time adopters.
 
-        ## Changelog
-
-        | Date | What changed | Source |
-        |------|--------------|--------|
-        | 2026-04-24 | Initial topic stub. | acceptance fixture |
         """,
     )
     write(
@@ -337,8 +330,8 @@ def scaffold_personal_kb(workspace: Path) -> Path:
     write(kb / "_kb-delivery" / "specs" / ".gitkeep", "")
     write(kb / "_kb-operations" / "releases" / "2026" / ".gitkeep", "")
     write(kb / "_kb-operations" / "incidents" / "2026" / ".gitkeep", "")
-    write(kb / "_kb-references" / "reports" / f"{DATE}-personal-brief-v1-0.html", html_report("Personal Acceptance Brief", "Fixture artifact for personal-layer verification."))
-    write(kb / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals-v1-0.html", html_report("Progress Report", "Fixture artifact for progress-report verification."))
+    write(kb / "_kb-references" / "reports" / f"{DATE}-personal-brief.html", html_report("Personal Acceptance Brief", "Fixture artifact for personal-layer verification."))
+    write(kb / "_kb-references" / "reports" / f"progress-{DATE}-platform-signals.html", html_report("Progress Report", "Fixture artifact for progress-report verification."))
     write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T09:00:00Z | start-day | personal | briefing created |\n")
     return kb
 
@@ -377,7 +370,7 @@ def scaffold_team_kb(workspace: Path) -> Path:
     write(kb / "_kb-delivery" / "specs" / ".gitkeep", "")
     write(kb / "_kb-operations" / "releases" / "2026" / ".gitkeep", "")
     write(kb / "_kb-operations" / "incidents" / "2026" / ".gitkeep", "")
-    write(kb / "reports" / f"{DATE}-team-review-v1-0.html", html_report("Team Promotion Review", "Fixture artifact for team-layer verification."))
+    write(kb / "reports" / f"{DATE}-team-review.html", html_report("Team Promotion Review", "Fixture artifact for team-layer verification."))
     return kb
 
 
@@ -394,7 +387,7 @@ def scaffold_org_kb(workspace: Path) -> Path:
         write(kb / team / "_kb-inputs" / "digested" / "2026" / "04" / ".gitkeep", "")
         write(kb / team / "_kb-references" / "findings" / "2026" / f"{DATE}-{team}.md", f"# Finding: {team}\n")
         write(kb / team / "_kb-references" / "topics" / "org-synthesis.md", "# Topic: Org synthesis\n")
-    write(kb / "reports" / f"{DATE}-org-brief-v1-0.html", html_report("Org Adoption Brief", "Fixture artifact for org-layer verification."))
+    write(kb / "reports" / f"{DATE}-org-brief.html", html_report("Org Adoption Brief", "Fixture artifact for org-layer verification."))
     return kb
 
 
@@ -404,7 +397,7 @@ def scaffold_company_kb(workspace: Path) -> Path:
     write(kb / "README.md", "# company-enablement-kb\n")
     write(kb / "_kb-decisions" / "archive" / "2026" / ".gitkeep", "")
     write(kb / "_kb-references" / "foundation" / "vmg.md", "# Company guidance\n")
-    write(kb / "reports" / f"{DATE}-company-brief-v1-0.html", html_report("Company Guidance Brief", "Fixture artifact for company-layer verification."))
+    write(kb / "reports" / f"{DATE}-company-brief.html", html_report("Company Guidance Brief", "Fixture artifact for company-layer verification."))
     write(kb / ".kb-log" / f"{DATE}.log", "| 2026-04-24T12:00:00Z | digest | company | published updated guidance |\n")
     return kb
 

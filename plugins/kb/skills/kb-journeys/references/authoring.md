@@ -1,7 +1,5 @@
 # Reference: journey authoring commands
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-17
-
 `kb-journeys` shares the four-command authoring arc with `kb-roadmap` (`ideate` / `discuss` / `review` / `refine`), with journey-specific deltas. See `kb-roadmap/references/authoring-commands.md` for the shared stance guidance only. Journey commands do not inherit roadmap command shapes, phase gates, tracker ownership, or `primitive-storage.roadmap-items` routing.
 
 ## Shared contract
@@ -109,13 +107,3 @@ When invoked this way, the review stance:
 - On `/kb journeys refine` success, the drift finding is marked **resolved** and the journey is re-rendered.
 
 This is the only supported path for journey edits driven by delivery drift. Journeys are **never** silently updated by roadmap runs.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Allowed `ideate` to create a new step's first delivery record and required the returned reference to be persisted on that step | PR #153 review |
-| 2026-09-17 | Added journey-specific `--apply` command shapes for optional linked-delivery tracker side-effects | PR #153 review |
-| 2026-09-17 | Limited the imported roadmap authoring contract to stance guidance and kept journey tracker side-effects on explicitly linked delivery records | PR #153 review |
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

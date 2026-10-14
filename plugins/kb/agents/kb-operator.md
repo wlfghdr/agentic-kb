@@ -1,7 +1,6 @@
 ---
 name: kb-operator
 description: Autonomous knowledge-operations agent. Runs daily and weekly rituals, processes inputs, routes to workstreams, maintains decisions, ideas, and tasks, generates HTML artifacts, and offers to commit/push/PR when CI is expected to stay green. Composes kb-management + kb-setup.
-version: 7.0.0
 uses:
   - kb-management
   - kb-setup
@@ -62,7 +61,7 @@ Monitor `_kb-decisions/`:
 - Due within 7 days → surface in `start-day`.
 - Overdue → escalate: suggest scheduling a meeting with stakeholders.
 - New evidence detected → update the evidence trail; advance status if warranted.
-- Resolved → move to archive, update affected topics with a changelog entry, close related tasks.
+- Resolved → move to archive, update affected topics, close related tasks.
 
 ### 4. Idea lifecycle
 
@@ -72,7 +71,7 @@ Monitor `_kb-ideas/`:
 - Ideas in `growing` >30 days without development log entry → flag as stale.
 - When a user invokes `/kb develop`, run the sparring flow: build internal model (assertion, assumptions, contradictions, failure modes, gaps), Socratic questioning, devil's advocate, convergence, then record results.
 - Ideas at `ready` → surface as promotion/topic-update candidates in `end-week`.
-- When an idea is `shipped`, move to `_kb-ideas/archive/`, update the target topic with a changelog entry.
+- When an idea is `shipped`, move to `_kb-ideas/archive/`, update the target topic.
 - Pattern detection: ≥3 findings converging on a theme with no topic/idea → suggest creating an idea.
 
 ### 5. Cross-layer flow
@@ -106,7 +105,7 @@ Rules (both): deterministic, fast. Watermark uses `latest · {YYYY-MM-DD HH:MM}`
 
 If `end-day` is skipped for a given date, the next `start-day` generates the missing day's summary from the log + git diff before producing its briefing.
 
-All artifacts follow the light/dark + watermark + changelog-appendix contract. See `kb-management/references/html-artifacts.md`.
+All artifacts follow the light/dark + watermark + sources-appendix contract. See `kb-management/references/html-artifacts.md`.
 
 When an artifact run needs external reads, preview the fetch plan first (sources, scope, execution mode, outputs) unless the user already invoked the explicit execution step or automation config authorizes the run. After generation, complete the artifact QA sweep before offering commit/push.
 
@@ -176,34 +175,3 @@ The loop MUST:
 ## Composition
 
 This agent is **stateless** between invocations. All state is in the file system (KB repos + log). Each invocation reads fresh.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; the composed kb-management/setup contracts now distinguish canonical tracker CRUD from reserved connection-digest write-back | Issue #152 |
-| 2026-06-17 | Version aligned to 6.3.2 (framework patch — glossary `Intake` term added; no behavioral change to this agent) | Version alignment |
-| 2026-06-10 | Version aligned to 6.3.1 | Version alignment |
-| 2026-06-02 | Version aligned to 6.3.0 after setup changed the shared process/operational primitive default to GitHub Issues-backed storage | Issue #145 |
-| 2026-05-25 | Version aligned to 6.2.0 | Version alignment |
-| 2026-05-25 | Version aligned to 6.1.0 to track the capture-routing changes and framework release | Version alignment |
-| 2026-05-24 | Capture loop §2 now points reflection-driven routing at the strong-signal rubric in `kb-management/references/capture-routing.md` and sends weak or ambiguous signals to default, matching the issue #126 operational definition | Issue #126 |
-| 2026-05-23 | Capture loop §2 now picks the destination layer per kb-management SKILL.md rule 12 (default / explicit / reflection-driven), and reflection-driven non-default targets require human confirmation before persistence. Cross-layer flow §5 names direct routing as parallel to promotion and confirms that automation level 3's auto-promote does not pick non-parent targets | Artifact layer routing |
-| 2026-05-10 | Version aligned to 6.0.0 for the v5 adoption-arc closeout. Removed the residual fixed-ladder `L4` references from the cross-layer-flow section ("Publication (L4) is always manual" → "Publication to a layer marketplace is always manual") and the autonomous-loop section ("Never publish to L4 automatically" → "Never publish to any layer marketplace automatically"). Tightened the digest-automation note from the ambiguous "Level 2+" to the explicit "automation level 2 or 3" wording. Corrected the daily-summary and weekly-summary finding paths from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec. No behavioral changes — the publish path was already manual at every automation level | v6.0.0 adoption + daily-usage gap audit |
-| 2026-04-30 | Version aligned to 5.5.0 after setup began proposing product-management roadmap/journey ownership from role, goals, sources, and outputs. The operator inherits status and artifact handoffs through kb-management + kb-setup | Product-management surface integration |
-| 2026-04-29 | Version aligned to 5.4.2 after the draft-skill discoverability fix in kb-management + kb-setup's packaged `kb.prompt.md`. The composed operator now inherits the new `/kb roadmap` and `/kb journeys` handoffs without any change to its own contract | v5.4.2 draft-skill discoverability fix |
-| 2026-04-27 | Version aligned to 5.4.1 for the patch release. No behavioral changes to the agent contract | 5.4.1 patch release |
-| 2026-04-27 | Version aligned to 5.4.0 for the soft-transition extension (kb-setup's adoption-stage Q8, REFERENCE §9 + §10, glossary stage vocabulary). REFERENCE §10 cross-reference in the autonomous-loop section updated to §12 to match the renumbering. No behavioral changes to the agent contract | Soft-transition extension |
-| 2026-04-26 | Version aligned to 5.3.0 after kb-management gained the new delivery/operations artifact surface (`brief`, `spec`, `release`, `incident`) so the composing operator matches the shipped framework metadata | Software-engineering operating-model gap closure |
-| 2026-04-25 | Version aligned to 5.2.0 after the kb-management trigger expansion and the kb-setup goal-oriented question-flow rework so the composing operator's declared version matches the shipped skills it composes | v5.2.0 trigger + setup rework |
-| 2026-04-25 | Version aligned to 5.1.0 after the migration-helper and roadmap-config closeout release so the operator's documented command surface matches the shipped framework metadata | v5.1.0 closeout release |
-| 2026-04-25 | Reworked the operator contract for 5.0.0 so it composes the flexible layer graph, notes, per-layer marketplaces, and connection digests under the new major-release model | v5.0.0 flexible layer model |
-| 2026-04-25 | Version aligned to 4.0.0 for the v4.0.0 framework release | v4.0.0 release alignment |
-| 2026-04-25 | Version aligned to 3.5.0 and clarified that artifact runs use explicit fetch preflights plus a post-generation QA sweep before the operator treats them as complete | Artifact-generation contract tightening |
-| 2026-04-24 | Version aligned to 3.4.4 after the harness install-surface corrections and roadmap proof-fixture additions | Version alignment |
-| 2026-04-22 | Added topics to the dashboard overview contract and bumped the declared agent version to 3.4.3 so the operator describes the shipped live state correctly | Fixes #22 |
-| 2026-04-22 | Bumped declared agent version to 3.4.2 so the phantom-overview behavior fix ships under the current framework patch release | Version alignment |
-| 2026-04-22 | Output contract §Always-current overviews now lists only `dashboard.html` + root `index.html` after dropping the phantom three-overview family from rule 9 | Fixes #18 |
-| 2026-04-22 | Version aligned to 3.4.0 after documenting Codex CLI compatibility in the public setup/onboarding contract | Compatibility expansion |
-| 2026-04-22 | Version aligned to 3.3.0 after the local-team `/kb promote` flow changed in `kb-management` | Team promote flow fix |
-| 2026-04-20 | Replaced the planned/manual overview-refresh split with the shipped always-current regeneration contract and kept `/kb status --refresh-overviews` as the manual rebuild escape hatch | v3.2.0 live-overview refresh |

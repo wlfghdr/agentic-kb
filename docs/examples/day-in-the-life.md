@@ -1,7 +1,5 @@
 # Example: Day in the Life
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 An illustrative walkthrough of a single day for a user named Alex, a principal engineer working on an observability platform. Alex has one anchor layer, two shared team layers, and consumes company guidance from a consumer layer. The examples below are not normative; they show what the system feels like in practice.
 
 ## 08:00 — Morning briefing
@@ -177,18 +175,3 @@ That keeps the daily chat, the roadmap, the journeys, and stakeholder updates fr
 ## The Point
 
 Alex never had to manually maintain a wiki hierarchy. The agent handled the bookkeeping while the human kept control over meaning, audience, and promotion.
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Version aligned to 6.3.0 after the shared process/operational primitive default moved to GitHub Issues-backed storage in the setup and reference specs. Example flow unchanged | Issue #145 |
-| 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
-| 2026-05-24 | Verified the walkthrough against the v6.1 command reference, bumped the example version to 6.1.0, made the external-read preflight explicit, and replaced the undocumented incident-resolve shorthand with the canonical `/kb incident [title]` update flow | Issue #122 |
-| 2026-05-14 | Added compact PM, EM, and on-call SRE scenes so the example covers the three non-engineer roles the operating model names alongside engineers. Introduced the post-incident retro flow in the SRE scene to exercise the new `/kb note retro [topic]` variant | Daily-reality gap audit across software-company roles |
-| 2026-05-10 | Added the shared artifact rhythm connecting status, delivery, and roadmap-change reports | Adoption-oriented engineering pass |
-| 2026-04-25 | Reworked the example for 5.0.0: anchor layer, named team layers, year-based finding paths, and explicit cross-layer promotion replaced the old fixed-ladder example | v5.0.0 flexible layer model |
-| 2026-04-18 | Initial version | Extracted from source spec §13 |

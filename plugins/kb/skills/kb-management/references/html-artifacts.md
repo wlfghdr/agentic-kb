@@ -1,7 +1,5 @@
 # HTML Artifact Generation — kb-management
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 Two families of artifacts:
 
 1. **Always-current overviews** — regenerated after any state-mutating operation. Overwritten in place. No version number; timestamp watermark.
@@ -31,9 +29,9 @@ The dashboard is the single owner-facing surface for live state — it renders f
 
 | Kind | Command / Trigger | Filename |
 |------|-------------------|----------|
-| Presentation | `/kb present [topic]` | `reports/<slug>-v<version>.html` |
-| Report | `/kb report [scope]` | `reports/<slug>-v<version>.html` |
-| Pitch | `/kb present --pitch [topic]` | `reports/<slug>-pitch-v<version>.html` |
+| Presentation | `/kb present [topic]` | `reports/YYYY-MM-DD-<slug>.html` |
+| Report | `/kb report [scope]` | `reports/YYYY-MM-DD-<slug>.html` |
+| Pitch | `/kb present --pitch [topic]` | `reports/YYYY-MM-DD-<slug>-pitch.html` |
 | Daily summary | `/kb end-day` (automatic) | `reports/daily-YYYY-MM-DD.html` + finding `findings/YYYY/YYYY-MM-DD-daily-summary.md` |
 | Weekly summary | `/kb end-week` (Friday 15:00) | `reports/weekly-YYYY-WW.html` + finding `findings/YYYY/YYYY-MM-DD-weekly-summary.md` |
 
@@ -121,10 +119,10 @@ Every generated artifact:
 
 1. **Self-contained** — no external runtime fetches (all CSS/JS inline or embedded).
 2. **Light + dark theme** embedded, with an in-page toggle. Default theme per `.kb-config/artifacts.yaml`.
-3. **Version watermark** on the intro slide / top of report — subtle, format: `v{version} · {date}`.
-4. **Changelog appendix** — the final slide (presentation) or section (report) lists versions.
+3. **Generation watermark** on the intro slide / top of report — subtle, format: `generated {date}`.
+4. **Sources appendix** — the final slide (presentation) or section (report) lists the sources the artifact draws on.
 5. **Accessible** — semantic HTML, WCAG AA contrast, keyboard nav, alt text on images.
-6. **Versioned, dated filenames** — default pattern `YYYY-MM-DD-<slug>-v<major>.<minor>.html` for any topic-bound artifact (presentations, reports, pitches). Regeneration writes a new file; does NOT overwrite old. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for contributor, shared, and synthesis layers.
+6. **Dated filenames** — default pattern `YYYY-MM-DD-<slug>.html` for any topic-bound artifact (presentations, reports, pitches). The date is the content's as-of date, not a version: regenerating the same artifact for the same date overwrites the file, and Git keeps the history. Dateless filenames are permitted only for always-current Family-1 overviews (`index.html`, `dashboard.html`). The rule is **layer-agnostic** — same filename convention for contributor, shared, and synthesis layers.
 7. **Layer-agnostic styling** — the configured reference template in `.kb-config/artifacts.yaml` (`styling.reference-file`) is THE template for every Family-2 artifact in that layer. Never hand-roll a fresh palette or layout per run. If the user works in a workspace with multiple KB layers, each layer reuses its own configured template — but within one layer, every artifact looks like it comes from one brand.
 8. **QA sweep before completion** — do not report the artifact done until the generated file itself passes a review sweep: theme toggle works, no unresolved placeholders remain, embedded assets resolve without network fetches, readability/contrast is acceptable in both themes, and keyboard affordances still work.
 
@@ -147,7 +145,7 @@ Concrete rules every generator implements:
 1. **Read `.kb-config/artifacts.yaml` first.** If `styling.source: template`, load the `reference-file`, parse its `:root` / `[data-theme="dark"]` / `[data-theme="light"]` blocks, and reuse those token values (`--*-bg*`, `--*-border*`, `--*-text*`, `--*-brand*`, semantic colors, radius, shadow). If `source: website`, reuse the token file generated at setup time. If `source: builtin`, use `templates/artifact-base.html`.
 2. **Same tokens across all artifacts.** The root `index.html`, every presentation, every report, and every daily/weekly summary share the same token set — one visual system per KB. A user opening any two artifacts side by side sees a single brand.
 3. **Both themes always.** Emit `[data-theme="dark"]` and `[data-theme="light"]` blocks, plus the keyboard-accessible toggle. Default theme per `artifacts.yaml → styling.default-theme`.
-4. **Never hard-code hex values in generator logic.** Hex values belong in token blocks only. Report-specific components (metrics grid, changelog table) reference tokens via `var(--...)`.
+4. **Never hard-code hex values in generator logic.** Hex values belong in token blocks only. Report-specific components (metrics grid, sources table) reference tokens via `var(--...)`.
 5. **Failure mode.** If the reference template is missing, unreadable, or lacks both theme blocks, fall back to `builtin` AND warn the user in the generator output — never silently publish with the wrong brand.
 
 ## Output location
@@ -159,25 +157,17 @@ Concrete rules every generator implements:
 | Shared contributor layer with shared reports | `_kb-references/reports/` |
 | Consumer or synthesis layer | `_kb-references/reports/` |
 
-Filename: `<slug>-v<version>.html` (per `.kb-config/artifacts.yaml → output.filename-template`).
-
-## Versioning rules
-
-- PATCH (1.0 → 1.1): prose edits, minor content changes.
-- MINOR (1.0 → 1.1): added slides / structural additions.
-- MAJOR (1.x → 2.0): template changed, narrative restructured.
-
-The previous file remains on disk (different filename). Changelog appendix preserves entries across versions.
+Filename: `YYYY-MM-DD-<slug>.html` (per `.kb-config/artifacts.yaml → output.filename-template`).
 
 ## Slide / section layout (presentation)
 
-1. **Intro** — title, one-line abstract, watermark (`v<version> · <date>`).
+1. **Intro** — title, one-line abstract, watermark (`generated <date>`).
 2. **Problem** — the friction or gap this addresses.
 3. **Pattern / Mechanism** — the approach.
 4. **Evidence** — grounding in findings + decisions.
 5. **Proposal / Ask** — what's being asked.
 6. **Next Steps** — concrete follow-ups.
-7. **Appendix — Changelog + sources**.
+7. **Appendix — Sources**.
 
 ## Root artifact index (`index.html`)
 
@@ -274,7 +264,7 @@ The base template (in `templates/artifact-base.html`) includes:
 - `<script>` for the theme toggle (keyboard accessible).
 - `<section>` elements per slide with semantic heading hierarchy.
 - Watermark placeholder `{{WATERMARK}}`.
-- Changelog appendix placeholder `{{CHANGELOG}}`.
+- Sources appendix placeholder `{{SOURCES_LIST}}`.
 
 The generator fills placeholders from `.kb-config/artifacts.yaml` + topic content.
 
@@ -288,24 +278,6 @@ For `/kb present` (and any slide-style report), the richer **`kb-setup/templates
 - Header with brand-logo slot and theme toggle.
 - Cover slide with large visible brand-mark (`.bg-brand`), title, subtitle, and **exact creation timestamp** (`Created {{CREATED_DATE}} · {{CREATED_TIME}}`).
 - Nav bar with keyboard shortcuts (←/→, Home, End, PgUp/PgDn, Space), progress bar, print CSS.
-- Built-in appendix/changelog slide.
+- Built-in appendix (sources) slide.
 
 Every `/kb present` MUST use this file (as customized by the phase-3 HTML-styling step) rather than regenerating a fresh layout.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-05-22 | Added "Commit policy, hosting, and merge strategy" subsection pointing at the new `docs/REFERENCE.md` §6 lifecycle contract: anchor-layer live overviews are tracked (+ `merge=ours` via `.gitattributes`); non-anchor live overviews are ignored by default; historical artifacts are always tracked; `/kb status --refresh-overviews` is the repair path. Generators must keep live overview output deterministic so `merge=ours` converges cleanly on the next regen. Closes audit finding #107 | Concept/spec gap audit |
-| 2026-05-15 | Reframed external-read examples to refer to stable roadmap/journey skills instead of optional draft skills | Release-readiness audit |
-| 2026-05-10 | Corrected the daily-summary and weekly-summary finding paths in the historical-artifacts table from `findings/YYYY-MM-DD-*.md` to the year-nested `findings/YYYY/YYYY-MM-DD-*.md` shape used everywhere else in the spec | v6.0.0 adoption + daily-usage gap audit |
-| 2026-05-10 | Added shared report source artifacts and clarified the interplay between status, delivery, roadmap-change, and ritual summaries | Adoption-oriented engineering pass |
-| 2026-05-05 | Replaced two stale "kb-setup Q13" references for the presentation-template copy step with phase-relative wording so the doc no longer points at a question number that the v5.4.0 renumbering invalidated. Behavioral contract unchanged | Onboarding consistency review |
-| 2026-04-25 | Added an explicit external-read preflight contract plus a mandatory post-generation QA sweep so artifact generation has reviewable fetch boundaries and a defined completion gate | Generic learnings extracted from roadmap/presentation feature work |
-| 2026-04-23 | Family-2 filename default is now `YYYY-MM-DD-<slug>-v<major>.<minor>.html` across every KB layer; styling contract is explicitly layer-agnostic (configured reference template is THE template per layer); root-`index.html` regeneration is now an explicit offer-then-confirm step after every Family-2 create/update (automation levels 2/3 still run silently) | ISO 42001 presentation generation friction |
-| 2026-04-22 | Root `index.html` source-of-truth row now lists findings/topics/ideas/decisions markdown alongside HTML artifacts, matching the shipped generator behavior | Fixes #21 |
-| 2026-04-22 | Added topics to the dashboard Family-1 contract and source-of-truth table so living positions are visible alongside findings, ideas, and decisions | Fixes #22 |
-| 2026-04-22 | Dropped the three phantom Family-1 overviews (`inventory.html`, `open-decisions.html`, `open-tasks.html`) that had no shipped generator; their signals already live in `dashboard.html` panels | Fixes #18 |
-| 2026-04-20 | Clarified that automatic overview refresh runs at every layer, while `/kb status --refresh-overviews` remains a manual repair/rebuild trigger | v3.2.0 live-overview refresh |

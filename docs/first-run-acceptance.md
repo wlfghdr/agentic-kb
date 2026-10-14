@@ -1,7 +1,5 @@
 # First-Run Acceptance Path
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
->
 > **Audience: maintainers and QA.** This is the deterministic baseline a release lead or team lead runs to verify that onboarding still produces the same working contract for every fresh adopter. **It is not the doc to read after you first install agentic-kb.** For that, use [`docs/examples/first-hour.md`](./examples/first-hour.md) — it walks the same install → setup → first capture path in narrative form, takes ~1 hour, and ends with a visible artifact you can open in a browser.
 
 This document defines the canonical first-run acceptance path for `agentic-kb`.
@@ -581,28 +579,3 @@ Create or reopen an issue if any of these occur:
 - [first-hour.md](./examples/first-hour.md)
 - [plugins/kb/skills/kb-setup/SKILL.md](../plugins/kb/skills/kb-setup/SKILL.md)
 - [plugins/kb/skills/kb-setup/references/setup-flow.md](../plugins/kb/skills/kb-setup/references/setup-flow.md)
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Added the offline shared tracker-backed lifecycle fixture using the real nested layer/connection schema and covering create, handoff, close, disabled digest writes, missing capability, absent authentication, legacy normalization, export-backed read-only behavior, ownership-blocked routing, manual completion, and the single-canonical-record invariant | Issue #152 and PR #153 review |
-| 2026-06-02 | Version aligned to 6.3.0 and changed the deterministic baseline so the personal layer stays file-backed while the shared team layer defaults decisions and tasks to GitHub Issues-backed `primitive-storage` with write-back still confirmation-gated | Issue #145 |
-| 2026-05-24 | Version aligned to 6.2.0 | Version alignment |
-| 2026-05-18 | Preamble now explicitly tags the doc as a maintainer/QA baseline and points adopters at `docs/examples/first-hour.md` for the actual first-install walkthrough. Closes audit finding #100 (acceptance.md was being referenced from README "Where to start" as if it were user onboarding) | Concept/onboarding/process audit |
-| 2026-05-18 | VS Code Copilot Chat install path now accepts either the Preview marketplace path (user-level `chat.plugins.marketplaces`) or the stable installer fallback (`scripts/install --target vscode`); the acceptance criteria allow either. Closes audit finding #97 | Concept/onboarding/process audit |
-| 2026-05-18 | Phase order swap propagated: Phase 1 baseline now covers workspace and harness facts (Q1–Q3); Phase 2 covers the open-ended context block (Q4–Q11). Phase 3 expected-output Q-references shifted to Q11/Q10/Q5/Q8/Q9 accordingly. Step 14 product-management proof references the new question numbering. Closes audit finding #98 | Concept/onboarding/process audit |
-| 2026-05-17 | Added first-run acceptance coverage for tracker-backed primitives: baseline keeps files canonical, optional proof verifies `primitive-storage`, the full GitHub governance profile or Jira setup outcomes, confirmation-gated tracker mutations, and absence of competing canonical KB files | Tracker-backed onboarding design |
-| 2026-05-15 | v6.1.0: updated the deterministic first-run path for the release-ready surface. The baseline now enables delivery and operations on the starter layers, calls out the operating model and role handbook as pre-acceptance reading, verifies delivery/operations directories, and adds optional proofs for `/kb brief`, `/kb spec`, `/kb release`, `/kb incident`, and `/kb note retro` | Release-readiness audit |
-| 2026-05-05 | v5.5.1: closed the v5.4.0 numbering drift. Phase 1 now baselines Q1–Q8 (Q8 = operating context / adoption stage, which had been silently dropped from this doc since v5.4.0). Phase 2 questions are renumbered Q9/Q10/Q11 to match `kb-setup/SKILL.md`. Phase 3 expected output now requires the adoption-stage label, explicit Stage↔automation-level consistency, and the graduation-criteria block, so the acceptance baseline actually proves the soft-transition flow it advertises. Added an explicit acceptance bullet that the chosen stage must be durable in `automation.yaml` and `foundation/me.md` | Onboarding consistency review |
-| 2026-04-30 | v5.5.0: added the optional product-management proof path so first-run acceptance covers setup-derived roadmap/journey ownership, source/output placement, and read-only dry-run validation when role/goals imply those artifacts | Product-management surface integration |
-| 2026-04-25 | v5.2.0: replaced the flat 13-question baseline with the four-phase, goal-oriented interview (Phase 1 context/goals, Phase 2 workspace facts, Phase 3 derived plan to confirm, Phase 4 single yes) so the canonical proof matches the new kb-setup behavior. Layer features and contributor-mode flags are now derived in Phase 3 from the user's own answers, not enumerated by the user. Q7 baseline answer pinned to "confirm everything" so the derived automation level stays at 1 (manual only) per the existing baseline | v5.2.0 setup rework |
-| 2026-04-25 | Clarified the baseline automation answer so level 1 is explicitly the manual-only setup path | Deep spec-audit follow-up |
-| 2026-04-25 | Concept-audit follow-up: aligned the doc version with the 5.1.x framework and added an optional migration-proof step covering `/kb migrate layer-model` and `/kb migrate archives` for legacy adopters | Concept-audit drift correction |
-| 2026-04-25 | Reworked the deterministic onboarding proof for 5.0.0: baseline now proves a two-layer graph, verifies year-based archives and notes, and requires one cross-layer promote or digest path before acceptance | v5.0.0 flexible layer model |
-| 2026-04-24 | Added Gemini CLI and Kiro IDE install-phase acceptance checks, updated Codex CLI to the `.agents/skills/` workflow, and added an export-backed roadmap proof step | Harness and roadmap proof correction |
-| 2026-04-22 | Exempted the presentation template placeholder scan from scaffold acceptance because those `{{…}}` markers are intentionally deferred for `/kb present` | Fixes #17 |
-| 2026-04-22 | Added Codex CLI acceptance guidance and clarified the difference between first-class supported harnesses and compatible CLI workflows | Compatibility expansion |
-| 2026-04-20 | Initial deterministic first-run acceptance path for onboarding verification | Issue #6 |

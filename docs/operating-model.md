@@ -1,7 +1,5 @@
 # Software Engineering Operating Model
 
-> **Version:** 0.3.1 | **Last updated:** 2026-05-15
-
 This document describes what day-to-day software engineering work looks like across the main roles in a software company, which artifacts make that work legible, and which parts of that operating model `agentic-kb` did not model explicitly before this operating-model extension.
 
 For the role-by-role companion (which commands each role reaches for first, which artifacts they read most, which they author most, and one realistic chain through the artifact graph per role), see [`docs/role-handbook.md`](./role-handbook.md).
@@ -178,15 +176,3 @@ Still out of scope:
 - support systems that need their own external source of truth.
 
 Those surfaces may still feed findings, briefs, specs, releases, or incidents through connections and reports, but they are not first-class KB primitives here.
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-05-15 | Reframed roadmap and journey coverage as stable setup-proposed product-management primitives instead of draft extensions | Release-readiness audit |
-| 2026-05-14 | v0.3.0: named Gap F (no canonical shape for team reflection — closed by the retro note variant) and Gap G (no user-facing role view — closed by the new `docs/role-handbook.md`). Added retros to the §1 Learning-loop artifact list and to §6's artifact table; extended the §7 modeling rule of thumb with retros. Added the top-of-doc pointer to the role handbook | Daily-reality gap audit across software-company roles |
-| 2026-04-30 | Added roadmap and journey artifacts to the role-loop model so product-management direction work is explicit alongside delivery and operations handoffs | Product-management surface integration |
-| 2026-04-26 | Initial operating-model analysis and artifact-gap definition for company-wide software engineering work; introduced the delivery/operations gap narrative for briefs, specs, releases, and incidents | Gap analysis for software-engineering daily work |
-| 2026-04-27 | Appended missing trailing newline to satisfy `markdownlint` MD047; no semantic change | CI fix |

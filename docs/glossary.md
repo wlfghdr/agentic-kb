@@ -1,7 +1,5 @@
 # Glossary
 
-> **Version:** 0.11 | **Last updated:** 2026-09-17
-
 Canonical terms used throughout the spec. If a term has an entry here, use this term and no synonym in spec documents.
 
 | Term | Definition |
@@ -12,7 +10,6 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Capture** | The flow that turns raw input into a finding, note, or skipped material. Command: `/kb [text/URL/path]`. The destination layer follows the capture-routing modes (default / explicit / reflection-driven); see `Capture routing` below. |
 | **Capture routing** | The rule that picks which layer a `/kb` capture lands in. Three modes: **default** (no target named → active layer), **explicit** (user named a target layer in the invocation, or a `capture-routing:` rule in `.kb-config/layers.yaml` matches), **reflection-driven** (agent inferred a non-default target from content/source/context — requires human confirmation before mutation). Parallel to `promote`: direct routing covers the first-write destination, promote covers the upward-after-maturation flow. Full contract: `plugins/kb/skills/kb-management/references/capture-routing.md`. |
 | **Capture-only mode** | Synonym for **Adoption stage 1**. The team uses the `agentic-kb` directory contract, evaluation-gate scoring patterns, and audit trail by hand, without invoking the `/kb` agent in the loop. A valid stop, not a half-installed product. |
-| **Changelog (inline)** | The `## Changelog` section at the bottom of any long-lived file. Required on topics, foundation files, and other living shared docs. |
 | **Brief** | A living delivery-intent artifact under `_kb-delivery/briefs/`. It frames the problem, scope, non-goals, success signals, and handoffs before detailed design starts. |
 | **Connection** | A per-layer declaration of linked product repos, trackers, reference mode, canonical tracker capabilities and authentication sources, and the separate reserved connection-digest write-back policy under `.kb-config/layers.yaml`. |
 | **Contributor-scoped** | An artifact visibility mode used at multi-user contributor layers: the file belongs to one contributor rather than the whole layer. **This is an axis of the primitive, not of the layer role.** A `contributor` layer can hold both `contributor-scoped` artifacts (private to one author until promoted) and `shared` artifacts (one canonical record per layer) at the same time. Not the same thing as the `contributor` layer role; see `docs/REFERENCE.md` §1 "Two orthogonal axes" for the full mapping. |
@@ -54,7 +51,7 @@ Canonical terms used throughout the spec. If a term has an entry here, use this 
 | **Tracker** | An external issue or planning system declared in a layer `connections:` block, such as GitHub issues, Jira exports, or Linear exports. |
 | **Tracker-backed primitive** | A decision, task, idea, feedback item, or intake item whose operational state lives in a configured tracker while the KB keeps synthesis, evidence, reports, and backlinks. The canonical owner must be explicit so KB files and tracker items do not both claim active ownership of the same item. |
 | **Primitive storage** | The per-layer `primitive-storage` config block that declares whether a primitive family is canonical in KB files, in a tracker, or in a hybrid file-to-tracker promotion flow. |
-| **Watermark** | The subtle `v{version} · {date}` marker added to generated HTML artifacts or the timestamp file that marks the last processed external digest window. |
+| **Watermark** | The subtle `generated {date}` marker added to generated HTML artifacts or the timestamp file that marks the last processed external digest window. |
 | **VMG** | Vision, Mission & Goals — the strategic steering model. Lives in `_kb-references/foundation/vmg.md`. Vision (years), Mission (quarters), Goals (weeks–quarters). Goals are synonymous with MCGs (Mission-Critical Goals). |
 | **Workstream** | A parallel track inside a layer with its own themes, active decisions, and status. Path: `_kb-workstreams/<name>.md`. |
 
@@ -79,30 +76,3 @@ The following terms are **not** used in this spec; use the term on the right ins
 | AI maturity model, agentic curve | adoption stage |
 | pre-agent mode, manual mode | capture-only mode |
 | Sync | Use the specific flow you mean: `digest`, `promote`, `publish`, `diff`, or `sync` for contributor-scoped reconciliation |
-
----
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Expanded `Connection` to distinguish canonical tracker capability/authentication declarations from reserved connection-digest write-back policy; version bumped to 0.11 | PR #153 review |
-| 2026-06-17 | Added `Intake` as the canonical term for a request/input item (most commonly a feature intake) that is triaged and routed onward to a roadmap item, spec, brief, delivery backlog, or closure. The term was already used across `REFERENCE.md`, `first-run-acceptance.md`, `collaboration.md`, and the tracker-backed-primitives reference without a canonical definition. Version bumped to 0.10 | Terminology consistency sweep |
-| 2026-05-23 | Added `Capture routing` as a canonical term covering the default / explicit / reflection-driven modes and the human-confirmation gate. Extended the `Capture` entry with a pointer to the new term. Version bumped to 0.9 | Artifact layer routing |
-| 2026-05-18 | `Task` entry expanded with split-ownership rule against external trackers (KB tasks own knowledge work; tracker tickets own engineering work; not two views of the same thing). Closes audit finding #103 | Concept/onboarding/process audit |
-| 2026-05-18 | Disambiguated `Contributor-scoped` (artifact visibility) and `Role` (layer mutation rights) so adopters cannot conflate the two axes. Both entries now point at the new "Two orthogonal axes" callout in `docs/REFERENCE.md` §1. Updated the `Adoption stage` entry to reference phase 2 question 11 after the kb-setup phase swap. Closes audit findings #98 and #104 | Concept/onboarding/process audit |
-| 2026-05-17 | Added `GitHub governance profile` as the canonical term for the generated adopter setup package that carries generic issue/project/PR rules, CI, checklist, and local workflow skill | Tracker-backed onboarding hardening |
-| 2026-05-17 | Added `primitive storage` as the canonical term for the per-layer file/tracker/hybrid ownership map used by tracker-backed primitives | Tracker-backed onboarding design |
-| 2026-05-17 | Added `tracker-backed primitive` as the generic term for decisions, tasks, ideas, feedback, and intake items whose operational state lives in a configured tracker while the KB keeps synthesis and backlinks | Cross-repo tracker-backbone review |
-| 2026-05-15 | Removed the active Draft term and reframed roadmap/journey glossary entries as stable setup-proposed product-management primitives; simplified Harness to the supported tiers documented in the README and reference | Release-readiness audit |
-| 2026-04-30 | Reframed roadmap and journey terms as setup-proposed product-management primitives, widened Journey beyond product-only flows, and updated the Draft definition so setup-proposed draft features are allowed when confirmed per layer | Product-management surface integration |
-| 2026-04-27 | Added soft-transition vocabulary: `adoption stage`, `capture-only mode`, `repo-as-OS framework`. Non-term mappings now steer `maturity level (for adoption)` and `AI maturity model / agentic curve` to `adoption stage`, and `pre-agent mode / manual mode` to `capture-only mode` | Soft-transition extension |
-| 2026-04-26 | Added the new delivery and operations vocabulary: `brief`, `spec`, `delivery`, `operations`, `release record`, and `incident record`, plus the canonical non-term mappings for `RFC`, `PRD`, and `postmortem` | Software-engineering operating-model gap closure |
-| 2026-04-25 | Added the missing `contributor-scoped` term and tightened the `Role` definition so artifact visibility and layer mutation rights are no longer easy to confuse | Deep spec-audit follow-up |
-| 2026-04-25 | Concept-audit follow-up: extended the Harness definition with the rules-only and not-feasible buckets that the README documents, so the glossary stays the single source of truth for harness vocabulary | Concept-audit drift correction |
-| 2026-04-25 | Replaced the fixed L1–L5 vocabulary with the 5.0 flexible layer graph terms (layer, scope, role, parent layer, anchor layer), added notes/connections/tracker terminology, and clarified marketplace as a per-layer capability | v5.0.0 flexible layer model |
-| 2026-04-24 | Updated the harness definition to distinguish marketplace/native plugin paths, installer-supported native command or skill paths, and Codex's compatible skill workflow | Harness docs correction |
-| 2026-04-22 | Added Codex CLI to the harness definition as a compatible CLI workflow and clarified first-class vs repo-local support language | Compatibility expansion |
-| 2026-04-22 | Added draft roadmap/journey terminology, updated in-repo skill/agent paths, and clarified the non-generic use of `sync` | Doc drift review |
-| 2026-04-18 | Initial version | New |
-| 2026-04-18 | Escaped literal `\|` inside the Digest row so markdownlint MD056 passes (no semantic change) | CI fix |

@@ -1,7 +1,5 @@
 # Troubleshooting — kb-setup
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-16
-
 ## No tools enabled in the VS Code chat session
 
 Symptom: `/kb` or `/kb setup` launches a chat session where the agent reports it has no tools available, or file operations (read / create / edit) fail.
@@ -50,19 +48,8 @@ Fix: install the IDE's CLI tool or deselect that harness and re-run.
 
 Expected on a brand-new KB. Capture your first input with `/kb [text/URL/path]` or drop a file into `_kb-inputs/`.
 
-## CI complaining about missing changelog
-
-Every topic and foundation file must end with a `## Changelog` section. The skill creates them with empty tables; adding content without appending a changelog row triggers CI.
-
 ## Marketplace install fails
 
 - Check that the marketplace repo is reachable (VPN / SSO if internal).
 - Re-run with `--force` to overwrite a partial install.
 - Check `scripts/install --help` for harness-specific options.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-16 | Version aligned to 7.0.0; no semantic change | Version alignment |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |

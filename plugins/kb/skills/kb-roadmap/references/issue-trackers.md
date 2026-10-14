@@ -1,7 +1,5 @@
 # Reference: issue trackers as first-class sources
 
-> **Version:** 7.0.0 | **Last updated:** 2026-09-17
-
 ## Why this exists
 
 Organizations track plans across heterogeneous systems — GitHub issues, Jira, Linear, a Notion board, a spreadsheet — and correlate delivery in a separate system. The skill treats *every* such system as an **issue tracker** with a common capability surface, not as a one-off "plan source".
@@ -107,21 +105,3 @@ Earlier schema used `plan-sources:` generically. Trackers are a specialized plan
 
 - Read-only plan sources (markdown milestones, release logs) stay under `plan-sources:`.
 - Tracker inputs now prefer active-layer `connections.trackers[]`; adapter-driven roadmap-specific read overrides may still live under `issue-trackers:` when needed.
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-09-17 | Required retained legacy overrides to preserve comment-history reads whenever the merged canonical connection supports comments | PR #153 review |
-| 2026-09-17 | Documented the composite GitHub Projects adapter and made migration reject missing identity or unsupported writes while retaining readable comment history | PR #153 review |
-| 2026-09-17 | Required migration to inspect every compatible destination and to create or select the paired issue connection for project-backed issue CRUD; corrected the adapter matrix to canonical operation names | PR #153 review |
-| 2026-09-17 | Preserved normalized capabilities and canonical authentication during legacy migration, including nested legacy authentication metadata | PR #153 review |
-| 2026-09-17 | Made legacy migration pause without token authentication, clean up migrated write names, and refuse automatic upgrades of explicit read-only connections | PR #153 review |
-| 2026-09-17 | Limited apply-capable roadmap ownership to one canonical tracker per layer and prevented legacy migration from upgrading same-named export-backed or incompatible connections | PR #153 review |
-| 2026-09-16 | Made legacy roadmap migration create or select the canonical connection and `primitive-storage.roadmap-items` ownership mapping in the same confirmed diff | PR #153 review |
-| 2026-09-16 | Prevented manual tracker proposals after failed ownership and moved authentication-source authority and migration to the canonical connection | PR #153 review |
-| 2026-09-16 | Routed roadmap writes through `primitive-storage.roadmap-items` and canonical connection capabilities; added explicit migration mapping for legacy `write-*` names | Issue #152 review |
-| 2026-06-02 | Added required version/changelog metadata so plugin specs and references are covered by the consistency check | Issue #144 |
-| 2026-04-25 | Updated the tracker reference to prefer active-layer `connections.trackers[]` and recast `issue-trackers[]` as the legacy/override surface for the 5.1 closeout | v5.1.0 closeout release |
-
-Adopters can mix both in the same scope.

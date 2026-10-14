@@ -83,16 +83,6 @@ Follow the rules in the `kb-management` skill's SKILL.md. Always:
 
 1. Apply the five-question evaluation gate before persisting anything.
 2. Log the operation to `.kb-log/YYYY-MM-DD.log`.
-3. Append an inline changelog entry on any topic / foundation file update.
+3. Update topics and foundation files in place; do not add changelog sections or dates — Git keeps the history.
 4. End with 1–3 concrete next-step suggestions.
 5. Offer to commit / push / open a PR after substantive changes (respect branch protection; no silent force-pushes).
-
-## Changelog
-
-| Date | What changed | Source |
-|------|-------------|--------|
-| 2026-05-24 | Routing precedence now points reflection-driven capture at the strong-signal rubric in `references/capture-routing.md` and says weak or ambiguous signals fall through to default, matching the issue #126 operational definition | Issue #126 |
-| 2026-05-23 | Expanded routing-precedence step 4 (URL or pasted text) into the three capture-routing modes (default / explicit / reflection-driven) and the human-confirmation gate for the reflection-driven mode. Mirrors kb-management SKILL.md rule 12 and the `capture-routing.md` contract | Artifact layer routing |
-| 2026-05-22 | Removed two dead verbs (`browse`, `install`) from the explicit-subcommand routing list. They had no implementation, no documentation, and no description anywhere — caught by the new command-list drift guard in `scripts/check_consistency.py`. Closes audit finding #109 | Audit-tracker closeout |
-| 2026-05-15 | Reframed the `/kb roadmap` and `/kb journeys` routing row as stable product-management subcommands gated by explicit owning-layer config, removing the old draft-skill wording from the active command-generation surface | Release-readiness audit |
-| 2026-05-10 | v6.0.0: removed residual fixed-ladder vocabulary (`L1` capture target in routing precedence, `L2/L3 repos` and `L2/L3 KB` in the triage signal table), replaced with the layer-graph terms (active layer, parent layers, contributor-capable parent layer). Added the canonical delivery/operations subcommands (`brief`, `spec`, `release`, `incident`) plus `note`, `migrate`, `sync`, `diff` to the explicit-subcommand list so the routing precedence matches `command-reference.md`. Added a connection-drift signal to the triage scan. Updated the rule-cross-reference for external completions to point at SKILL.md rule 8 (Task creation and closure are explicit) instead of the retired sub-letter `rule #10c`. First changelog row in this file | v6.0.0 adoption + daily-usage gap audit |
