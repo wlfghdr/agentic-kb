@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml/badge.svg)](https://github.com/wlfghdr/agentic-kb/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Spec version](https://img.shields.io/badge/spec-v6.3.1-green.svg)](CHANGELOG.md)
+[![Spec version](https://img.shields.io/badge/spec-v7.0.0-green.svg)](CHANGELOG.md) <!-- x-release-please-version -->
 
 ---
 
@@ -346,7 +346,7 @@ The reading list is grouped by audience. Pick the row that matches what you are 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Every doc change updates the per-file changelog, the root [`CHANGELOG.md`](CHANGELOG.md), and CI must stay green. Rules for both humans and agents: [`AGENTS.md`](AGENTS.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Every doc change updates its per-file changelog, uses a Conventional Commit PR title (the root [`CHANGELOG.md`](CHANGELOG.md) is generated from it by release-please), and CI must stay green. Rules for both humans and agents: [`AGENTS.md`](AGENTS.md).
 
 ## License
 

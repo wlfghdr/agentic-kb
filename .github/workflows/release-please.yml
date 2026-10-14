@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write # release-please creates its autorelease:* labels
 
 jobs:
   release-please:
@@ -18,3 +19,7 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          # PRs opened with GITHUB_TOKEN do not trigger CI. Add a RELEASE_PLEASE_TOKEN
+          # secret (fine-grained PAT: contents + pull requests write) so release PRs
+          # run validate.yml; without it the built-in token is used.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}

@@ -1,6 +1,6 @@
 # Agent Instructions
 
-> **Version:** 0.15 | **Last updated:** 2026-06-02
+> **Version:** 0.16 | **Last updated:** 2026-10-14
 
 This file is read first by any AI agent (and any human) working in this repository. It defines the ground rules. Layer-specific documents in `docs/` extend these rules — they never override them.
 
@@ -97,7 +97,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 4. Read [plugins/kb/skills/kb-management/references/html-artifacts.md](plugins/kb/skills/kb-management/references/html-artifacts.md) if the change affects artifact generation, external-source reads during generation, or artifact completion criteria.
 5. Identify which docs your change touches (`docs/REFERENCE.md`, plugin skill docs, or agent docs).
 6. Draft the change.
-7. Update the per-file changelog, the root `CHANGELOG.md`, and `VERSION` if applicable.
+7. Update the per-file changelog; leave the root `CHANGELOG.md` and `VERSION` to the release-please PR.
 8. Run local checks (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 9. Open a PR with a description that answers: what changed, why, what it breaks (if anything).
 
@@ -107,6 +107,7 @@ Keep this stated once, crisply, and point to the owning contract instead of rest
 
 | Date | What changed | Source |
 |------|-------------|--------|
+| 2026-10-14 | Bumped AGENTS version to 0.16: Rule 3 hands the root `CHANGELOG.md`, `VERSION` and plugin manifest versions to release-please (Conventional Commit PR titles, squash-merged); doc `**Version:**` headers version each doc's own contract and are no longer aligned to the aggregate version; workflow step 7 updated accordingly | Release-please migration |
 | 2026-06-02 | Bumped AGENTS version to 0.15 to track the shared work-backend default switch: shared process and operational artifacts now default to GitHub Issues through `primitive-storage` and the GitHub governance profile, while private/personal layers remain file-backed unless explicitly configured otherwise | Issue #145 |
 | 2026-05-23 | Bumped AGENTS version to 0.14 to track the capture-time layer routing contract: artifacts no longer need to flow private → shared via `/kb promote` alone. New `plugins/kb/skills/kb-management/references/capture-routing.md` codifies three routing modes (default / explicit / reflection-driven) and the mandatory human-confirmation gate when the agent infers a non-default destination. `docs/REFERENCE.md` §1 carries the normative subsection; kb-management SKILL.md adds core rule 12; kb-operator capture loop, command-reference, kb.md/kb.prompt.md routing precedence, collaboration.md rule 2a, audit rule K16, and glossary all updated. AGENTS rules unchanged in semantics | Artifact layer routing |
 | 2026-05-22 | Bumped AGENTS version to 0.13 to track the audit-tracker closeout sweep (#106, #109, #110) and Rule 3 refinement: Rule 3 now carries an explicit "which files have a per-file changelog" table (skill/agent specs, long-lived docs/*, governance docs = yes; README, templates, generated artifacts, and inline `## Changelog` lines inside fenced format examples = no); concurrency contract added (`docs/concurrency.md`); README command list trimmed to the canonical reference; `scripts/check_consistency.py` extended with a command-list drift check; pre-v5.0 release history split into `CHANGELOG.archive.md`. AGENTS rules unchanged in semantics — Rule 3 just made explicit | Audit-tracker closeout |

@@ -82,3 +82,9 @@ The pre-push hook enforces this before every push. Emergency bypass: `git push -
 ## Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Be kind, be precise, be honest about what you don't know.
+
+## Changelog
+
+| Date | What changed | Source |
+|------|-------------|--------|
+| 2026-10-14 | Contribution flow switched to Conventional Commit PR titles; root `CHANGELOG.md`, `VERSION` and plugin manifest versions are maintained by the release-please PR instead of by hand. Added this per-file changelog (required by AGENTS Rule 3) | Release-please migration |

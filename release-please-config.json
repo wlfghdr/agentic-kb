@@ -67,15 +67,7 @@
         },
         {
           "type": "generic",
-          "path": "plugins/kb/agents/kb-operator.md"
-        },
-        {
-          "type": "generic",
-          "path": "plugins/kb/skills/kb-management/SKILL.md"
-        },
-        {
-          "type": "generic",
-          "path": "plugins/kb/skills/kb-setup/SKILL.md"
+          "path": "README.md"
         }
       ]
     }

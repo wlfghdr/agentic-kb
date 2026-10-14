@@ -1,7 +1,7 @@
 ---
 name: kb-setup
 description: Interactive onboarding wizard that scaffolds an agentic-kb workspace around a flexible layer graph. Asks the user about their context, goals, audience, sources, and desired outputs first, derives a proposed layer graph and feature set including tracker-backed primitive ownership and product-management roadmap/journey placement when relevant, then creates or onboards layer repos, writes the anchor-layer config, configures documented harness workflows, and generates the required templates, indexes, tracker setup artifacts, and HTML style references.
-version: 7.0.0 # x-release-please-version
+version: 7.0.0
 triggers:
   - "/kb setup"
   - "setup kb"

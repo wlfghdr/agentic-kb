@@ -31,20 +31,6 @@ EXEMPT_FROM_VERSION = {
     REPO / "docs" / "roadmap.md",
 }
 
-# Files whose version headers intentionally track a local document contract
-# instead of the aggregate framework VERSION. Narrative examples that teach
-# current behavior should not be added here unless they are deliberately
-# release-pinned and the pin is named in the file.
-VERSION_MAJOR_DRIFT_ALLOWLIST = {
-    REPO / "AGENTS.md",
-    REPO / "CLAUDE.md",
-    REPO / "docs" / "glossary.md",
-    REPO / "docs" / "operating-model.md",
-    REPO / "docs" / "role-handbook.md",
-    REPO / "docs" / "uninstall.md",
-    REPO / "plugins" / "kb" / "skills" / "kb-setup" / "references" / "adoption-stages.md",
-    REPO / "plugins" / "kb" / "skills" / "kb-setup" / "references" / "github-governance-profile.md",
-}
 
 # Terms we forbid in the public spec.
 #
@@ -154,34 +140,9 @@ def check_versions_and_changelogs() -> list[str]:
         if not CHANGELOG_RE.search(text):
             errors.append(f"MISSING '## Changelog' section: {rel}")
 
-    root_version_path = REPO / "VERSION"
-    if not root_version_path.is_file():
-        return errors
-    root_version = parse_version(root_version_path.read_text(encoding="utf-8"))
-    if root_version is None:
-        return errors
-    root_major = root_version[0]
-
-    for doc in iter_all_docs():
-        if doc in VERSION_MAJOR_DRIFT_ALLOWLIST:
-            continue
-        text = doc.read_text(encoding="utf-8", errors="ignore")
-        match = VERSION_RE.search(text)
-        if not match:
-            continue
-        # Doc headers version the doc's own contract. They must be on the
-        # current MAJOR (breaking spec changes touch every doc), but a
-        # release-please MINOR/PATCH release must not force "version aligned"
-        # edits across every file.
-        if int(match.group(1)) < root_major:
-            rel = doc.relative_to(REPO)
-            doc_version = ".".join(part for part in match.groups() if part is not None)
-            errors.append(
-                f"VERSION header drift in {rel}: expected major "
-                f"{root_major}.x, got {doc_version}. "
-                "Add a narrow allowlist entry only for intentionally pinned "
-                "or independently versioned docs."
-            )
+    # Doc **Version:** headers version each doc's own contract and change only
+    # with that doc (logged in its own ## Changelog). They are deliberately not
+    # tied to the aggregate VERSION that release-please bumps.
     return errors
 
 
@@ -429,45 +390,6 @@ def check_changelog_release_hygiene() -> list[str]:
     return []
 
 
-def check_framework_coupled_versions() -> list[str]:
-    """Verify that framework-coupled agents and skills align with the aggregate VERSION.
-
-    The kb-operator agent and core skills (kb-management, kb-setup) are framework-coupled
-    and MUST match the VERSION at the repo root. Independent skills keep their own SemVer.
-    """
-    errors: list[str] = []
-    version_file = REPO / "VERSION"
-    if not version_file.is_file():
-        return errors
-    expected = version_file.read_text(encoding="utf-8").strip()
-
-    targets: list[Path] = []
-    # All agents in plugins/kb/agents/*.md
-    agents_dir = REPO / "plugins" / "kb" / "agents"
-    if agents_dir.is_dir():
-        targets.extend(agents_dir.glob("*.md"))
-
-    # Core skills: kb-management and kb-setup
-    for skill in ("kb-management", "kb-setup"):
-        skill_md = REPO / "plugins" / "kb" / "skills" / skill / "SKILL.md"
-        if skill_md.is_file():
-            targets.append(skill_md)
-
-    for path in targets:
-        rel = path.relative_to(REPO)
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        match = re.search(r"^version:\s*(\S+)", text, re.MULTILINE)
-        if not match:
-            errors.append(f"MISSING version field in frontmatter: {rel}")
-            continue
-        value = match.group(1).strip()
-        if value != expected:
-            errors.append(
-                f"VERSION drift in framework-coupled spec {rel}: expected {expected}, got {value}"
-            )
-    return errors
-
-
 def main() -> int:
     all_errors: list[str] = []
     all_errors += check_root_version()
@@ -478,7 +400,6 @@ def main() -> int:
     all_errors += check_forbidden_terms()
     all_errors += check_internal_links()
     all_errors += check_command_list_drift()
-    all_errors += check_framework_coupled_versions()
 
     if all_errors:
         print("Consistency check failed:\n")
