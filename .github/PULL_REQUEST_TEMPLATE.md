@@ -26,8 +26,7 @@ For full rules, see CONTRIBUTING.md and AGENTS.md.
 ## Checklist
 
 - [ ] Per-file `## Changelog` appended for every modified long-lived spec/concept doc
-- [ ] Root `CHANGELOG.md` updated under `## [Unreleased]`
-- [ ] `VERSION` bumped if the change is user-visible
+- [ ] PR title is a Conventional Commit; root `CHANGELOG.md`/`VERSION` untouched (release-please owns them)
 - [ ] Links validated locally (`lychee --config .lychee.toml .`)
 - [ ] `python3 scripts/check_consistency.py` passes
 - [ ] `python3 scripts/check_plugin_structure.py` passes (if skills/agents/plugins touched)

@@ -31,20 +31,6 @@ EXEMPT_FROM_VERSION = {
     REPO / "docs" / "roadmap.md",
 }
 
-# Files whose version headers intentionally track a local document contract
-# instead of the aggregate framework VERSION. Narrative examples that teach
-# current behavior should not be added here unless they are deliberately
-# release-pinned and the pin is named in the file.
-VERSION_MINOR_DRIFT_ALLOWLIST = {
-    REPO / "AGENTS.md",
-    REPO / "CLAUDE.md",
-    REPO / "docs" / "glossary.md",
-    REPO / "docs" / "operating-model.md",
-    REPO / "docs" / "role-handbook.md",
-    REPO / "docs" / "uninstall.md",
-    REPO / "plugins" / "kb" / "skills" / "kb-setup" / "references" / "adoption-stages.md",
-    REPO / "plugins" / "kb" / "skills" / "kb-setup" / "references" / "github-governance-profile.md",
-}
 
 # Terms we forbid in the public spec.
 #
@@ -70,7 +56,7 @@ def _load_external_blocklist() -> list[str]:
     return terms
 
 VERSION_RE = re.compile(r"\*\*Version:\*\*\s*(\d+)\.(\d+)(?:\.(\d+))?")
-FRONTMATTER_VERSION_RE = re.compile(r"^version:\s*(\d+)\.(\d+)(?:\.(\d+))?\s*$", re.MULTILINE)
+FRONTMATTER_VERSION_RE = re.compile(r"^version:\s*(\d+)\.(\d+)(?:\.(\d+))?\s*(?:#.*)?$", re.MULTILINE)
 CHANGELOG_RE = re.compile(r"^##\s+Changelog\s*$", re.MULTILINE)
 HEADING_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 INLINE_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -154,31 +140,9 @@ def check_versions_and_changelogs() -> list[str]:
         if not CHANGELOG_RE.search(text):
             errors.append(f"MISSING '## Changelog' section: {rel}")
 
-    root_version_path = REPO / "VERSION"
-    if not root_version_path.is_file():
-        return errors
-    root_version = parse_version(root_version_path.read_text(encoding="utf-8"))
-    if root_version is None:
-        return errors
-    root_minor = root_version[:2]
-
-    for doc in iter_all_docs():
-        if doc in VERSION_MINOR_DRIFT_ALLOWLIST:
-            continue
-        text = doc.read_text(encoding="utf-8", errors="ignore")
-        match = VERSION_RE.search(text)
-        if not match:
-            continue
-        doc_minor = (int(match.group(1)), int(match.group(2)))
-        if doc_minor < root_minor:
-            rel = doc.relative_to(REPO)
-            doc_version = ".".join(part for part in match.groups() if part is not None)
-            errors.append(
-                f"VERSION header drift in {rel}: expected at least "
-                f"{root_minor[0]}.{root_minor[1]}.x, got {doc_version}. "
-                "Add a narrow allowlist entry only for intentionally pinned "
-                "or independently versioned docs."
-            )
+    # Doc **Version:** headers version each doc's own contract and change only
+    # with that doc (logged in its own ## Changelog). They are deliberately not
+    # tied to the aggregate VERSION that release-please bumps.
     return errors
 
 
@@ -197,8 +161,8 @@ def check_changelog_exists() -> list[str]:
     if not c.is_file():
         return ["MISSING: CHANGELOG.md at repo root"]
     text = c.read_text(encoding="utf-8")
-    if "[Unreleased]" not in text:
-        return ["CHANGELOG.md must contain an '[Unreleased]' section header"]
+    if not text.startswith("# Changelog"):
+        return ["CHANGELOG.md must start with a '# Changelog' header"]
     return []
 
 
@@ -404,90 +368,26 @@ def check_command_list_drift() -> list[str]:
 
 
 def check_changelog_release_hygiene() -> list[str]:
+    """The newest CHANGELOG release block must match VERSION.
+
+    release-please bumps VERSION and prepends the CHANGELOG block in the same
+    release PR, so a mismatch means one of them was edited by hand.
+    """
     version_path = REPO / "VERSION"
     changelog_path = REPO / "CHANGELOG.md"
     if not version_path.is_file() or not changelog_path.is_file():
         return []
-
-    current_version = parse_version(version_path.read_text(encoding="utf-8").strip())
-    if current_version is None:
-        return []
-
+    current = version_path.read_text(encoding="utf-8").strip()
     text = changelog_path.read_text(encoding="utf-8")
-    unreleased_match = re.search(
-        r"^## \[Unreleased\]\s*(.*?)(?=^## \[)",
-        text,
-        re.MULTILINE | re.DOTALL,
-    )
-    if not unreleased_match:
-        return ["CHANGELOG.md must contain an '[Unreleased]' section header"]
-
-    unreleased_body = unreleased_match.group(1)
-    unreleased_has_entries = any(
-        re.match(r"^\s*-\s+\S", line) for line in unreleased_body.splitlines()
-    )
-    if not unreleased_has_entries:
-        return []
-
-    release_versions = [
-        parse_version(match.group(1))
-        for match in re.finditer(r"^## \[(\d+\.\d+\.\d+)\]", text, re.MULTILINE)
-    ]
-    release_versions = [version for version in release_versions if version is not None]
-    if not release_versions:
+    match = re.search(r"^##\s+\[?v?(\d+\.\d+\.\d+)\]?", text, re.MULTILINE)
+    if not match:
+        return ["CHANGELOG.md has no release block"]
+    if match.group(1) != current:
         return [
-            "CHANGELOG.md [Unreleased] has entries but no release-tagged "
-            "version block exists"
-        ]
-
-    latest_release = max(release_versions)
-    if current_version <= latest_release:
-        latest = ".".join(str(part) for part in latest_release)
-        current = ".".join(str(part) for part in current_version)
-        return [
-            "CHANGELOG.md [Unreleased] has entries, but VERSION has not moved "
-            f"beyond the latest release block ({latest}); got VERSION {current}"
+            f"CHANGELOG.md newest release block is {match.group(1)} but VERSION is "
+            f"{current}; both are maintained by the release-please PR, not by hand"
         ]
     return []
-
-
-def check_framework_coupled_versions() -> list[str]:
-    """Verify that framework-coupled agents and skills align with the aggregate VERSION.
-
-    The kb-operator agent and core skills (kb-management, kb-setup) are framework-coupled
-    and MUST match the VERSION at the repo root. Independent skills keep their own SemVer.
-    """
-    errors: list[str] = []
-    version_file = REPO / "VERSION"
-    if not version_file.is_file():
-        return errors
-    expected = version_file.read_text(encoding="utf-8").strip()
-
-    targets: list[Path] = []
-    # All agents in plugins/kb/agents/*.md
-    agents_dir = REPO / "plugins" / "kb" / "agents"
-    if agents_dir.is_dir():
-        targets.extend(agents_dir.glob("*.md"))
-
-    # Core skills: kb-management and kb-setup
-    for skill in ("kb-management", "kb-setup"):
-        skill_md = REPO / "plugins" / "kb" / "skills" / skill / "SKILL.md"
-        if skill_md.is_file():
-            targets.append(skill_md)
-
-    for path in targets:
-        rel = path.relative_to(REPO)
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        match = re.search(r"^version:\s*(\S+)", text, re.MULTILINE)
-        if not match:
-            errors.append(f"MISSING version field in frontmatter: {rel}")
-            continue
-        value = match.group(1).strip()
-        if value != expected:
-            errors.append(
-                f"VERSION drift in framework-coupled spec {rel}: expected {expected}, got {value}"
-            )
-    return errors
 
 
 def main() -> int:
@@ -500,7 +400,6 @@ def main() -> int:
     all_errors += check_forbidden_terms()
     all_errors += check_internal_links()
     all_errors += check_command_list_drift()
-    all_errors += check_framework_coupled_versions()
 
     if all_errors:
         print("Consistency check failed:\n")
